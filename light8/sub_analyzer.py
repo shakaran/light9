@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from Subs import *
 from Patch import *
 from types import TupleType

@@ -107,7 +107,8 @@ class Lightboard:
         self.subediting.refresh()
         self.buildinterface()
         bindkeys(self.master,'<Escape>', self.quit)
-        self.master.tk_setPalette('gray40')
+        self.slidermapper.setup()
+        # self.master.tk_setPalette('gray40')
 
     def stageassub(self):
         """returns the current onstage lighting as a levels
@@ -160,9 +161,9 @@ class Lightboard:
         for name, val in extlevels.items():
             if name in self.scalelevels:
                 sl = self.scalelevels[name]
-                sl.disable_traces()
+                # sl.disable_traces()
                 sl.set(val)
-                sl.recreate_traces()
+                # sl.recreate_traces()
         
         for lev,lab,oldlev,numlab in zip(levels, self.channel_levels, 
                                          self.oldlevels, 

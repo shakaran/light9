@@ -1,5 +1,19 @@
-Disconnect all	disconnected	disconnected	disconnected	disconnected
+1-00 opening	*curtain	house	god	*1-01-0
+1-01	*1-01-0	*1-01-9 end conversations	*1-02-0	*interscene
+1-02	*1-02-0	*1-02-1 desk solo	*1-03-0	*interscene
+1-03	*1-03-0	*1-04-00-dance	*1-04-01 dark tables	*interscene
+1-04	*1-04-00-dance	*1-04-01 dark tables	*1-04-02 solo ada	*1-04-10-after dance
+1-04 - 2	*1-04-02 solo ada	*1-04-10-after dance	*1-04-20-table	*1-04-30-small table
+1-04 -3, I.5, I.6	*1-04-30-small table	*1-05-0	*1-06-0	*interscene
+1-06, I.7	*1-06-0	*1-07-0	*1-08-00-left cafe	*interscene
+1-08 cuba intro	*1-08-00-left cafe	*1-08-10-right cafe	*1-08-10-centerwalk	*1-08-10-rightwalk
+1-08 cuba travopen	*1-08-30-full	*1-08-10-right cafe	*1-08-20-backdrop	*1-08-10-rightwalk
+1-10 - intermission	*1-10-0	*curtain	house	*2-01-0-dance
+2-00 intermission	*curtain	house	god	*2-01-0-dance
+2-01	*2-01-0-dance	*2-01-01-solo	*2-01-1-after dance	*2-01-1-darker dance
+2-03 start	*2-03-00-open dance	*2-03-10-dialogue	god	*2-03-20-luckcover
+2-03 luck	*2-03-20-luck-l	*2-03-20-luck-c	*2-03-20-luck-r	*2-03-20-luckcover
+2-05	*2-05-0	*2-05-1-dream	*2-05-2-boat	*interscene
+2-06	*2-06-0	*2-06-1-patio right	*2-06-2 patio left	*interscene
 colors	col blue	col gree	col oran	col red
-first four	*1-01-0	*1-02-0	*1-03-0	*1-04-00-dance
-random	*1-03-0	*1-04-10-after dance	*1-06-0	*1-01-0
 vitals	house	god	*curtain	phone booth

@@ -77,7 +77,7 @@ class Stage(Canvas):
 
         # we had the picture removed for good luck, but we remember
         # what the dimensions formerly was
-        self.config(width=821,height=681)
+        self.config(width=821,height=681, bg="grey40")
 
 
     def setsubediting(self,subeditor):

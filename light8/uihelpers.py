@@ -13,7 +13,6 @@ windowlocations = {
     'effect' : '24x24+0963+338',
     'stage' : '823x683+37+030',
     'scenes' : '504x198+462+12',
-
 }
 
 def make_frame(parent):
@@ -157,7 +156,8 @@ class Togglebutton(Button):
 class FancyDoubleVar(DoubleVar):
     def __init__(self,master=None):
         DoubleVar.__init__(self,master)
-        self.callbacklist = {}
+        self.callbacklist = {} # cbname : mode
+        self.namedtraces = {} # name : cbname
     def trace_variable(self,mode,callback):
         """Define a trace callback for the variable.
 
@@ -171,7 +171,7 @@ class FancyDoubleVar(DoubleVar):
         self._tk.call("trace", "variable", self._name, mode, cbname)
         
         # we build a list of the trace callbacks (the py functrions and the tcl functionnames)
-        self.callbacklist[cbname]= mode
+        self.callbacklist[cbname] = mode
 #        print "added trace:",callback,cbname
         
         return cbname
@@ -187,6 +187,29 @@ class FancyDoubleVar(DoubleVar):
 #            self.trace_variable(v[0],v[1])
             self._tk.call("trace", "variable", self._name, mode,cb)
 
+    def trace_named(self, name, callback):
+        if name in self.namedtraces:
+            print "FancyDoubleVar: already had a trace named %s - replacing it" % name
+            self.delete_named(name)
+
+        cbname = self.trace_variable('w',callback) # this will register in self.callbacklist too
+        
+        self.namedtraces[name] = cbname
+        return cbname
+        
+    def delete_named(self, name):
+        if name in self.namedtraces:
+
+            cbname = self.namedtraces[name]
+            
+            self.trace_vdelete('w',cbname)
+	    #self._tk.call("trace","vdelete",self._name,'w',cbname)
+            print "FancyDoubleVar: successfully deleted trace named %s" % name
+        else:
+            print "FancyDoubleVar: attempted to delete named %s which wasn't set to any function" % name
+
+
+
 
 if __name__=='__main__':
     root=Tk()
@@ -198,3 +221,12 @@ if __name__=='__main__':
     t.pack()
     Entry(root,textvariable=iv).pack()
     root.mainloop()
+
+
+
+
+
+
+
+
+

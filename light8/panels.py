@@ -135,7 +135,8 @@ class Subpanels:
             # make DoubleVar (there might be one left around from
             # before a refresh)
             if name not in scalelevels:
-                scalelevels[name]=FancyDoubleVar()
+                # scalelevels[name]=FancyDoubleVar()
+                scalelevels[name]=DoubleVar()
 
             sub.set_slider_var(scalelevels[name])
 

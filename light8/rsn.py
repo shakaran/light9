@@ -29,7 +29,7 @@ if not DUMMY:
     parportdmx.golive()
 
 mr_lightboard = Lightboard(root,parportdmx,DUMMY)
-root.tk_setPalette('gray40')
+# root.tk_setPalette('gray40')
 
 signal(SIGINT, mr_lightboard.quit)
 

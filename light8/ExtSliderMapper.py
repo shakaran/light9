@@ -2,7 +2,7 @@
 submasters.  It tells you the status of each mapping and saves and loads
 presets.  The show is relying on this module!  Do not lose it!
 
-FUQ (frequently unasked question)
+FUQ (frequently unasked question(s))
 
 1. What's with all the *args?
 
@@ -10,6 +10,9 @@ It lets functions take any number of arguments and throw them away.
 Callbacks do this, and we typically don't care about what they have to say. """
 
 from Tix import *
+from uihelpers import FancyDoubleVar
+
+stdfont = ('Arial', 8)
 
 class SliderMapping:
     def __init__(self, default='disconnected', synced=0, extinputlevel=0, 
@@ -17,6 +20,7 @@ class SliderMapping:
         self.subname = StringVar() # name of submaster we're connected to
         self.subname.set(default)
         self.sublevel = DoubleVar() # scalelevel variable of that submaster
+        # self.sublevel = FancyDoubleVar() # scalelevel variable of that submaster
         self.sublevel.set(sublevel)
         self.synced = BooleanVar() # currently synced
         self.synced.set(synced)
@@ -39,6 +43,19 @@ class SliderMapping:
         return self.synced.get()
     def disconnect(self, *args):
         self.set_subname('disconnected') # a bit hack-like
+        # self.sublevel.delete_named('sync')
+        '''
+        try:
+            if self.sublevel.unsync_trace_cbname is not None:
+                # self.sublevel.trace_vdelete('w', 
+                    # self.sublevel.unsync_trace_cbname)
+                self.sublevel._tk.call('trace', 'vdelete', self.sublevel._name, 
+                    'w', self.sublevel.unsync_trace_cbname)
+                self.sublevel.unsync_trace_cbname = None
+        except AttributeError:
+            pass
+        '''
+            
         self.sublabel.configure(text="N/A")
         self.color_bg()
     def isdisconnected(self):
@@ -88,19 +105,26 @@ class SliderMapping:
         'newvar is one of the variables in scalelevels'
 
         if newvar is not self.sublevel:
+            # self.sublevel.delete_named('sync')
+            self.sublevel = newvar
+            self.sublabel.configure(textvariable=newvar)
+            # self.sublevel.trace_named('sync', lambda *args: self.unsync(*args))
+            '''
             try:
-                # remove an old trace
-                self.sublevel.trace_vdelete('w',
-                    self.sublevel.unsync_trace_cbname)
+                if self.sublevel.unsync_trace_cbname is not None:
+                    # remove an old trace
+                    self.sublevel.trace_vdelete('w',
+                        self.sublevel.unsync_trace_cbname)
             except AttributeError:
                 pass # it didn't have one
 
             self.sublevel = newvar
             self.sublevel.unsync_trace_cbname = self.sublevel.trace('w', 
                 self.unsync)
+            '''
 
-        if self.sublabel:
-            self.sublabel.configure(textvariable=newvar)
+        # if self.sublabel:
+            # self.sublabel.configure(textvariable=newvar)
         self.check_synced()
     def get_mapping(self):
         'Get name of submaster currently mapped'
@@ -111,29 +135,35 @@ class SliderMapping:
     def draw_interface(self, master, subnames):
         'Draw interface into master, given a list of submaster names'
         frame = Frame(master)
-        c = ComboBox(frame, variable=self.subname)
+        c = ComboBox(frame, variable=self.subname, dropdown=0)
         c.slistbox.listbox.insert(END, "disconnected")
+        # c.listbox.insert(END, "disconnected")
         for s in subnames:
             c.slistbox.listbox.insert(END, s)
-        c.entry.configure(width=12)
+            # c.listbox.insert(END, s)
+        c.entry.configure(width=12, font=stdfont)
+        c.slistbox.listbox.configure(font=stdfont, exportselection=0)
         statframe = Frame(frame)
 
-        self.statuslabel = Label(statframe, text="No sync")
+        self.statuslabel = Label(statframe, text="No sync", width=15, font=stdfont)
         self.statuslabel.grid(columnspan=2, sticky=W)
-        ilabel = Label(statframe, text="Input", fg='blue')
+        ilabel = Label(statframe, text="Input", fg='blue', font=stdfont)
         ilabel.grid(row=1, sticky=W)
-        extlabel = Label(statframe, textvariable=self.extlevel, width=5)
+        extlabel = Label(statframe, textvariable=self.extlevel, width=5, font=stdfont)
         extlabel.grid(row=1, column=1)
-        rlabel = Label(statframe, text="Real")
+        rlabel = Label(statframe, text="Real", font=stdfont)
         rlabel.grid(row=2, sticky=W)
-        self.sublabel = Label(statframe, text="N/A", width=5)
+        self.sublabel = Label(statframe, text="N/A", width=5, font=stdfont)
         self.sublabel.grid(row=2, column=1)
-        statframe.pack(side=BOTTOM, expand=1, fill=X)
-        c.pack()
+        disc_button = Button(statframe, text="Disconnect", 
+            command=self.disconnect, padx=0, pady=0, font=stdfont)
+        disc_button.grid(row=3, columnspan=2)
+        statframe.pack(side=BOTTOM, expand=1, fill=BOTH)
+        c.pack(expand=1, fill=BOTH)
         frame.pack(side=LEFT, expand=1, fill=BOTH)
 
         self.widgets = [frame, c, statframe, self.statuslabel, ilabel, extlabel,
-                        rlabel, self.sublabel]
+                        rlabel, self.sublabel, disc_button]
 
 class ExtSliderMapper(Frame):
     def __init__(self, parent, sliderlevels, sliderinput, filename='slidermapping',
@@ -161,6 +191,7 @@ class ExtSliderMapper(Frame):
 
         self.draw_interface()
     def load_presets(self):
+        self.presets = {}
         self.file = open(self.filename, 'r')
         lines = self.file.readlines()
         for l in lines:
@@ -183,13 +214,15 @@ class ExtSliderMapper(Frame):
                 v = self.sliderlevels[slidermap.get_mapping()]
                 slidermap.set_sublevel_var(v)
             except KeyError:
-                pass
+                name = slidermap.get_mapping()
+                if name != 'disconnected':
+                    print "ESM: No submaster named", name
                 
     def get_levels(self):
         'Called by changelevels, returns a dict of new values for submasters'
         if not self.sliderinput: return {}
 
-        self.load_scalelevels() # freshen our input from the physical sliders
+        self.load_scalelevels() # freshen our input from the submasters
 
         rawlevels = self.sliderinput.get_levels()
         for rawlev, slidermap in zip(rawlevels, self.current_mappings):
@@ -217,11 +250,14 @@ class ExtSliderMapper(Frame):
                 command=self.delete_preset).pack(side=LEFT)
         Button(presetframe, text="Disconnect", padx=0, pady=0, 
                 command=self.disconnect_all).pack(side=LEFT)
+        Button(presetframe, text="Reload", padx=0, pady=0, 
+                command=self.load_presets).pack(side=LEFT)
         presetframe.pack(side=BOTTOM)
     def apply_preset(self, preset):
         if not preset: return
         preset_mapping = self.presets.get(preset)
         if not preset_mapping: return
+        self.disconnect_all()
         for subname, slidermap in zip(preset_mapping, self.current_mappings):
             slidermap.set_subname(subname)
     def delete_preset(self, *args):

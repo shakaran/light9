@@ -1013,3 +1013,5 @@ subs["*2-07-0"] = { "sidefill2" : 100, "sidefill1" : 83, "cycright" : 41,
     "main 5" : 100, "main 4" : 100, "main 7" : 100, "hotbox2" : 5,
     "main 9" : 100, "main 8" : 100, "rock" : 0, "cycleft" : 41, "edge" : 63,
     "god" : 100, "marry2" : 100, "marry1" : 100, "xmas" : 100,}
+subs["*interscene"] = { "blue1" : 38, "blue3" : 38, "blue2" : 38,
+    "blue4" : 38,}
