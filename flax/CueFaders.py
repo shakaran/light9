@@ -18,6 +18,7 @@ cue_state_indicator_colors = {
 # FIXE make fades work properly: the set_next / prev bug
 # WONT find cue by page ("not necessawy!")
 # WONT CueFader controls KeyboardController?  unlikely
+# FIXE AutoSave loop
 
 class LabelledScale(Tk.Frame):
     """Scale with two labels: a name and current value"""
@@ -483,9 +484,16 @@ class CueList:
             return empty_cue
     def __del__(self):
         self.save()
-    def save(self):
-        print "Saving cues to", self.filename
-        self.treedict.save(self.filename)
+    def save(self, backup=0):
+        if backup:
+
+            backupfilename = "%s-backup" % self.filename
+            print time.asctime(), "Saving backup version of cues to", \
+                backupfilename
+            self.treedict.save(backupfilename)
+        else:
+            print time.asctime(), "Saving cues to", self.filename
+            self.treedict.save(self.filename)
     def reload(self):
         # TODO: we probably will need to make sure that indices still make
         # sense, etc.
@@ -529,6 +537,7 @@ class TkCueList(CueList, Tk.Frame):
         for count, cue in enumerate(self.cues):
             self.display_cue(count, cue)
         self.update_cue_indicators()
+        self.save_loop()
     def set_fader(self, fader):
         self.fader = fader
     def wheelscroll(self, evt):
@@ -627,6 +636,10 @@ class TkCueList(CueList, Tk.Frame):
         sel = self.hlist.info_selection()
         if sel:
             self.set_next(int(sel[0]))
+    def save_loop(self):
+        """This saves the CueList every minute."""
+        self.save(backup=1)
+        self.after(60000, self.save_loop)
 
 class CueEditron(Tk.Frame):
     def __init__(self, master, changed_callback=None, cue=None):
