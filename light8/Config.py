@@ -5,40 +5,49 @@ from Subs import *
 
 
 patch = {
-    'side l' : 45,
+    
+    'side l' : 45, # posts
     'side r' : 46,
-    'main 1' : 1,
-    'main 2' : 2,
-    'main 3' : 3,
-    'main 4' : 4,
-    'main 5' : 5,
-    'main 6' : 6,
-    'main 7' : 7,
-    'main 8' : 8,
-    'main 9' : 9,
-    'main 10' : 10,
-    'center sc' : 20,
-    'sr sky' : 43,
-    'blacklight' : 15,
+    
+    ('patio1','main 1',) : 1,
+    ('main 2',) : 2,
+    ('main 3',) : 3,
+    ('main 4',) : 4,
+    ('main 5',) : 5,
+    ('god','main 6') : 6,
+    ('main 7',) : 7,
+    ('main 8',) : 8,
+    ('main 9',) : 9,
+    ('main 10',) : 10,
+    ('main 11',):11,
+    ('patio2','main 12',):12,
+
+    'cycleft' : 43,
+    'cycright' : 44, # ? might be a different circuit
+    
     'house':68,
-    ('b0 1 r' ,'b01'):54, # left bank over house
-    ('b0 2 p' ,'b02'):53,
-    ('b0 3 o' ,'b03'):52,
-    ('b0 4 b' ,'b04'):51,
-    ('b0 5 r' ,'b05'):50,
-    ('b0 6 lb','b06'):49,
-    ('b1 1'   ,'b11'):55, # mid bank
-    ('b1 2'   ,'b12'):56,
-    ('b1 3'   ,'b13'):57,
-    ('b1 4'   ,'b14'):58,
-    ('b1 5'   ,'b15'):59,
-    ('b1 6'   ,'b16'):60,
-    ('b2 1 lb','b21'):61, # right bank
-    ('b2 2 r' ,'b22'):62,
-    ('b2 3 b' ,'b23'):63,
-    ('b2 4 o' ,'b24'):64,
-    ('b2 5 p' ,'b25'):65,
-    ('b2 6 r' ,'b26'):66,   
+    ('desk1' ,'b11'):54, # left bank over house
+    ('marry1' ,'b12'):53,
+    ('b13',):52,
+    ('hotbox1' ,'b14'):51,
+    ('edge' ,'b15'):50,
+    ('phone','b16'):49,
+    ('cuba1'   ,'b21'):55, # mid bank
+    ('b22',):56,
+    ('b23',):57,
+    ('b24'):58,
+    ('b25'):59,
+    ('desk2'   ,'b26'):60,
+    ('rock','b31'):61, # right bank
+    ('b32',):62,
+    ('hotbox2' ,'b33'):63,
+    ('b34',):64,
+    ('marry2' ,'b35'):65,
+    ('cuba2' ,'b36'):66,
+    'oran1':21,    'oran2':25,    'oran3':29,    'oran4':33,
+    'gree1':22,    'gree2':26,    'gree3':30,    'gree4':34,
+    'blue1':23,    'blue2':27,    'blue3':31,    'blue4':35,
+    'red1' :24,    'red2' :28,    'red3' :32,    'red4' :36,
 }
 
 from util import maxes,scaledict
@@ -48,11 +57,6 @@ def fulls(chans):
     return dict([(c,FL) for c in chans])
 def levs(chans,levs):
     return dict([(c,v) for c,v in zip(chans,levs)])
-
-def blacklight(params, slideradjuster):
-    params.add_param('nd',CheckboxParam())
-    while 1:
-        yield {'blacklight':100*params['nd']}
 
 def strobe(params, slideradjuster):
     patterns = {
@@ -246,17 +250,14 @@ subs = {
     ('scp hot ctr', 'yellow'):{18:FL},
     ('scp more', '#AAAA00'):{18:FL,14:FL},
     ('scp all', '#AAAA00'):fulls((13,16,18,19,39)),
-    ('col oran', '#EEEE99'):fulls((21,25,29,33)),
-    ('col red', 'red'):fulls((24,28,32,36)),
-    ('col red big', 'red'):fulls((24,28,32,36,
-                         'b0 1 r','b0 5 r','b2 2 r','b2 6 r')),
-    ('col blue', 'blue'):fulls((23,27,31,35,'b0 4 b','b2 3 b')),
-    ('col gree', 'green'):fulls((22,26,30,34)),
+    ('col oran', '#EEEE99'):fulls('oran1 oran2 oran3 oran4'.split()),
+    ('col red', 'red'):fulls('red1 red2 red3 red4'.split()),
+    ('col blue', 'blue'):fulls('blue1 blue2 blue3 blue4'.split()),
+    ('col gree', 'green'):fulls('gree1 gree2 gree3 gree4'.split()),
     'sidepost':fulls((45,46)),
     'edges':fulls((55,60,49,54,61,66)),
-    'bank1ctr':fulls(('b12','b13','b14','b15')),
-    ('blacklight', 'purple'):blacklight,
-    'over pit ctr' : fulls((6,)),
+    'bank1ctr':fulls(('b22','b23','b24','b25')),
+    'god' : fulls((6,)),
     ('strobe', 'grey'):strobe,
     
 #    'midstage' : dict([(r, 100) for r in range(11, 21)]),
@@ -266,77 +267,8 @@ subs = {
     'chase2' : chase,
 #    'random' : randomdimmer,
 }
-subs["*10"] = { "14" : 46.000000,
-                "18" : 46.000000,
-                "22" : 88.000000,
-                "23" : 95.000000,
-                "24" : 19.000000,
-                "26" : 88.000000,
-                "27" : 95.000000, "28" : 19.000000,
-                "30" : 88.000000, "31" : 95.000000,
-                "32" : 19.000000, "34" : 88.000000,
-                "35" : 95.000000, "36" : 19.000000,
-                "b0 5 r" : 7.000000, "b0 4 b" : 95.000000,
-                "b0 1 r" : 7.000000, "b2 2 r" : 7.000000,
-                "b2 3 b" : 95.000000, "b2 6 r" : 7.000000, }
-subs["*13"] = { "main 1" : 51.0, "main 2" : 51.0, "main 3" : 51.0,
-                "main 4" : 51.0, "main 5" : 51.0, "main 6" : 51.0,
-                "main 7" : 51.0, "main 8" : 51.0, "main 9" : 51.0,
-                "main 10" : 51.0, "11" : 51.0, "12" : 51.0,
-                "blacklight" : 0.0, "21" : 56.0, "22" : 50.0,
-                "24" : 51.0, "25" : 56.0, "26" : 50.0, "28" : 51.0,
-                "29" : 56.0, "30" : 50.0, "32" : 51.0, "33" : 56.0,
-                "34" : 50.0, "36" : 51.0, "b0 5 r" : 51.0,
-                "b0 1 r" : 51.0, "b2 2 r" : 51.0, "b2 6 r" : 51.0, }
-subs["*16"] = { "main 1" : 54, "main 4" : 49, "main 5" : 41, "main 6" : 43,
-    "main 7" : 46, "main 8" : 29, "main 9" : 50, "main 10" : 41,
-    "11" : 32, "13" : 77, "16" : 77, "18" : 77, "19" : 77, "39" : 77,
-    "42" : 30, "sr sky" : 30,}
-subs["*3"] = { "main 1" : 47, "main 2" : 47, "main 3" : 47, "main 4" : 47,
-    "main 5" : 47, "main 6" : 47, "main 7" : 47, "main 8" : 47, "main 9" : 47,
-    "main 10" : 47, "11" : 47, "12" : 47, "blacklight" : 0, "21" : 67,
-    "22" : 69, "23" : 69, "24" : 78, "25" : 67, "26" : 69, "27" : 69,
-    "28" : 78, "29" : 67, "30" : 69, "31" : 69, "32" : 78, "33" : 67,
-    "34" : 69, "35" : 69, "36" : 78, "b0 4 b" : 69, "b1 2" : 61,
-    "b1 3" : 61, "b1 4" : 61, "b1 5" : 61, "b2 3 b" : 69,}
-subs["*12"] = { "main 1" : 25, "main 4" : 23, "main 5" : 19, "main 6" : 20,
-    "main 7" : 22, "main 8" : 14, "main 9" : 23, "main 10" : 19,
-    "11" : 15, "13" : 36, "16" : 36, "18" : 36, "19" : 36, "22" : 65,
-    "23" : 100, "24" : 23, "26" : 65, "27" : 100, "28" : 23, "30" : 65,
-    "31" : 100, "32" : 23, "34" : 65, "35" : 100, "36" : 23, "39" : 36,
-    "b0 4 b" : 100, "b1 2" : 62, "b1 3" : 62, "b1 4" : 62, "b1 5" : 62,
-    "b2 3 b" : 100,}
-subs["*curtain"] = { "main 4" : 44, "main 5" : 37, "main 6" : 86,
-    "main 7" : 42, "main 8" : 32, "main 9" : 45, "42" : 41, "sr sky" : 41,
-    "b0 6 lb" : 27, "b0 1 r" : 27, "b1 1" : 27, "b1 2" : 100, "b1 3" : 100,
-    "b1 4" : 100, "b1 5" : 100, "b1 6" : 27, "b2 1 lb" : 27, "b2 6 r" : 27,
-                     
-                     }
-subs["ba outrs"] = fulls("b01 b02 b03 b04 b05 b06 b21 b22 b23 b24 b25 b26".split())
-subs["ba some"] = {'b02':40,'b03':FL,'b04':FL,'b05':40,
-                   'b22':40,'b23':FL,'b24':FL,'b25':40,}
-subs['*curtain'].update(subs['ba some'])
 
-subs["*2"] = { "main 1" : 77, "main 4" : 70, "main 5" : 59, "main 6" : 61,
-    "main 7" : 66, "main 8" : 42, "main 9" : 71, "main 10" : 59,
-    "11" : 45, "24" : 77, "28" : 77, "32" : 77, "36" : 77, "b0 5 r" : 77,
-    "b0 1 r" : 77, "b2 2 r" : 77, "b2 6 r" : 77,}
-subs["*6"] = { "main 1" : 37, "main 4" : 33, "main 5" : 28, "main 6" : 29,
-    "main 7" : 32, "main 8" : 20, "main 9" : 34, "main 10" : 28,
-    "11" : 22, "13" : 37, "blacklight" : 0, "16" : 37, "18" : 37,
-    "19" : 37, "21" : 82, "22" : 82, "23" : 82, "24" : 82, "25" : 82,
-    "26" : 82, "27" : 82, "28" : 82, "29" : 82, "30" : 82, "31" : 82,
-    "32" : 82, "33" : 82, "34" : 82, "35" : 82, "36" : 82, "39" : 37,
-    "b0 5 r" : 82, "b0 4 b" : 82, "b0 1 r" : 82, "b2 2 r" : 82, "b2 3 b" : 82,
-    "b2 6 r" : 82,}
-subs["*8"] = { "13" : 60, "16" : 60, "18" : 60, "19" : 60, "22" : 14,
-    "23" : 100, "26" : 14, "27" : 100, "30" : 14, "31" : 100, "34" : 14,
-    "35" : 100, "39" : 60, "b0 6 lb" : 14, "b0 4 b" : 100, "b0 1 r" : 14,
-    "b1 1" : 14, "b1 2" : 70, "b1 3" : 70, "b1 4" : 70, "b1 5" : 70,
-    "b1 6" : 14, "b2 1 lb" : 14, "b2 3 b" : 100, "b2 6 r" : 14,}
-subs["*5"] = { "main 1" : 81, "main 4" : 74, "main 5" : 62, "main 6" : 64,
-    "main 7" : 70, "main 8" : 44, "main 9" : 75, "main 10" : 62,
-    "11" : 48, "21" : 29, "24" : 29, "25" : 29, "28" : 29, "29" : 29,
-    "32" : 29, "33" : 29, "36" : 29, "42" : 37, "sr sky" : 37, "b0 5 r" : 29,
-    "b0 4 b" : 72, "b0 3 o" : 72, "b0 2 p" : 29, "b2 2 r" : 29, "b2 3 b" : 72,
-    "b2 4 o" : 72, "b2 5 p" : 29,}
+subs["ba outrs"] = fulls("b11 b12 b13 b14 b15 b16 b31 b32 b33 b34 b35 b36".split())
+subs["ba some"] = {'b12':40,'b13':FL,'b14':FL,'b15':40,
+                   'b32':40,'b33':FL,'b34':FL,'b35':40,}
+subs['*curtain'] = subs['ba some'].copy()
