@@ -1,106 +1,112 @@
 <?xml version="1.0"?>
 <!DOCTYPE PyObject SYSTEM "PyObjects.dtd">
 <PyObject family="obj" type="builtin_wrapper"  class="_EmptyClass">
-<attr name="__toplevel__" family="map" type="__compound__" extra="None TreeDict" id="135916956" >
+<attr name="__toplevel__" family="map" type="__compound__" extra="None TreeDict" id="138321692" >
   <entry>
     <key type="string" value="cues" />
-    <val type="list" id="138285508" >
-      <item type="PyObject" id="138620316" class="Cue">
+    <val type="list" id="140057044" >
+      <item type="PyObject" id="139705788" class="Cue">
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 0" />
         <attr name="time" type="numeric" value="0" />
       </item>
-      <item type="PyObject" id="138232236" class="Cue">
+      <item type="PyObject" id="138399700" class="Cue">
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 1" />
         <attr name="time" type="numeric" value="1" />
       </item>
-      <item type="PyObject" id="138598276" class="Cue">
+      <item type="PyObject" id="139651028" class="Cue">
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 2" />
         <attr name="time" type="numeric" value="2" />
       </item>
-      <item type="PyObject" id="138229380" class="Cue">
+      <item type="PyObject" id="139651716" class="Cue">
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 3" />
         <attr name="time" type="numeric" value="3" />
       </item>
-      <item type="PyObject" id="138309300" class="Cue">
+      <item type="PyObject" id="140056788" class="Cue">
+        <attr name="time" type="numeric" value="4" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 4" />
-        <attr name="time" type="numeric" value="4" />
+        <attr name="page" type="string" value="1.3.13" />
       </item>
-      <item type="PyObject" id="138229564" class="Cue">
+      <item type="PyObject" id="139731244" class="Cue">
+        <attr name="time" type="numeric" value="5" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 5" />
-        <attr name="time" type="numeric" value="5" />
+        <attr name="page" type="string" value="1.3.17" />
       </item>
-      <item type="PyObject" id="138296364" class="Cue">
+      <item type="PyObject" id="139724292" class="Cue">
+        <attr name="time" type="numeric" value="6" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 6" />
-        <attr name="time" type="numeric" value="6" />
+        <attr name="page" type="string" value="1.4.2" />
       </item>
-      <item type="PyObject" id="138256796" class="Cue">
+      <item type="PyObject" id="138615364" class="Cue">
+        <attr name="time" type="numeric" value="7" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 7" />
-        <attr name="time" type="numeric" value="7" />
+        <attr name="page" type="string" value="2.1.1" />
       </item>
-      <item type="PyObject" id="136370908" class="Cue">
+      <item type="PyObject" id="139653716" class="Cue">
+        <attr name="time" type="numeric" value="8" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 8" />
-        <attr name="time" type="numeric" value="8" />
+        <attr name="page" type="string" value="2.1.2" />
       </item>
-      <item type="PyObject" id="136982724" class="Cue">
+      <item type="PyObject" id="140059964" class="Cue">
+        <attr name="time" type="numeric" value="9" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 9" />
-        <attr name="time" type="numeric" value="9" />
+        <attr name="page" type="string" value="2.2.4" />
       </item>
-      <item type="PyObject" id="138256916" class="Cue">
+      <item type="PyObject" id="139654716" class="Cue">
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 10" />
         <attr name="time" type="numeric" value="10" />
       </item>
-      <item type="PyObject" id="138233236" class="Cue">
+      <item type="PyObject" id="139654900" class="Cue">
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 11" />
         <attr name="time" type="numeric" value="11" />
       </item>
-      <item type="PyObject" id="138233420" class="Cue">
+      <item type="PyObject" id="139655084" class="Cue">
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 12" />
         <attr name="time" type="numeric" value="12" />
       </item>
-      <item type="PyObject" id="138233660" class="Cue">
+      <item type="PyObject" id="139655124" class="Cue">
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 13" />
         <attr name="time" type="numeric" value="13" />
       </item>
-      <item type="PyObject" id="138296580" class="Cue">
+      <item type="PyObject" id="139655364" class="Cue">
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 14" />
         <attr name="time" type="numeric" value="14" />
       </item>
-      <item type="PyObject" id="136859228" class="Cue">
+      <item type="PyObject" id="139655548" class="Cue">
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 15" />
         <attr name="time" type="numeric" value="15" />
       </item>
-      <item type="PyObject" id="138233700" class="Cue">
+      <item type="PyObject" id="139655588" class="Cue">
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 16" />
         <attr name="time" type="numeric" value="16" />
       </item>
-      <item type="PyObject" id="138233740" class="Cue">
+      <item type="PyObject" id="140051868" class="Cue">
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 17" />
         <attr name="time" type="numeric" value="17" />
       </item>
-      <item type="PyObject" id="138609044" class="Cue">
+      <item type="PyObject" id="139652364" class="Cue">
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 18" />
         <attr name="time" type="numeric" value="18" />
       </item>
-      <item type="PyObject" id="138230836" class="Cue">
+      <item type="PyObject" id="140041636" class="Cue">
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 19" />
         <attr name="time" type="numeric" value="19" />

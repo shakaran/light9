@@ -2,6 +2,14 @@ from __future__ import division, nested_scopes
 import Tix as Tk
 import time
 from TreeDict import TreeDict, allow_class_to_be_pickled
+from TLUtility import enumerate
+
+cue_state_indicator_colors = {
+             # bg       fg
+    'prev' : ('blue',   'white'),
+    'cur' :  ('yellow', 'black'),
+    'next' : ('red',    'white'),
+}
 
 class LabelledScale(Tk.Frame):
     """Scale with two labels: a name and current value"""
@@ -9,6 +17,11 @@ class LabelledScale(Tk.Frame):
         Tk.Frame.__init__(self, master, bd=2, relief='raised')
         opts.setdefault('variable', Tk.DoubleVar())
         opts.setdefault('showvalue', 0)
+
+        self.normaltrough = opts.get('troughcolor', 'black')
+        self.flashtrough = opts.get('flashtroughcolor', 'red')
+        del opts['flashtroughcolor']
+
         self.scale_var = opts['variable']
         self.scale = Tk.Scale(self, **opts)
         self.scale.pack(side='top', expand=1, fill='both')
@@ -24,6 +37,10 @@ class LabelledScale(Tk.Frame):
     def update_value_label(self, *args):
         val = self.scale_var.get() * 100
         self.scale_value['text'] = "%0.2f" % val
+        if val != 0:
+            self.scale['troughcolor'] = self.flashtrough
+        else:
+            self.scale['troughcolor'] = self.normaltrough
     def disable(self):
         if not self.disabled:
             self.scale['state'] = 'disabled'
@@ -36,11 +53,11 @@ class LabelledScale(Tk.Frame):
 
 class TimedGoButton(Tk.Frame):
     """Go button, fade time entry, and time fader"""
-    def __init__(self, master, name, scale_to_fade):
+    def __init__(self, master, name, scale_to_fade, **kw):
         Tk.Frame.__init__(self, master)
         self.name = name
         self.scale_to_fade = scale_to_fade
-        self.button = Tk.Button(self, text=name, command=self.start_fade)
+        self.button = Tk.Button(self, text=name, command=self.start_fade, **kw)
         self.button.pack(fill='both', expand=1, side='left')
         self.timer_var = Tk.StringVar()
         self.timer_entry = Tk.Entry(self, textvariable=self.timer_var, width=5)
@@ -88,36 +105,51 @@ class CueFader(Tk.Frame):
         self.auto_shift = Tk.IntVar()
         self.auto_shift.set(1)
 
+        # this is a mechanism to stop Tk from autoshifting too much.
+        # if this variable is true, the mouse button is down.  we don't want
+        # to shift until they release it.  when it is released, we will
+        # set it to false and then call autoshift.
+        self.no_shifts_until_release = 0
+
         self.scales = {}
         self.shift_buttons = {}
         self.go_buttons = {}
-
-        topframe = Tk.Frame(self)
-        self.current_cues = Tk.Label(topframe)
-        self.current_cues.pack()
-        self.update_cue_display()
-        topframe.pack()
         
-        bottomframe = Tk.Frame(self)
-        self.auto_shift_checkbutton = Tk.Checkbutton(self, 
+        topframe = Tk.Frame(self)
+
+        self.set_prev_button = Tk.Button(topframe, text='Set Prev',
+            command=lambda: cuelist.set_selection_as_prev(),
+            fg='white', bg='blue')
+        self.set_prev_button.pack(side='left')
+
+        self.auto_shift_checkbutton = Tk.Checkbutton(topframe, 
             variable=self.auto_shift, text='Autoshift', 
             command=self.toggle_autoshift)
-        self.auto_shift_checkbutton.pack()
-        bottomframe.pack(side='bottom')
+        self.auto_shift_checkbutton.pack(side='left')
 
-        middleframe = Tk.Frame(self)
-        for name, start, end, side in (('Prev', 1, 0, 'left'),
-                                       ('Next', 0, 1, 'right')):
+        self.set_next_button = Tk.Button(topframe, text='Set Next',
+            command=lambda: cuelist.set_selection_as_next(),
+            fg='white', bg='red')
+        self.set_next_button.pack(side='left')
+
+        topframe.pack(side='top')
+
+        faderframe = Tk.Frame(self)
+        self.direction_info = (('Prev', 1, 0, 'left', 'blue'),
+                               ('Next', 0, 1, 'right', 'red'))
+        for name, start, end, side, color in self.direction_info:
             frame = Tk.Frame(self)
             scale = LabelledScale(frame, name, from_=start, to_=end, 
-                res=0.01, orient='horiz')
-            scale.pack(fill='both', expand=1)
-            go = TimedGoButton(frame, 'Go %s' % name, scale)
+                res=0.0001, orient='horiz', flashtroughcolor=color)
+            scale.pack(fill='x', expand=0)
+            go = TimedGoButton(frame, 'Go %s' % name, scale, bg=color, 
+                fg='white')
             go.pack(fill='both', expand=1)
             frame.pack(side=side, fill='both', expand=1)
         
             shift = Tk.Button(frame, text="Shift %s" % name, state='disabled',
-                command=lambda name=name: self.shift(name))
+                command=lambda name=name: self.shift(name), fg=color, 
+                bg='black')
 
             self.scales[name] = scale
             self.shift_buttons[name] = shift
@@ -125,37 +157,47 @@ class CueFader(Tk.Frame):
 
             scale.scale_var.trace('w', \
                 lambda x, y, z, name=name, scale=scale: self.xfade(name, scale))
-        middleframe.pack(side='bottom', fill='both', expand=1)
+
+            def button_press(event, name=name, scale=scale):
+                self.no_shifts_until_release = 1 # prevent shifts until release
+            def button_release(event, name=name, scale=scale):
+                self.no_shifts_until_release = 0
+                self.autoshift(name, scale)
+
+            scale.scale.bind("<ButtonPress>", button_press)
+            scale.scale.bind("<ButtonRelease>", button_release)
+        faderframe.pack(side='bottom', fill='both', expand=1)
     def toggle_autoshift(self):
         for name, button in self.shift_buttons.items():
             if not self.auto_shift.get():
                 button.pack(side='bottom', fill='both', expand=1)
             else:
                 button.pack_forget()
-
     def shift(self, name):
-        print "shift", name
+        # to prevent overshifting
+        if self.no_shifts_until_release:
+            return
+
         for scale_name, scale in self.scales.items():
-            scale.scale_var.set(0)
+            scale.scale.set(0)
         self.cuelist.shift((-1, 1)[name == 'Next'])
-        self.update_cue_display()
-    def update_cue_display(self):
-        current_cues = [cue.name for cue in self.cuelist.get_current_cues()]
-        self.current_cues['text'] = ', '.join(current_cues)
-    def xfade(self, name, scale):
+    def autoshift(self, name, scale):
         scale_val = scale.scale_var.get() 
-        # print "xfade", name, scale_val
 
         if scale_val == 1:
             if self.auto_shift.get():
-                print "autoshifting", name
                 self.shift(name)
-                scale_val = scale.scale_var.get() # this needs to be refreshed
-            else:
-                self.shift_buttons[name]['state'] = 'normal'
+    def xfade(self, name, scale):
+        if self.auto_shift.get():
+            self.autoshift(name, scale)
+            scale_val = scale.scale_var.get() 
         else:
-            # disable any dangerous shifting
-            self.shift_buttons[name]['state'] = 'disabled'
+            scale_val = scale.scale_var.get() 
+            if scale_val == 1:
+                self.shift_buttons[name]['state'] = 'normal'
+            else:
+                # disable any dangerous shifting
+                self.shift_buttons[name]['state'] = 'disabled'
 
         d = self.opposite_direction(name)
         if scale_val != 0:
@@ -249,16 +291,112 @@ class CueList:
         self.save()
     def save(self):
         self.treedict.save(self.filename)
+    def reload(self):
+        # TODO: we probably will need to make sure that indices still make
+        # sense, etc.
+        self.treedict.load(self.filename)
+
+class TkCueList(CueList, Tk.Frame):
+    def __init__(self, master, filename):
+        CueList.__init__(self, filename)
+        Tk.Frame.__init__(self, master)
+        
+        self.columns = ('name', 'time', 'page', 'desc')
+            
+        self.scrolled_hlist = Tk.ScrolledHList(self,
+            options='hlist.columns %d hlist.header 1' % len(self.columns))
+        self.hlist = self.scrolled_hlist.hlist
+        self.hlist.configure(fg='white', bg='black', 
+            command=self.select_callback)
+        self.scrolled_hlist.pack(fill='both', expand=1)
+
+        boldfont = self.tk.call('tix', 'option', 'get', 
+            'bold_font')
+        header_style = Tk.DisplayStyle('text', refwindow=self,
+            anchor='center', padx=8, pady=2, font=boldfont)
+
+        for count, header in enumerate(self.columns):
+            self.hlist.header_create(count, itemtype='text',
+                text=header, style=header_style)
+
+        self.cue_label_windows = {}
+        for count, cue in enumerate(self.cues):
+            self.display_cue(count, cue)
+        self.update_cue_indicators()
+    def display_cue(self, cue_count, cue):
+        # cue_count is the path in the hlist -- this probably isn't ideal
+        for col, header in enumerate(self.columns):
+            try:
+                text = getattr(cue, header)
+            except AttributeError:
+                text = ''
+
+            if col == 0:
+                lab = Tk.Label(self.hlist, text=text, fg='white', bg='black')
+                def select_and_highlight(event):
+                    self.select_callback(cue_count)
+                    self.hlist.selection_clear()
+                    self.hlist.selection_set(cue_count)
+
+                lab.bind("<Double-1>", select_and_highlight)
+                self.hlist.add(cue_count, itemtype='window', window=lab)
+                self.cue_label_windows[cue_count] = lab
+            else:
+                self.hlist.item_create(cue_count, col, text=text)
+    def reset_cue_indicators(self, cue_indices=None):
+        """If cue_indices is None, we'll reset all of them."""
+        cue_indices = cue_indices or self.cue_label_windows.keys()
+        for key in cue_indices:
+            window = self.cue_label_windows[key]
+            window.configure(fg='white', bg='black')
+    def update_cue_indicators(self):
+        states = dict(zip(self.get_current_cue_indices(), 
+                     ('prev', 'cur', 'next')))
+
+        for count, state in states.items():
+            window = self.cue_label_windows[count]
+            bg, fg = cue_state_indicator_colors[state]
+            window.configure(bg=bg, fg=fg)
+    def shift(self, diff):
+        self.reset_cue_indicators(self.get_current_cue_indices())
+        CueList.shift(self, diff)
+        self.update_cue_indicators()
+        # try to see all indices, but next takes priority over all, and cur
+        # over prev
+        for index in self.get_current_cue_indices():
+            self.hlist.see(index)
+    def select_callback(self, index):
+        new_next = int(index)
+        self.set_next(new_next)
+    def set_next(self, index):
+        prev, cur, next = self.get_current_cue_indices()
+        self.reset_cue_indicators((next,))
+        CueList.set_next(self, index)
+        self.update_cue_indicators()
+    def set_prev(self, index):
+        prev, cur, next = self.get_current_cue_indices()
+        self.reset_cue_indicators((prev,))
+        CueList.set_prev(self, index)
+        self.update_cue_indicators()
+    def set_selection_as_prev(self):
+        sel = self.hlist.info_selection()
+        if sel:
+            self.set_prev(int(sel[0]))
+    def set_selection_as_next(self):
+        sel = self.hlist.info_selection()
+        if sel:
+            self.set_next(int(sel[0]))
 
 if __name__ == "__main__":
-    cl = CueList('cues/cuelist1')
+    root = Tk.Tk()
+    cl = TkCueList(root, 'cues/cuelist1')
+    cl.pack(fill='both', expand=1)
 
     # to populate cue list
     if 0:
         for x in range(20):
             cl.add_cue(Cue('cue %d' % x, time=x, some_attribute=3))
 
-    root = Tk.Tk()
     fader = CueFader(root, cl)
     fader.pack(fill='both', expand=1)
     Tk.mainloop()
