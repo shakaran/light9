@@ -41,18 +41,33 @@ class Subediting:
         print "subedit: editing ",sub.name
         self.sub = sub
         self.highlighteditsub()
-    def highlighteditsub(self):
+    def highlighteditsub(self, color='red'):
         """based on how widgets got self.register'd, we highlight
         just the row that's being edited"""
 
         # highlight that row only
         for n,wl in self.widgets.items():
+            if n == self.sub.name:
+                self.colorsub(n, color)
+            else:
+                self.colorsub(n, 'restore')
+
+        '''
+        # highlight that row only
+        for n,wl in self.widgets.items():
             if n==self.sub.name:
                 for w in wl:
-                    w.config(bg='red')
+                    w.config(bg=color)
             else:
                 for w in wl:
                     w.config(bg=self.oldcolors[w])
+        '''
+    def colorsub(self, name, color):
+        for w in self.widgets[name]:
+            if color == 'restore':
+                w.config(bg=self.oldcolors[w])
+            else:
+                w.config(bg=color)
         
     #
     # next two methods are called by the Stage

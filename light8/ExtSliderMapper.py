@@ -13,10 +13,12 @@ from Tix import *
 from uihelpers import FancyDoubleVar, get_selection
 
 stdfont = ('Arial', 8)
+colors = ('lightBlue', 'lightPink', 'lightGreen', 'aquamarine1')
 
 class SliderMapping:
-    def __init__(self, default='disconnected', synced=0, extinputlevel=0, 
-                 sublevel=0):
+    def __init__(self, color, default='disconnected', synced=0, 
+                 extinputlevel=0, sublevel=0):
+        self.color = color
         self.subname = StringVar() # name of submaster we're connected to
         self.subname.set(default)
         self.sublevel = DoubleVar() # scalelevel variable of that submaster
@@ -153,8 +155,9 @@ class SliderMapping:
         self.listbox = ScrolledListBox(frame, scrollbar='y', bg='black')
         self.listbox.listbox.bind("<<ListboxSelect>>", self.listbox_cb, add=1)
         self.listbox.listbox.configure(font=stdfont, exportselection=0, 
-            selectmode=BROWSE, bg='black', fg='white')
-        self.listbox.vsb.configure(troughcolor='black')
+            selectmode=BROWSE, bg='black', fg='white', 
+            selectbackground=self.color)
+        self.listbox.vsb.configure(troughcolor=self.color)
         # self.listbox.listbox.insert(END, "disconnected")
         for s in subnames:
             self.listbox.listbox.insert(END, s)
@@ -183,8 +186,8 @@ class SliderMapping:
                         ilabel, extlabel, rlabel, self.sublabel, disc_button]
 
 class ExtSliderMapper(Frame):
-    def __init__(self, parent, sliderlevels, sliderinput, filename='slidermapping',
-                 numsliders=4):
+    def __init__(self, parent, sliderlevels, sliderinput, 
+                 lightboard, filename='slidermapping', numsliders=4):
         'Slider levels is scalelevels, sliderinput is an ExternalInput object'
         Frame.__init__(self, parent, bg='black')
         self.parent = parent
@@ -192,6 +195,7 @@ class ExtSliderMapper(Frame):
         self.sliderinput = sliderinput
         self.filename = filename
         self.numsliders = numsliders
+        self.lightboard = lightboard
         self.file = None
 
         # don't call setup, let them do that when scalelevels is created
@@ -203,8 +207,8 @@ class ExtSliderMapper(Frame):
 
         self.current_preset = StringVar() # name of current preset
         self.current_mappings = []
-        for i in range(self.numsliders):
-            self.current_mappings.append(SliderMapping())
+        for i, color in zip(range(self.numsliders), colors):
+            self.current_mappings.append(SliderMapping(color))
 
         self.draw_interface()
     def load_presets(self):
@@ -242,6 +246,16 @@ class ExtSliderMapper(Frame):
 
         self.load_scalelevels() # freshen our input from the submasters
 
+        for m, color in zip(self.current_mappings, colors):
+            if not m.isdisconnected():
+                name = m.get_mapping()
+                lastsub = self.subs_highlighted.get(color)
+                if name is not lastsub:
+                    if lastsub is not None:
+                        self.lightboard.highlight_sub(lastsub, 'restore')
+                    self.lightboard.highlight_sub(name, color)
+                    self.subs_highlighted[color] = name
+
         rawlevels = self.sliderinput.get_levels()
         for rawlev, slidermap in zip(rawlevels, self.current_mappings):
             slidermap.changed_extinput(rawlev)
@@ -250,7 +264,7 @@ class ExtSliderMapper(Frame):
             for m in self.current_mappings
             if m.issynced()])
     def draw_interface(self):
-        self.reallevellabels = []
+        self.subs_highlighted = {}
         subchoiceframe = Frame(self, bg='black')
         for m in self.current_mappings:
             m.draw_interface(subchoiceframe, self.subnames)

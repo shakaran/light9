@@ -2,6 +2,7 @@ from __future__ import nested_scopes
 
 from Tix import *
 from signal import signal, SIGINT
+from time import time
 import sys, cPickle, random
 
 from uihelpers import *
@@ -41,6 +42,8 @@ class Lightboard:
         print "Light 8.8: Enterring backgroundloop"
         self.backgroundloop()
         self.updatestagelevels()
+        self.rec_file = open('light9.log', 'a')
+        self.record_start()
         
     def buildinterface(self):
         print "Light 8.8: Constructing interface..."
@@ -63,7 +66,8 @@ class Lightboard:
         mapping_tl = toplevelat('mapping')
         self.slidermapper = ExtSliderMapper.ExtSliderMapper(mapping_tl, 
                                                             self.scalelevels, 
-                                                            ExternalSliders())
+                                                            ExternalSliders(),
+                                                            self)
         self.slidermapper.pack()
 
         print "\tsubmaster control"
@@ -116,12 +120,17 @@ class Lightboard:
 
     def refresh(self, *args):
         'rebuild interface, reload data'
+        print "Light 8.8: Refresh initiated.  Cross your fingers."
         self.get_data()
+        print "Light 8.8: Subediting refreshed"
         self.subediting.refresh()
+        print "Light 8.8: Rebuilding interface..."
         self.buildinterface()
         bindkeys(self.master,'<Escape>', self.quit)
+        print "Light 8.8: Setting up slider patching..."
         self.slidermapper.setup()
         # self.master.tk_setPalette('gray40')
+        print "Light 8.8: Now back to your regularly scheduled Light 8"
 
     def stageassub(self):
         """returns the current onstage lighting as a levels
@@ -236,14 +245,16 @@ class Lightboard:
         self.master.after(50, self.backgroundloop, ())
         self.changelevel()
     def quit(self, *args):
+        print "Light 8.8: And that's my cue to exit..."
         self.save()
+        self.record_end()
         self.master.destroy()
         sys.exit()
     def save(self, *args):
         filename = '/tmp/light9.prefs'
         if self.DUMMY:
             filename += '.dummy'
-        print "Saving to", filename
+        print "Light 8.8: Saving to", filename
         file = open(filename, 'w')
 
         try:
@@ -252,3 +263,24 @@ class Lightboard:
             print "UnpickleableError!  There's yer problem."
     def toggle_jostle(self, *args):
         self.jostle_mode = not self.jostle_mode
+        print "Light 8.8: Jostle mode", ('off', 'on')[self.jostle_mode]
+    def record_start(self):
+        print "Light 8.8: Recorder started"
+        self.rec_file.write("%s:\t%s\n" % (time(), "--- Start ---"))
+        self.record_stamp()
+    def record_end(self):
+        print "Light 8.8: Recorder shutdown"
+        self.rec_file.write("%s:\t%s\n" % (time(), "--- End ---"))
+    def record_stamp(self):
+        'Record the current submaster levels, continue this loop'
+        levels = []
+        for n, v in self.scalelevels.items():
+            lev = v.get()
+            if lev:
+                levels.append('%s\t%s' % (n, lev))
+
+        template = "%s:\t%s\n" % (time(), '\t'.join(levels))
+        self.rec_file.write(template)
+        self.master.after(100, self.record_stamp)
+    def highlight_sub(self, name, color):
+        self.subediting.colorsub(name, color)
