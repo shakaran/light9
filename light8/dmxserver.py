@@ -25,7 +25,7 @@ todo:
 from __future__ import division
 from twisted.internet import reactor
 from twisted.web import xmlrpc, server
-import sys,time
+import sys,time,os
 from optparse import OptionParser
 from io import ParportDMX
 from updatefreq import Updatefreq
@@ -50,7 +50,11 @@ class XMLRPCServe(xmlrpc.XMLRPC):
 
         print "starting parport connection"
         self.parportdmx=ParportDMX()
-        self.parportdmx.golive()
+        if os.environ.get('DMXDUMMY',0):
+            self.parportdmx.godummy()
+        else:
+            self.parportdmx.golive()
+            
 
         self.updatefreq=Updatefreq() # freq of actual dmx sends
         self.num_unshown_updates=None
