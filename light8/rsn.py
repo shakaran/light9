@@ -24,6 +24,7 @@ else:
 root = Tk()
 root.wm_title(window_title)
 root.wm_geometry('+447+373')
+root.tk_focusFollowsMouse()
 
 import Subs, Patch
 

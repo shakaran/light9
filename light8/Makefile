@@ -1,6 +1,7 @@
 LIB=/usr/local/lib
 
 go: parportmodule.so
+	ln -s ../Widgets/FlyingFader.py
 	sudo python pypar
 
 parportmodule.so: parport_wrap.c

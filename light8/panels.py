@@ -3,6 +3,7 @@
 from Tkinter import *
 from uihelpers import *
 import Patch
+from FlyingFader import FlyingFader
 
 stdfont = ('Arial', 8)
 monofont = ('Courier', 8)
@@ -62,7 +63,8 @@ class Leveldisplay:
         # channel_levels is an output - changelevel will use it to access these labels
 
 class Subpanels:
-    def __init__(self,scenesparent,effectsparent,scalelevels,Subs,xfader,changelevel):
+    def __init__(self, scenesparent, effectsparent, scalelevels, Subs, xfader,
+        changelevel):
         
         sublist = Subs.subs.items()
         sublist.sort()
@@ -84,28 +86,26 @@ class Subpanels:
             scaleopts = {}
             if sub.color:
                 scaleopts['troughcolor'] = sub.color
-            s=Scale(f,command=lambda l,name=name: changelevel(name,l),showvalue=0,
-                    length=300-17,variable=scalelevels[name],width=20,
-                    to=0,res=.001,from_=1,bd=1, **scaleopts)
-            l=Label(f,text=str(name), font=stdfont, padx=0, pady=0)
-            v=Label(f,textvariable=scalelevels[name], font=stdfont, padx=0, pady=0)
-            l.pack(side='bottom')
-            v.pack(side='bottom')
+
+            s = FlyingFader(f, label=str(name), variable=scalelevels[name],
+                    showvalue=0, length=300-17,
+                    width=20, to=0,res=.001,from_=1,bd=1, font=stdfont,
+                    **scaleopts)
 
             for axis in ('y','x'):
                 cvar=IntVar()
-                cb=Checkbutton(f,text=axis,variable=cvar,font=stdfont, padx=0, pady=0, bd=1)
+                cb=Checkbutton(f,text=axis,variable=cvar,font=stdfont, padx=0, 
+                               pady=0, bd=1)
                 button = ('Alt','Control')[axis=='y'] # unused?
-    #            s.bind('<Key-%s>'%axis, lambda ev,cb=cb: cb.invoke)
+                # s.bind('<Key-%s>'%axis, lambda ev,cb=cb: cb.invoke)
                 cb.pack(side='bottom',fill='both', padx=0, pady=0)
                 xfader.registerbutton(name,axis,cvar)
 
             s.pack(side='left')
-            s.bind('<3>', lambda evt, v=scalelevels[name]: toggle_slider(v))\
+            s.bind('<3>', 
+                lambda evt, v=scalelevels[name]: toggle_slider(v))
 
             # effects frame?
             sframe = Frame(f,bd=2,relief='groove')
             sub.draw_tk(sframe)
             sframe.pack(side='left',fill='y')
-
-    
