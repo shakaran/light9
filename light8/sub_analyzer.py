@@ -1,4 +1,3 @@
-#!/usr/bin/python
 from Subs import *
 from Patch import *
 from types import TupleType
@@ -8,6 +7,10 @@ from Config import patch, subs
 import re
 import Patch
 Patch.reload_data(0)
+
+def resolve_name(channelname):
+    "Insure that we're talking about the primary name of the light"
+    return Patch.get_channel_name(Patch.get_dmx_channel(channelname))
 
 subusage = {}
 
@@ -58,8 +61,7 @@ scene_names = {
 
 sub_to_scene = {}
 
-# blacklist is a list of *prefixes* to light names that won't be shown
-blacklist = 'god upfill red blue cyc oran sidefill'.split()
+blacklist = 'god upfill1 upfill2 upfill3 upfill4 red1 red2 red3 red4 blue1 blue2 blue3 blue4 cycleft cycright sidefill1 sidefill2'.split()
 blacklist.extend(['side l','side r'])
 
 for subname, levdict in subs.items():
@@ -83,9 +85,7 @@ def twist(l):
     return [(b,a) for a,b in l]
 
 def format_usage(ch, usage):
-    if max([ch.startswith(pre) for pre in blacklist]):
-        return
-    
+    if ch in blacklist: return
     usage=twist(usage)
     usage.sort()
 #    usage.reverse()
