@@ -43,23 +43,23 @@ class Console:
         self.frame.focus()
 
 class Leveldisplay:
-    def __init__(self,parent,_oldlevels):
-        global channel_levels
+    def __init__(self,parent,_oldlevels,channel_levels):
         
         frames = (make_frame(parent), make_frame(parent))
-        channel_levels=[]
+        channel_levels[:]=[]
         for channel in range(1, 69):
             f=Frame(frames[channel > 34])
             Label(f,text=str(channel), width=3, bg='lightPink', 
                 font=stdfont, padx=0, pady=0, bd=0, height=1).pack(side='left')
             Label(f,text=Patch.get_channel_name(channel), width=8, 
                 font=stdfont, anchor='w', padx=0, pady=0, bd=0, height=1).pack(side='left')
-            l=Label(f,text=_oldlevels[channel-1], width=3, bg='lightBlue', 
+            l=Label(f, width=3, bg='lightBlue', #text=_oldlevels[channel-1],
                 font=stdfont, anchor='e', padx=1, pady=0, bd=0, height=1)
             l.pack(side='left')
             colorlabel(l)
             channel_levels.append(l)
             f.pack(side='top')
+        # channel_levels is an output - changelevel will use it to access these labels
 
 class Subpanels:
     def __init__(self,scenesparent,effectsparent,scalelevels,Subs,xfader,changelevel):

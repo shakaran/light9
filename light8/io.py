@@ -1,9 +1,13 @@
 
+
+from parport import *
+
 DUMMY=1
 
 def init(DUMMY_in):
     global DUMMY
     if not DUMMY_in:
+        
         getparport()
         DUMMY=0
 

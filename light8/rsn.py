@@ -2,7 +2,6 @@
 from __future__ import nested_scopes
 
 from Tkinter import *
-from parport import *
 from time import sleep
 from signal import *
 import sys, thread, cPickle
@@ -55,7 +54,7 @@ def changelevel(*args):
             levels[ch-1] = max(levels[ch-1], fadelev)
 
     levels = [int(l) for l in levels]
-    
+
     for lev,lab,oldlev in zip(levels, channel_levels, _oldlevels):
         if lev != oldlev:
             lab.config(text="%d" % lev)
@@ -112,7 +111,7 @@ def buildinterface(*args):
     leveldisplay=toplevelat(873,400)
     leveldisplay.bind('<Escape>', sys.exit)
 
-    Leveldisplay(leveldisplay,_oldlevels)
+    Leveldisplay(leveldisplay,_oldlevels,channel_levels)
 
     Console()
 
