@@ -13,9 +13,9 @@ cue_state_indicator_colors = {
 }
 
 # TODO 
-# .... pause fades, set new time to be remaining about of time in the fade so 
+# FIXE pause fades, set new time to be remaining about of time in the fade so 
 #           fade can continue properly
-# FIX? make fades work properly: the set_next / prev bug
+# FIXE make fades work properly: the set_next / prev bug
 # WONT find cue by page ("not necessawy!")
 # WONT CueFader controls KeyboardController?  unlikely
 
@@ -506,7 +506,7 @@ class TkCueList(CueList, Tk.Frame):
             index = int(index)
             self.editor.set_cue_to_edit(self.cues[index])
             
-        self.columns = ('name', 'time', 'page', 'cuenum', 'desc')
+        self.columns = ('name', 'time', 'page', 'cuenum', 'desc', 'sub_levels')
         self.scrolled_hlist = Tk.ScrolledHList(self,
             options='hlist.columns %d hlist.header 1' % len(self.columns))
         self.hlist = self.scrolled_hlist.hlist

@@ -7,6 +7,9 @@ blue4 : 0.47
 dayback : 0.36
 downfill-left : 0.43
 downfill-right : 0.25
+f1 : 0.39
 f1.5 : 0.25
-main-l-blue : 0.65
+main-l-blue : 0.94
+main-l-red : 0.48
+main-lc-fill : 0.135
 storefill : 0.36

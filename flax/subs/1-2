@@ -13,5 +13,5 @@ main-r-blue : 0.555
 main-r-red : 0.78
 r-scp : 0.755
 ramp9-stairs : 0.57
-storefill : 1.0
+storefill : 0.9
 upstairs above : 0.44
