@@ -2,7 +2,8 @@ from Tkinter import *
 from time import time
 
 class FlyingFader(Frame):
-    def __init__(self, master, variable, label, time=1.5, font=('Arial', 8)):
+    def __init__(self, master, variable, label, time=1.5, font=('Arial', 8),
+                 **kw):
         Frame.__init__(self, master)
         self.name = label
         self.variable = variable
@@ -11,8 +12,11 @@ class FlyingFader(Frame):
         self.fadetimes = 0, 0
 
         self.config({'bd':1, 'relief':'raised'})
-        self.scale = Scale(self, variable=variable, showvalue=0, from_=100, 
-            to_=0, res=0.1, width=20, length=200)
+        scaleopts = {'variable' : variable, 'showvalue' : 0, 'from' : 100,
+                     'to' : 0, 'res' : 0.1, 'width' : 20, 'length' : 200}
+        scaleopts.update(kw)
+        
+        self.scale = Scale(self, scaleopts)
         self.vlabel = Label(self, text="0.0", font=font)
         self.label = Label(self, text=label, wraplength=40, font=font)
 
