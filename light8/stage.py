@@ -367,9 +367,8 @@ def createlights(s):
     s.addlight('main 10',(597, 556),aim=(339, 444))
     s.addlight('main 11',(636, 556),aim=(449, 409))
 
-    s.addlight('sidepost2', (785, 609))
-    s.addlight('sidepost1', (8, 613))
-
+    s.addlight('side r', (785, 609))
+    s.addlight('side l', (8, 613))
 
 if __name__=='__main__':
     root=Tk()
