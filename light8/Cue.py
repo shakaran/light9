@@ -1,12 +1,12 @@
-'''And that's my cue to exit(0)...'''
+"""And that's my cue to exit(0)..."""
 from time import time
 from util import subsetdict
 
 class Cue:
-    '''Cues are groups of fades.  They can tell you the current levels at a 
+    """Cues are groups of fades.  They can tell you the current levels at a 
     given time.  They contain Fades, which are actually children of Cue,
     meaning that Cues can contain Cues.  This is similar to the Light9 concept
-    of Cues and Fades, but without all the Nodes.'''
+    of Cues and Fades, but without all the Nodes."""
     def __init__(self, name, starttime, endtime, *fades):
         'Create a cue'
         self.name = name
