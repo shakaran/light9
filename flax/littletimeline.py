@@ -1,14 +1,15 @@
 #!/usr/bin/python
 
-"""
-a test that listens to ascoltami player and outputs a light to dmxserver
-"""
-import xmlrpclib,time,socket,os
+""" a test that listens to ascoltami player and outputs a light to
+dmxserver """
+
+from __future__ import division
+import xmlrpclib,time,socket,sys
+sys.path.append("../light8")
+import dmxclient
 
 player=xmlrpclib.Server("http://localhost:8040")
-dmx=xmlrpclib.Server("http://localhost:8030")
-
-print "found both servers"
+print "found player"
 
 t1=time.time()
 while 1:
@@ -17,10 +18,17 @@ while 1:
     except socket.error,e:
         print "server error %r, waiting"%e
         time.sleep(2)
-    print time.time()-t1,playtime
-    try:
-        dmx.outputlevels("littletimeline-%s"%os.getpid(),[.01*(playtime)%100])
-    except xmlrpclib.Fault,e:
-        print "outputlevels: %s" % e
-    
+
+    lev=0
+    for low,high,func in ((0,20,0),
+                          (20,30,(playtime-20)/10),
+                          (30,170,1),
+                          (170,189,1-(playtime-170)/19),
+                          ):
+        if low<=playtime<high:
+            lev=func
+
+    print "Send",lev
+    dmxclient.outputlevels([lev])
+  
     time.sleep(.01)
