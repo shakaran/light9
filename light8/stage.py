@@ -67,12 +67,18 @@ class Stage(Canvas):
 
         self.subeditor = None
 
+
     def setimage(self,stageimage):
         img = Image('photo',file=stageimage)
         self.img=img # can't lose this!
         print img.width()
-        self.create_image(0,0,anchor='nw',image=img)
-        self.config(width=img.width(),height=img.height())
+#        self.create_image(0,0,anchor='nw',image=img)
+#        self.config(width=img.width(),height=img.height())
+
+        # we had the picture removed for good luck, but we remember
+        # what the dimensions formerly was
+        self.config(width=821,height=681)
+
 
     def setsubediting(self,subeditor):
         self.subeditor = subeditor
