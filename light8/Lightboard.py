@@ -56,9 +56,10 @@ class Lightboard:
         self.stage = s # save it
 
         sub_tl = toplevelat('sub', self.windowpos)
+        scene_tl = toplevelat('scenes',self.windowpos)
         effect_tl = toplevelat('effect', self.windowpos)
 
-        self.subpanels = Subpanels(sub_tl, effect_tl, self, self.scalelevels,
+        self.subpanels = Subpanels(sub_tl, effect_tl, scene_tl, self, self.scalelevels,
                                    Subs, self.xfader, self.changelevel,
                                    self.subediting, Subs.longestsubname())
 
@@ -102,6 +103,7 @@ class Lightboard:
         self.subediting.refresh()
         self.buildinterface()
         bindkeys(self.master,'<Escape>', self.quit)
+        self.master.tk_setPalette('gray40')
 
     def stageassub(self):
         """returns the current onstage lighting as a levels

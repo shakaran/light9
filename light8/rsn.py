@@ -25,9 +25,9 @@ root.tk_focusFollowsMouse()
 parportdmx = io.ParportDMX(DUMMY)
 
 mr_lightboard = Lightboard(root,parportdmx,DUMMY)
+root.tk_setPalette('gray40')
 
 signal(SIGINT, mr_lightboard.quit)
-
 
 bindkeys(root,'<Escape>', mr_lightboard.quit)
 

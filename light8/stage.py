@@ -370,6 +370,15 @@ def createlights(s):
     s.addlight('side r', (785, 609))
     s.addlight('side l', (8, 613))
 
+    s.addlight('cafe1',(174, 476))
+    s.addlight('cafe2',(584, 475))
+    s.addlight('dream',(329, 477),aim=(267, 309))
+    s.addlight('xmas',(555, 56),aim=(438, 284))
+
+    for y,col in ((300,'red'),(333,'blue'),(364,'gree'),(407,'oran')):
+        for i in range(1,5):
+            s.addlight('%s%s' % (col,i),(726+10*i,y))
+
 if __name__=='__main__':
     root=Tk()
     root.tk_focusFollowsMouse()

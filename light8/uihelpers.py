@@ -11,7 +11,9 @@ windowlocations = {
     'leveldisplay' : '144x340+870+400',
     'cuefader' : '314x212+546+741',
     'effect' : '24x24+0963+338',
-    'stage' : '823x683+117+030',
+    'stage' : '823x683+37+030',
+    'scenes' : '504x198+462+12',
+
 }
 
 def make_frame(parent):

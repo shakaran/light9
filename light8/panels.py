@@ -78,14 +78,14 @@ class Leveldisplay:
         # these labels
 
 class Subpanels:
-    def __init__(self, scenesparent, effectsparent, lightboard,
+    def __init__(self, scenesparent, effectsparent, scenes, lightboard,
                  scalelevels, Subs, xfader,
                  changelevel, subediting, longestname):
         
         sublist = Subs.subs.items()
         sublist.sort()
 
-        for p in scenesparent,effectsparent:
+        for p in scenesparent,effectsparent,scenes:
             sw = ScrolledWindow(p)
             for but,units in ( (4,-4),(5,4) ):
                 sw.window.bind("<ButtonPress-%s>"%but,lambda ev,s=sw.vsb,u=units: s.tk.call('tkScrollByUnits',s,'hv',u))
@@ -93,8 +93,10 @@ class Subpanels:
             sw.pack(expand=1,fill=BOTH)
             if p==scenesparent:
                 scenesparent = sw.window
-            else:
+            elif p==effectsparent:
                 effectsparent = sw.window
+            else:
+                scenes=sw.window
 
         for name, sub in sublist:
             # choose one of the sub panels to add to
@@ -106,6 +108,14 @@ class Subpanels:
                 end1=0
                 end2=1
                 width1=len(name)
+            elif name.startswith("*") and name[1].isdigit():
+                parent=scenes
+                side1='right'
+                side2='top'
+                orient1='horiz'
+                end1=1
+                end2=0
+                width1=longestname
             else:
                 parent=scenesparent
                 side1='right'
