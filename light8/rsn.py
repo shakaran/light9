@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from __future__ import nested_scopes
 
-from Tkinter import *
+from Tix import *
 from time import sleep
 from signal import signal, SIGINT
 import sys, cPickle
@@ -11,7 +11,9 @@ from uihelpers import *
 from panels import *
 from Xfader import *
 from subediting import Subediting
+from Fader import Fader
 import stage
+
 
 if len(sys.argv) >= 2:
     DUMMY = 0
@@ -68,7 +70,8 @@ class Lightboard:
         effect_tl = toplevelat(462,4)
 
         self.subpanels = Subpanels(sub_tl, effect_tl, self.scalelevels, Subs, 
-            self.xfader, self.changelevel, self.subediting, Subs.longestsubname())
+            self.xfader, self.changelevel, self.subediting, 
+            Subs.longestsubname())
 
         leveldisplay_tl = toplevelat(873,400)
         leveldisplay_tl.bind('<Escape>', sys.exit)
@@ -96,6 +99,10 @@ class Lightboard:
 
         self.xfader.setupwidget(xf)
         controlpanel.pack()
+
+        cuefader_tl = toplevelat(98, 480)
+        cuefader = Fader(cuefader_tl, Subs.cues, self.scalelevels)
+        cuefader.pack()
 
     def refresh(self, *args):
         'rebuild interface, reload data'

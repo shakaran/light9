@@ -1,7 +1,7 @@
 """some of the panels"""
 from __future__ import nested_scopes
 
-from Tkinter import *
+from Tix import *
 from uihelpers import *
 import Patch
 from FlyingFader import FlyingFader

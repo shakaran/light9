@@ -1,6 +1,6 @@
 from Patch import *
 from time import time
-from Tkinter import *
+from Tix import *
 from types import TupleType
 
 stdfont = ('Arial', 8)
@@ -216,7 +216,7 @@ class Sub:
     
 
 def reload_data(dummy):
-    global subs
+    global subs, cues
     if dummy:
         import ConfigDummy as Config
     else:
@@ -234,5 +234,8 @@ def reload_data(dummy):
         subs[name] = Sub(name, levels, color=color)
 
     # subs = dict([(name, Sub(levels)) for name, levels in Config.subs.items()])
+
+    cues = Config.cues
+
 def longestsubname():
     return max([len(x) for x in subs.keys()])

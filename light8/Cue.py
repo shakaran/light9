@@ -7,10 +7,16 @@ class Cue:
     given time.  They contain Fades, which are actually children of Cue,
     meaning that Cues can contain Cues.  This is similar to the Light9 concept
     of Cues and Fades, but without all the Nodes."""
-    def __init__(self, name, starttime, endtime, *fades):
+    def __init__(self, name, starttime, endtime=None, dur=None, *fades):
         'Create a cue'
+        if not endtime:
+            endtime = starttime + dur
+        else:
+            dur = endtime - starttime
+
         self.name = name
         self.starttime = starttime
+        self.dur = dur
         self.endtime = endtime
         self.fades = fades
         self.cuestart = None
@@ -38,17 +44,22 @@ class Cue:
             for ch, lev in fade_d.items():
                 d[ch] = max(lev, d.get(ch, 0))
         return d
+    def get_end_levels(self):
+        'Returns the final levels'
+        d = {}
+        for fade in self.fades:
+            fade_d = fade.get_end_levels()
+            for ch, lev in fade_d.items():
+                d[ch] = max(lev, d.get(ch, 0))
+        return d
 
 class Fade(Cue):
     'See Cue.__doc__'
     def __init__(self, channel, starttime, endtime=None, endlevel=0, dur=None,
                  param=None):
-        'Only specify an end time or a duration'
-        if not endtime:
-            endtime = starttime + dur
-        else:
-            dur = endtime - starttime
-        Cue.__init__(self, "%s -> %f" % (channel, endlevel), starttime, endtime)
+        'Fades are simple Cues'
+        Cue.__init__(self, "%s -> %f" % (channel, endlevel), starttime, endtime,
+            dur)
         self.channel = channel
         self.endlevel = endlevel
         self.dur = dur
@@ -71,6 +82,8 @@ class Fade(Cue):
             percent = float(elapsed) / self.dur
             return {self.channel : self.init_level + 
                 percent * (self.endlevel - self.init_level)}
+    def get_end_levels(self):
+        return {self.channel : self.endlevel}
 
 if __name__ == '__main__':
     f1 = Fade('red', 0, 2, 100)

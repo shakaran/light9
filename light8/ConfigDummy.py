@@ -2,7 +2,15 @@ from random import randrange
 from time import time
 from __future__ import generators,division
 from Subs import *
+from Cue import *
 
+f1 = Fade('red', 0, 2, 100)
+f2 = Fade('green', 1, 3, 50)
+f3 = Fade('blue', 0, 4, 0)
+f4 = Fade('clear', 0, 8, 75) 
+c1 = Cue("Color shift", 0, 10, f1, f2, f3, f4)
+
+cues = [c1]
 
 patch = {
     
@@ -241,7 +249,6 @@ def randomdimmer(params, slideradjuster):
             curtime = time()
         yield {dim : 100, 20 : params.get_param_value('magic')}
 
-
 subs = {
     'over pit sm' : levs(range(1, 13),(100,0,0,91,77,79,86,55,92,77,59,0)),
     'over pit lg' : fulls(range(1, 13)),
@@ -264,7 +271,7 @@ subs = {
 #    'backstage' : dict([(r, 100) for r in range(21, 31)]),
 #    'frontchase' : mr_effect,
     'chase' : chase,
-    'chase2' : chase,
+    # 'chase2' : chase,
 #    'random' : randomdimmer,
 }
 

@@ -1,6 +1,8 @@
 """all the tiny tk helper functions"""
+
 from __future__ import nested_scopes
 from Tkinter import *
+from Tix import *
 from types import StringType
 
 def make_frame(parent):
@@ -14,11 +16,11 @@ def bindkeys(root,key, func):
         w.bind(key, func)
 
 def toplevelat(x,y,w=None,h=None):
-    tl=Toplevel()
+    tl = Toplevel()
     if w and h:
-        tl.wm_geometry("%dx%d+%d+%d"%(w,h,x,y))
+        tl.wm_geometry("%dx%d+%d+%d" % (w,h,x,y))
     else:
-        tl.wm_geometry("+%d+%d"%(x,y))
+        tl.wm_geometry("+%d+%d" % (x,y))
     return tl
 
 def toggle_slider(s):

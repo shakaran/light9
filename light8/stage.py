@@ -1,5 +1,4 @@
-from Tkinter import *
-
+from Tix import *
 
 def printevent(ev):
     for k in dir(ev):
@@ -7,9 +6,7 @@ def printevent(ev):
             print k,getattr(ev,k)
     print ""
 
-
 textstyle={'font':'arial 7','fill':'white'}
-
 
 class Stage(Canvas):
     

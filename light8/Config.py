@@ -3,6 +3,7 @@ from time import time
 from __future__ import generators,division
 from Subs import *
 
+from Fader import fader
 
 patch = {
     
@@ -260,12 +261,8 @@ subs = {
     'god' : fulls((6,)),
     ('strobe', 'grey'):strobe,
     
-#    'midstage' : dict([(r, 100) for r in range(11, 21)]),
-#    'backstage' : dict([(r, 100) for r in range(21, 31)]),
-#    'frontchase' : mr_effect,
     'chase' : chase,
     'chase2' : chase,
-#    'random' : randomdimmer,
 }
 
 subs["ba outrs"] = fulls("b11 b12 b13 b14 b15 b16 b31 b32 b33 b34 b35 b36".split())

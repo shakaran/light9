@@ -15,8 +15,8 @@ def scaledict(d,scl):
 # class Setting that scales, maxes        
 
 def subsetdict(d, dkeys, default=0):
-    'Subset of dictionary d: only the keys in dkeys'
-    # print 'd', d, 'dkeys', dkeys
+    """Subset of dictionary d: only the keys in dkeys.  If you plan on omitting
+    keys, make sure you like the default."""
     newd = {} # dirty variables!
     for k in dkeys:
         newd[k] = d.get(k, default)

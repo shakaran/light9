@@ -1,4 +1,4 @@
-from Tkinter import *
+from Tix import *
 from __future__ import division
 
 class Xfader(Canvas):
