@@ -8,6 +8,9 @@ def printevent(ev):
     print ""
 
 
+textstyle={'font':'arial 7','fill':'white'}
+
+
 class Stage(Canvas):
     
     """a fancy widget that shows light locations (and optionally their
@@ -155,7 +158,7 @@ class Stage(Canvas):
             sr = self.find_withtag('selectrect')
             if not sr:
                 sr=self.create_rectangle( self.lmbstart[0],self.lmbstart[1],coords[0],coords[1],
-                                          outlinestipple='gray50',
+                                          outlinestipple='gray50',outline='yellow',
                                           tag='selectrect')
 
             # move rectangle with mouse
@@ -205,9 +208,10 @@ class Stage(Canvas):
             self.create_oval(aim[0]-2,aim[1]-2,
                              aim[0]+2,aim[1]+2,
                              fill='red',tag=tags+" hotspot")
-            self.create_line(location[0],location[1],aim[0],aim[1],stipple='gray50',
+            self.create_line(location[0],location[1],aim[0],aim[1],fill='lightblue',
                              arrow='last',arrowshape="9 15 6",tag='light')
-        self.create_text(location[0],location[1]+5,anchor='n',text=name,tag=tags)
+        self.create_text(location[0]-1,location[1]+6,anchor='n',text=name,fill='black',tag=tags,**dict([(k,v) for k,v in textstyle.items() if k!='fill']))
+        self.create_text(location[0],location[1]+5,anchor='n',text=name,tag=tags,**textstyle)
         self.alllights.append(name)
         self.alllighttags[self.nametag(name)]=name
 
@@ -236,30 +240,55 @@ class Stage(Canvas):
                         lights.append(n)
         return lights
 
-root=Tk()
-root.wm_geometry("+376+330")
-s=Stage(root)
-s.setimage('guysanddolls.gif')
-s.pack()
 
-s.addlight('desk1',(46, 659),    aim=(210, 381))
-s.addlight('marry1',(78, 661),   aim=(398, 428))
-s.addlight('b13',(110, 661))   
-s.addlight('hotbox1',(147, 657), aim=(402, 327))
-s.addlight('edge',(179, 651),    aim=(116, 441))
-s.addlight('phone',(214, 652),   aim=(651, 417))
-s.addlight('cuba1',(315, 656),   aim=(559, 407))
-s.addlight('b22',(347, 661),     aim=(247, 458))
-s.addlight('b23',(379, 661))  
-s.addlight('b24',(417, 661))  
-s.addlight('b25',(455, 658),     aim=(520, 466))
-s.addlight('desk2',(490, 655),   aim=(237, 375))
-s.addlight('rock',(571, 655),    aim=(286, 304))
-s.addlight('b32',(606, 650))  
-s.addlight('hotbox2',(637, 650), aim=(433, 337))
-s.addlight('b34',(671, 651))   
-s.addlight('marry2',(703, 651),  aim=(429, 426))
-s.addlight('cuba2',(733, 652),   aim=(602, 408))
+def createlights(s):
+    s.setimage('guysanddolls.gif')
+    s.addlight('desk1',(46, 659),    aim=(210, 381))
+    s.addlight('marry1',(78, 661),   aim=(398, 428))
+    s.addlight('b13',(110, 661))   
+    s.addlight('hotbox1',(147, 657), aim=(402, 327))
+    s.addlight('edge',(179, 651),    aim=(116, 441))
+    s.addlight('phone',(214, 652),   aim=(651, 417))
+    s.addlight('cuba1',(315, 656),   aim=(559, 407))
+    s.addlight('b22',(347, 661),     aim=(247, 458))
+    s.addlight('b23',(379, 661))  
+    s.addlight('b24',(417, 661))  
+    s.addlight('b25',(455, 658),     aim=(520, 466))
+    s.addlight('desk2',(490, 655),   aim=(237, 375))
+    s.addlight('rock',(571, 655),    aim=(286, 304))
+    s.addlight('b32',(606, 650))  
+    s.addlight('hotbox2',(637, 650), aim=(433, 337))
+    s.addlight('b34',(671, 651))   
+    s.addlight('marry2',(703, 651),  aim=(429, 426))
+    s.addlight('cuba2',(733, 652),   aim=(602, 408))
+
+    s.addlight('sidefill1',(115, 473),aim=(228, 423))
+    s.addlight('sidefill2',(617, 475),aim=(526, 425))
+
+    s.addlight('cycright',(485, 164),(483, 109))
+    s.addlight('cycleft',(330, 154),(333, 108))
+
+    s.addlight('upfill1',(275, 325),(262, 237))
+    s.addlight('upfill2',(333, 326),(330, 229))
+    s.addlight('upfill3',(473, 325),(454, 226))
+    s.addlight('upfill4',(541, 325),(528, 223))
+
+    s.addlight('god',(369,549))
+
+    s.addlight('patio1',(42, 560),(12, 512))
+    s.addlight('patio2',(675, 553),(793, 514))
+
+    s.addlight('hotback',(413, 476),(414, 396))
 
 
-root.mainloop()
+
+if __name__=='__main__':
+    root=Tk()
+    root.wm_geometry("+376+330")
+    s=Stage(root)
+    s.setimage('guysanddolls.gif')
+    s.pack()
+
+    createlights(s)
+    root.mainloop()
+
