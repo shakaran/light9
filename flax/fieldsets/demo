@@ -1,6 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <fieldset version='1'>
-  <field y='40' x='30' name='light1' falloff='10'/>
-  <field y='70.9854106065' x='89.7809651165' name='light2' falloff='9.44161122397'/>
-  <field y='56.5504587159' x='39.8543897217' name='light3' falloff='9.02748404992'/>
+  <field y='64.518605176' x='64.4226431666' name='light1' falloff='10'/>
+  <field y='71.6297059084' x='64.1501958858' name='light2' falloff='9.44161122397'/>
+  <field y='62.2614165793' x='49.4797562176' name='light3' falloff='9.02748404992'/>
+  <field y='64.7105473806' x='39.4725745351' name='1ight3' falloff='9.02748404992'/>
+  <field y='70.0008620159' x='45.644638445' name='2ight3' falloff='9.02748404992'/>
+  <field y='70.7801243766' x='53.963092297' name='3ight3' falloff='9.02748404992'/>
+  <field y='68.1676620898' x='74.8416350959' name='4ight3' falloff='10.5270359255'/>
+  <field y='62.0408841822' x='79.8677043872' name='5ight3' falloff='9.02748404992'/>
 </fieldset>

@@ -12,6 +12,8 @@ import dispatcher
 
 import Tkinter as tk
 
+defaultfont="arial 8"
+
 def pairdist(pair1,pair2):
     return sqrt((pair1[0]-pair2[0])**2+(pair1[1]-pair2[1])**2)
 
@@ -136,7 +138,7 @@ class FieldDisplay:
                                           outlinestipple='gray50')
 
         # make text
-        self.txt=c.create_text(0,0,text=f.name(),font="arial 10 bold",
+        self.txt=c.create_text(0,0,text=f.name(),font=defaultfont+" bold",
                                fill='white',anchor='c',
                                tags=self.tags)
 
@@ -151,10 +153,12 @@ class FieldDisplay:
             dworld=c.canvas2world_vector(*dcan)
             self.field.center(*(self.field.center()+dworld))
             self._lastmouse=ev.x,ev.y
-            dispatcher.send("field coord changed")
             self.setcoords() # redraw
         def release(ev):
-            del self._lastmouse
+            if hasattr(self,'_lastmouse'):
+                del self._lastmouse
+            dispatcher.send("field coord changed") # updates bounds
+            
         c.tag_bind(self.txt,"<ButtonPress-1>",press)
         c.tag_bind(self.txt,"<B1-Motion>",motion)
         c.tag_bind(self.txt,"<B1-ButtonRelease>",release)
@@ -167,9 +171,9 @@ class FieldDisplay:
             worldmouse=self.canvas.canvas2world(ev.x,ev.y)
             currentdist=pairdist(worldmouse,self.field.center())
             self.field.falloff(currentdist)
-            dispatcher.send("field coord changed")
             self.setcoords()
         c.tag_bind(outerring,"<B1-Motion>",motion)
+        c.tag_bind(outerring,"<B1-ButtonRelease>",release) # from above
 
         self.setcoords()
     
@@ -248,7 +252,7 @@ class Tracker(tk.Frame):
 ########################################################################
                 
 root=tk.Tk()
-
+root.wm_geometry('700x350')
 tra=Tracker(root)
 tra.pack(fill='both',exp=1)
 
