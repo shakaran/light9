@@ -9,7 +9,7 @@ class Updatefreq:
     the samples param to __init__ specifies how many past updates will
     be stored.  """
     
-    def __init__(self,samples=40):
+    def __init__(self,samples=20):
         self.times=[0]
         self.samples=samples
 
@@ -24,7 +24,10 @@ class Updatefreq:
         """a cheap algorithm, for now, which looks at the first and
         last times only"""
 
-        hz=len(self.times)/(self.times[-1]-self.times[0])
+        try:
+            hz=len(self.times)/(self.times[-1]-self.times[0])
+        except ZeroDivisionError:
+            return 0
         return hz
     def __str__(self):
-        return "%.1fHz"%float(self)
+        return "%.2fHz"%float(self)
