@@ -1,7 +1,12 @@
 #!/usr/bin/python
 
+"""
+todo: curveview should preserve more objects, for speed maybe
+
+"""
 from __future__ import division
-import xmlrpclib,time,bisect,socket,sys,textwrap
+import xmlrpclib,time,socket,sys,textwrap,math
+from bisect import bisect_left,bisect,bisect_right
 import Tkinter as tk
 from dispatch import dispatcher
 from twisted.internet import reactor,tksupport
@@ -20,9 +25,11 @@ class Curve:
         self.points = []
 
         self.points = [(0,0),(1,1),(9,1),(10,0)]
+        for x in range(11,500):
+            self.points.append((x,.5))
         
     def eval(self,t):
-        i = bisect.bisect_left(self.points,(t,None))-1
+        i = bisect_left(self.points,(t,None))-1
 
         if self.points[i][0]>t:
             return self.points[i][1]
@@ -39,52 +46,119 @@ class Curve:
 class Curveview(tk.Canvas):
     def __init__(self,master,curve,**kw):
         self.curve=curve
-        tk.Canvas.__init__(self,master,height=130,closeenough=5,**kw)
+        tk.Canvas.__init__(self,master,width=10,height=10,
+                           relief='sunken',bd=1,
+                           closeenough=5,**kw)
         self.selected_points=[] # idx of points being dragged
         self.update()
+        self.bind("<Enter>",self.focus)
+        dispatcher.connect(self.input_time,"input time")
+        dispatcher.connect(self.update,"zoom changed")
+        self.bind("<Configure>",self.update)
     def screen_from_world(self,p):
-        return p[0]*30+5,120-p[1]*100
+        start,end = self.zoom
+        ht = self.winfo_height()
+        return (p[0]-start)/(end-start)*self.winfo_width(), (ht-5)-p[1]*(ht-10)
     def world_from_screen(self,x,y):
-        return (x-5)/30,(120-y)/100
-    def update(self):
+        start,end = self.zoom
+        ht = self.winfo_height()
+        return x/self.winfo_width()*(end-start)+start, ((ht-5)-y)/(ht-10)
+    
+    def input_time(self,val):
+        t=val
+        pts = self.screen_from_world((val,0))+self.screen_from_world((val,1))
+        self.delete('timecursor')
+        self.create_line(*pts,**dict(width=2,fill='red',tags=('timecursor',)))
+    def update(self,*args):
+
+        self.zoom = dispatcher.send("zoom area")[0][1]
+        cp = self.curve.points
+
+        visible_x = (self.world_from_screen(0,0)[0],
+                     self.world_from_screen(self.winfo_width(),0)[0])
+
+        visleftidx = max(0,bisect_left(cp,(visible_x[0],None))-1)
+        visrightidx = min(len(cp)-1,bisect_left(cp,(visible_x[1],None))+1)
+                             
+        visible_points = cp[visleftidx:visrightidx]
+        
         self.delete('curve')
         linepts=[]
-        for p in self.curve.points:
+        for p in visible_points:
             linepts.extend(self.screen_from_world(p))
-        self.create_line(*linepts,**{'tags':'curve'})
-        for i,p in enumerate(self.curve.points):
-            rad=3
-            p = self.screen_from_world(p)
-            dot = self.create_rectangle(p[0]-rad,p[1]-rad,p[0]+rad,p[1]+rad,
-                                        outline='black',fill='blue',
-                                        tags=('curve','point'))
-            self.tag_bind(dot,"<ButtonPress-1>",
-                          lambda ev,i=i: self.dotpress(ev,i))
-            self.bind("<Motion>",
+        line = self.create_line(*linepts,**{'tags':'curve'})
+
+        # canvas doesnt have keyboard focus, so i can't easily change the
+        # cursor when ctrl is pressed
+#        def curs(ev):
+#            print ev.state
+#        self.bind("<KeyPress>",curs)
+#        self.bind("<KeyRelease-Control_L>",lambda ev: curs(0))
+        self.tag_bind(line,"<Control-ButtonPress-1>",self.newpoint)
+
+        self.dots = {} # idx : canvas rectangle
+
+        if len(visible_points)<50: ###self.zoom[1]-self.zoom[0]<30 or len(visible_points)<:
+            for i,p in enumerate(visible_points):
+                rad=3
+                p = self.screen_from_world(p)
+    #            if p[0]-prevx<10:
+    #                # too close- skip the dots
+    #                continue
+                dot = self.create_rectangle(p[0]-rad,p[1]-rad,p[0]+rad,p[1]+rad,
+                                            outline='black',fill='blue',
+                                            tags=('curve','point'))
+                self.tag_bind(dot,"<ButtonPress-1>",
+                              lambda ev,i=i: self.dotpress(ev,i))
+                self.bind("<Motion>",
                           lambda ev,i=i: self.dotmotion(ev,i))
-            self.bind("<ButtonRelease-1>",
+                self.bind("<ButtonRelease-1>",
                           lambda ev,i=i: self.dotrelease(ev,i))
+                self.dots[i]=dot
+
+            self.highlight_selected_dots()
+
+    def newpoint(self,ev):
+        cp = self.curve.points
+        
+        p = self.world_from_screen(ev.x,ev.y)
+        i = bisect(cp,(p[0],None))
+
+        self.unselect()
+        cp.insert(i,p)
+        self.update()
+
+    def highlight_selected_dots(self):
+        for i,d in self.dots.items():
+            if i in self.selected_points:
+                self.itemconfigure(d,fill='red')
+            else:
+                self.itemconfigure(d,fill='blue')
         
     def dotpress(self,ev,dotidx):
         self.selected_points=[dotidx]
+        self.highlight_selected_dots()
 
     def dotmotion(self,ev,dotidx):
         cp = self.curve.points
-        
+
+        moved=0
         for idx in self.selected_points:
             newp = self.world_from_screen(ev.x,ev.y)
             if idx>0 and newp[0]<=cp[idx-1][0]:
                 continue
             if idx<len(cp)-1 and newp[0]>=cp[idx+1][0]:
                 continue
-            
+            moved=1
             cp[idx] = newp
-        
-        self.update()
-    def dotrelease(self,ev,dotidx):
+        if moved:
+            self.update()
+    def unselect(self):
         self.selected_points=[]
-        print "press",dotidx
-
+        self.highlight_selected_dots()
+        
+    def dotrelease(self,ev,dotidx):
+        self.unselect()
         
 class Curveset:
     curves = None # curvename : curve
@@ -105,20 +179,25 @@ class Curvesetview(tk.Frame):
         dispatcher.connect(self.add_curve,"add_curve",sender=self.curveset)
     def add_curve(self,name):
         f = tk.Frame(self,relief='raised',bd=1)
-        f.pack(side='top')
+        f.pack(side='top',fill='both',exp=1)
         tk.Label(f,text="curve %r"%name).pack(side='left')
         cv = Curveview(f,self.curveset.curves[name])
-        cv.pack(side='right')
+        cv.pack(side='right',fill='both',exp=1)
         self.curves[name] = cv
 
 class Music:
     def __init__(self):
         self.player=None # xmlrpc Proxy to player
         self.recenttime=0
+        
     def current_time(self):
         """return deferred which gets called with the current time"""
         if self.player is None:
-            self.player = Proxy("http://spot:8040")            
+            self.player = Proxy("http://spot:8040")
+            d = self.player.callRemote("songlength")
+            def sendmax(l):
+                dispatcher.send("max time",maxtime=l)
+            d.addCallback(sendmax)
         d = self.player.callRemote('gettime')
         def sendtime(t):
             dispatcher.send("input time",val=t)
@@ -205,19 +284,140 @@ class Output:
         dispatcher.send("output levels",val=out.get_levels())
         dmxclient.outputlevels(out.get_dmx_list(),twisted=1)
 
+def statuslines(master):
+    for signame,textfilter in [
+        ('input time',lambda t: "%.2fs"%t),
+        ('output levels',
+         lambda levels: textwrap.fill("; ".join(["%s:%.2f"%(n,v)
+                                                 for n,v in
+                                                 levels.items()]),70)),
+        ('update period',lambda t: "%.1fms"%(t*1000)),
+        ]:
+        l = tk.Label(master,anchor='w',justify='left')
+        l.pack(side='top',fill='x')
+        dispatcher.connect(lambda val,l=l,sn=signame,tf=textfilter:
+                           l.config(text=sn+": "+tf(val)),
+                           signame,weak=0)
+
+class Zoomcontrol(object,tk.Canvas):
+
+    def maxtime():
+        doc = "seconds at the right edge of the bar"
+        def fget(self): return self._maxtime
+        def fset(self, value):
+            self._maxtime = value
+            self.updatewidget()
+        return locals()
+    maxtime = property(**maxtime())
+    
+    def start():
+        def fget(self): return self._start
+        def fset(self,v): self._start = max(0,v)
+        return locals()
+    start = property(**start())
+
+    def end():
+        def fget(self): return self._end
+        def fset(self,v): self._end = min(self.maxtime,v)
+        return locals()
+    end = property(**end())
+        
+
+    def __init__(self,master,**kw):
+        self.maxtime=370
+        self.start=0
+        self.end=20
+        tk.Canvas.__init__(self,master,width=250,height=30,
+                           relief='raised',bd=1,bg='gray60',**kw)
+        self.leftbrack = self.create_line(0,0,0,0,0,0,0,0,width=5)
+        self.rightbrack = self.create_line(0,0,0,0,0,0,0,0,width=5)
+        self.shade = self.create_rectangle(0,0,0,0,fill='gray70',outline=None)
+        self.time = self.create_line(0,0,0,0,fill='red',width=2)
+        self.updatewidget()
+        self.bind("<Configure>",self.updatewidget)
+
+        self.bind("<ButtonPress-1>",lambda ev: setattr(self,'lastx',ev.x))
+        self.tag_bind(self.leftbrack,"<B1-Motion>",
+                      lambda ev: self.adjust('start',ev))
+        self.tag_bind(self.rightbrack,"<B1-Motion>",
+                      lambda ev: self.adjust('end',ev))
+        self.tag_bind(self.shade,"<B1-Motion>",
+                      lambda ev: self.adjust('offset',ev))
+        dispatcher.connect(lambda: (self.start,self.end),"zoom area",weak=0)
+        dispatcher.connect(self.input_time,"input time")
+        dispatcher.connect(lambda maxtime: (setattr(self,'maxtime',maxtime),
+                                            self.updatewidget()),"max time",weak=0)
+        self.created=1
+    def input_time(self,val):
+        t=val
+        x=self.can_for_t(t)
+        self.coords(self.time,x,0,x,self.winfo_height())
+
+    def adjust(self,attr,ev):
+        if not hasattr(self,'lastx'):
+            return
+        new = self.can_for_t(getattr(self,attr)) + (ev.x - self.lastx)
+        self.lastx = ev.x
+        setattr(self,attr,self.t_for_can(new))
+        self.updatewidget()
+        dispatcher.send("zoom changed")
+        
+    def offset():
+        doc = "virtual attr that adjusts start and end together"
+        def fget(self):
+            return self.start
+        def fset(self, value):
+            d = self.end-self.start
+            self.start = value
+            self.end = self.start+d
+        return locals()
+    offset = property(**offset())
+
+    def can_for_t(self,t):
+        return t/self.maxtime*(self.winfo_width()-30)+20
+    def t_for_can(self,x):
+        return (x-20)/(self.winfo_width()-30)*self.maxtime
+
+    def updatewidget(self,*args):
+        """redraw pieces based on start/end"""
+        if not hasattr(self,'created'): return
+        y1,y2=3,self.winfo_height()-3
+        lip = 6
+        scan = self.can_for_t(self.start)
+        ecan = self.can_for_t(self.end)
+        self.coords(self.leftbrack,scan+lip,y1,scan,y1,scan,y2,scan+lip,y2)
+        self.coords(self.rightbrack,ecan-lip,y1,ecan,y1,ecan,y2,ecan-lip,y2)
+        self.coords(self.shade,scan+3,y1+lip,ecan-3,y2-lip)
+        self.delete("tics")
+        lastx=-1000
+        for t in range(0,int(self.maxtime)):
+            x = self.can_for_t(t)
+            if 0<x<self.winfo_width() and x-lastx>30:
+                txt=str(t)
+                if lastx==-1000:
+                    txt=txt+"sec"
+                self.create_line(x,0,x,15,
+                                 tags=('tics',))
+                self.create_text(x,self.winfo_height()-1,anchor='s',
+                                 text=txt,tags=('tics',),font='6x13')
+                lastx = x
 
 #######################################################################
 root=tk.Tk()
+root.wm_geometry("790x930")
+#root.tk_focusFollowsMouse()
 
 m=Music()
 
+zc = Zoomcontrol(root)
+zc.pack(side='top',fill='x')
+
 cs = Curveset()
 csv = Curvesetview(root,cs)
-csv.pack()
+csv.pack(side='top',fill='both',exp=1)
 
 for loop in range(6):
     cs.add_curve('c'+str(loop+1),Curve())
-
 
 subterms = []
 for subname in "zip_orange","zip_red":
@@ -231,25 +431,13 @@ for subname in "zip_orange","zip_red":
     st.subexpr=se
     
     stv=Subtermview(root,st)
-    stv.pack(side='top',fill='x',exp=1)
+    stv.pack(side='top',fill='x')
     subterms.append(st)
 
 out = Output(subterms)
 
-for signame,textfilter in [
-    ('input time',lambda t: "%.2fs"%t),
-    ('output levels',
-     lambda levels: textwrap.fill("; ".join(["%s:%.2f"%(n,v)
-                                             for n,v in levels.items()]),100)),
-    ('update period',lambda t: "%.1fms"%(t*1000)),
-    ]:
-    l = tk.Label(root,anchor='w')
-    l.pack(side='top',fill='x')
-    dispatcher.connect(lambda val,l=l,sn=signame,tf=textfilter:
-                       l.config(text=sn+": "+tf(val)),
-                       signame,weak=0)
+statuslines(root)
     
-
 recent_t=[]
 def update():
     d = m.current_time()
