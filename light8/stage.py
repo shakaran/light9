@@ -61,6 +61,7 @@ class Stage(Canvas):
         self.selectedlights=[]
         self.alllighttags={} # tag: name lookup
 
+        self.subeditor=None
 
     def setimage(self,stageimage):
         img = Image('photo',file=stageimage)
@@ -68,7 +69,9 @@ class Stage(Canvas):
         print img.width()
         self.create_image(0,0,anchor='nw',image=img)
         self.config(width=img.width(),height=img.height())
-        
+
+    def setsubediting(self,subeditor):
+        self.subeditor = subeditor
     #
     # selection management
     #
@@ -141,7 +144,7 @@ class Stage(Canvas):
                     self.clearselection()
                     self.select(touching[0])
                     # and adjust its level
-                    self.lmbstate='levelchange'
+                    self.startlevelchange()
                     
             else:
                 # clicked a light that wasn't selected
@@ -149,7 +152,7 @@ class Stage(Canvas):
                     self.clearselection()
                 self.select(touching[0])
                 # and adjust levels now
-                self.lmbstate='levelchange'
+                self.startlevelchange()
                 
         if self.lmbstate=='rectangle':
             self.markfordynselection()
@@ -163,11 +166,12 @@ class Stage(Canvas):
         if self.lmbstate=='deselect-or-level':
             if (coords[0]-self.lmbstart[0])**2+(coords[1]-self.lmbstart[1])**2>self.halo**2:
                 # they moved enough, it's a level change
-                self.lmbstate='levelchange'
+                self.startlevelchange()
 
         if self.lmbstate=='levelchange':
-            delta = self.lmbstart[1]-ev.y
-            print "change by",delta
+            delta = (self.lmbstart[1]-ev.y)
+            if self.subeditor:
+                self.subeditor.levelchange(self.selectedlights,delta)
 
         if self.lmbstate=='rectangle':
             sr = self.find_withtag('selectrect')
@@ -198,6 +202,10 @@ class Stage(Canvas):
 #            self.incorporatedynselection()
             
         self.lmbstate=None
+    def startlevelchange(self):
+        self.lmbstate='levelchange'
+        if self.subeditor:
+            self.subeditor.startlevelchange()
 
     #
     # light names vs. canvas object tags
