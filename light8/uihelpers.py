@@ -172,7 +172,7 @@ class FancyDoubleVar(DoubleVar):
         
         # we build a list of the trace callbacks (the py functrions and the tcl functionnames)
         self.callbacklist[cbname]= mode
-        print "added trace:",callback,cbname
+#        print "added trace:",callback,cbname
         
         return cbname
     trace=trace_variable

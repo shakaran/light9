@@ -74,8 +74,19 @@ class SliderMapping:
             self.lastbgcolor = color
     def set_sublevel_var(self, newvar):
         'newvar is one of the variables in scalelevels'
-        self.sublevel = newvar
-        self.sublevel.trace('w', self.unsync)
+
+        if newvar is not self.sublevel:
+            try:
+                # remove an old trace
+                self.sublevel.trace_vdelete('w',self.sublevel.unsync_trace_cbname)
+            except AttributeError:
+                pass # it didn't have one
+
+            self.sublevel = newvar
+            self.sublevel.unsync_trace_cbname = self.sublevel.trace('w', self.unsync)
+            
+#        self.sublevel = newvar
+
         if self.sublabel:
             self.sublabel.configure(textvariable=newvar)
         self.check_synced()
