@@ -59,7 +59,7 @@ class Mass:
         return not self._stopped
 
 class FlyingFader(Frame):
-    def __init__(self, master, variable, label, fadedur=1.5, font=('Arial', 8),
+    def __init__(self, master, variable, label, fadedur=1.5, font=('Arial', 8), labelwidth=12,
                  **kw):
         Frame.__init__(self, master)
         self.name = label
@@ -69,18 +69,24 @@ class FlyingFader(Frame):
         
         self.config({'bd':1, 'relief':'raised'})
         scaleopts = {'variable' : variable, 'showvalue' : 0, 'from' : 1.0,
-                     'to' : 0, 'res' : 0.001, 'width' : 20, 'length' : 200}
+                     'to' : 0, 'res' : 0.001, 'width' : 20, 'length' : 200, 'orient':'vert'}
         scaleopts.update(kw)
+        if scaleopts['orient']=='vert':
+            side1=TOP
+            side2=BOTTOM
+        else:
+            side1=RIGHT
+            side2=LEFT
         
         self.scale = Scale(self, scaleopts)
         self.vlabel = Label(self, text="0.0", width=6, font=font)
-        self.label = Label(self, text=label, wraplength=40, font=font)
+        self.label = Label(self, text=label, font=font, anchor='w',width=labelwidth) #wraplength=40, )
 
         self.oldtrough = self.scale['troughcolor']
 
-        self.scale.pack(side=TOP, expand=1, fill=BOTH, anchor='c')
-        self.vlabel.pack(side=BOTTOM, expand=0, fill=X)
-        self.label.pack(side=BOTTOM, expand=0, fill=X)
+        self.scale.pack(side=side2, expand=1, fill=BOTH, anchor='c')
+        self.vlabel.pack(side=side2, expand=0, fill=X)
+        self.label.pack(side=side2, expand=0, fill=X)
 
         for k in range(1, 10):
             self.scale.bind("<Key-%d>" % k, 
