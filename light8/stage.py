@@ -31,6 +31,20 @@ class Stage(Canvas):
     lights should be able to be interactively 'locked', which blocks
     them from being selected. 
 
+    API:
+      __init__(parent,**kw)
+        put pass any canvas options you want
+        
+      setimage(stageimage)
+        sets image to given filename (ppm, gif, etc) and resizes the canvas to the image size
+
+      addlight(name, location, aim=None)
+        location and aim are pixel coord tuples. name will be passed back to you in the callback (see below)
+
+      setlightchangecb(cb)
+        give a function which will be called like this: cb(list_of_light_names, delta)
+      
+
     """
     def __init__(self,parent,**kw):
         Canvas.__init__(self,parent,**kw)
@@ -130,6 +144,7 @@ class Stage(Canvas):
                     self.lmbstate='levelchange'
                     
             else:
+                # clicked a light that wasn't selected
                 if not shifted:
                     self.clearselection()
                 self.select(touching[0])

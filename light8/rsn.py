@@ -43,6 +43,7 @@ fades = {}
 
 _oldlevels=[None] * 68
 
+# this is called on a loop, and ALSO by the Scales
 def changelevel(*args):
     'Amp trims slider'
     global _oldlevels
@@ -86,8 +87,6 @@ def quit(*args):
 
 
 xfader=Xfader(scalelevels)
-
-
 
 def buildinterface(*args):
     global channel_levels, _oldlevels, leveldisplay, xfader
@@ -191,7 +190,3 @@ bindkeys(root,'<Escape>', quit)
 # bindkeys(root,'<s>', make_sub)
 backgroundloop()
 root.mainloop() # Receiver switches main
-
-while 1:
-    for lev in range(0,255,25)+range(255,0,-25):
-        sleep(.2)
