@@ -12,6 +12,11 @@ class BaseIO:
         # you'd override with additional startup stuff here,
         # perhaps even loading a module and saving it to a class
         # attr so the subclass-specific functions can use it
+
+    def godummy(self):
+        print "IO: %s is going dummy" % self.__name__
+        self.dummy=1
+        # you might override this to close ports, etc
         
     def isdummy(self):
         return self.dummy
@@ -58,7 +63,7 @@ class SerialPots(BaseIO):
         self.dummy=1
         self.__name__='SerialPots' # i thought this was automatic!
 
-    def startup(self):
+    def golive(self):
         """
         ls -l /dev/i2c-0
         crw-rw-rw-    1 root     root      89,   0 Jul 11 12:27 /dev/i2c-0
@@ -73,6 +78,10 @@ class SerialPots(BaseIO):
 
         ioctl(self.f,I2C_SLAVE,port)
         self.dummy=0
+
+    def godummy(self):
+        BaseIO.godummy(self)
+        self.f.close()
 
     def getlevels(self):
         if self.dummy:
