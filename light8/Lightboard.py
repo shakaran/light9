@@ -1,8 +1,9 @@
-from __future__ import nested_scopes
+from __future__ import nested_scopes,division
 
 from Tix import *
 from signal import signal, SIGINT
 from time import time
+import xmlrpclib
 import sys, cPickle, random
 
 from uihelpers import *
@@ -22,9 +23,9 @@ class Pickles:
         self.windowpos = windowpos
 
 class Lightboard:
-    def __init__(self, master, parportdmx, DUMMY):
+    def __init__(self, master, DUMMY):
         self.master = master
-        self.parportdmx = parportdmx
+
         self.DUMMY = DUMMY
         self.jostle_mode = 0
         self.lastline = None
@@ -48,7 +49,11 @@ class Lightboard:
         self.get_data()
         self.buildinterface()
         self.load()
-        print "Light 8.8: Enterring backgroundloop"
+
+        # get a connection to the dmx server
+        self.dmxserver=xmlrpclib.Server("http://localhost:8030")
+        
+        print "Light 8.8: Entering backgroundloop"
         self.backgroundloop()
         self.updatestagelevels()
         self.rec_file = open('light9.log', 'a')
@@ -294,7 +299,8 @@ class Lightboard:
             levels = [min(100, max(x + delta, 0)) for x in levels]
             # print "jostled", levels
 
-        self.parportdmx.sendlevels(levels)
+        self.dmxserver.outputlevels("light8-%s" %os.getpid(),[l/100 for l in levels])
+#        self.parportdmx.sendlevels(levels)
 
     def updatestagelevels(self):
         self.master.after(100, self.updatestagelevels)

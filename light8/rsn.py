@@ -3,7 +3,7 @@ from __future__ import nested_scopes
 
 from Tix import *
 from signal import signal, SIGINT
-import io
+import xmlrpclib
 from uihelpers import *
 from Fader import Fader
 from Lightboard import Lightboard
@@ -23,15 +23,13 @@ root.wm_geometry('+462+470')
 root.tk_focusFollowsMouse()
 
 
-parportdmx = io.ParportDMX()
-
 if not DUMMY:
     # this turns the parportdmx from dummy to live
     print "Light 8.8: Preparing DMX interface..."
     parportdmx.golive()
 
 print "Light 8.8: And this...is Mr. Lightboard"
-mr_lightboard = Lightboard(root,parportdmx,DUMMY)
+mr_lightboard = Lightboard(root,DUMMY)
 # root.tk_setPalette('gray40')
 
 signal(SIGINT, mr_lightboard.quit)
