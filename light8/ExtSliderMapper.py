@@ -54,9 +54,9 @@ class SliderMapping:
         if self.widgets:
             if self.isdisconnected():
                 color = 'honeyDew4'
-            # elif self.issynced():
+            elif self.issynced():
             # stupid hack
-            elif abs(self.extlevel.get() - self.sublevel.get()) <= 0.02:
+            # elif abs(self.extlevel.get() - self.sublevel.get()) <= 0.02:
                 color = 'honeyDew2'
             else: # unsynced
                 color = 'red'
@@ -64,8 +64,10 @@ class SliderMapping:
             if self.statuslabel:
                 if color == 'honeyDew2': # connected
                     self.statuslabel['text'] = 'Sync'
+                elif self.extlevel.get() < self.sublevel.get():
+                    self.statuslabel['text'] = 'No sync (go up)'
                 else:
-                    self.statuslabel['text'] = 'No sync'
+                    self.statuslabel['text'] = 'No sync (go down)'
 
             # print "color", color, "lastbgcolor", self.lastbgcolor
             if self.lastbgcolor == color: return
