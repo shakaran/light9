@@ -1,9 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 from __future__ import nested_scopes
 
 from Tix import *
 from signal import signal, SIGINT
-import xmlrpclib
 from uihelpers import *
 from Fader import Fader
 from Lightboard import Lightboard
