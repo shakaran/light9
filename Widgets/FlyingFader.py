@@ -174,7 +174,6 @@ def colorfade(scale, lev):
     col="#%02X%02X%02X" % tuple(out)
     scale.config(troughcolor=col)
 
-
 if __name__ == '__main__':
     root = Tk()
     root.tk_focusFollowsMouse()

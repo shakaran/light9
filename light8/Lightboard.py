@@ -27,6 +27,7 @@ class Lightboard:
         self.parportdmx = parportdmx
         self.DUMMY = DUMMY
         self.jostle_mode = 0
+        self.lastline = None
 
         self.channel_levels = []
         self.scalelevels = {}
@@ -279,8 +280,12 @@ class Lightboard:
             if lev:
                 levels.append('%s\t%s' % (n, lev))
 
-        template = "%s:\t%s\n" % (time(), '\t'.join(levels))
-        self.rec_file.write(template)
+
+        newdata = '\t'.join(levels) 
+        if newdata!=self.lastline:
+            template = "%s:\t%s\n" % (time(), newdata)
+            self.rec_file.write(template)
+            self.lastline = newdata
         self.master.after(100, self.record_stamp)
     def highlight_sub(self, name, color):
         self.subediting.colorsub(name, color)

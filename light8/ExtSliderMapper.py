@@ -147,7 +147,10 @@ class SliderMapping:
         'Returns suitable output for ExtSliderMapper.get_levels()'
         return (self.subname.get(), self.extlevel.get())
     def listbox_cb(self, *args):
-        self.subname.set(self.subnames[get_selection(self.listbox.listbox)-0])
+        selection = get_selection(self.listbox.listbox)
+        self.disconnect()
+        self.subname.set(self.subnames[selection])
+        self.listbox.listbox.select_set(selection)
     def draw_interface(self, master, subnames):
         'Draw interface into master, given a list of submaster names'
         self.subnames = subnames
@@ -247,14 +250,19 @@ class ExtSliderMapper(Frame):
         self.load_scalelevels() # freshen our input from the submasters
 
         for m, color in zip(self.current_mappings, colors):
-            if not m.isdisconnected():
-                name = m.get_mapping()
-                lastsub = self.subs_highlighted.get(color)
-                if name is not lastsub:
-                    if lastsub is not None:
+            name = m.get_mapping()
+            lastsub = self.subs_highlighted.get(color)
+            if name is not lastsub:
+                if lastsub is not None:
+                    try: 
                         self.lightboard.highlight_sub(lastsub, 'restore')
+                    except KeyError:
+                        pass
+                try:
                     self.lightboard.highlight_sub(name, color)
-                    self.subs_highlighted[color] = name
+                except KeyError:
+                    pass
+                self.subs_highlighted[color] = name
 
         rawlevels = self.sliderinput.get_levels()
         for rawlev, slidermap in zip(rawlevels, self.current_mappings):

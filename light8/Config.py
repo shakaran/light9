@@ -171,10 +171,6 @@ subs['*2-05-2-boat']={ 'b22': 100, 'b23': 100, 'b24': 100, 'b32': 52, 'cuba2': 6
 
 subs[('*2-06-0', 'white')]={ 'b22': 14, 'b23': 100, 'b24': 100, 'b32': 23, 'b34': 30, 'cycright': 100, 'desk2': 23, 'hotbox1': 49, 'hotbox2': 43, 'main 10': 55, 'main 11': 55, 'main 2': 30, 'main 7': 30, 'main 9': 30, 'marry1': 69, 'marry2': 34, 'rock': 17, 'side r': 30, 'upfill1': 48, 'upfill4': 48, }
 
-subs['*2-06-1-patio right']={ 'patio2': 100, }
-
-subs['*2-06-2 patio left']={ 'patio1': 100, }
-
 subs[('*2-07-0', 'white')]={ 'b22': 100, 'b23': 100, 'b24': 100, 'b25': 100, 'b34': 100, 'cycleft': 41, 'cycright': 41, 'desk2': 78, 'edge': 63, 'hotbox1': 14, 'hotbox2': 5, 'main 10': 100, 'main 11': 100, 'main 2': 100, 'main 3': 83, 'main 4': 100, 'main 5': 100, 'main 7': 100, 'main 8': 100, 'main 9': 100, 'marry1': 100, 'marry2': 100, 'phone': 62, 'side l': 100, 'side r': 100, 'sidefill1': 83, 'sidefill2': 100, 'upfill1': 56, 'upfill2': 100, 'upfill3': 69, 'upfill4': 56, }
 
 subs['*curtain']={ 'b22': 73, 'b24': 73, 'b25': 73, 'b34': 73, 'desk2': 57, 'edge': 58, 'hotbox2': 73, 'main 10': 73, 'main 11': 73, 'main 2': 73, 'main 3': 73, 'main 4': 73, 'main 5': 73, 'main 7': 73, 'main 8': 73, 'main 9': 73, 'marry1': 73, 'marry2': 73, 'phone': 58, 'side l': 73, 'side r': 73, 'sidefill1': 23, 'sidefill2': 23, 'upfill1': 9, 'upfill2': 68, 'upfill3': 18, 'upfill4': 9, }
@@ -367,3 +363,36 @@ subs["*1-01-0-justright"] = { "sidefill2" : 100, "sidefill1" : 0,
     "side r" : 100, "main 11" : 0, "main 10" : 0, "main 3" : 0, "main 2" : 100,
     "main 5" : 100, "main 4" : 0, "main 7" : 0, "phone" : 100, "main 9" : 100,
     "main 8" : 100, "cycleft" : 0, "edge" : 0, "marry2" : 7, "marry1" : 100,}
+
+subs["*2-06-0"] = { "cycright" : 100, "main 11" : 55, "main 10" : 55,
+    "upfill1" : 48, "main 7" : 30, "b34" : 0, "main 9" : 30, "b24" : 100,
+    "b23" : 100, "b22" : 0, "desk2" : 23, "edge" : 0, "hotbox2" : 79,
+    "hotbox1" : 71, "upfill4" : 48, "b32" : 51, "rock" : 17, "marry2" : 34,
+    "marry1" : 69, "main 2" : 30, "side r" : 30,}
+subs["patio right"] = { "phone" : 0, "patio2" : 0, "cuba2" : 0,
+    "b34" : 34, "main 9" : 0, "b25" : 16, "cuba1" : 76, "b32" : 0,}
+subs["patio left"] = { "main 3" : 31, "edge" : 54, "b13" : 0,
+    "patio1" : 0, "cafe1" : 40, "desk1" : 0,}
+subs["*2-06-0"] = { "cycright" : 100, "main 11" : 13, "main 10" : 0,
+    "upfill1" : 48, "b34" : 0, "b24" : 100, "b23" : 100, "b22" : 0,
+    "desk2" : 23, "hotbox2" : 83, "hotbox1" : 51, "upfill4" : 48,
+    "b32" : 41, "main 2" : 60, "main 4" : 85, "main 7" : 30, "main 9" : 70,
+    "edge" : 0, "rock" : 0, "marry2" : 34, "marry1" : 64, "side r" : 30,}
+
+# don't screw up!
+subs['*2-06-1-patio right']=subs['patio right'].copy()
+
+subs['*2-06-2 patio left']=subs['patio left'].copy()
+subs["*2-07-0"] = { "sidefill2" : 100, "sidefill1" : 83, "cycright" : 41,
+    "main 11" : 100, "main 10" : 100, "upfill1" : 56, "b34" : 100,
+    "b25" : 100, "cycleft" : 41, "b23" : 100, "b22" : 100, "side l" : 100,
+    "hotbox2" : 5, "hotbox1" : 14, "upfill4" : 56, "b24" : 100, "desk2" : 78,
+    "upfill3" : 69, "upfill2" : 100, "main 3" : 83, "main 2" : 100,
+    "main 5" : 100, "main 4" : 100, "main 7" : 100, "phone" : 62,
+    "main 9" : 100, "main 8" : 100, "edge" : 63, "marry2" : 100,
+    "marry1" : 100, "xmas" : 99, "side r" : 100,}
+subs["*2-06-0"] = { "cycright" : 100, "main 11" : 13, "main 10" : 0,
+    "upfill1" : 48, "b34" : 0, "b24" : 100, "b23" : 62, "b22" : 0,
+    "desk2" : 23, "hotbox2" : 89, "hotbox1" : 88, "upfill4" : 48,
+    "b32" : 0, "main 2" : 63, "main 4" : 97, "main 7" : 42, "main 9" : 52,
+    "edge" : 0, "rock" : 0, "marry2" : 0, "marry1" : 41, "side r" : 0,}
