@@ -74,6 +74,8 @@ class Lightboard:
         leveldisplay_tl.bind('<Escape>', sys.exit)
 
         self.leveldisplay = Leveldisplay(leveldisplay_tl, self.channel_levels)
+        for i in range(0,len(self.channel_levels)):
+            self.channel_levels[i].config(text=self.oldlevels[i])
 
         if DUMMY:
             filename = 'ConfigDummy.py'
