@@ -38,13 +38,10 @@ class Subediting:
         self.startlevels = self.sub.getlevels()
 
     def getcurrentlevel(self,lightname):
-        print "resolve",lightname
-        ch = get_dmx_channel(lightname)
         try:
             ch = get_dmx_channel(lightname)
         except ValueError:
             return None
-        print "resolved ch",ch
         return self.currentoutputlevels[ch]
 
     def levelchange(self,lightnames,delta):

@@ -8,7 +8,7 @@ def get_dmx_channel(name):
         i = int(name)
         return i
     except ValueError:
-        raise "Invalid channel name:", name
+        raise ValueError("Invalid channel name: %s" % name)
 
 def get_channel_name(dmxnum):
     try:
