@@ -54,8 +54,9 @@ class SliderMapping:
         if self.widgets:
             if self.isdisconnected():
                 color = 'honeyDew4'
-            elif self.issynced():
-            # elif abs(self.extlevel.get() - self.sublevel.get()) <= 0.02:
+            # elif self.issynced():
+            # stupid hack
+            elif abs(self.extlevel.get() - self.sublevel.get()) <= 0.02:
                 color = 'honeyDew2'
             else: # unsynced
                 color = 'red'
