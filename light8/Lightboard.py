@@ -159,7 +159,10 @@ class Lightboard:
         extlevels = self.slidermapper.get_levels()
         for name, val in extlevels.items():
             if name in self.scalelevels:
-                self.scalelevels[name].set(val)
+                sl = self.scalelevels[name]
+                sl.disable_traces()
+                sl.set(val)
+                sl.recreate_traces()
         
         for lev,lab,oldlev,numlab in zip(levels, self.channel_levels, 
                                          self.oldlevels, 

@@ -153,6 +153,27 @@ class Togglebutton(Button):
             self.config(bg=self._origbkg,relief='raised')
         return "break"
 
+
+class FancyDoubleVar(DoubleVar):
+    def __init__(self,master=None):
+        DoubleVar.__init__(self,master)
+        self.callbacklist = {}
+    def trace_variable(self,mode,callback):
+
+        # we build a list of the trace callbacks (the py functrions and the tcl functionnames)
+        id=DoubleVar.trace_variable(self,mode,callback)
+
+        self.callbacklist[id]= [mode,callback]
+
+        return id
+
+    def disable_traces(self):
+        for k,v in self.callbacklist.items():
+            self.trace_vdelete(v[0],k)
+    def recreate_traces(self):
+        for k,v in self.callbacklist.items():
+            self.trace_variable(v[0],v[1])
+
 if __name__=='__main__':
     root=Tk()
     root.tk_focusFollowsMouse()
