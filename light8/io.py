@@ -1,4 +1,5 @@
 
+
 class BaseIO:
     def __init__(self):
         self.dummy=1
@@ -76,6 +77,9 @@ class SerialPots(BaseIO):
         # this is for a chip with A0,A1,A2 lines all low:
         port = 72
 
+        from fcntl import *
+
+        I2C_SLAVE = 0x0703  #/* Change slave address                 */
         ioctl(self.f,I2C_SLAVE,port)
         self.dummy=0
 
