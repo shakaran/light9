@@ -41,8 +41,9 @@ def toplevel_savegeometry(tl,name):
     # dont know why) so we unbind after the first Destroy event
     tl.unbind("<Destroy>",tl._toplevelat_funcid)
 
-def toplevelat(name):
-    tl = Toplevel()
+def toplevelat(name, existingtoplevel=None):
+    tl = existingtoplevel or Toplevel()
+    tl.title(name)
 
     try:
         f=open(".light9-window-geometry-%s" % name.replace(' ','_'))
