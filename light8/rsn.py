@@ -10,6 +10,7 @@ import io
 from uihelpers import *
 from panels import *
 from Xfader import *
+from subediting import Subediting
 import stage
 
 if len(sys.argv) >= 2:
@@ -44,27 +45,29 @@ class Lightboard:
 
         self.channel_levels = []
         self.scalelevels = {}
+        self.xfader = Xfader(self.scalelevels) # doesn't draw any UI yet-- look for self.xfader.setupwidget()
         self.oldlevels = [None] * 68
+        self.subediting = Subediting(currentoutputlevels=self.oldlevels)
 
         self.buildinterface()
         self.load()
         self.backgroundloop()
+        
     def buildinterface(self):
         for w in self.master.winfo_children():
             w.destroy()
 
-        stage_tl = toplevelat(65,37)
+        stage_tl = toplevelat(44,723)
         s = stage.Stage(stage_tl)
         stage.createlights(s)
+        s.setsubediting(self.subediting)
         s.pack()
 
         sub_tl = toplevelat(0,0)
         effect_tl = toplevelat(462,4)
 
-        self.xfader = Xfader(self.scalelevels)
-
         self.subpanels = Subpanels(sub_tl, effect_tl, self.scalelevels, Subs, 
-            self.xfader, self.changelevel)
+            self.xfader, self.changelevel, self.subediting, Subs.longestsubname())
 
         leveldisplay_tl = toplevelat(873,400)
         leveldisplay_tl.bind('<Escape>', sys.exit)
@@ -118,7 +121,7 @@ class Lightboard:
             else:
                 numlab['bg'] = 'lightPink'
 
-        self.oldlevels = levels[:]
+        self.oldlevels[:] = levels[:] # replace the elements in oldlevels - don't make a new list (Subediting is watching it)
             
         parportdmx.sendlevels(levels)
 
