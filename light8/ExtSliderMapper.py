@@ -1,4 +1,14 @@
-"""some more of the panels"""
+""" The External Slider Mapping widget determines which pots map to which
+submasters.  It tells you the status of each mapping and saves and loads
+presets.  The show is relying on this module!  Do not lose it!
+
+FUQ (frequently unasked question)
+
+1. What's with all the *args?
+
+It lets functions take any number of arguments and throw them away.
+Callbacks do this, and we typically don't care about what they have to say. """
+
 from Tix import *
 
 class SliderMapping:
@@ -54,14 +64,14 @@ class SliderMapping:
         if self.widgets:
             if self.isdisconnected():
                 color = 'honeyDew4'
-            elif self.issynced():
             # stupid hack
             # elif abs(self.extlevel.get() - self.sublevel.get()) <= 0.02:
+            elif self.issynced():
                 color = 'honeyDew2'
             else: # unsynced
                 color = 'red'
 
-            if self.statuslabel:
+            if self.statuslabel: # more stupid hackery
                 if color == 'honeyDew2': # connected
                     self.statuslabel['text'] = 'Sync'
                 elif self.extlevel.get() < self.sublevel.get():
@@ -80,14 +90,14 @@ class SliderMapping:
         if newvar is not self.sublevel:
             try:
                 # remove an old trace
-                self.sublevel.trace_vdelete('w',self.sublevel.unsync_trace_cbname)
+                self.sublevel.trace_vdelete('w',
+                    self.sublevel.unsync_trace_cbname)
             except AttributeError:
                 pass # it didn't have one
 
             self.sublevel = newvar
-            self.sublevel.unsync_trace_cbname = self.sublevel.trace('w', self.unsync)
-            
-#        self.sublevel = newvar
+            self.sublevel.unsync_trace_cbname = self.sublevel.trace('w', 
+                self.unsync)
 
         if self.sublabel:
             self.sublabel.configure(textvariable=newvar)
@@ -108,11 +118,6 @@ class SliderMapping:
         c.entry.configure(width=12)
         statframe = Frame(frame)
 
-        '''
-        cb = Checkbutton(statframe, variable=self.synced, 
-            text="Synced")
-        cb.grid(columnspan=2, sticky=W)
-        '''
         self.statuslabel = Label(statframe, text="No sync")
         self.statuslabel.grid(columnspan=2, sticky=W)
         ilabel = Label(statframe, text="Input", fg='blue')
@@ -190,15 +195,6 @@ class ExtSliderMapper(Frame):
         for rawlev, slidermap in zip(rawlevels, self.current_mappings):
             slidermap.changed_extinput(rawlev)
 
-        '''
-        outputlevels = {}
-        for m in self.current_mappings:
-            if m.issynced():
-                k, v = m.get_level_pair()
-                outputlevels[k] = v
-                m.ignorenextunync()
-        return outputlevels
-        '''
         return dict([m.get_level_pair()
             for m in self.current_mappings
             if m.issynced()])
