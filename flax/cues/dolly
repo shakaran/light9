@@ -1,35 +1,51 @@
 <?xml version="1.0"?>
 <!DOCTYPE PyObject SYSTEM "PyObjects.dtd">
 <PyObject family="obj" type="builtin_wrapper"  class="_EmptyClass">
-<attr name="__toplevel__" family="map" type="__compound__" extra="None TreeDict" id="138476812" >
+<attr name="__toplevel__" family="map" type="__compound__" extra="None TreeDict" id="137706436" >
   <entry>
     <key type="string" value="cues" />
-    <val type="list" id="139904124" >
-      <item type="PyObject" id="139924844" class="Cue">
+    <val type="list" id="139857260" >
+      <item type="PyObject" id="139847260" class="Cue">
+        <attr name="name" type="string" value="bogus" />
+        <attr name="time" type="string" value="1" />
+        <attr name="page" type="string" value="-7" />
+        <attr name="cuenum" type="string" value="1" />
+        <attr name="sub_levels" type="string" value="" />
+        <attr name="desc" type="string" value="" />
+      </item>
+      <item type="PyObject" id="141755900" class="Cue">
+        <attr name="name" type="string" value="emergency blackout" />
+        <attr name="time" type="string" value="1" />
+        <attr name="page" type="string" value="-7" />
+        <attr name="cuenum" type="string" value="1" />
+        <attr name="sub_levels" type="string" value="" />
+        <attr name="desc" type="string" value="" />
+      </item>
+      <item type="PyObject" id="139850876" class="Cue">
         <attr name="name" type="string" value="curtain warmers" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="-7" />
         <attr name="cuenum" type="string" value="1" />
-        <attr name="sub_levels" type="string" value="curtain_warmers : 1" />
+        <attr name="sub_levels" type="string" value="curtain_warmers : .32" />
         <attr name="desc" type="string" value="preshow" />
       </item>
-      <item type="PyObject" id="139846908" class="Cue">
+      <item type="PyObject" id="139856108" class="Cue">
         <attr name="name" type="string" value="cast frozen" />
-        <attr name="time" type="string" value="3" />
+        <attr name="time" type="string" value="5" />
         <attr name="page" type="string" value="1-1-1" />
         <attr name="cuenum" type="string" value="2" />
         <attr name="sub_levels" type="string" value="1-1_sill : .8" />
         <attr name="desc" type="string" value="curtain opens" />
       </item>
-      <item type="PyObject" id="141773276" class="Cue">
+      <item type="PyObject" id="139857348" class="Cue">
         <attr name="name" type="string" value="cast wakes up" />
-        <attr name="time" type="string" value=".75" />
+        <attr name="time" type="string" value=".5" />
         <attr name="page" type="string" value="1-1-1" />
         <attr name="cuenum" type="string" value="3" />
         <attr name="sub_levels" type="string" value="1-1 : .8" />
         <attr name="desc" type="string" value="music cue" />
       </item>
-      <item type="PyObject" id="139876388" class="Cue">
+      <item type="PyObject" id="139959236" class="Cue">
         <attr name="name" type="string" value="cast freezes, dolly walks RC to LC" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-1-1" />
@@ -37,7 +53,7 @@
         <attr name="sub_levels" type="string" value="1-1 : .6, front_rc : 1" />
         <attr name="desc" type="string" value="dolly at right" />
       </item>
-      <item type="PyObject" id="140861612" class="Cue">
+      <item type="PyObject" id="139854876" class="Cue">
         <attr name="name" type="string" value="cast freezes, dolly walks RC to LC" />
         <attr name="time" type="string" value="5" />
         <attr name="page" type="string" value="1-1-1" />
@@ -45,7 +61,7 @@
         <attr name="sub_levels" type="string" value="1-1 : .6, front_lc : 1, front_c : 0.6" />
         <attr name="desc" type="string" value="dolly at left, &quot;financial consultation&quot;" />
       </item>
-      <item type="PyObject" id="141767524" class="Cue">
+      <item type="PyObject" id="140873988" class="Cue">
         <attr name="name" type="string" value="unfreeze" />
         <attr name="time" type="string" value="1.5" />
         <attr name="page" type="string" value="1-1-2" />
@@ -53,7 +69,7 @@
         <attr name="sub_levels" type="string" value="1-1 : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="141766484" class="Cue">
+      <item type="PyObject" id="140863356" class="Cue">
         <attr name="name" type="string" value="freeze, scene is RC and C" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-1-2" />
@@ -61,7 +77,7 @@
         <attr name="sub_levels" type="string" value="1-1 : .8, front_c : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140861292" class="Cue">
+      <item type="PyObject" id="139956420" class="Cue">
         <attr name="name" type="string" value="unfreeze" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-1-3" />
@@ -69,7 +85,7 @@
         <attr name="sub_levels" type="string" value="1-1 : 1" />
         <attr name="desc" type="string" value="&quot;mrs levi!&quot;" />
       </item>
-      <item type="PyObject" id="140862260" class="Cue">
+      <item type="PyObject" id="140863076" class="Cue">
         <attr name="name" type="string" value="freeze, scene RC" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-1-4" />
@@ -77,15 +93,15 @@
         <attr name="sub_levels" type="string" value="1-1 : .8, front_rc : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="139855580" class="Cue">
+      <item type="PyObject" id="140865020" class="Cue">
         <attr name="name" type="string" value="dolly at stairs" />
         <attr name="time" type="string" value="2" />
         <attr name="page" type="string" value="1-1-4" />
         <attr name="cuenum" type="string" value="9.5" />
-        <attr name="sub_levels" type="string" value="1-1 : .2,  dolly_stairs_right : 1" />
+        <attr name="sub_levels" type="string" value="1-1 : .2,  dolly_stairs_right : 1, dolly_runway_right : .5" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="139852148" class="Cue">
+      <item type="PyObject" id="139876340" class="Cue">
         <attr name="name" type="string" value="dolly walks to her R runway corner" />
         <attr name="time" type="string" value="2" />
         <attr name="page" type="string" value="1-1-4" />
@@ -93,7 +109,7 @@
         <attr name="sub_levels" type="string" value="1-1 : .2, dolly_runway_right : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="141766980" class="Cue">
+      <item type="PyObject" id="140866044" class="Cue">
         <attr name="name" type="string" value="unfreeze" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-1-5" />
@@ -101,7 +117,7 @@
         <attr name="sub_levels" type="string" value="1-1 : 1" />
         <attr name="desc" type="string" value="&quot;i&apos;m waiting for that sign&quot;" />
       </item>
-      <item type="PyObject" id="140877028" class="Cue">
+      <item type="PyObject" id="141760180" class="Cue">
         <attr name="name" type="string" value="stage clears, band walks runway" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-1-5" />
@@ -109,7 +125,7 @@
         <attr name="sub_levels" type="string" value="worklights : 1, runway : .45" />
         <attr name="desc" type="string" value="set change" />
       </item>
-      <item type="PyObject" id="140876300" class="Cue">
+      <item type="PyObject" id="140865740" class="Cue">
         <attr name="name" type="string" value="scene opens outside store L" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-2-6" />
@@ -117,7 +133,7 @@
         <attr name="sub_levels" type="string" value="1-2_outside : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140874516" class="Cue">
+      <item type="PyObject" id="135998148" class="Cue">
         <attr name="name" type="string" value="enters store" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-2-6" />
@@ -125,7 +141,7 @@
         <attr name="sub_levels" type="string" value="1-2 : 1, trap :0.2, upstairs : 0.2" />
         <attr name="desc" type="string" value="&quot;i can&apos;t help it...&quot;" />
       </item>
-      <item type="PyObject" id="141766684" class="Cue">
+      <item type="PyObject" id="139849076" class="Cue">
         <attr name="name" type="string" value="trapdoor area" />
         <attr name="time" type="string" value="2" />
         <attr name="page" type="string" value="1-2-7" />
@@ -133,23 +149,23 @@
         <attr name="sub_levels" type="string" value="1-2 : 0.5, trap : 1, upstairs : 0.2" />
         <attr name="desc" type="string" value="walking to trap, &quot;cornelius!&quot;" />
       </item>
-      <item type="PyObject" id="140877108" class="Cue">
+      <item type="PyObject" id="139856420" class="Cue">
         <attr name="name" type="string" value="monologue and &quot;it takes a woman&apos;" />
-        <attr name="time" type="string" value="3" />
+        <attr name="time" type="string" value="4" />
         <attr name="cuenum" type="string" value="16" />
         <attr name="page" type="string" value="1-2-7" />
         <attr name="sub_levels" type="string" value="1-2_song_downstairs : 1, upstairs : 0.2, 1-2 : 0.6, trap :0.2" />
         <attr name="desc" type="string" value="sheep something" />
       </item>
-      <item type="PyObject" id="140876916" class="Cue">
+      <item type="PyObject" id="140865284" class="Cue">
         <attr name="name" type="string" value="&quot;restore&quot; after song finishes" />
-        <attr name="time" type="string" value="3" />
+        <attr name="time" type="string" value="4" />
         <attr name="cuenum" type="string" value="17" />
         <attr name="page" type="string" value="1-2-9" />
         <attr name="sub_levels" type="string" value="1-2 : 1, upstairs : 0.2, trap :0.2" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="141771332" class="Cue">
+      <item type="PyObject" id="140867700" class="Cue">
         <attr name="name" type="string" value="dolly alone" />
         <attr name="time" type="string" value="1" />
         <attr name="cuenum" type="string" value="18" />
@@ -157,7 +173,7 @@
         <attr name="sub_levels" type="string" value="1-2 : 1, upstairs : 0.2, trap : 0.2" />
         <attr name="desc" type="string" value="dolly sings takes a woman (no-op)" />
       </item>
-      <item type="PyObject" id="140875740" class="Cue">
+      <item type="PyObject" id="140862484" class="Cue">
         <attr name="name" type="string" value="dolly upstairs" />
         <attr name="time" type="string" value="3" />
         <attr name="cuenum" type="string" value="19" />
@@ -165,7 +181,7 @@
         <attr name="sub_levels" type="string" value="upstairs : .9,  1-2 : 0.5, trap : 0.2" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="141776244" class="Cue">
+      <item type="PyObject" id="140851836" class="Cue">
         <attr name="name" type="string" value="cross to trapdoor" />
         <attr name="time" type="string" value="1" />
         <attr name="cuenum" type="string" value="20" />
@@ -173,7 +189,7 @@
         <attr name="sub_levels" type="string" value="upstairs : 0.2,  1-2 : 0.5, trap : 1, 1-2_register : 0.7" />
         <attr name="desc" type="string" value="plans to make (?)" />
       </item>
-      <item type="PyObject" id="140875252" class="Cue">
+      <item type="PyObject" id="140851540" class="Cue">
         <attr name="name" type="string" value="cross to upstairs" />
         <attr name="time" type="string" value="1" />
         <attr name="cuenum" type="string" value="21" />
@@ -181,7 +197,7 @@
         <attr name="sub_levels" type="string" value="upstairs : .9,  1-2 : 0.5, trap : 0.2" />
         <attr name="desc" type="string" value="&quot;yes, corn, yes!&quot;" />
       </item>
-      <item type="PyObject" id="140852300" class="Cue">
+      <item type="PyObject" id="140871348" class="Cue">
         <attr name="name" type="string" value="cross to trapdoor and register area" />
         <attr name="time" type="string" value="3" />
         <attr name="cuenum" type="string" value="22" />
@@ -189,15 +205,7 @@
         <attr name="sub_levels" type="string" value="upstairs : 0.2,  1-2 :0.5 ,trap : 1, 1-2_register : 1" />
         <attr name="desc" type="string" value="chicken at 8" />
       </item>
-      <item type="PyObject" id="139853588" class="Cue">
-        <attr name="name" type="string" value="cross to upstairs" />
-        <attr name="time" type="string" value="3" />
-        <attr name="cuenum" type="string" value="23" />
-        <attr name="page" type="string" value="1-2-16" />
-        <attr name="sub_levels" type="string" value="upstairs : 1.0,  1-2 :.5, trap : 0.2" />
-        <attr name="desc" type="string" value="DELETED" />
-      </item>
-      <item type="PyObject" id="140852460" class="Cue">
+      <item type="PyObject" id="140856348" class="Cue">
         <attr name="name" type="string" value="whole scene" />
         <attr name="time" type="string" value="3" />
         <attr name="cuenum" type="string" value="24" />
@@ -205,7 +213,7 @@
         <attr name="sub_levels" type="string" value="upstairs : 1.0,  1-2 : 1, trap : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140872332" class="Cue">
+      <item type="PyObject" id="140871588" class="Cue">
         <attr name="name" type="string" value="follow the guys" />
         <attr name="time" type="string" value="3" />
         <attr name="cuenum" type="string" value="25" />
@@ -213,7 +221,7 @@
         <attr name="sub_levels" type="string" value="runway : .6, 1-2 : 0.5" />
         <attr name="desc" type="string" value="set breaks apart as they sing" />
       </item>
-      <item type="PyObject" id="140875004" class="Cue">
+      <item type="PyObject" id="140873276" class="Cue">
         <attr name="name" type="string" value="chorus fills DL then whole stage" />
         <attr name="time" type="string" value="3" />
         <attr name="cuenum" type="string" value="26" />
@@ -221,15 +229,7 @@
         <attr name="sub_levels" type="string" value="allstage : .9, sky : .75" />
         <attr name="desc" type="string" value="sunday clothes outside" />
       </item>
-      <item type="PyObject" id="140855812" class="Cue">
-        <attr name="name" type="string" value="fadeout" />
-        <attr name="time" type="string" value="2" />
-        <attr name="cuenum" type="string" value="27" />
-        <attr name="page" type="string" value="1-2-18" />
-        <attr name="sub_levels" type="string" value="" />
-        <attr name="desc" type="string" value="DELETED" />
-      </item>
-      <item type="PyObject" id="140858244" class="Cue">
+      <item type="PyObject" id="140862228" class="Cue">
         <attr name="name" type="string" value="blueout to worklights" />
         <attr name="time" type="string" value="2" />
         <attr name="page" type="string" value="1-2-18" />
@@ -237,7 +237,7 @@
         <attr name="sub_levels" type="string" value="worklights : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140857244" class="Cue">
+      <item type="PyObject" id="140872700" class="Cue">
         <attr name="name" type="string" value="outside hatshop, DL" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-3-19" />
@@ -245,15 +245,15 @@
         <attr name="sub_levels" type="string" value="1-3_outside : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140860404" class="Cue">
+      <item type="PyObject" id="140862580" class="Cue">
         <attr name="name" type="string" value="inside and outside" />
-        <attr name="time" type="string" value="2" />
+        <attr name="time" type="string" value="4" />
         <attr name="page" type="string" value="1-3-19" />
         <attr name="cuenum" type="string" value="29+30" />
         <attr name="sub_levels" type="string" value="1-3_inside : 1, 1-3_outside : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140855652" class="Cue">
+      <item type="PyObject" id="140855364" class="Cue">
         <attr name="name" type="string" value="enter hatshop" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-3-20" />
@@ -261,7 +261,7 @@
         <attr name="sub_levels" type="string" value="1-3_inside : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140875388" class="Cue">
+      <item type="PyObject" id="140855492" class="Cue">
         <attr name="name" type="string" value="SPOT alone for song, walks R then LC" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-3-21" />
@@ -269,7 +269,7 @@
         <attr name="sub_levels" type="string" value="nsi_cue_1 : .3" />
         <attr name="desc" type="string" value="ribbons" />
       </item>
-      <item type="PyObject" id="140866868" class="Cue">
+      <item type="PyObject" id="140853948" class="Cue">
         <attr name="name" type="string" value="SPOT OFF return to scene" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-3-22" />
@@ -277,23 +277,7 @@
         <attr name="sub_levels" type="string" value="1-3_inside : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140858140" class="Cue">
-        <attr name="name" type="string" value="song again" />
-        <attr name="time" type="string" value="3" />
-        <attr name="page" type="string" value="1-3-23" />
-        <attr name="cuenum" type="string" value="33" />
-        <attr name="sub_levels" type="string" value="nsi_cue_1 : 1" />
-        <attr name="desc" type="string" value="DELETED" />
-      </item>
-      <item type="PyObject" id="140857100" class="Cue">
-        <attr name="name" type="string" value="return to scene" />
-        <attr name="time" type="string" value="3" />
-        <attr name="page" type="string" value="1-3-23" />
-        <attr name="cuenum" type="string" value="34" />
-        <attr name="sub_levels" type="string" value="1-3_inside : 1" />
-        <attr name="desc" type="string" value="DELETED" />
-      </item>
-      <item type="PyObject" id="140865676" class="Cue">
+      <item type="PyObject" id="140854756" class="Cue">
         <attr name="name" type="string" value="actors are DL to runway" />
         <attr name="time" type="string" value="4" />
         <attr name="page" type="string" value="1-3-36" />
@@ -301,7 +285,7 @@
         <attr name="sub_levels" type="string" value="runway_stairs : .5, worklights : 1" />
         <attr name="desc" type="string" value="set breaks apart" />
       </item>
-      <item type="PyObject" id="140860644" class="Cue">
+      <item type="PyObject" id="140853164" class="Cue">
         <attr name="name" type="string" value="stage fills with dancers" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-3-36" />
@@ -309,7 +293,7 @@
         <attr name="sub_levels" type="string" value="1-3-36_dance : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140857972" class="Cue">
+      <item type="PyObject" id="140859452" class="Cue">
         <attr name="name" type="string" value="front center mini" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-3-36" />
@@ -317,7 +301,7 @@
         <attr name="sub_levels" type="string" value="1-3-36_dance : 0.5, front_lc : 0.5" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140860900" class="Cue">
+      <item type="PyObject" id="140870452" class="Cue">
         <attr name="name" type="string" value="dolly alone in L runway corner stairs" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-3-37" />
@@ -325,7 +309,7 @@
         <attr name="sub_levels" type="string" value="runway_stairs_left: 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="139850732" class="Cue">
+      <item type="PyObject" id="140857092" class="Cue">
         <attr name="name" type="string" value="dolly alone in L runway corner" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-3-37" />
@@ -333,7 +317,7 @@
         <attr name="sub_levels" type="string" value="dolly_runway_left : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140868692" class="Cue">
+      <item type="PyObject" id="140857820" class="Cue">
         <attr name="name" type="string" value="dance?" />
         <attr name="time" type="string" value="4" />
         <attr name="page" type="string" value="1-3-38" />
@@ -341,7 +325,7 @@
         <attr name="sub_levels" type="string" value="1-3-36_dance : 1, front_lc : .5" />
         <attr name="desc" type="string" value="guys enter from UL" />
       </item>
-      <item type="PyObject" id="140853756" class="Cue">
+      <item type="PyObject" id="140858484" class="Cue">
         <attr name="name" type="string" value="SPOT" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-3-38" />
@@ -349,23 +333,15 @@
         <attr name="sub_levels" type="string" value="1-3-36_dance : 0.4, sky : 0.4, runway : 0.16" />
         <attr name="desc" type="string" value="dolly alone" />
       </item>
-      <item type="PyObject" id="140866532" class="Cue">
+      <item type="PyObject" id="140869604" class="Cue">
         <attr name="name" type="string" value="crowd arrives" />
-        <attr name="time" type="string" value="7" />
+        <attr name="time" type="string" value="10" />
         <attr name="page" type="string" value="1-3-38" />
         <attr name="cuenum" type="string" value="40" />
         <attr name="sub_levels" type="string" value="nsi_cue_2 : 1, patio : .5, runway: 0.6" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140871380" class="Cue">
-        <attr name="name" type="string" value="add patio" />
-        <attr name="time" type="string" value="3" />
-        <attr name="page" type="string" value="1-3-39" />
-        <attr name="cuenum" type="string" value="41" />
-        <attr name="sub_levels" type="string" value="" />
-        <attr name="desc" type="string" value="DELETED" />
-      </item>
-      <item type="PyObject" id="140871308" class="Cue">
+      <item type="PyObject" id="142243836" class="Cue">
         <attr name="name" type="string" value="center scene" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-3-39" />
@@ -373,7 +349,7 @@
         <attr name="sub_levels" type="string" value="nsi_cue_2 : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140864404" class="Cue">
+      <item type="PyObject" id="142244356" class="Cue">
         <attr name="name" type="string" value="dolly DC alone SPOT" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="1-3-40" />
@@ -381,7 +357,7 @@
         <attr name="sub_levels" type="string" value="1-3-36_dance : 0.4, sky : 0.4, runway : 0.16\n" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142424108" class="Cue">
+      <item type="PyObject" id="140856100" class="Cue">
         <attr name="name" type="string" value="fadeout" />
         <attr name="time" type="string" value="3" />
         <attr name="cuenum" type="string" value="44" />
@@ -389,39 +365,39 @@
         <attr name="sub_levels" type="string" value="" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140863780" class="Cue">
+      <item type="PyObject" id="142246452" class="Cue">
         <attr name="name" type="string" value="warmers" />
         <attr name="time" type="string" value="5" />
         <attr name="cuenum" type="string" value="45" />
         <attr name="page" type="string" value="1-3-40" />
-        <attr name="sub_levels" type="string" value="curtain_warmers : 1" />
+        <attr name="sub_levels" type="string" value="curtain_warmers : .5" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142423524" class="Cue">
+      <item type="PyObject" id="142244108" class="Cue">
         <attr name="name" type="string" value="warmers out" />
-        <attr name="time" type="string" value="10" />
+        <attr name="time" type="string" value="20" />
         <attr name="cuenum" type="string" value="45.5" />
         <attr name="page" type="string" value="1-3-40" />
         <attr name="sub_levels" type="string" value="" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140860764" class="Cue">
+      <item type="PyObject" id="142246756" class="Cue">
         <attr name="name" type="string" value="&quot;night&quot; scene" />
-        <attr name="time" type="string" value="3" />
+        <attr name="time" type="string" value="4" />
         <attr name="page" type="string" value="2-1-1" />
         <attr name="cuenum" type="string" value="46" />
         <attr name="sub_levels" type="string" value="2-1_outside : 1" />
-        <attr name="desc" type="string" value="" />
+        <attr name="desc" type="string" value="on curtain opening" />
       </item>
-      <item type="PyObject" id="140872020" class="Cue">
+      <item type="PyObject" id="140857132" class="Cue">
         <attr name="name" type="string" value="lights change scene to later at night" />
-        <attr name="time" type="string" value="3" />
+        <attr name="time" type="string" value="5" />
         <attr name="page" type="string" value="2-1-3" />
         <attr name="cuenum" type="string" value="47" />
         <attr name="sub_levels" type="string" value="2-1_darker : .8" />
         <attr name="desc" type="string" value="after song" />
       </item>
-      <item type="PyObject" id="140868556" class="Cue">
+      <item type="PyObject" id="142244836" class="Cue">
         <attr name="name" type="string" value="mini scene" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="2-1-4" />
@@ -429,7 +405,7 @@
         <attr name="sub_levels" type="string" value="2-1_darker : .8" />
         <attr name="desc" type="string" value="no change" />
       </item>
-      <item type="PyObject" id="142425500" class="Cue">
+      <item type="PyObject" id="142247004" class="Cue">
         <attr name="name" type="string" value="another mini scene" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="2-1-4" />
@@ -437,15 +413,7 @@
         <attr name="sub_levels" type="string" value="2-1_darker : .8" />
         <attr name="desc" type="string" value="no change" />
       </item>
-      <item type="PyObject" id="140866780" class="Cue">
-        <attr name="name" type="string" value="fadeout" />
-        <attr name="time" type="string" value="3" />
-        <attr name="page" type="string" value="2-1-4" />
-        <attr name="cuenum" type="string" value="50" />
-        <attr name="sub_levels" type="string" value="" />
-        <attr name="desc" type="string" value="DELETED" />
-      </item>
-      <item type="PyObject" id="142426652" class="Cue">
+      <item type="PyObject" id="142249460" class="Cue">
         <attr name="name" type="string" value="worklights" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="2-1-4" />
@@ -453,7 +421,7 @@
         <attr name="sub_levels" type="string" value="worklights : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142425204" class="Cue">
+      <item type="PyObject" id="142246884" class="Cue">
         <attr name="name" type="string" value="lewis at top of stairs" />
         <attr name="time" type="string" value="4" />
         <attr name="page" type="string" value="2-2-5" />
@@ -461,7 +429,7 @@
         <attr name="sub_levels" type="string" value="2-2_all : 1" />
         <attr name="desc" type="string" value="harmonia gardens" />
       </item>
-      <item type="PyObject" id="142425540" class="Cue">
+      <item type="PyObject" id="140860788" class="Cue">
         <attr name="name" type="string" value="left table" />
         <attr name="time" type="string" value="4" />
         <attr name="page" type="string" value="2-2-5" />
@@ -469,7 +437,7 @@
         <attr name="sub_levels" type="string" value="2-2_all : 0.5, 2-2_l_table : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142428996" class="Cue">
+      <item type="PyObject" id="140871052" class="Cue">
         <attr name="name" type="string" value="all" />
         <attr name="time" type="string" value="2" />
         <attr name="page" type="string" value="2-2-6" />
@@ -477,7 +445,7 @@
         <attr name="sub_levels" type="string" value="2-2_all : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142428004" class="Cue">
+      <item type="PyObject" id="142250932" class="Cue">
         <attr name="name" type="string" value="right table" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="2-2-6" />
@@ -485,7 +453,7 @@
         <attr name="sub_levels" type="string" value="2-2_all : .5, 2-2_r_table : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142428556" class="Cue">
+      <item type="PyObject" id="142252188" class="Cue">
         <attr name="name" type="string" value="all" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="2-2-7" />
@@ -493,7 +461,7 @@
         <attr name="sub_levels" type="string" value="2-2_all : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142427220" class="Cue">
+      <item type="PyObject" id="142247548" class="Cue">
         <attr name="name" type="string" value="left table" />
         <attr name="time" type="string" value="3" />
         <attr name="cuenum" type="string" value="57" />
@@ -501,7 +469,7 @@
         <attr name="sub_levels" type="string" value="2-2_all : .5, 2-2_l_table : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140866020" class="Cue">
+      <item type="PyObject" id="142249172" class="Cue">
         <attr name="name" type="string" value="all, when curtain closes" />
         <attr name="time" type="string" value="3" />
         <attr name="cuenum" type="string" value="58" />
@@ -509,7 +477,7 @@
         <attr name="sub_levels" type="string" value="2-2_all : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142429580" class="Cue">
+      <item type="PyObject" id="142253388" class="Cue">
         <attr name="name" type="string" value="right table, curtain opens" />
         <attr name="time" type="string" value="3" />
         <attr name="cuenum" type="string" value="59" />
@@ -517,7 +485,7 @@
         <attr name="sub_levels" type="string" value="2-2_all : .5, 2-2_r_table : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142428692" class="Cue">
+      <item type="PyObject" id="142253628" class="Cue">
         <attr name="name" type="string" value="all" />
         <attr name="time" type="string" value="3" />
         <attr name="cuenum" type="string" value="60" />
@@ -525,23 +493,7 @@
         <attr name="sub_levels" type="string" value="2-2_all : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142427300" class="Cue">
-        <attr name="name" type="string" value="right table and stairs, for mo+lewis" />
-        <attr name="time" type="string" value="3" />
-        <attr name="cuenum" type="string" value="61" />
-        <attr name="page" type="string" value="2-2-8" />
-        <attr name="sub_levels" type="string" value="2-2_all : .5, 2-2_r_table : 1" />
-        <attr name="desc" type="string" value="DELETED" />
-      </item>
-      <item type="PyObject" id="142433436" class="Cue">
-        <attr name="name" type="string" value="all" />
-        <attr name="time" type="string" value="3" />
-        <attr name="cuenum" type="string" value="62" />
-        <attr name="page" type="string" value="2-2-8" />
-        <attr name="sub_levels" type="string" value="2-2_all : 1" />
-        <attr name="desc" type="string" value="DELETED" />
-      </item>
-      <item type="PyObject" id="140867348" class="Cue">
+      <item type="PyObject" id="142254604" class="Cue">
         <attr name="name" type="string" value="left table (&quot;champagne&quot;)" />
         <attr name="time" type="string" value="3" />
         <attr name="cuenum" type="string" value="63" />
@@ -549,7 +501,7 @@
         <attr name="sub_levels" type="string" value="2-2_all : .5, 2-2_l_table : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142433676" class="Cue">
+      <item type="PyObject" id="142254068" class="Cue">
         <attr name="name" type="string" value="all" />
         <attr name="time" type="string" value="3" />
         <attr name="cuenum" type="string" value="64" />
@@ -557,7 +509,7 @@
         <attr name="sub_levels" type="string" value="2-2_all : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142434276" class="Cue">
+      <item type="PyObject" id="142254780" class="Cue">
         <attr name="name" type="string" value="right table (&quot;let&apos;s dance&quot;)" />
         <attr name="time" type="string" value="3" />
         <attr name="cuenum" type="string" value="65" />
@@ -565,15 +517,15 @@
         <attr name="sub_levels" type="string" value="2-2_all : .5, 2-2_r_table : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142434708" class="Cue">
+      <item type="PyObject" id="142254524" class="Cue">
         <attr name="name" type="string" value="all" />
         <attr name="time" type="string" value="3" />
         <attr name="cuenum" type="string" value="66" />
         <attr name="page" type="string" value="2-2-9" />
         <attr name="sub_levels" type="string" value="2-2_all : 1" />
-        <attr name="desc" type="string" value="" />
+        <attr name="desc" type="string" value="with music" />
       </item>
-      <item type="PyObject" id="142430524" class="Cue">
+      <item type="PyObject" id="142251396" class="Cue">
         <attr name="name" type="string" value="waiters talk about dolly at the base of stairs" />
         <attr name="time" type="string" value="4" />
         <attr name="cuenum" type="string" value="67" />
@@ -581,7 +533,7 @@
         <attr name="sub_levels" type="string" value="2-2_all : .9, bottom_of_stairs : 0.6" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142436340" class="Cue">
+      <item type="PyObject" id="142252076" class="Cue">
         <attr name="name" type="string" value="dimmer.." />
         <attr name="time" type="string" value="3" />
         <attr name="cuenum" type="string" value="68" />
@@ -589,7 +541,7 @@
         <attr name="sub_levels" type="string" value="2-2_all : .8, bottom_of_stairs : 0.5" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142432924" class="Cue">
+      <item type="PyObject" id="142247500" class="Cue">
         <attr name="name" type="string" value="dolly arrives and walks down stairs" />
         <attr name="time" type="string" value="5" />
         <attr name="cuenum" type="string" value="69" />
@@ -597,23 +549,23 @@
         <attr name="sub_levels" type="string" value="2-2_all : 0.9, garden_stairs : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142436732" class="Cue">
+      <item type="PyObject" id="142259748" class="Cue">
         <attr name="name" type="string" value="&quot;down center&quot; dolly&apos;s scene" />
-        <attr name="time" type="string" value="8" />
+        <attr name="time" type="string" value="10" />
         <attr name="cuenum" type="string" value="70" />
         <attr name="page" type="string" value="2-2-14" />
         <attr name="sub_levels" type="string" value="2-2_all : 1, front_c : 0.6" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142430604" class="Cue">
+      <item type="PyObject" id="142258596" class="Cue">
         <attr name="name" type="string" value="&quot;dim&quot; for polka dance" />
-        <attr name="time" type="string" value="3" />
+        <attr name="time" type="string" value="5" />
         <attr name="page" type="string" value="2-2-18" />
         <attr name="cuenum" type="string" value="71" />
         <attr name="sub_levels" type="string" value="2-2_all : 0.7, front_rc : .7" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142429444" class="Cue">
+      <item type="PyObject" id="142254388" class="Cue">
         <attr name="name" type="string" value="&quot;light stairs&quot;" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="2-2-18" />
@@ -621,7 +573,7 @@
         <attr name="sub_levels" type="string" value="2-2_all : 0.8, garden_stairs : 0.5, bottom_of_stairs : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142435644" class="Cue">
+      <item type="PyObject" id="142255060" class="Cue">
         <attr name="name" type="string" value="&quot;bright&quot; during chase" />
         <attr name="time" type="string" value="1.5" />
         <attr name="page" type="string" value="2-2-19" />
@@ -629,7 +581,7 @@
         <attr name="sub_levels" type="string" value="2-2_all : 1, garden_stairs : 0.5, bottom_of_stairs : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142436836" class="Cue">
+      <item type="PyObject" id="142241780" class="Cue">
         <attr name="name" type="string" value="blueout right after freeze" />
         <attr name="time" type="string" value="0" />
         <attr name="page" type="string" value="2-2-19" />
@@ -637,15 +589,15 @@
         <attr name="sub_levels" type="string" value="worklights : 1.0" />
         <attr name="desc" type="string" value="&quot;gasp!&quot;" />
       </item>
-      <item type="PyObject" id="142439444" class="Cue">
+      <item type="PyObject" id="142255500" class="Cue">
         <attr name="name" type="string" value="&quot;cold&quot; courtroom" />
         <attr name="time" type="string" value="4" />
         <attr name="page" type="string" value="2-3-20" />
         <attr name="cuenum" type="string" value="75" />
         <attr name="sub_levels" type="string" value="2-3_cold : 1" />
-        <attr name="desc" type="string" value="" />
+        <attr name="desc" type="string" value="when set change  is complete" />
       </item>
-      <item type="PyObject" id="142440884" class="Cue">
+      <item type="PyObject" id="142261348" class="Cue">
         <attr name="name" type="string" value="room warms up" />
         <attr name="time" type="string" value="4" />
         <attr name="page" type="string" value="2-3-22" />
@@ -653,7 +605,7 @@
         <attr name="sub_levels" type="string" value="2-3_brighter : .7" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142443300" class="Cue">
+      <item type="PyObject" id="142256524" class="Cue">
         <attr name="name" type="string" value="SPOT on cornelius song" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="2-3-22" />
@@ -661,23 +613,15 @@
         <attr name="sub_levels" type="string" value="2-3_brighter : .7" />
         <attr name="desc" type="string" value="only takes a  moment (no-op)" />
       </item>
-      <item type="PyObject" id="142443060" class="Cue">
+      <item type="PyObject" id="142257572" class="Cue">
         <attr name="name" type="string" value="SPOT OUT room is cold again" />
-        <attr name="time" type="string" value="6.5" />
+        <attr name="time" type="string" value="12" />
         <attr name="page" type="string" value="2-3-23" />
         <attr name="cuenum" type="string" value="78" />
         <attr name="sub_levels" type="string" value="2-3_cold : 1" />
         <attr name="desc" type="string" value="end of song" />
       </item>
-      <item type="PyObject" id="142437620" class="Cue">
-        <attr name="name" type="string" value="fadeout" />
-        <attr name="time" type="string" value="3" />
-        <attr name="page" type="string" value="2-3-25" />
-        <attr name="cuenum" type="string" value="79" />
-        <attr name="sub_levels" type="string" value="" />
-        <attr name="desc" type="string" value="DELETED" />
-      </item>
-      <item type="PyObject" id="140860260" class="Cue">
+      <item type="PyObject" id="142260188" class="Cue">
         <attr name="name" type="string" value="blueout to worklights" />
         <attr name="time" type="string" value="2" />
         <attr name="page" type="string" value="2-3-25" />
@@ -685,7 +629,7 @@
         <attr name="sub_levels" type="string" value="worklights : 1" />
         <attr name="desc" type="string" value="end of scene" />
       </item>
-      <item type="PyObject" id="142441524" class="Cue">
+      <item type="PyObject" id="142262252" class="Cue">
         <attr name="name" type="string" value="store" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="2-4-26" />
@@ -693,7 +637,7 @@
         <attr name="sub_levels" type="string" value="1-2 : 1, trap : 0.2, upstairs : 0.2" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140856772" class="Cue">
+      <item type="PyObject" id="142264532" class="Cue">
         <attr name="name" type="string" value="trapdoor up" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="2-4-26" />
@@ -701,15 +645,15 @@
         <attr name="sub_levels" type="string" value="1-2 : 1, trap : 1.0, upstairs : 0.2" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142443788" class="Cue">
+      <item type="PyObject" id="142257068" class="Cue">
         <attr name="name" type="string" value="trapdoor down" />
-        <attr name="time" type="string" value="3" />
+        <attr name="time" type="string" value="5" />
         <attr name="page" type="string" value="2-4-26" />
         <attr name="cuenum" type="string" value="83" />
         <attr name="sub_levels" type="string" value="1-2 : 1, trap : 0.4, upstairs : 0.2" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142443708" class="Cue">
+      <item type="PyObject" id="142259476" class="Cue">
         <attr name="name" type="string" value="dolly alone at top of R stairs" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="2-4-28" />
@@ -717,7 +661,7 @@
         <attr name="sub_levels" type="string" value="2-4_money : 1, 1-2 : 0.35, upstairs : 0.2, 1-2_register : .8" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142445180" class="Cue">
+      <item type="PyObject" id="142263332" class="Cue">
         <attr name="name" type="string" value="restore to store" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="2-4-28" />
@@ -725,7 +669,7 @@
         <attr name="sub_levels" type="string" value="1-2 : 1, trap : 0.2, upstairs : 0.2" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142442004" class="Cue">
+      <item type="PyObject" id="142264132" class="Cue">
         <attr name="name" type="string" value="fade to front" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="2-4-30" />
@@ -733,7 +677,7 @@
         <attr name="sub_levels" type="string" value="front_of_stage : 1, 1-2: .5" />
         <attr name="desc" type="string" value="before set breaks" />
       </item>
-      <item type="PyObject" id="142442428" class="Cue">
+      <item type="PyObject" id="142262132" class="Cue">
         <attr name="name" type="string" value="crowd arrives" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="2-4-30" />
@@ -741,7 +685,7 @@
         <attr name="sub_levels" type="string" value="2-2_all : 1, front_of_stage : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142450284" class="Cue">
+      <item type="PyObject" id="142252268" class="Cue">
         <attr name="name" type="string" value="flat splits" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="2-4-31" />
@@ -749,7 +693,7 @@
         <attr name="sub_levels" type="string" value="finale : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142449500" class="Cue">
+      <item type="PyObject" id="142264956" class="Cue">
         <attr name="name" type="string" value="dolly enters" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="2-4-31" />
@@ -757,15 +701,15 @@
         <attr name="sub_levels" type="string" value="finale_with_dolly : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142450044" class="Cue">
+      <item type="PyObject" id="142268132" class="Cue">
         <attr name="name" type="string" value="curtains close" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="2-4-31+" />
         <attr name="cuenum" type="string" value="90" />
-        <attr name="sub_levels" type="string" value="curtain_warmers : 1" />
+        <attr name="sub_levels" type="string" value="curtain_warmers : .3" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142444764" class="Cue">
+      <item type="PyObject" id="142268716" class="Cue">
         <attr name="name" type="string" value="curtains reopen" />
         <attr name="time" type="string" value="2" />
         <attr name="page" type="string" value="2-4-31+" />
@@ -773,23 +717,23 @@
         <attr name="sub_levels" type="string" value="finale_with_dolly : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="140870724" class="Cue">
+      <item type="PyObject" id="142263892" class="Cue">
         <attr name="name" type="string" value="curtains close again" />
         <attr name="time" type="string" value="3" />
         <attr name="page" type="string" value="2-4-31+" />
         <attr name="cuenum" type="string" value="92" />
-        <attr name="sub_levels" type="string" value="curtain_warmers : 1" />
+        <attr name="sub_levels" type="string" value="curtain_warmers : .3" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142452596" class="Cue">
+      <item type="PyObject" id="142263772" class="Cue">
         <attr name="name" type="string" value="house comes up" />
         <attr name="time" type="string" value="4" />
         <attr name="page" type="string" value="2-4-31+" />
         <attr name="cuenum" type="string" value="93" />
-        <attr name="sub_levels" type="string" value="curtain_warmers: 1, house : 1" />
+        <attr name="sub_levels" type="string" value="curtain_warmers: .5, house : 1" />
         <attr name="desc" type="string" value="" />
       </item>
-      <item type="PyObject" id="142443580" class="Cue">
+      <item type="PyObject" id="142275284" class="Cue">
         <attr name="name" type="string" value="emergency blackout" />
         <attr name="time" type="string" value="0" />
         <attr name="page" type="string" value="--" />
