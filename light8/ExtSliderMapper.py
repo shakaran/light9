@@ -12,8 +12,11 @@ class SliderMapping:
         self.attached.set(attached)
         self.extlevel = DoubleVar() # external slider's input
         self.extlevel.set(extinputlevel)
-        self.extlabel = None
-        self.sublabel = None
+        self.widgets = [] # list of widgets drawn
+        self.sublabel = None # the label which represents a sub level.  we hold on to
+                             # it so we can change its textvariable
+        self.lastbgcolor = None # last background color drawn to avoid unnecessary
+                                # updates
     def attach(self):
         self.attached.set(1)
         self.color_text()
@@ -43,13 +46,18 @@ class SliderMapping:
         self.detach()
         self.color_text()
     def color_text(self):
-        if self.extlabel:
+        if self.widgets:
             if self.isdisconnected():
-                self.extlabel.configure(fg='honeyDew4')
+                color = 'honeyDew4'
             elif self.isattached():
-                self.extlabel.configure(fg='honeyDew2')
-            else:
-                self.extlabel.configure(fg='red')
+                color = 'honeyDew2'
+            else: # detached
+                color = 'red'
+
+            if self.lastbgcolor == color: return
+            for widget in self.widgets:
+                widget.configure(bg=color)
+            self.lastbgcolor = color
     def disconnect(self):
         self.set_subname('disconnected') # a bit hack-like
         self.sublabel.configure(text="N/A")
@@ -74,17 +82,23 @@ class SliderMapping:
             c.slistbox.listbox.insert(END, s)
         c.entry.configure(width=12)
         statframe = Frame(frame)
-        Checkbutton(statframe, variable=self.attached, 
-            text="Attached").grid(columnspan=2, sticky=W)
-        Label(statframe, text="Input", fg='red').grid(row=1, sticky=W)
-        self.extlabel = Label(statframe, textvariable=self.extlevel, width=5)
-        self.extlabel.grid(row=1, column=1)
-        Label(statframe, text="Real").grid(row=2, sticky=W)
+        cb = Checkbutton(statframe, variable=self.attached, 
+            text="Attached")
+        cb.grid(columnspan=2, sticky=W)
+        ilabel = Label(statframe, text="Input", fg='blue')
+        ilabel.grid(row=1, sticky=W)
+        extlabel = Label(statframe, textvariable=self.extlevel, width=5)
+        extlabel.grid(row=1, column=1)
+        rlabel = Label(statframe, text="Real")
+        rlabel.grid(row=2, sticky=W)
         self.sublabel = Label(statframe, text="N/A", width=5)
         self.sublabel.grid(row=2, column=1)
         statframe.pack(side=BOTTOM, expand=1, fill=X)
         c.pack()
         frame.pack(side=LEFT, expand=1, fill=BOTH)
+
+        self.widgets = [frame, c, statframe, cb, ilabel, extlabel, rlabel, 
+                        self.sublabel]
 
 class ExtSliderMapper(Frame):
     def __init__(self, parent, sliderlevels, sliderinput, filename='slidermapping',
