@@ -135,7 +135,7 @@ if __name__ == "__main__":
     root.config(bg='black')
     root.tk_setPalette("#004633")
 
-    sc = Subcomposer(root, dmxdummy=1)
+    sc = Subcomposer(root, dmxdummy=0)
     sc.pack()
 
     while 1:

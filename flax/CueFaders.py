@@ -12,6 +12,12 @@ cue_state_indicator_colors = {
     'next' : ('red',    'white'),
 }
 
+# TODO pause fades, set new time to be remaining about of time in the fade so fade
+#        can continue properly
+#      make fades work properly: the set_next / prev bug
+#      find cue by page ("not necessawy!")
+#      CueFader controls KeyboardController?  unlikely
+
 class LabelledScale(Tk.Frame):
     """Scale with two labels: a name and current value"""
     def __init__(self, master, label, **opts):
@@ -178,9 +184,19 @@ class CueFader(Tk.Frame):
 
         self.auto_load_times_checkbutton = Tk.Checkbutton(topframe, 
             variable=self.auto_load_times, text='Autoload Times', 
-            command=self.toggle_autoshift, bg='black', fg='white', 
+            bg='black', fg='white', 
             highlightbackground='black')
         self.auto_load_times_checkbutton.pack(fill='both', side='left')
+
+        self.mute = Tk.IntVar()
+        self.mute.set(0)
+
+        self.mutebutton = Tk.Checkbutton(topframe, 
+            variable=self.mute, text='Mute', 
+            bg='black', fg='white', 
+            highlightbackground='black',
+            command=self.send_dmx_levels)
+        self.mutebutton.pack(fill='both', side='left')
 
         self.set_next_button = Tk.Button(topframe, text='Set Next',
             command=lambda: cuelist.set_selection_as_next(),
@@ -255,9 +271,12 @@ class CueFader(Tk.Frame):
             current_levels_as_sub = cur_sub.crossfade(other_sub, scale_val)
             self.current_dmx_levels = current_levels_as_sub.get_dmx_list()
             self.send_dmx_levels()
-    def send_dmx_levels(self):
+    def send_dmx_levels(self, *args):
         # print "send_dmx_levels", self.current_dmx_levels
-        dmxclient.outputlevels(self.current_dmx_levels)
+        if self.mute.get():
+            dmxclient.outputlevels([0] * 68)
+        else:
+            dmxclient.outputlevels(self.current_dmx_levels)
         self.last_levels_sent = time.time()
     def send_dmx_levels_loop(self):
         diff = time.time() - self.last_levels_sent
@@ -453,7 +472,7 @@ class TkCueList(CueList, Tk.Frame):
             index = int(index)
             self.editor.set_cue_to_edit(self.cues[index])
             
-        self.columns = ('name', 'time', 'page', 'desc')
+        self.columns = ('name', 'time', 'page', 'cuenum', 'desc')
         self.scrolled_hlist = Tk.ScrolledHList(self,
             options='hlist.columns %d hlist.header 1' % len(self.columns))
         self.hlist = self.scrolled_hlist.hlist
@@ -591,14 +610,15 @@ class CueEditron(Tk.Frame):
                 pass
     def setup_editing_forms(self):
         self.variables = {}
-        for row, field in enumerate(('name', 'time', 'page', 'desc', 
+        for row, field in enumerate(('name', 'time', 'page', 'cuenum', 'desc', 
             'sub_levels')):
             lab = Tk.Label(self, text=field, fg='white', bg='black')
             lab.grid(row=row, column=0, sticky='nsew')
 
             entryvar = Tk.StringVar()
             entry = Tk.Entry(self, fg='white', bg='black', 
-                textvariable=entryvar)
+                textvariable=entryvar, insertbackground='white',
+                highlightbackground='red') # TODO this red/black is backwards
             entry.grid(row=row, column=1, sticky='nsew')
 
             self.variables[field] = entryvar
@@ -615,7 +635,7 @@ class CueEditron(Tk.Frame):
         self.columnconfigure(1, weight=1)
     def fill_in_cue_info(self):
         self.enable_callbacks = 0
-        for row, field in enumerate(('name', 'time', 'page', 'desc', 
+        for row, field in enumerate(('name', 'time', 'page', 'cuenum', 'desc', 
             'sub_levels')):
             text = ''
             if self.cue:
