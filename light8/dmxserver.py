@@ -26,7 +26,7 @@ from __future__ import division
 from twisted.internet import reactor
 from twisted.web import xmlrpc, server
 import sys,time
-from optik import OptionParser
+from optparse import OptionParser
 from io import ParportDMX
 from updatefreq import Updatefreq
 
@@ -63,21 +63,23 @@ class XMLRPCServe(xmlrpc.XMLRPC):
         
     def purgeclients(self):
         
-        """forget about any clients who haven't sent levels in a while
-        (5 seconds). this runs in a loop"""
+        """forget about any clients who haven't sent levels in a while.
+        this runs in a loop"""
 
         purge_age=10 # seconds
         
         reactor.callLater(1,self.purgeclients)
 
         now=time.time()
-        for cid,lastseen in self.lastseen.items():
+        cids=self.clientlevels.keys()
+        for cid in cids:
+            lastseen=self.lastseen[cid]
             if lastseen<now-purge_age:
                 print ("forgetting client %s (no activity for %s sec)" %
                        (cid,purge_age))
                 del self.clientlevels[cid]
-                del self.lastseen[cid]
                 del self.clientfreq[cid]
+                del self.lastseen[cid]
         
     def sendlevels(self):
         
@@ -153,7 +155,7 @@ class XMLRPCServe(xmlrpc.XMLRPC):
     def xmlrpc_outputlevels(self,cid,levellist):
         """send a unique id for your client (name+pid maybe), then
         the variable-length dmx levellist (scaled 0..1)"""
-        if levellist!=self.clientlevels.get(cid,[]):
+        if levellist!=self.clientlevels.get(cid,None):
             self.clientlevels[cid]=levellist
             self.clientschanged=1
             if cid not in self.lastseen:
