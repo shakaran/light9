@@ -73,7 +73,7 @@ class Lightboard:
         scene_tl = toplevelat('scenes')
         effect_tl = toplevelat('effect')
 
-        print "\tslider patching"
+        print "\tslider patching -- It can't be turned off!"
         mapping_tl = toplevelat('mapping')
         self.slidermapper = ExtSliderMapper.ExtSliderMapper(mapping_tl, 
                                                             self.scalelevels, 
@@ -331,7 +331,7 @@ class Lightboard:
         self.slidermapper.setup()
 
     def backgroundloop(self, *args):
-        self.master.after(50, self.backgroundloop, ())
+        self.master.after(150, self.backgroundloop, ())
         self.changelevel()
     def quit(self, *args):
         print "Light 8.8: And that's my cue to exit..."
