@@ -12,11 +12,12 @@ cue_state_indicator_colors = {
     'next' : ('red',    'white'),
 }
 
-# TODO pause fades, set new time to be remaining about of time in the fade so fade
-#        can continue properly
-#      make fades work properly: the set_next / prev bug
-#      find cue by page ("not necessawy!")
-#      CueFader controls KeyboardController?  unlikely
+# TODO 
+# .... pause fades, set new time to be remaining about of time in the fade so 
+#           fade can continue properly
+# FIX? make fades work properly: the set_next / prev bug
+# WONT find cue by page ("not necessawy!")
+# WONT CueFader controls KeyboardController?  unlikely
 
 class LabelledScale(Tk.Frame):
     """Scale with two labels: a name and current value"""
@@ -91,7 +92,9 @@ class TimedGoButton(Tk.Frame):
         self.timer_entry.pack(fill='y', side='left')
         self.timer_var.set(2)
         self.disabled = (self.button['state'] == 'disabled')
+        self.start_time = 0
         self.fading = 0
+        self.last_after_key = 0
     def wheelscroll(self, event):
         """Mouse wheel increments or decrements timer."""
         if event.num == 4: # scroll up
@@ -99,20 +102,35 @@ class TimedGoButton(Tk.Frame):
         else:            # scroll down
             self.timer_entry.decrement()
     def start_fade(self, end_level=1):
-        try:
-            fade_time = float(self.timer_var.get())
-        except ValueError:
-            # since we use a control now, i don't think we need to worry about
-            # validation any more.
-            print ">>> Can't fade -- bad time", self.timer_var.get()
-            return
-
+        self.last_start_time = self.start_time
         self.start_time = time.time()
         self.start_level = self.scale_to_fade.scale_var.get()
         self.end_level = end_level
-        self.fade_length = fade_time
-        self.fading = 1
-        self.do_fade()
+
+        if self.fading == 1: # if we're already fading
+            print "already fading!"
+            # fade_time = old_fade_length - 
+            self.fading = 'paused'
+            self.fade_length = time.time() - self.last_start_time
+            print "fade_length", self.fade_length
+            self.end_fade()
+        else:
+            print "not already fading or continuing a fade"
+            try:
+                fade_time = float(self.timer_var.get())
+            except ValueError:
+                # since we use a TixControl now, i don't think we need to worry 
+                # about validation any more.
+                print ">>> Can't fade -- bad time", self.timer_var.get()
+                return
+
+            # TODO fix
+            if self.fading != 'paused':
+                self.fade_length = fade_time
+            print "fade_length", self.fade_length
+            self.button['text'] = 'Pause'
+            self.fading = 1
+            self.do_fade()
     def do_fade(self):
         diff = time.time() - self.start_time
         if diff < self.fade_length:
@@ -122,12 +140,16 @@ class TimedGoButton(Tk.Frame):
             self.scale_to_fade.scale_var.set(newlevel)
 
             if newlevel != self.end_level:
-                self.after(10, self.do_fade)
+                self.last_after_key = self.after(10, self.do_fade)
             else:
-                self.fading = 0
+                self.end_fade()
         else:
             self.scale_to_fade.scale_var.set(self.end_level)
-            self.fading = 0
+            self.end_fade()
+    def end_fade(self):
+        self.button['text'] = self.name
+        self.fading = 0
+        self.after_cancel(self.last_after_key)
     def disable(self):
         if not self.disabled:
             self.button['state'] = 'disabled'
@@ -216,7 +238,7 @@ class CueFader(Tk.Frame):
                                                                           name))
             scale.pack(fill='x', expand=0)
             go = TimedGoButton(frame, 'Go %s' % name, scale, bg=color, 
-                fg='white')
+                fg='white', width=10)
             go.pack(fill='both', expand=1)
             frame.pack(side=side, fill='both', expand=1)
         
@@ -249,14 +271,16 @@ class CueFader(Tk.Frame):
     def reload_cue_times(self):
         prev, cur, next = self.cuelist.get_current_cues()
         self.go_buttons['Next'].set_time(next.time)
-    def update_cue_cache(self):
+    def update_cue_cache(self, compute_dmx_levels=1):
         """Rebuilds subs from the current cues.  As this is expensive, we don't
         do it unless necessary (i.e. whenever we shift or a cue is edited)"""
+        # print "update_cue_cache"
         # load the subs to fade between
         for cue, name in zip(self.cuelist.get_current_cues(), 
                              ('Prev', 'Cur', 'Next')):
             self.cues_as_subs[name] = cue.get_levels_as_sub()
-        self.compute_dmx_levels()
+        if compute_dmx_levels:
+            self.compute_dmx_levels()
     def compute_dmx_levels(self):
         """Compute the DMX levels to send.  This should get called whenever the
         DMX levels could change: either during a crossfade or when a cue is
@@ -271,6 +295,11 @@ class CueFader(Tk.Frame):
             current_levels_as_sub = cur_sub.crossfade(other_sub, scale_val)
             self.current_dmx_levels = current_levels_as_sub.get_dmx_list()
             self.send_dmx_levels()
+
+            # print "compute_dmx_levels: fade at", scale_val
+            # print "between", cur_sub.name, 
+            # print "and", other_sub.name
+            # print 
     def send_dmx_levels(self, *args):
         # print "send_dmx_levels", self.current_dmx_levels
         if self.mute.get():
@@ -303,12 +332,15 @@ class CueFader(Tk.Frame):
         # to prevent overshifting
         if self.no_shifts_until_release:
             return
+        # print "shift", name
 
-        for scale_name, scale in self.scales.items():
-            scale.scale.set(0)
         self.cuelist.shift((-1, 1)[name == 'Next'])
+        self.update_cue_cache(compute_dmx_levels=0)
+        for scale_name, scale in self.scales.items():
+            # print "shift: setting scale to 0", scale_name
+            scale.scale.set(0)
+        self.update_cue_cache(compute_dmx_levels=1)
 
-        self.update_cue_cache()
         if self.auto_load_times.get():
             self.reload_cue_times()
     def autoshift(self, name, scale):
@@ -574,11 +606,17 @@ class TkCueList(CueList, Tk.Frame):
         self.reset_cue_indicators((next,))
         CueList.set_next(self, index)
         self.update_cue_indicators()
+
+        if self.fader: # XXX this is untested
+            self.fader.update_cue_cache()
     def set_prev(self, index):
         prev, cur, next = self.get_current_cue_indices()
         self.reset_cue_indicators((prev,))
         CueList.set_prev(self, index)
         self.update_cue_indicators()
+
+        if self.fader: # XXX this is untested
+            self.fader.update_cue_cache()
     def set_selection_as_prev(self):
         sel = self.hlist.info_selection()
         if sel:
@@ -618,7 +656,7 @@ class CueEditron(Tk.Frame):
             entryvar = Tk.StringVar()
             entry = Tk.Entry(self, fg='white', bg='black', 
                 textvariable=entryvar, insertbackground='white',
-                highlightbackground='red') # TODO this red/black is backwards
+                highlightcolor='red') # TODO this red/black is backwards
             entry.grid(row=row, column=1, sticky='nsew')
 
             self.variables[field] = entryvar
@@ -649,7 +687,7 @@ class CueEditron(Tk.Frame):
 if __name__ == "__main__":
     root = Tk.Tk()
     root.title("ShowMaster 9000")
-    root.geometry("500x555")
+    root.geometry("600x670")
     cl = TkCueList(root, 'cues/dolly')
     cl.pack(fill='both', expand=1)
 
