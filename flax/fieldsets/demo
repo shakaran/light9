@@ -1,3 +1,6 @@
-light1: x=30 y=40 falloff=10
-light2: x=60 y=50 falloff=30
-light3: x=40 y=50 falloff=20
+<?xml version='1.0' encoding='UTF-8'?>
+<fieldset version='1'>
+  <field y='40' x='30' name='light1' falloff='10'/>
+  <field y='70.9854106065' x='89.7809651165' name='light2' falloff='9.44161122397'/>
+  <field y='56.5504587159' x='39.8543897217' name='light3' falloff='9.02748404992'/>
+</fieldset>
