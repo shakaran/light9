@@ -29,6 +29,7 @@ class Cue:
         return c.keys()
     def start(self, levels, time):
         'Mark the beginning of a cue'
+        # print "cue marked with", levels
         self.init_levels = levels
         self.init_time = time
 
@@ -56,13 +57,14 @@ class Fade(Cue):
     'See Cue.__doc__'
     def __init__(self, channel, starttime, dur=None, endlevel=0, param=None):
         'Fades are simple Cues'
-        Cue.__init__(self, "%s -> %f" % (channel, endlevel), starttime, dur)
+        Cue.__init__(self, "%s -> %.1f" % (channel, endlevel), starttime, dur)
         self.channel = channel
         self.endlevel = endlevel
         self.dur = dur
         self.param = param
     def start(self, levels, time):
         'Mark the beginning of the fade'
+        # print "fade", self.name, "marked with", levels
         self.init_levels = levels
         self.init_level = levels[self.channel]
         self.init_time = time
@@ -76,7 +78,8 @@ class Fade(Cue):
         elif elapsed >= self.endtime:
             return {self.channel : self.endlevel}
         else:
-            percent = float(elapsed) / self.dur
+            percent = float((curtime - self.init_time) - self.starttime) / \
+                        self.dur
             return {self.channel : self.init_level + 
                 percent * (self.endlevel - self.init_level)}
     def get_end_levels(self):

@@ -14,7 +14,6 @@ from subediting import Subediting
 from Fader import Fader
 import stage
 
-
 if len(sys.argv) >= 2:
     DUMMY = 0
     print "This is the real thing, baby"
@@ -97,9 +96,9 @@ class Lightboard:
         self.xfader.setupwidget(xf)
         controlpanel.pack()
 
-        # cuefader_tl = toplevelat(98, 480)
-        # cuefader = Fader(cuefader_tl, Subs.cues, self.scalelevels)
-        # cuefader.pack()
+        cuefader_tl = toplevelat(78, 480)
+        cuefader = Fader(cuefader_tl, Subs.cues, self.scalelevels)
+        cuefader.pack()
 
     def refresh(self, *args):
         'rebuild interface, reload data'

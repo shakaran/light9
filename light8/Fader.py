@@ -10,6 +10,11 @@ from FlyingFader import FlyingFader
 
 stdfont = ('Arial', 10)
 
+def get_selection(listbox):
+    'Given a listbox, returns first selection as integer'
+    selection = int(listbox.curselection()[0]) # blech
+    return selection
+
 class Fader(Frame):
     'User interface for cue fader'
     def __init__(self, master, cues, scalelevels):
@@ -40,14 +45,17 @@ class Fader(Frame):
         self.cuetimeleft.set('0s')
 
         buttonframe = Frame(self)
+        topframe = Frame(self) # to contain cue list and infoframe
+        infoframe = Frame(topframe)
+        topframe.pack()
 
-        self.listbox = ScrolledListBox(buttonframe, 
+        self.listbox = ScrolledListBox(topframe, 
             command=self.update_selection)
         self.listbox.listbox.configure({'exportselection' : 0, 
             'selectmode' : EXTENDED})
         for c in self.cues:
             self.listbox.listbox.insert(END, c.name)
-        self.listbox.pack(side=TOP)
+        self.listbox.pack(side=LEFT)
         self.listbox.listbox.bind("<<ListboxSelect>>", self.update_selection, 
             add=1)
         Button(buttonframe, text="Go", command=self.go, font=stdfont,
@@ -56,10 +64,11 @@ class Fader(Frame):
             bg='red').pack(side=LEFT)
         Button(buttonframe, text="Prev", command=self.prev, 
             font=stdfont).pack(side=LEFT)
-        Button(buttonframe, text="Next", command=self.next, 
-            font=stdfont).pack(side=LEFT)
+        nextbutton = Button(buttonframe, text="Next", command=self.next, 
+            font=stdfont)
+        # Button(buttonframe, text="Load", command=self.mark_start, bg='grey80',
+            # font=stdfont).pack(side=LEFT)
 
-        infoframe = Frame(self)
         Label(infoframe, textvariable=self.cuename, 
             font=('Arial', 12), bg='lightBlue').grid(columnspan=4, sticky=NE+SW)
 
@@ -69,9 +78,10 @@ class Fader(Frame):
             font=stdfont).grid(row=1, column=1, columnspan=3, sticky=NE+SW)
 
         Label(infoframe, text="Target", font=stdfont,
-            bg='lightPink', wraplength=50).grid(row=2, sticky=NE+SW)
+            bg='lightPink').grid(row=2, sticky=NE+SW)
         Label(infoframe, textvariable=self.cuetarget, 
-            font=stdfont).grid(row=2, column=1, columnspan=3, sticky=NE+SW)
+            font=stdfont, wraplength=250).grid(row=2, column=1, columnspan=3, 
+                sticky=NE+SW)
 
         Label(infoframe, text="Status", font=stdfont,
             bg='lightPink').grid(row=3, sticky=NE+SW)
@@ -94,25 +104,30 @@ class Fader(Frame):
             font=stdfont)
         self.percentlabel.grid(row=5, column=1, columnspan=3, sticky=NE+SW)
 
-        s = Scale(infoframe, variable=self.cuepercent,
+        # s = Scale(infoframe, variable=self.cuepercent,
+        s = Scale(buttonframe, variable=self.cuepercent,
                         showvalue=0, length=220,
                         width=18, sliderlength=30,
                         to=100,res=.1,from_=0,bd=1, font=stdfont,
                         orient='horiz')
-        s.grid(row=6, columnspan=4, sticky='ew')
+        # s.grid(row=6, columnspan=4, sticky='ew')
+        nextbutton.pack(side=RIGHT)
+        s.pack(side=RIGHT, expand=1, fill=X)
 
         infoframe.pack(side=RIGHT, fill=BOTH, expand=1)
-        buttonframe.pack(side=BOTTOM)
+        buttonframe.pack(side=BOTTOM, expand=1, fill=X)
 
         self.listbox.listbox.select_set(0)
         self.update_selection()
+    def mark_start(self):
+        self.time_start = time()
+        startlevels = dict([(k, v.get()) for k, v in self.scalelevels.items()])
+        # print "going to mark with", startlevels
+        self.current.start(startlevels, self.time_start)
     def update_percent(self, *args):
         if self.cuestatus.get() != 'running':
             self.cuestatus.set("running")
-            self.time_start = time()
-            startlevels = dict([(k, v.get()) 
-                for k, v in self.scalelevels.items()])
-            self.current.start(startlevels, self.time_start)
+            self.mark_start()
 
         percent = self.cuepercent.get()
         self.percentlabel.config(text='%.1f%%' % percent)
@@ -121,19 +136,22 @@ class Fader(Frame):
         elapsed = percent * self.current.dur
         self.cuetimeelapse.set('%.1fs' % elapsed)
         self.cuetimeleft.set('%.1fs' % (self.current.dur - elapsed))
+
         newlevels = self.current.get_levels(self.time_start + elapsed)
+        # print "newlevels", newlevels
         for ch, lev in newlevels.items():
             try:
-                self.scalelevels[ch].set(lev / 100.0)
+                self.scalelevels[ch].set(lev)
             except KeyError:
                 pass
 
     def update_selection(self, *args):
-        selection = int(self.listbox.listbox.curselection()[0]) # blech
+        self.cuestatus.set('stopped')
+        selection = get_selection(self.listbox.listbox)
         self.current = self.cues[selection]
         self.cuename.set(self.current.name)
         self.cuelength.set(self.current.dur)
-        target = ', '.join(['%s -> %.1f' % (n, lev) 
+        target = ', '.join(['%s -> %.2f' % (n, lev) 
             for n, lev in self.current.get_end_levels().items()])
         self.cuetarget.set(target)
         self.cuetimeelapse.set('0s')
@@ -142,33 +160,34 @@ class Fader(Frame):
     def go(self):
         self.update_selection()
         self.cuestatus.set("running")
-        self.time_start = time()
-        startlevels = dict([(k, v.get()) for k, v in self.scalelevels.items()])
-        self.current.start(startlevels, self.time_start)
+        self.mark_start()
         self.running_loop()
     def stop(self):
         self.cuestatus.set('stopped')
     def prev(self):
-        self.cuestatus.set('stopped')
-        selection = int(self.listbox.listbox.curselection()[0]) # blech
+        self.stop()
+        selection = get_selection(self.listbox.listbox)
         if selection != 0:
             self.listbox.listbox.select_clear(selection)
             self.listbox.listbox.select_set(selection - 1)
             self.update_selection()
+            self.mark_start()
     def next(self):
-        self.cuestatus.set('stopped')
-        selection = int(self.listbox.listbox.curselection()[0]) # blech
+        self.stop()
+        selection = get_selection(self.listbox.listbox)
         if selection != self.listbox.listbox.size() - 1:
             self.listbox.listbox.select_clear(selection)
             self.listbox.listbox.select_set(selection + 1)
             self.update_selection()
+            self.mark_start()
     def running_loop(self):
         if self.cuestatus.get() == 'stopped':
             return
         curtime = time()
         elapsed = (curtime - self.time_start)
+
         if elapsed > self.current.dur:
-            self.cuestatus.set('finished')
+            self.cuestatus.set('stopped')
             self.cuepercent.set(100)
 
             # advance cues if okay
