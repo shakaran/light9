@@ -18,11 +18,21 @@ class LabelledScale(Tk.Frame):
         self.scale_value.pack(side='bottom')
         self.scale_var.trace('w', self.update_value_label)
         self.update_value_label()
+        self.disabled = (self.scale['state'] == 'disabled')
     def set_label(self, label):
         self.name['text'] = label
     def update_value_label(self, *args):
         val = self.scale_var.get() * 100
         self.scale_value['text'] = "%0.2f" % val
+    def disable(self):
+        if not self.disabled:
+            self.scale['state'] = 'disabled'
+            self.scale_var.set(0)
+            self.disabled = 1
+    def enable(self):
+        if self.disabled:
+            self.scale['state'] = 'normal'
+            self.disabled = 0
 
 class TimedGoButton(Tk.Frame):
     """Go button, fade time entry, and time fader"""
@@ -36,6 +46,7 @@ class TimedGoButton(Tk.Frame):
         self.timer_entry = Tk.Entry(self, textvariable=self.timer_var, width=5)
         self.timer_entry.pack(fill='y', side='left')
         self.timer_var.set("2")
+        self.disabled = (self.button['state'] == 'disabled')
     def start_fade(self, end_level=1):
         try:
             fade_time = float(self.timer_var.get())
@@ -61,6 +72,14 @@ class TimedGoButton(Tk.Frame):
                 self.after(10, self.do_fade)
         else:
             self.scale_to_fade.scale_var.set(self.end_level)
+    def disable(self):
+        if not self.disabled:
+            self.button['state'] = 'disabled'
+            self.disabled = 1
+    def enable(self):
+        if self.disabled:
+            self.button['state'] = 'normal'
+            self.disabled = 0
 
 class CueFader(Tk.Frame):
     def __init__(self, master, cuelist):
@@ -71,6 +90,7 @@ class CueFader(Tk.Frame):
 
         self.scales = {}
         self.shift_buttons = {}
+        self.go_buttons = {}
 
         topframe = Tk.Frame(self)
         self.current_cues = Tk.Label(topframe)
@@ -101,6 +121,7 @@ class CueFader(Tk.Frame):
 
             self.scales[name] = scale
             self.shift_buttons[name] = shift
+            self.go_buttons[name] = go
 
             scale.scale_var.trace('w', \
                 lambda x, y, z, name=name, scale=scale: self.xfade(name, scale))
@@ -113,10 +134,9 @@ class CueFader(Tk.Frame):
                 button.pack_forget()
 
     def shift(self, name):
-        for scale in self.scales.values():
-            scale.scale_var.set(0)
-            scale.scale.update()
         print "shift", name
+        for scale_name, scale in self.scales.items():
+            scale.scale_var.set(0)
         self.cuelist.shift((-1, 1)[name == 'Next'])
         self.update_cue_display()
     def update_cue_display(self):
@@ -124,28 +144,33 @@ class CueFader(Tk.Frame):
         self.current_cues['text'] = ', '.join(current_cues)
     def xfade(self, name, scale):
         scale_val = scale.scale_var.get() 
+        # print "xfade", name, scale_val
 
         if scale_val == 1:
             if self.auto_shift.get():
+                print "autoshifting", name
                 self.shift(name)
+                scale_val = scale.scale_var.get() # this needs to be refreshed
             else:
                 self.shift_buttons[name]['state'] = 'normal'
         else:
             # disable any dangerous shifting
             self.shift_buttons[name]['state'] = 'disabled'
 
+        d = self.opposite_direction(name)
         if scale_val != 0:
             # disable illegal three part crossfades
-            # TODO:
-            # if name == 'Next':
-            #   disable go_prev button and slider, lock slider at 0
-            pass
+            self.scales[d].disable()
+            self.go_buttons[d].disable()
         else:
-            # undo above changes
-
-            # Actually, TimedGoButton and LabelledScale can have enable/disable
-            # methods which will only do the Tk calls if necessary
-            pass
+            # undo above work
+            self.scales[d].enable()
+            self.go_buttons[d].enable()
+    def opposite_direction(self, d):
+        if d == 'Next':
+            return 'Prev'
+        else:
+            return 'Next'
 
 class Cue:
     """A Cue has a name, a time, and any number of other attributes."""
@@ -205,7 +230,7 @@ class CueList:
         if not self.cues:
             return None
         else:
-            return max(0, min(index, len(self.cues)))
+            return max(0, min(index, len(self.cues) - 1))
     def get_current_cue_indices(self):
         cur = self.current_cue_index
         return [self.bound_index(index) for index in
