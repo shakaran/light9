@@ -1,4 +1,5 @@
 """some of the panels"""
+from __future__ import nested_scopes
 
 from Tkinter import *
 from uihelpers import *
@@ -25,23 +26,49 @@ class Controlpanel(Frame):
                 fill='x')
 
 class Console:
-    def __init__(self):
+    def __init__(self,refresh,currentlevels,configfilename):
         print "Light 8: Everything's under control"
         t=toplevelat(267,717,w=599,h=19)
         self.frame = Frame(t)
         self.entry=Entry(self.frame)
         self.entry.pack(expand=1, fill='x')
-        self.entry.bind('<Return>', lambda evt: self.execute(evt, 
-            self.entry.get()))
+        self.entry.bind('<Return>',
+                        lambda evt: self.execute(evt, self.entry.get()))
         self.frame.pack(fill=BOTH, expand=1)
+        self.refreshcmd=refresh
+        self.currentlevels=currentlevels
+        self.configfilename=configfilename
     
-    def execute(evt, str):
+    def execute(self, evt, str):
         if str[0] == '*': # make a new sub
-            make_sub(str)
+            self.make_sub(str)
         else:
             print '>>>', str
             print eval(str)
         self.frame.focus()
+
+    def make_sub(self, name):
+        i = 1
+        if not name:
+            print "Enter sub name in console."
+            return
+
+        st = ''
+        linebuf = 'subs["%s"] = {' % name
+        for l in self.currentlevels:
+            if l:
+                if len(linebuf) > 60: 
+                    st += linebuf + '\n   '
+                    linebuf = ''
+
+                linebuf += ' "%s" : %d,' % (Patch.get_channel_name(i), l)
+            i += 1
+        st += linebuf + '}\n'
+        f = open(self.configfilename, 'a')
+        f.write(st)
+        f.close()
+        print 'Added sub:', st
+        self.refreshcmd()
 
 class Leveldisplay:
     def __init__(self, parent, channel_levels, num_channels=68):
@@ -87,6 +114,7 @@ class Subpanels:
             if sub.is_effect:
                 parent=effectsparent
                 side1='bottom'
+                side2='left'
                 orient1='vert'
                 end1=0
                 end2=1
@@ -94,6 +122,7 @@ class Subpanels:
             else:
                 parent=scenesparent
                 side1='right'
+                side2='top'
                 orient1='horiz'
                 end1=1
                 end2=0
@@ -101,7 +130,7 @@ class Subpanels:
 
             # make frame that surrounds the whole submaster
             f=Frame(parent, bd=1, relief='raised')
-            f.pack(fill='both',exp=1,side=('top','left')[sub.is_effect])
+            f.pack(fill='both',exp=1,side=side2)
 
             # make DoubleVar (there might be one left around from before a refresh)
             if name not in scalelevels:
@@ -122,7 +151,8 @@ class Subpanels:
                             **scaleopts)
 
             if not sub.is_effect:
-                eb = Button(f,text="E",font=stdfont,padx=0,pady=0,bd=1,command=lambda subediting=subediting,sub=sub: subediting.setsub(sub))
+                eb = Togglebutton(f,text="Edit",font=stdfont,padx=0,pady=0,bd=1,
+                                  command=lambda: subediting.setsub(sub))
                 eb.pack(side=side1,fill='both',padx=0,pady=0)
 
             for axis in ('y','x'):

@@ -46,7 +46,7 @@ class Lightboard:
         self.channel_levels = []
         self.scalelevels = {}
         self.xfader = Xfader(self.scalelevels) # doesn't draw any UI yet-- look for self.xfader.setupwidget()
-        self.oldlevels = [None] * 68
+        self.oldlevels = [None] * 68 # never replace this; just clear it
         self.subediting = Subediting(currentoutputlevels=self.oldlevels)
 
         self.buildinterface()
@@ -54,6 +54,7 @@ class Lightboard:
         self.backgroundloop()
         
     def buildinterface(self):
+        global DUMMY
         for w in self.master.winfo_children():
             w.destroy()
 
@@ -74,7 +75,11 @@ class Lightboard:
 
         self.leveldisplay = Leveldisplay(leveldisplay_tl, self.channel_levels)
 
-        Console()
+        if DUMMY:
+            filename = 'ConfigDummy.py'
+        else:
+            filename = 'Config.py'
+        Console(self.refresh,currentlevels=self.oldlevels,configfilename=filename)
 
         # root frame
         controlpanel = Controlpanel(root, self.xfader, self.refresh, self.quit)
@@ -149,32 +154,7 @@ class Lightboard:
             print "EOFrror: Couldn't load prefs (%s)" % filename
         except:
             print "BigTrouble: Couldn't load prefs (%s)" % filename
-    def make_sub(self, name):
-        i = 1
-        if not name:
-            print "Enter sub name in console."
-            return
 
-        st = ''
-        linebuf = 'subs["%s"] = {' % name
-        for l in self.oldlevels:
-            if l:
-                if len(linebuf) > 60: 
-                    st += linebuf + '\n   '
-                    linebuf = ''
-
-                linebuf += ' "%s" : %d,' % (Patch.get_channel_name(i), l)
-            i += 1
-        st += linebuf + '}\n'
-        if DUMMY:
-            filename = 'ConfigDummy.py'
-        else:
-            filename = 'Config.py'
-        f = open(filename, 'a')
-        f.write(st)
-        f.close()
-        print 'Added sub:', st
-        self.refresh()
     def backgroundloop(self, *args):
         self.master.after(50, self.backgroundloop, ())
         self.changelevel()
