@@ -1,5 +1,18 @@
 from types import TupleType
 
+
+def resolve_name(channelname):
+    "Ensure that we're talking about the primary name of the light."
+    return get_channel_name(get_dmx_channel(channelname))
+
+
+def get_all_channels():
+    """returns primary names for all channels (sorted)"""
+    prinames = reverse_patch.values()[:]
+    prinames.sort()
+    return prinames
+        
+
 def get_dmx_channel(name):
     if name in patch:
         return patch[name]

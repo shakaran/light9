@@ -36,7 +36,7 @@ def read_tsv(filename,outname):
         print >>out,"}\n"
         
 
-#print_tsv(filename="sublevs.txt",allchans=Patch.get_all_channels(),subs=subs)
-read_tsv(filename="sublevs-fixed",outname="Configsubs-fixed.py")
+print_tsv(filename="sublevs.txt",allchans=Patch.get_all_channels(),subs=subs)
+read_tsv(filename="sublevs.txt",outname="Configsubs2.py")
 
                     
