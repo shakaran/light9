@@ -4,21 +4,11 @@ from __future__ import generators,division
 from Subs import *
 from Cue import *
 
-f1 = Fade('col blue', 0, 2, 100)
-f2 = Fade('god', 1, 3, 50)
-f3 = Fade('house', 0, 4, 0)
-f4 = Fade('col gree', 0, 8, 75) 
+f1 = Fade('bogus sub, i hope', 0, 2, 0.1)
 
-g1 = Fade('edges', 1, 2, 20)
-g2 = Fade('sidepost', 0, 4, 50)
-g3 = Fade('cyc', 1, 5, 20)
-g4 = Fade('*curtain', 0, 8, 15) 
-
-c1 = Cue("This", 0, 10, f1, f2, f3, f4)
-c2 = Cue("That", 0, 5, g1, g2, g3, g4)
-c3 = Cue("The other", 1, 7, f1, g2, g3, f4)
-
-cues = [c1, c2, c3]
+cues = [
+    Cue("Seat filler", 0, 10, f1),
+]
 
 patch = {
     
