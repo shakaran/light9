@@ -35,7 +35,8 @@ class Subcomposer(tk.Frame):
             self.set_levels([0] * self.numchannels)
             dispatcher.send("levelchanged")
 
-        tk.Button(self, text="all to zero", command=alltozero).pack(side='top')
+        tk.Button(self, text="all to zero", command=alltozero,
+                  fg='white').pack(side='top')
 
         dispatcher.connect(self.levelchanged,"levelchanged")
         dispatcher.connect(self.sendupdate,"levelchanged")
@@ -98,15 +99,15 @@ class Subcomposer(tk.Frame):
 
 def Savebox(master, levels, verb="Save", cmd=None):
     f=tk.Frame(master,bd=2,relief='raised')
-    tk.Label(f,text="Sub name:").pack(side='left')
-    e=tk.Entry(f)
+    tk.Label(f,text="Sub name:",fg='white').pack(side='left')
+    e=tk.Entry(f,fg='white')
     e.pack(side='left',exp=1,fill='x')
     def cb(*args):
         subname=e.get()
         cmd(levels,subname)
         print "sub",verb,subname
     e.bind("<Return>",cb)
-    tk.Button(f,text=verb,command=cb).pack(side='left')
+    tk.Button(f,text=verb,command=cb,fg='white').pack(side='left')
     return f
     
 #############################
@@ -114,6 +115,7 @@ def Savebox(master, levels, verb="Save", cmd=None):
 if __name__ == "__main__":
     root=tk.Tk()
     root.config(bg='black')
+    root.tk_setPalette("#004633")
 
     sc = Subcomposer(root, dmxdummy=1)
     sc.pack()
