@@ -19,7 +19,7 @@ import Tkinter as tk
 defaultfont="arial 8"
 
 def pairdist(pair1,pair2):
-    return sqrt((pair1[0]-pair2[0])**2+(pair1[1]-pair2[1])**2)
+    return pair1.dist(pair2)
 
 def canvashighlighter(canvas,obj,attribute,normalval,highlightval):
     """creates bindings on a canvas obj that make attribute go
