@@ -1,21 +1,16 @@
-"""And that's my cue to exit(0)..."""
+'''And that's my cue to exit(0)...'''
 from time import time
-from util import subsetdict, scaledict
+from util import subsetdict
 
 class Cue:
-    """Cues are groups of fades.  They can tell you the current levels at a 
+    '''Cues are groups of fades.  They can tell you the current levels at a 
     given time.  They contain Fades, which are actually children of Cue,
     meaning that Cues can contain Cues.  This is similar to the Light9 concept
-    of Cues and Fades, but without all the Nodes."""
-    def __init__(self, name, starttime, dur, *fades):
+    of Cues and Fades, but without all the Nodes.'''
+    def __init__(self, name, starttime, endtime, *fades):
         'Create a cue'
-
-        endtime = starttime + dur
-        dur = endtime - starttime
-
         self.name = name
         self.starttime = starttime
-        self.dur = dur
         self.endtime = endtime
         self.fades = fades
         self.cuestart = None
@@ -29,7 +24,6 @@ class Cue:
         return c.keys()
     def start(self, levels, time):
         'Mark the beginning of a cue'
-        # print "cue marked with", levels
         self.init_levels = levels
         self.init_time = time
 
@@ -44,27 +38,23 @@ class Cue:
             for ch, lev in fade_d.items():
                 d[ch] = max(lev, d.get(ch, 0))
         return d
-    def get_end_levels(self):
-        'Returns the final levels'
-        d = {}
-        for fade in self.fades:
-            fade_d = fade.get_end_levels()
-            for ch, lev in fade_d.items():
-                d[ch] = max(lev, d.get(ch, 0))
-        return d
 
 class Fade(Cue):
     'See Cue.__doc__'
-    def __init__(self, channel, starttime, dur=None, endlevel=0, param=None):
-        'Fades are simple Cues'
-        Cue.__init__(self, "%s -> %.1f" % (channel, endlevel), starttime, dur)
+    def __init__(self, channel, starttime, endtime=None, endlevel=0, dur=None,
+                 param=None):
+        'Only specify an end time or a duration'
+        if not endtime:
+            endtime = starttime + dur
+        else:
+            dur = endtime - starttime
+        Cue.__init__(self, "%s -> %f" % (channel, endlevel), starttime, endtime)
         self.channel = channel
         self.endlevel = endlevel
         self.dur = dur
         self.param = param
     def start(self, levels, time):
         'Mark the beginning of the fade'
-        # print "fade", self.name, "marked with", levels
         self.init_levels = levels
         self.init_level = levels[self.channel]
         self.init_time = time
@@ -78,41 +68,9 @@ class Fade(Cue):
         elif elapsed >= self.endtime:
             return {self.channel : self.endlevel}
         else:
-            percent = float((curtime - self.init_time) - self.starttime) / \
-                        self.dur
+            percent = float(elapsed) / self.dur
             return {self.channel : self.init_level + 
                 percent * (self.endlevel - self.init_level)}
-    def get_end_levels(self):
-        return {self.channel : self.endlevel}
-
-class SimpleCue(Cue):
-    'See Cue.__doc__'
-    def __init__(self, name, target, dur, **info):
-        Cue.__init__(self, name, 0, dur)
-        self.target = target
-        self.dur = dur
-        self.info = info
-    def start(self, levels, time):
-        'Mark the beginning of the fade'
-        self.init_levels = levels
-        self.init_time = time
-    def channels_involved(self):
-        'Speaks for itself, I hope'
-        return self.target.keys()
-    def get_levels(self, curtime):
-        elapsed = curtime - self.init_time
-        if elapsed >= self.endtime:
-            return self.target
-        else:
-            percent = float((curtime - self.init_time) - self.starttime) / \
-                        self.dur
-            return dict([(n, self.init_levels[n] + 
-                percent * (lev - self.init_levels[n]))
-                    for n, lev in self.target])
-            # return {self.channel : self.init_level + 
-                # percent * (self.endlevel - self.init_level)}
-    def get_end_levels(self):
-        return self.target
 
 if __name__ == '__main__':
     f1 = Fade('red', 0, 2, 100)
