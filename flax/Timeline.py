@@ -289,29 +289,39 @@ class Timeline:
         return dict_max(*levels)
 
 if __name__ == '__main__':
-    T = TimedEvent
+    def T(*args, **kw):
+        """This used to be a synonym for TimedEvent:
 
-    linear = LinearBlender()
+        T = TimedEvent
+
+        It now acts the same way, except that it will fill in a default 
+        blender if you don't.  The default blender is a LinearBlender."""
+        linear = LinearBlender()
+        if 'blender' not in kw:
+            kw['blender'] = linear
+
+        return TimedEvent(*args, **kw)
+
     quad = ExponentialBlender(2)
     invquad = ExponentialBlender(0.5)
     smoove = SmoothBlender()
 
     track1 = TimelineTrack('red track',
-        T(0, 'red', blender=linear, level=0),
+        T(0, 'red', level=0),
         T(4, 'red', blender=quad, level=0.5),
         T(12, 'red', blender=smoove, level=0.7),
         T(15, 'red', level=0.0)) # last TimedEvent doesn't need a blender
     track2 = TimelineTrack('green track',
         T(0, 'green', blender=invquad, level=0.2),
         T(5, 'green', blender=smoove, level=1),
-        T(10, 'green', blender=linear, level=0.8),
-        T(15, 'green', blender=linear, level=0.6),
+        T(10, 'green', level=0.8),
+        T(15, 'green', level=0.6),
         T(20, 'green', level=0.0)) # last TimedEvent doesn't need a blender
     track3 = TimelineTrack('tableau demo',
-        T(0, 'blue', level=0.0, blender=linear),
+        T(0, 'blue', level=0.0),
         T(2, 'blue', level=1.0, blender=InstantEnd()),
-        T(18, 'blue', level=1.0, blender=linear),
-        T(20, 'blue', level=0.0, blender=linear))
+        T(18, 'blue', level=1.0),
+        T(20, 'blue', level=0.0))
 
     tl = Timeline([track1, track2, track3])
 
@@ -343,7 +353,7 @@ if __name__ == '__main__':
             scalevars[color].set(levels.get(color, 0))
     
     colorscalesframe.pack()
-    time_scale = Tix.Scale(root, from_=0, to_=track1.length(), 
+    time_scale = Tix.Scale(root, from_=0, to_=tl.length(), 
         orient=Tix.HORIZONTAL, res=0.01, command=set_timeline_time)
     time_scale.pack(side=Tix.BOTTOM, fill=Tix.X, expand=1)
 
