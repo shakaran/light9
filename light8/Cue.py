@@ -1,6 +1,6 @@
 """And that's my cue to exit(0)..."""
 from time import time
-from util import subsetdict
+from util import subsetdict, scaledict
 
 class Cue:
     """Cues are groups of fades.  They can tell you the current levels at a 
@@ -84,6 +84,35 @@ class Fade(Cue):
                 percent * (self.endlevel - self.init_level)}
     def get_end_levels(self):
         return {self.channel : self.endlevel}
+
+class SimpleCue(Cue):
+    'See Cue.__doc__'
+    def __init__(self, name, target, dur, **info):
+        Cue.__init__(self, name, 0, dur)
+        self.target = target
+        self.dur = dur
+        self.info = info
+    def start(self, levels, time):
+        'Mark the beginning of the fade'
+        self.init_levels = levels
+        self.init_time = time
+    def channels_involved(self):
+        'Speaks for itself, I hope'
+        return self.target.keys()
+    def get_levels(self, curtime):
+        elapsed = curtime - self.init_time
+        if elapsed >= self.endtime:
+            return self.target
+        else:
+            percent = float((curtime - self.init_time) - self.starttime) / \
+                        self.dur
+            return dict([(n, self.init_levels[n] + 
+                percent * (lev - self.init_levels[n]))
+                    for n, lev in self.target])
+            # return {self.channel : self.init_level + 
+                # percent * (self.endlevel - self.init_level)}
+    def get_end_levels(self):
+        return self.target
 
 if __name__ == '__main__':
     f1 = Fade('red', 0, 2, 100)
