@@ -60,12 +60,13 @@ class Togglebutton(Button):
     label's on the button face, not to the side. the optional command
     callback is called on button set, not on unset. takes a variable
     just like a checkbutton"""
-    def __init__(self,parent,variable=None,command=None,**kw):
+    def __init__(self,parent,variable=None,command=None,downcolor='red',**kw):
 
         self.oldcommand = command
         Button.__init__(self,parent,command=self.invoke,**kw)
 
         self._origbkg = self.cget('bg')
+        self.downcolor = downcolor
 
         self._variable = variable
         if self._variable:
@@ -94,7 +95,7 @@ class Togglebutton(Button):
     def _setstate(self,newstate):
         self.state = newstate
         if newstate: # set
-            self.config(bg='red',relief='sunken')
+            self.config(bg=self.downcolor,relief='sunken')
         else: # unset
             self.config(bg=self._origbkg,relief='raised')
         return "break"

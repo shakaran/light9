@@ -157,8 +157,9 @@ class Subpanels:
 
             for axis in ('y','x'):
                 cvar=IntVar()
-                cb=Togglebutton(f,text=axis.upper(),variable=cvar,font=stdfont, padx=0, 
-                               pady=0, bd=1)
+                eb_color = ('red', 'green')[axis == 'y']
+                cb=Togglebutton(f,text=axis.upper(),variable=cvar,font=stdfont, 
+                                padx=0, pady=0, bd=1, downcolor=eb_color)
                 cb.pack(side=side1,fill='both', padx=0, pady=0)
                 s.bind('<Key-%s>'%axis, lambda ev,cb=cb: cb.invoke)
                 xfader.registerbutton(name,axis,cvar)

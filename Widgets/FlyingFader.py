@@ -1,4 +1,4 @@
-from Tkinter import *
+from Tix import *
 from time import time,sleep
 from __future__ import division
 
@@ -152,7 +152,8 @@ class FlyingFader(Frame):
         self.after(30, self.gofade)
 
     def updatelabel(self, *args):
-        self.vlabel['text'] = "%.3f" % self.variable.get()
+        if self.variable:
+            self.vlabel['text'] = "%.3f" % self.variable.get()
 #        if self.fadetimes[1] == 0: # no fade
 #            self.vlabel['fg'] = 'black'
 #        elif self.curfade[1] > self.curfade[0]:
@@ -165,7 +166,6 @@ class FlyingFader(Frame):
 
     def set(self, val):
         self.scale.set(val)
-
 
 def colorfade(scale, lev):
     low = (255, 255, 255)

@@ -8,7 +8,7 @@ f1 = Fade('red', 0, 2, 100)
 f2 = Fade('green', 1, 3, 50)
 f3 = Fade('blue', 0, 4, 0)
 f4 = Fade('clear', 0, 8, 75) 
-c1 = Cue("Color shift", 0, 10, f1, f2, f3, f4)
+c1 = Cue("Color shift", 0, 10, None, f1, f2, f3, f4)
 
 cues = [c1]
 
