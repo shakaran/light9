@@ -99,7 +99,11 @@ class FlyingFader(Frame):
         self.scale.bind("<2>", self.cancelfade)
         self.scale.bind("<3>", self.mousefade)
 
-        self.variable.trace('w', self.updatelabel)
+        self.trace_ret = self.variable.trace('w', self.updatelabel)
+        self.bind("<Destroy>",self.ondestroy)
+
+    def ondestroy(self,*ev):
+        self.variable.trace_vdelete('w',self.trace_ret)
 
     def cancelfade(self, evt):
         self.fadegoal = self.variable.get()
