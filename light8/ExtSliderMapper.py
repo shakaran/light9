@@ -13,35 +13,18 @@ class SliderMapping:
         self.extlevel = DoubleVar() # external slider's input
         self.extlevel.set(extinputlevel)
         self.widgets = [] # list of widgets drawn
-        self.sublabel = None # the label which represents a sub level.  we hold on to
-                             # it so we can change its textvariable
-        self.lastbgcolor = None # last background color drawn to avoid unnecessary
-                                # updates
-        self.ignoreunsync = 0   # whether to ignore the next request to unsync
-                                # this is because we trace the slider variable, but
-                                # we are also semi-responsible for setting it in
-                                # Lightboard.changelevels.
-    def ignorenextunync(self):
-        print "skipping next unsync"
-        self.ignoreunsync += 1
-        self.sync()
-        # self.color_bg()
+        self.sublabel = None # the label which represents a sub level.  
+                             # we hold on to it so we can change its 
+                             # textvariable
+        self.statuslabel = None # tells us sync status
+        self.lastbgcolor = None # last background color drawn to avoid 
+                                # unnecessary redraws
     def sync(self, *args):
-        # print "syncing"
         self.synced.set(1)
-        # self.color_bg()
+        self.color_bg()
     def unsync(self, *args):
-        if self.ignoreunsync > 0:
-            print "skipped unsync", self.ignoreunsync
-            self.synced.set(1)
-            self.color_bg()
-            self.ignoreunsync -= 1
-            return 
-        '''
-        print "unsyncing"
-        '''
         self.synced.set(0)
-        # self.color_bg()
+        self.color_bg()
     def issynced(self):
         return self.synced.get()
     def disconnect(self, *args):
@@ -49,7 +32,7 @@ class SliderMapping:
         self.sublabel.configure(text="N/A")
         self.color_bg()
     def isdisconnected(self):
-        return self.subname.get() == 'disconnected'
+        return self.subname.get() == 'disconnected' # a bit more hack-like
     def check_synced(self, *args):
         'If external level is near than the sublevel, it synces'
         if self.isdisconnected(): 
@@ -69,7 +52,6 @@ class SliderMapping:
         self.color_bg()
     def color_bg(self):
         if self.widgets:
-            self.check_synced()
             if self.isdisconnected():
                 color = 'honeyDew4'
             elif self.issynced():
@@ -77,6 +59,12 @@ class SliderMapping:
                 color = 'honeyDew2'
             else: # unsynced
                 color = 'red'
+
+            if self.statuslabel:
+                if color == 'honeyDew2': # connected
+                    self.statuslabel['text'] = 'Sync'
+                else:
+                    self.statuslabel['text'] = 'No sync'
 
             # print "color", color, "lastbgcolor", self.lastbgcolor
             if self.lastbgcolor == color: return
@@ -105,9 +93,14 @@ class SliderMapping:
             c.slistbox.listbox.insert(END, s)
         c.entry.configure(width=12)
         statframe = Frame(frame)
+
+        '''
         cb = Checkbutton(statframe, variable=self.synced, 
             text="Synced")
         cb.grid(columnspan=2, sticky=W)
+        '''
+        self.statuslabel = Label(statframe, text="No sync")
+        self.statuslabel.grid(columnspan=2, sticky=W)
         ilabel = Label(statframe, text="Input", fg='blue')
         ilabel.grid(row=1, sticky=W)
         extlabel = Label(statframe, textvariable=self.extlevel, width=5)
@@ -120,8 +113,8 @@ class SliderMapping:
         c.pack()
         frame.pack(side=LEFT, expand=1, fill=BOTH)
 
-        self.widgets = [frame, c, statframe, cb, ilabel, extlabel, rlabel, 
-                        self.sublabel]
+        self.widgets = [frame, c, statframe, self.statuslabel, ilabel, extlabel,
+                        rlabel, self.sublabel]
 
 class ExtSliderMapper(Frame):
     def __init__(self, parent, sliderlevels, sliderinput, filename='slidermapping',
@@ -183,6 +176,7 @@ class ExtSliderMapper(Frame):
         for rawlev, slidermap in zip(rawlevels, self.current_mappings):
             slidermap.changed_extinput(rawlev)
 
+        '''
         outputlevels = {}
         for m in self.current_mappings:
             if m.issynced():
@@ -194,7 +188,6 @@ class ExtSliderMapper(Frame):
         return dict([m.get_level_pair()
             for m in self.current_mappings
             if m.issynced()])
-        '''
     def draw_interface(self):
         self.reallevellabels = []
         subchoiceframe = Frame(self)
