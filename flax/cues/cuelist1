@@ -1,167 +1,109 @@
 <?xml version="1.0"?>
 <!DOCTYPE PyObject SYSTEM "PyObjects.dtd">
 <PyObject family="obj" type="builtin_wrapper"  class="_EmptyClass">
-<attr name="__toplevel__" family="map" type="__compound__" extra="None TreeDict" id="138506468" >
+<attr name="__toplevel__" family="map" type="__compound__" extra="None TreeDict" id="136600876" >
   <entry>
     <key type="string" value="cues" />
-    <val type="list" id="139971548" >
-      <item type="PyObject" id="140423764" class="Cue">
-        <attr name="name" type="string" value="tevya special" />
-        <attr name="desc" type="string" value="whoa - this works" />
-        <attr name="page" type="string" value="3.2" />
-        <attr name="sub_levels" type="string" value="green : 1.0" />
-        <attr name="time" type="string" value="2" />
+    <val type="list" id="138285116" >
+      <item type="PyObject" id="138619532" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
+        <attr name="name" type="string" value="cue 0" />
+        <attr name="time" type="numeric" value="0" />
       </item>
-      <item type="PyObject" id="139862804" class="Cue">
-        <attr name="subdict" type="dict" id="139863044" >
-        </attr>
-        <attr name="name" type="string" value="lady luck" />
-        <attr name="time" type="string" value="1" />
-        <attr name="page" type="string" value="1.1.5" />
-        <attr name="sub_levels" type="string" value="blue : 1.0, green : 0.5" />
-        <attr name="desc" type="string" value="music flourish" />
+      <item type="PyObject" id="138231364" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
+        <attr name="name" type="string" value="cue 1" />
+        <attr name="time" type="numeric" value="1" />
       </item>
-      <item type="PyObject" id="139862732" class="Cue">
-        <attr name="subdict" type="dict" id="139852060" >
-        </attr>
-        <attr name="name" type="string" value="dolly solo" />
-        <attr name="time" type="string" value="2" />
-        <attr name="page" type="string" value="1.2.10" />
-        <attr name="sub_levels" type="string" value="blue : 0.1, green : 0.1" />
-        <attr name="desc" type="string" value="tevya: &quot;what&apos;s happening to the tradition?&quot;" />
+      <item type="PyObject" id="138597492" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
+        <attr name="name" type="string" value="cue 2" />
+        <attr name="time" type="numeric" value="2" />
       </item>
-      <item type="PyObject" id="139915236" class="Cue">
-        <attr name="subdict" type="dict" id="139852964" >
-        </attr>
+      <item type="PyObject" id="138228508" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 3" />
-        <attr name="time" type="string" value="4" />
-        <attr name="page" type="string" value="1.2.14" />
-        <attr name="sub_levels" type="string" value="red : 1" />
-        <attr name="desc" type="string" value="the third cue" />
+        <attr name="time" type="numeric" value="3" />
       </item>
-      <item type="PyObject" id="139851228" class="Cue">
-        <attr name="subdict" type="dict" id="139863188" >
-        </attr>
-        <attr name="name" type="string" value="heart" />
-        <attr name="time" type="string" value="10" />
-        <attr name="page" type="string" value="1.3.13" />
-        <attr name="sub_levels" type="string" value="frontwhite : 0.2, red : 0.7" />
-        <attr name="desc" type="string" value="&quot;you&apos;ve gotta have heart&quot;" />
+      <item type="PyObject" id="138308908" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
+        <attr name="name" type="string" value="cue 4" />
+        <attr name="time" type="numeric" value="4" />
       </item>
-      <item type="PyObject" id="139863332" class="Cue">
-        <attr name="subdict" type="dict" id="139841476" >
-        </attr>
-        <attr name="name" type="string" value="more musical refs" />
-        <attr name="time" type="string" value="5" />
-        <attr name="page" type="string" value="1.3.17" />
-        <attr name="sub_levels" type="string" value="blue : 1.0" />
-        <attr name="desc" type="string" value="etc." />
+      <item type="PyObject" id="138228692" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
+        <attr name="name" type="string" value="cue 5" />
+        <attr name="time" type="numeric" value="5" />
       </item>
-      <item type="PyObject" id="139855188" class="Cue">
-        <attr name="subdict" type="dict" id="139855428" >
-        </attr>
-        <attr name="name" type="string" value="rainbow shimmer" />
-        <attr name="time" type="string" value="6" />
-        <attr name="page" type="string" value="1.4.2" />
-        <attr name="sub_levels" type="string" value="" />
-        <attr name="desc" type="string" value="curtain close" />
+      <item type="PyObject" id="138295972" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
+        <attr name="name" type="string" value="cue 6" />
+        <attr name="time" type="numeric" value="6" />
       </item>
-      <item type="PyObject" id="139873788" class="Cue">
-        <attr name="subdict" type="dict" id="139855956" >
-        </attr>
-        <attr name="name" type="string" value="fade up" />
-        <attr name="time" type="string" value="7" />
-        <attr name="page" type="string" value="2.1.1" />
-        <attr name="sub_levels" type="string" value="" />
-        <attr name="desc" type="string" value="stage manager: &quot;worklights, please&quot;" />
+      <item type="PyObject" id="138255924" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
+        <attr name="name" type="string" value="cue 7" />
+        <attr name="time" type="numeric" value="7" />
       </item>
-      <item type="PyObject" id="139927324" class="Cue">
-        <attr name="subdict" type="dict" id="139854356" >
-        </attr>
-        <attr name="name" type="string" value="blackout" />
-        <attr name="time" type="string" value="8" />
-        <attr name="page" type="string" value="2.1.2" />
-        <attr name="sub_levels" type="string" value="" />
-        <attr name="desc" type="string" value="&quot;lights out!&quot;" />
+      <item type="PyObject" id="136392732" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
+        <attr name="name" type="string" value="cue 8" />
+        <attr name="time" type="numeric" value="8" />
       </item>
-      <item type="PyObject" id="139864660" class="Cue">
-        <attr name="subdict" type="dict" id="139857340" >
-        </attr>
-        <attr name="name" type="string" value="sill" />
-        <attr name="time" type="string" value="4.2" />
-        <attr name="page" type="string" value="2.2.4" />
-        <attr name="sub_levels" type="string" value="" />
-        <attr name="desc" type="string" value="another description" />
+      <item type="PyObject" id="136982068" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
+        <attr name="name" type="string" value="cue 9" />
+        <attr name="time" type="numeric" value="9" />
       </item>
-      <item type="PyObject" id="139855916" class="Cue">
-        <attr name="name" type="string" value="front only" />
-        <attr name="desc" type="string" value="mr. cue 10" />
-        <attr name="page" type="string" value="2.7.3" />
-        <attr name="sub_levels" type="string" value="" />
-        <attr name="time" type="string" value="10" />
+      <item type="PyObject" id="138256044" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
+        <attr name="name" type="string" value="cue 10" />
+        <attr name="time" type="numeric" value="10" />
       </item>
-      <item type="PyObject" id="139163156" class="Cue">
+      <item type="PyObject" id="138232364" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 11" />
-        <attr name="desc" type="string" value="" />
-        <attr name="page" type="string" value="" />
-        <attr name="sub_levels" type="string" value="" />
-        <attr name="time" type="string" value="11" />
+        <attr name="time" type="numeric" value="11" />
       </item>
-      <item type="PyObject" id="139854140" class="Cue">
-        <attr name="desc" type="string" value="" />
-        <attr name="page" type="string" value="" />
+      <item type="PyObject" id="138232548" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 12" />
-        <attr name="sub_levels" type="string" value="" />
-        <attr name="time" type="string" value="2.1" />
+        <attr name="time" type="numeric" value="12" />
       </item>
-      <item type="PyObject" id="139841764" class="Cue">
-        <attr name="desc" type="string" value="" />
-        <attr name="page" type="string" value="" />
+      <item type="PyObject" id="138232788" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 13" />
-        <attr name="sub_levels" type="string" value="" />
-        <attr name="time" type="string" value="13" />
+        <attr name="time" type="numeric" value="13" />
       </item>
-      <item type="PyObject" id="139854308" class="Cue">
+      <item type="PyObject" id="138296188" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 14" />
-        <attr name="desc" type="string" value="" />
-        <attr name="page" type="string" value="" />
-        <attr name="sub_levels" type="string" value="red : 1" />
-        <attr name="time" type="string" value="14" />
+        <attr name="time" type="numeric" value="14" />
       </item>
-      <item type="PyObject" id="139858580" class="Cue">
+      <item type="PyObject" id="136857940" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 15" />
-        <attr name="desc" type="string" value="" />
-        <attr name="page" type="string" value="" />
-        <attr name="sub_levels" type="string" value="red : 1" />
-        <attr name="time" type="string" value="15" />
+        <attr name="time" type="numeric" value="15" />
       </item>
-      <item type="PyObject" id="139856100" class="Cue">
+      <item type="PyObject" id="138232828" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 16" />
-        <attr name="desc" type="string" value="" />
-        <attr name="page" type="string" value="" />
-        <attr name="sub_levels" type="string" value="red : 1" />
-        <attr name="time" type="string" value="16" />
+        <attr name="time" type="numeric" value="16" />
       </item>
-      <item type="PyObject" id="139856180" class="Cue">
+      <item type="PyObject" id="138232868" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 17" />
-        <attr name="desc" type="string" value="" />
-        <attr name="page" type="string" value="" />
-        <attr name="sub_levels" type="string" value="red : 1" />
-        <attr name="time" type="string" value="17" />
+        <attr name="time" type="numeric" value="17" />
       </item>
-      <item type="PyObject" id="139846156" class="Cue">
-        <attr name="name" type="string" value="some name" />
-        <attr name="desc" type="string" value="" />
-        <attr name="page" type="string" value="" />
-        <attr name="sub_levels" type="string" value="red : 1" />
-        <attr name="time" type="string" value="18" />
+      <item type="PyObject" id="138608260" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
+        <attr name="name" type="string" value="cue 18" />
+        <attr name="time" type="numeric" value="18" />
       </item>
-      <item type="PyObject" id="139841948" class="Cue">
+      <item type="PyObject" id="138229964" class="Cue">
+        <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 19" />
-        <attr name="desc" type="string" value="" />
-        <attr name="page" type="string" value="" />
-        <attr name="sub_levels" type="string" value="red : 1" />
-        <attr name="time" type="string" value="19" />
+        <attr name="time" type="numeric" value="19" />
       </item>
     </val>
   </entry>
