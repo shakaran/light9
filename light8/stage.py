@@ -94,6 +94,7 @@ class Stage(Canvas):
         
         self.lmbstate='pressed'
         self.lmbstart=(ev.x,ev.y)
+        print "click at",self.lmbstart
 
         shifted=ev.state & 1
         control=ev.state & 4
@@ -240,8 +241,25 @@ root.wm_geometry("+376+330")
 s=Stage(root)
 s.setimage('guysanddolls.gif')
 s.pack()
-s.addlight('drew',(330,640),(90,20))
-s.addlight('house',(360,640))
-s.addlight('barn',(390,640))
+
+s.addlight('desk1',(46, 659),    aim=(210, 381))
+s.addlight('marry1',(78, 661),   aim=(398, 428))
+s.addlight('b13',(110, 661))   
+s.addlight('hotbox1',(147, 657), aim=(402, 327))
+s.addlight('edge',(179, 651),    aim=(116, 441))
+s.addlight('phone',(214, 652),   aim=(651, 417))
+s.addlight('cuba1',(315, 656),   aim=(559, 407))
+s.addlight('b22',(347, 661),     aim=(247, 458))
+s.addlight('b23',(379, 661))  
+s.addlight('b24',(417, 661))  
+s.addlight('b25',(455, 658),     aim=(520, 466))
+s.addlight('desk2',(490, 655),   aim=(237, 375))
+s.addlight('rock',(571, 655),    aim=(286, 304))
+s.addlight('b32',(606, 650))  
+s.addlight('hotbox2',(637, 650), aim=(433, 337))
+s.addlight('b34',(671, 651))   
+s.addlight('marry2',(703, 651),  aim=(429, 426))
+s.addlight('cuba2',(733, 652),   aim=(602, 408))
+
 
 root.mainloop()
