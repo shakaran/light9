@@ -160,12 +160,12 @@ class Subpanels:
         subediting.setsub(sub)
         
     def subediting_save(self,name,sub,lightboard):
-        lightboard.save_sub(name,sub.getlevels())
+        lightboard.save_sub(name,sub.getlevels(),refresh=0)
         
     def subeditingbuttons(self,f,side1,sub,name,lightboard,subediting):
         for txt,cmd in (("Edit",lambda subediting=subediting,sub=sub: self.subediting_edit(subediting,sub)),
                         ("Save",lambda sub=sub,name=name,lightboard=lightboard: self.subediting_save(name,sub,lightboard)),
-                        ("SaveStg",lambda l=lightboard,name=name: l.save_sub(name,l.stageassub())),
+                        ("SaveStg",lambda l=lightboard,name=name: l.save_sub(name,l.stageassub(),refresh=1)),
                         ):
             eb = Button(f,text=txt,font=stdfont,padx=0,pady=0,
                         bd=1,command=cmd)

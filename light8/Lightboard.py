@@ -4,7 +4,7 @@ from Tix import *
 from time import sleep
 from signal import signal, SIGINT
 import sys, cPickle
-import shelve
+# import shelve
 
 import io
 from uihelpers import *
@@ -35,8 +35,9 @@ class Lightboard:
         self.oldlevels = [None] * 68 # never replace this; just clear it
         self.subediting = Subediting(currentoutputlevels=self.oldlevels)
 
-        self.shelf = shelve.open('/tmp/light9.newprefs')
-        self.windowpos = self.shelf.get('window', {})
+        # self.shelf = shelve.open('/tmp/light9.newprefs')
+        # self.windowpos = self.shelf.get('window', {})
+        self.windowpos = 0
         self.get_data()
         self.buildinterface()
         self.load()
@@ -111,7 +112,7 @@ class Lightboard:
         return dict([(Patch.get_channel_name(i),l) for i,l
                      in zip(range(1,len(levs)+1),levs)
                      if l>0])
-    def save_sub(self, name, levels):
+    def save_sub(self, name, levels, refresh=1):
         if not name:
             print "Enter sub name in console."
             return
@@ -133,7 +134,8 @@ class Lightboard:
         f.write(st)
         f.close()
         print 'Added sub:', st
-        self.refresh()
+        if refresh:
+            self.refresh()
 
     # this is called on a loop, and ALSO by the Scales
     def changelevel(self, *args):
@@ -210,6 +212,7 @@ class Lightboard:
         print "Saving to", filename
         file = open(filename, 'w')
 
+        '''
         # {name : (tkname, geom)}
         windowitems = self.windowpos.items()
         windowmapping = dict([(pair[0], name) for name, pair in windowitems])
@@ -225,8 +228,9 @@ class Lightboard:
             except:
                 # print "failed to save windowpos"
                 pass
-        self.shelf['window'] = self.windowpos
-        self.shelf.close()
+        # self.shelf['window'] = self.windowpos
+        # self.shelf.close()
+        '''
 
         try:
             cPickle.dump(Pickles(self.scalelevels, Subs.subs.items()), file)

@@ -5,6 +5,15 @@ from Tkinter import *
 from Tix import *
 from types import StringType
 
+windowlocations = {
+    'sub' : '425x738+00+00',
+    'console' : '168x24+848+000',
+    'leveldisplay' : '144x340+870+400',
+    'cuefader' : '314x212+546+741',
+    'effect' : '24x24+0963+338',
+    'stage' : '823x683+117+030',
+}
+
 def make_frame(parent):
     f = Frame(parent, bd=0)
     f.pack(side='left')
@@ -16,15 +25,15 @@ def bindkeys(root,key, func):
         w.bind(key, func)
 
 # def toplevelat(x,y,w=None,h=None):
-def toplevelat(name, windowpos):
+def toplevelat(name, windowpos=None):
     tl = Toplevel()
 
-    if name in windowpos:
-        tkname, geom = windowpos[name]
-        tl.wm_geometry(geom)
-        windowpos[name] = str(tl), geom
-    else:
-        windowpos[name] = str(tl), '+0+0'
+    tl.wm_geometry(windowlocations[name])
+
+    # if name in windowpos:
+        # tkname, geom = windowpos[name]
+        # tl.wm_geometry(geom)
+        # windowpos[name] = str(tl), geom
 
     # if w and h:
         # tl.wm_geometry("%dx%d+%d+%d" % (w,h,x,y))
