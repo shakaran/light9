@@ -10,7 +10,7 @@ from skim.zooming import Zooming,Pair
 from math import sqrt,sin,cos
 from pygame.rect import Rect
 from xmlnodebase import xmlnodeclass,collectiveelement,xmldocfile
-import dispatcher
+from dispatch import dispatcher
 
 import dmxclient
 
