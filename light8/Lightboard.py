@@ -38,6 +38,7 @@ class Lightboard:
         self.buildinterface()
         self.load()
         self.backgroundloop()
+        self.updatestagelevels()
         
     def buildinterface(self):
         for w in self.master.winfo_children():
@@ -48,6 +49,7 @@ class Lightboard:
         stage.createlights(s)
         s.setsubediting(self.subediting)
         s.pack()
+        self.stage = s # save it
 
         sub_tl = toplevelat(0,0,w=440,h=610)
         effect_tl = toplevelat(462,4)
@@ -146,8 +148,8 @@ class Lightboard:
                                          self.oldlevels, 
                                          self.leveldisplay.number_labels):
             if lev != oldlev:
-                lab.config(text="%d" % lev)
-                colorlabel(lab)
+                lab.config(text="%d" % lev) # update labels in lev display
+                colorlabel(lab)             # recolor labels
                 if lev < oldlev:
                     numlab['bg'] = 'blue'
                 else:
@@ -158,6 +160,11 @@ class Lightboard:
         self.oldlevels[:] = levels[:] # replace the elements in oldlevels - don't make a new list (Subediting is watching it)
             
         self.parportdmx.sendlevels(levels)
+
+    def updatestagelevels(self):
+        self.master.after(100, self.updatestagelevels)
+        for lev, idx in zip(self.oldlevels, xrange(0, 68 + 1)):
+            self.stage.updatelightlevel(Patch.get_channel_name(idx + 1), lev)
 
     def load(self):
         try:

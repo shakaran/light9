@@ -65,7 +65,7 @@ class Stage(Canvas):
         self.selectedlights=[]
         self.alllighttags={} # tag: name lookup
 
-        self.subeditor=None
+        self.subeditor = None
 
     def setimage(self,stageimage):
         img = Image('photo',file=stageimage)
@@ -76,6 +76,12 @@ class Stage(Canvas):
 
     def setsubediting(self,subeditor):
         self.subeditor = subeditor
+
+    # (17:00:06) drewp: if yes, then self.itemconfigure(tagOrId, text=...)
+    def updatelightlevel(self, name, level):
+        tag = self.nametag(name)
+        self.itemconfigure("level_%s" % tag, text=level)
+
     #
     # selection management
     #
@@ -85,7 +91,7 @@ class Stage(Canvas):
         for l in self.selectedlights:
             for c in self.getlightbboxes(l):
                self.create_rectangle(c[0]-2,c[1]-2,c[2]+2,c[3]+2,
-                                     outline='red',tag="selectbox")            
+                                     outline='red',tag="selectbox")
 
     def selectall(self):
         self.selectedlights= self.alllights[:]
@@ -105,11 +111,15 @@ class Stage(Canvas):
         be shown along with any new lights. if subtract=1, the selection will
         be shown MINUS the newlights."""
         if subtract==0:
-            # orig selection plus any newlights that weren't in the orig selection
-            self.selectedlights = self.origselection[:] + [l for l in newlightnames if l not in self.origselection]
+            # orig selection plus any newlights that weren't in the orig 
+            # selection
+            self.selectedlights = self.origselection[:] + \
+                [l for l in newlightnames if l not in self.origselection]
         else:
-            # orig selection lights except those that are in the newlightnames list
-            self.selectedlights = [l for l in self.origselection if l not in newlightnames]
+            # orig selection lights except those that are in the newlightnames 
+            # list
+            self.selectedlights = [l for l in self.origselection 
+                if l not in newlightnames]
         self.updateselectionboxes()
 
     def select(self,lightname,select=1): # select=0 for deselect
@@ -122,7 +132,6 @@ class Stage(Canvas):
 
         self.updateselectionboxes()
                 
-
     #
     # mouse handling
     #
@@ -200,8 +209,9 @@ class Stage(Canvas):
             sr = self.find_withtag('selectrect')
             if not sr:
                 # make the selection rectangle
-                sr=self.create_rectangle( self.mousedownpos[0],self.mousedownpos[1],coords[0],coords[1],
-                                          outlinestipple='gray50',outline='yellow',tag='selectrect')
+                sr=self.create_rectangle( self.mousedownpos[0],
+                    self.mousedownpos[1],coords[0],coords[1],
+                    outlinestipple='gray50',outline='yellow',tag='selectrect')
 
             # move rectangle with mouse
             self.coords(sr,*(self.mousedownpos+coords))
@@ -216,13 +226,14 @@ class Stage(Canvas):
                 self.delete('selectrect')
 
             if self.mode=='deselect-or-rectangle':
-                # they didn't move enough to promote the mode to level, so it's a deselect click
+                # they didn't move enough to promote the mode to level, so 
+                # it's a deselect click
                 self.clearselection()
             
             self.mode=None
 
     #
-    #
+    # subedit type things (correct me if i'm wrong)
     #
             
     def startlevelchange(self):
@@ -259,22 +270,31 @@ class Stage(Canvas):
         if aim:
             self.create_oval(aim[0]-2,aim[1]-2,
                              aim[0]+2,aim[1]+2,
-                             fill='red',tag=tags+" hotspot")
-            self.create_line(location[0],location[1],aim[0],aim[1],fill='lightblue',
-                             arrow='last',arrowshape="9 15 6",tag='light')
+                             fill='blue',tag=tags+" hotspot")
+            self.create_line(location[0],location[1],aim[0],aim[1],
+                fill='lightblue', arrow='last',arrowshape="9 15 6",tag='light')
+
         # shadow
         self.create_text(location[0]-1,location[1]+6,
                          anchor='n',text=name,fill='black',
-                         tag=tags,**dict([(k,v) for k,v in textstyle.items() if k!='fill']))
+                         tag=tags,**dict([(k,v) 
+                            for k,v in textstyle.items() if k!='fill']))
         # text
-        self.create_text(location[0],location[1]+5,anchor='n',text=name,tag=tags,**textstyle)
+        self.create_text(location[0],location[1]+5,anchor='n',text=name,
+            tag=tags,**textstyle)
+
+        # level
+        self.create_text(location[0]-2,location[1]+13,anchor='n',
+            text='0', # will be changed later
+            tag='level_%s' % self.nametag(name),**textstyle)
         
         self.alllights.append(name)
         self.alllighttags[self.nametag(name)]=name
 
     def getlightbboxes(self,tag):
-        """returns a list of bboxes for a light with a given name_ tag. the selection
-        mechanism draws around these bboxes to show that a light is selected"""
+        """returns a list of bboxes for a light with a given name_ tag. the 
+        selection mechanism draws around these bboxes to show that a light is 
+        selected"""
         bboxes=[]
         for o in self.find_withtag("name_%s" % self.nametag(tag)):
             if 'hotspot' in self.gettags(o):
@@ -351,13 +371,6 @@ def createlights(s):
     s.addlight('sidepost1', (8, 613))
 
 
-
-
-
-
-
-
-
 if __name__=='__main__':
     root=Tk()
     root.tk_focusFollowsMouse()
@@ -376,4 +389,3 @@ if __name__=='__main__':
     s.setsubediting(subediting_standin())
     
     root.mainloop()
-
