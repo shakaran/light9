@@ -27,8 +27,12 @@ parportdmx = io.ParportDMX(DUMMY)
 mr_lightboard = Lightboard(root,parportdmx,DUMMY)
 
 signal(SIGINT, mr_lightboard.quit)
+
+
 bindkeys(root,'<Escape>', mr_lightboard.quit)
 
+root.bind_class("all","<ButtonPress-4>",lambda ev: eventtoparent(ev,"<ButtonPress-4>"))
+root.bind_class("all","<ButtonPress-5>",lambda ev: eventtoparent(ev,"<ButtonPress-5>"))
 
 root.mainloop() # Receiver switches main
 
