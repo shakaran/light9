@@ -41,6 +41,8 @@ class TimedEvent:
             (self.frame, self.level, self.time, self.next_blender)
     def get_level(self):
         return self.level
+    def __hash__(self):
+        return id(self.time) ^ id(self.frame) ^ id(self.next_blender)
 
 class Blender:
     """Blenders are functions that merge the effects of two LevelFrames."""
@@ -72,7 +74,18 @@ class Blender:
         0.25 * endframe.  This function is included since many blenders are
         just functions on the percentage and still combine start and end frames
         in this way."""
-        return {startframe : (1.0 - blendtime), endframe : blendtime}
+        # print "linear_blend", startframe, endframe, blendtime
+        if startframe.frame == endframe.frame:
+            # print "same frames"
+            startlevel = startframe.level * (1.0 - blendtime)
+            endlevel = endframe.level * blendtime
+            levels = {startframe.frame : max(startlevel, endlevel)}
+        else:
+            # print "diff frames"
+            levels = {startframe.frame : (1.0 - blendtime) * startframe.level,
+                endframe.frame : blendtime * endframe.level}
+        # print "return", levels
+        return levels
 
 class InstantEnd(Blender):
     """Instant change from startframe to endframe at the end.  In other words,
@@ -83,7 +96,7 @@ class InstantEnd(Blender):
         # This is because Blenders never be asked for blenders at the endpoints
         # (after all, they wouldn't be blenders if they were). Please see
         # 'Very important note' in Blender.__doc__
-        return {startframe : 1.0}
+        return {startframe.frame : startframe.level}
 
 class InstantStart(Blender):
     """Instant change from startframe to endframe at the beginning.  In other
@@ -94,7 +107,7 @@ class InstantStart(Blender):
         # This is because Blenders never be asked for blenders at the endpoints
         # (after all, they wouldn't be blenders if they were). Please see
         # 'Very important note' in Blender.__doc__
-        return {endframe : 1.0}
+        return {endframe.frame : endframe.level}
 
 class LinearBlender(Blender):
     """Linear fade from one frame to another"""
@@ -185,15 +198,15 @@ class TimelineTrack:
         """Returns a LevelFrame with the levels of this track at that time."""
         before, after = self.get_surrounding_frames(time)
         
-        if before == after:
-            return {before.frame : 1.0}
+        if not after or before == after:
+            return {before.frame : before.level}
         else: # we have a blended value
             diff = after.time - before.time
             elapsed = time - before.time
             percent = elapsed / diff
             if not before.next_blender:
                 raise MissingBlender, before
-            return before.next_blender(before.frame, after.frame, percent)
+            return before.next_blender(before, after, percent)
 
 class Timeline:
     def __init__(self, tracks, rate=1, direction=FORWARD):
@@ -283,13 +296,24 @@ if __name__ == '__main__':
     invquad = ExponentialBlender(0.5)
     smoove = SmoothBlender()
 
-    track1 = TimelineTrack('lights',
-        T(0, 'red', blender=linear),
-        T(5, 'blue', blender=quad),
-        T(10, 'red', blender=smoove),
-        T(15, 'blue')) # last TimedEvent doesn't need a blender
+    track1 = TimelineTrack('red track',
+        T(0, 'red', blender=linear, level=0),
+        T(4, 'red', blender=quad, level=0.5),
+        T(12, 'red', blender=smoove, level=0.7),
+        T(15, 'red', level=0.0)) # last TimedEvent doesn't need a blender
+    track2 = TimelineTrack('green track',
+        T(0, 'green', blender=invquad, level=0.2),
+        T(5, 'green', blender=smoove, level=1),
+        T(10, 'green', blender=linear, level=0.8),
+        T(15, 'green', blender=linear, level=0.6),
+        T(20, 'green', level=0.0)) # last TimedEvent doesn't need a blender
+    track3 = TimelineTrack('tableau demo',
+        T(0, 'blue', level=0.0, blender=linear),
+        T(2, 'blue', level=1.0, blender=InstantEnd()),
+        T(18, 'blue', level=1.0, blender=linear),
+        T(20, 'blue', level=0.0, blender=linear))
 
-    tl = Timeline([track1])
+    tl = Timeline([track1, track2, track3])
 
     tl.play()
 
