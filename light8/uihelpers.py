@@ -1,5 +1,5 @@
 """all the tiny tk helper functions"""
-
+from __future__ import nested_scopes
 from Tkinter import *
 from types import StringType
 
@@ -54,44 +54,56 @@ def colortotuple(anytkobj, colorname):
     return [v / 256 for v in rgb]
 
 class Togglebutton(Button):
-    """works like a single radiobutton, but it's a button so the label's on the button face, not to the side"""
-    def __init__(self,parent,**kw):
-        if kw['variable']:
-            self.variable = kw['variable']
-            self.variable.trace('w',self.varchanged)
-            del kw['variable']
+    """works like a single radiobutton, but it's a button so the
+    label's on the button face, not to the side. the optional command
+    callback is called on button set, not on unset. takes a variable
+    just like a checkbutton"""
+    def __init__(self,parent,variable=None,command=None,**kw):
+
+        self.oldcommand = command
+        Button.__init__(self,parent,command=self.invoke,**kw)
+
+        self._origbkg = self.cget('bg')
+
+        self._variable = variable
+        if self._variable:
+            self._variable.trace('w',self._varchanged)
+            self._setstate(self._variable.get())
         else:
-            self.variable=None
-        self.oldcommand = kw.get('command',None)
-        kw['command'] = self.invoke
-        Button.__init__(self,parent,**kw)
+            self._setstate(0)
 
-        self.origbkg = self.cget('bg')
+        self.bind("<Return>",self.invoke)
+        self.bind("<1>",self.invoke)
+        self.bind("<space>",self.invoke)
 
-        self.state=0
-        if self.variable:
-            self.state = self.variable.get()
-
-        self.setstate(self.state)
-
-        self.bind("<Enter>",lambda ev: self.setstate)
-        self.bind("<Leave>",lambda ev: self.setstate)
-
-    def varchanged(self,*args):
-        self.setstate(self.variable.get())
+    def _varchanged(self,*args):
+        self._setstate(self._variable.get())
         
-    def invoke(self):
-        self.setstate(not self.state)
+    def invoke(self,*ev):
+        if self._variable:
+            self._variable.set(not self.state)
+        else:
+            self._setstate(not self.state)
         
-        if self.oldcommand:
+        if self.oldcommand and self.state: # call command only when state goes to 1
             self.oldcommand()
-
-    def setstate(self,newstate):
-        self.variable.set(newstate)
-        if newstate: # set
-            self.tk.call('tkButtonDown',self)
-            self.config(bg='green')
-        else: # unset
-            self.tk.call('tkButtonUp',self)
-            self.config(bg=self.origbkg)
         return "break"
+
+    def _setstate(self,newstate):
+        self.state = newstate
+        if newstate: # set
+            self.config(bg='red',relief='sunken')
+        else: # unset
+            self.config(bg=self._origbkg,relief='raised')
+        return "break"
+
+if __name__=='__main__':
+    root=Tk()
+    root.tk_focusFollowsMouse()
+    iv=IntVar()
+    def cb():
+        print "cb!"
+    t = Togglebutton(root,text="testbutton",command=cb,variable=iv)
+    t.pack()
+    Entry(root,textvariable=iv).pack()
+    root.mainloop()
