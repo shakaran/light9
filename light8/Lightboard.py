@@ -3,7 +3,6 @@ from __future__ import nested_scopes,division
 from Tix import *
 from signal import signal, SIGINT
 from time import time
-import xmlrpclib
 import sys, cPickle, random
 
 from uihelpers import *
@@ -13,6 +12,7 @@ from subediting import Subediting
 from Fader import Fader
 from ExternalInput import ExternalSliders
 import io, stage, Subs, Patch, ExtSliderMapper
+import dmxclient
 
 class Pickles:
     def __init__(self, scalelevels, subs=None, windowpos=None):
@@ -50,9 +50,6 @@ class Lightboard:
         self.buildinterface()
         self.load()
 
-        # get a connection to the dmx server
-        self.dmxserver=xmlrpclib.Server("http://localhost:8030")
-        
         print "Light 8.8: Entering backgroundloop"
         self.backgroundloop()
         self.updatestagelevels()
@@ -299,7 +296,7 @@ class Lightboard:
             levels = [min(100, max(x + delta, 0)) for x in levels]
             # print "jostled", levels
 
-        self.dmxserver.outputlevels("light8-%s" %os.getpid(),[l/100 for l in levels])
+        dmxclient.outputlevels([l/100 for l in levels])
 #        self.parportdmx.sendlevels(levels)
 
     def updatestagelevels(self):
