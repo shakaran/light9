@@ -12,7 +12,8 @@ import Submaster
 import dispatcher
 
 class Subcomposer(tk.Frame):
-    def __init__(self, master, levelboxopts=None, dmxdummy=0, numchannels=68):
+    def __init__(self, master, levelboxopts=None, dmxdummy=0, numchannels=68,
+        use_persistentlevels=0):
         tk.Frame.__init__(self, master, bg='black')
         self.dmxdummy = dmxdummy
         self.numchannels = numchannels
@@ -35,13 +36,13 @@ class Subcomposer(tk.Frame):
             self.set_levels([0] * self.numchannels)
             dispatcher.send("levelchanged")
 
-        tk.Button(self, text="all to zero", command=alltozero,
-                  fg='white').pack(side='top')
+        tk.Button(self, text="all to zero", command=alltozero).pack(side='top')
 
         dispatcher.connect(self.levelchanged,"levelchanged")
         dispatcher.connect(self.sendupdate,"levelchanged")
 
-        self.persistentlevels()
+        if use_persistentlevels:
+            self.persistentlevels()
 
         self.lastupdate=0 # time we last sent to dmx
 
@@ -99,16 +100,33 @@ class Subcomposer(tk.Frame):
 
 def Savebox(master, levels, verb="Save", cmd=None):
     f=tk.Frame(master,bd=2,relief='raised')
-    tk.Label(f,text="Sub name:",fg='white').pack(side='left')
-    e=tk.Entry(f,fg='white')
+    tk.Label(f,text="Sub name:").pack(side='left')
+    e=tk.Entry(f)
     e.pack(side='left',exp=1,fill='x')
     def cb(*args):
         subname=e.get()
         cmd(levels,subname)
         print "sub",verb,subname
     e.bind("<Return>",cb)
-    tk.Button(f,text=verb,command=cb,fg='white').pack(side='left')
+    tk.Button(f,text=verb,command=cb).pack(side='left')
     return f
+
+def open_sub_editing_window(subname, use_mainloop=1, dmxdummy=0):
+    if use_mainloop:
+        toplevel = tk.Tk()
+    else:
+        toplevel = tk.Toplevel()
+    if dmxdummy: 
+        dummy_str = ' (dummy)'
+    else:
+        dummy_str = ''
+    toplevel.title("Subcomposer: %s%s" % (subname, dummy_str))
+    sc = Subcomposer(toplevel, use_persistentlevels=0, dmxdummy=dmxdummy)
+    sc.pack(fill='both', expand=1)
+    sc.loadsub(subname)
+    sc.considersendupdate(use_after_loop=10)
+    if use_mainloop:
+        tk.mainloop()
     
 #############################
 

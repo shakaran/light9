@@ -2,4 +2,4 @@
 
 import sys
 import Subcomposer
-Subcomposer.open_sub_editing_window(sys.argv[-1], use_mainloop=1)
+Subcomposer.open_sub_editing_window(sys.argv[-1], use_mainloop=1, dmxdummy=0)
