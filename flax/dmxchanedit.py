@@ -10,7 +10,7 @@ import sys
 sys.path.append("../light8")
 import Patch
 from uihelpers import make_frame, colorlabel, eventtoparent
-import dispatcher
+from dispatch import dispatcher
 
 stdfont = ('Arial', 10)
 

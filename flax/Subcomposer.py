@@ -9,7 +9,7 @@ import dmxclient
 import Patch
 import Submaster
 
-import dispatcher
+from dispatch import dispatcher
 
 class Subcomposer(tk.Frame):
     def __init__(self, master, levelboxopts=None, dmxdummy=0, numchannels=68,
