@@ -37,7 +37,7 @@ class Fadable:
         if key_bindings:
             for k in range(1, 10):
                 self.bind("<Key-%d>" % k,
-                    lambda evt, k=k: self.fade(k / 10.0))
+                    lambda evt, k=k: self.fade(k * 10.0))
             self.bind("<Key-0>", lambda evt: self.fade(100))
             self.bind("<grave>", lambda evt: self.fade(0))
 
@@ -71,9 +71,8 @@ class Fadable:
         self.fade_end_level = value
         
         self.fade_step_time = step_time
-        if not self.fading:
-            self.fading = 1
-            self.do_fade()
+        self.fading = 1
+        self.do_fade()
     def do_fade(self):
         """Actually performs the fade for Fadable.fade.  Shouldn't be called
         directly."""

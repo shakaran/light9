@@ -78,7 +78,7 @@ class FlyingFader(Frame):
             side1=RIGHT
             side2=LEFT
         
-        self.scale = Scale(self, scaleopts)
+        self.scale = Scale(self, **scaleopts)
         self.vlabel = Label(self, text="0.0", width=6, font=font)
         self.label = Label(self, text=label, font=font, anchor='w',width=labelwidth) #wraplength=40, )
 
