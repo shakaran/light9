@@ -49,9 +49,11 @@ class SubmasterTk(Frame):
         self.scale.pack(side=BOTTOM, expand=1, fill=BOTH)
 
 class KeyboardComposer(Frame):
-    def __init__(self, root, submasters, current_sub_levels=None):
+    def __init__(self, root, submasters, current_sub_levels=None, dmxdummy=0):
         Frame.__init__(self, root, bg='black')
         self.submasters = submasters
+        self.dmxdummy = dmxdummy
+
         self.current_sub_levels = {}
         if current_sub_levels:
             self.current_sub_levels = current_sub_levels
@@ -216,8 +218,9 @@ class KeyboardComposer(Frame):
         maxes = self.get_levels_as_sub()
         return maxes.get_dmx_list()
     def send_levels(self):
-        levels = self.get_dmx_list()
-        dmxclient.outputlevels(levels)
+        if not self.dmxdummy:
+            levels = self.get_dmx_list()
+            dmxclient.outputlevels(levels)
         # print "sending levels", levels
     def send_levels_loop(self):
         self.send_levels()
@@ -238,7 +241,7 @@ if __name__ == "__main__":
 
     root = Tk()
     tl = toplevelat("Keyboard Composer", existingtoplevel=root)
-    kc = KeyboardComposer(tl, s)
+    kc = KeyboardComposer(tl, s, dmxdummy=1)
     kc.pack(fill=BOTH, expand=1)
     atexit.register(kc.save)
     try:
