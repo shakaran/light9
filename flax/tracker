@@ -3,12 +3,16 @@ from __future__ import division,nested_scopes
 
 import sys
 sys.path.append("../../editor/pour")
+sys.path.append("../light8")
 
+from Submaster import Submaster
 from skim.zooming import Zooming,Pair
 from math import sqrt,sin,cos
 from pygame.rect import Rect
 from xmlnodebase import xmlnodeclass,collectiveelement,xmldocfile
 import dispatcher
+
+import dmxclient
 
 import Tkinter as tk
 
@@ -73,6 +77,14 @@ class Fieldset(collectiveelement):
                 active+=1
         if active>0:
             print
+        self.dmxsend(x,y)
+    def dmxsend(self,x,y):
+        """output lights to dmx"""
+        levels=dict([(f.name(),f.calc(x,y)) for f in self.getall()])
+        dmxlist=Submaster(None,levels).get_dmx_list()
+        dmxclient.outputlevels(dmxlist)
+        
+        
     def getbounds(self):
         """returns xmin,xmax,ymin,ymax for the non-zero areas of this field"""
         r=None
