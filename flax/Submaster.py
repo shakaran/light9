@@ -57,15 +57,20 @@ class Submaster:
     def max(self, *othersubs):
         return sub_maxes(self, *othersubs)
     def __repr__(self):
-        return "<%s: %r>" % (self.name, self.levels)
+        levels = ' '.join(["%s:%.2f" % item for item in self.levels.items()])
+        return "<'%s': [%s]>" % (self.name, levels)
     def get_dmx_list(self):
         leveldict = self.get_levels() # gets levels of sub contents
 
         levels = [0] * 68
         for k, v in leveldict.items():
-            levels[Patch.get_dmx_channel(k) - 1] = v
+            dmxchan = Patch.get_dmx_channel(k) - 1
+            levels[dmxchan] = max(v, levels[dmxchan])
 
         return levels
+    def normalize_patch_names(self):
+        # possibly busted -- don't use unless you know what you're doing
+        self.set_all_levels(self.levels.copy())
 
 def sub_maxes(*subs):
     return Submaster("max(%r)" % (subs,),
@@ -80,7 +85,9 @@ class Submasters:
         files = os.listdir('subs')
 
         for filename in files:
-            if filename.startswith('.') or filename.endswith('~'):
+            # we don't want these files
+            if filename.startswith('.') or filename.endswith('~') or \
+               filename.startswith('CVS'):
                 continue
             self.submasters[filename] = Submaster(filename)
     def get_all_subs(self):
@@ -94,6 +101,10 @@ class Submasters:
 if __name__ == "__main__":
     Patch.reload_data()
     s = Submasters()
-    newsub = s['newsub']
-    newsub.set_all_levels({'5' : 1, '7': 0.2})
     print s.get_all_subs()
+    if 0: # turn this on to normalize all subs
+        for sub in s.get_all_subs():
+            print "before", sub
+            sub.normalize_patch_names()
+            sub.save()
+            print "after", sub

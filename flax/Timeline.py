@@ -137,7 +137,7 @@ class SmoothBlender(Blender):
 class Strobe(Blender):
     "Strobes the frame on the right side between offlevel and onlevel."
     def __init__(self, ontime, offtime, onlevel=1, offlevel=0):
-        "times are in seconds"
+        "times are in seconds (floats)"
         make_attributes_from_args('ontime', 'offtime', 'onlevel', 'offlevel')
         self.cycletime = ontime + offtime
     def __call__(self, startframe, endframe, blendtime, time_since_startframe):
@@ -159,10 +159,38 @@ class TimelineTrack:
         else:
             self.default_frame = None
         self.name = name
-        self.events = list(timedevents)
+        self.set_events(list(timedevents))
+    def set_events(self, events):
+        """This is given a list of TimedEvents.  They need not be sorted."""
+        self.events = events
+        self._cleaup_events()
+    def _cleaup_events(self):
+        """This makes sure all events are in the right order and have defaults
+        filled in if they have missing frames."""
         self.events.sort()
-        self.fill_in_missing_subs()
-    def fill_in_missing_subs(self):
+        self.fill_in_missing frames()
+    def add_event(self, event):
+        """Add a TimedEvent object to this TimelineTrack"""
+        self.events.append(event)
+        self._cleaup_events(self.events)
+    def delete_event(self, event):
+        """Delete event by TimedEvent object"""
+        self.events.remove(event)
+        self._cleaup_events(self.events)
+    def delete_event_by_name(self, name):
+        """Deletes all events matching a certain name"""
+        self.events = [e for e in self.events if e.name is not name]
+        self._cleaup_events(self.events)
+    def delete_event_by_time(self, starttime, endtime=None):
+        """Deletes all events within a certain time range, inclusive.  endtime
+        is optional."""
+        endtime = endtime or starttime
+        self.events = [e for e in self.events
+            if e.time >= starttime and e.time <= endtime]
+        self._cleaup_events(self.events)
+    def fill_in_missing frames(self):
+        """Runs through all events and sets TimedEvent with missing frames to
+        the default frame."""
         for event in self.events:
             if event.frame == MISSING:
                 event.frame = self.default_frame

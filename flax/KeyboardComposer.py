@@ -188,9 +188,9 @@ class KeyboardComposer(Frame):
             self.send_levels()
             self.after(10, self.send_frequent_updates)
     def send_levels(self):
-        print self.submasters.get_sub_by_name('frontwhite')
         levels = self.get_dmx_list()
-        dmxclient.outputlevels(levels)
+        # dmxclient.outputlevels(levels)
+        # print "sending levels", levels
     def send_levels_loop(self):
         self.send_levels()
         self.after(1000, self.send_levels_loop)
