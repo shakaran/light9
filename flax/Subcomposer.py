@@ -1,0 +1,150 @@
+#!/usr/bin/python
+
+from __future__ import division, nested_scopes
+import Tkinter as tk
+from dmxchanedit import Levelbox
+import sys,os,time,atexit
+sys.path.append("../light8")
+import dmxclient
+import Patch
+import Submaster
+
+from dispatch import dispatcher
+
+class Subcomposer(tk.Frame):
+    def __init__(self, master, levelboxopts=None, dmxdummy=0, numchannels=68,
+        use_persistentlevels=0):
+        tk.Frame.__init__(self, master, bg='black')
+        self.dmxdummy = dmxdummy
+        self.numchannels = numchannels
+
+        self.levels = [0]*68 # levels should never get overwritten, just edited
+
+        self.levelbox = Levelbox(self)
+        self.levelbox.pack(side='top')
+        # the dmx levels we edit and output, range is 0..1 (dmx chan 1 is
+        # the 0 element)
+        self.levelbox.setlevels(self.levels)
+
+        self.savebox = Savebox(self, self.levels, cmd=self.savenewsub)
+        self.savebox.pack(side='top')
+
+        self.loadbox = Savebox(self, self.levels, verb="Load", cmd=self.loadsub)
+        self.loadbox.pack(side='top')
+
+        def alltozero():
+            self.set_levels([0] * self.numchannels)
+            dispatcher.send("levelchanged")
+
+        tk.Button(self, text="all to zero", command=alltozero).pack(side='top')
+
+        dispatcher.connect(self.levelchanged,"levelchanged")
+        dispatcher.connect(self.sendupdate,"levelchanged")
+
+        if use_persistentlevels:
+            self.persistentlevels()
+
+        self.lastupdate=0 # time we last sent to dmx
+
+        self.lastsent=[] # copy of levels
+
+    def persistentlevels(self):
+        """adjusts levels from subcomposer.savedlevels, if possible; and
+        arranges to save the levels in that file upon exit"""    
+        self.load_levels()
+        atexit.register(self.save_levels)
+    def save_levels(self, *args):
+        levelfile = file("subcomposer.savedlevels","w")
+        levelfile.write(" ".join(map(str, self.levels)))
+    def load_levels(self):
+        try:
+            levelfile = file("subcomposer.savedlevels","r")
+            levels = map(float, levelfile.read().split())
+            self.set_levels(levels)
+        except IOError:
+            pass
+    def levelchanged(self, channel=None, newlevel=None):
+        if channel is not None and newlevel is not None:
+            if channel>len(self.levels):
+                return
+            self.levels[channel-1]=max(0,min(1,float(newlevel)))
+        self.levelbox.setlevels(self.levels)
+    def savenewsub(self, levels, subname):
+        leveldict={}
+        for i,lev in zip(range(len(self.levels)),self.levels):
+            if lev!=0:
+                leveldict[Patch.get_channel_name(i+1)]=lev
+        
+        s=Submaster.Submaster(subname,leveldict)
+        s.save()
+    def loadsub(self, levels, subname):
+        """puts a sub into the levels, replacing old level values"""
+        s=Submaster.Submasters().get_sub_by_name(subname)
+        self.levels[:]=[0]*68
+        self.levels[:]=s.get_dmx_list()
+        dispatcher.send("levelchanged")
+    def sendupdate(self):
+        if not self.dmxdummy:
+            dmxclient.outputlevels(self.levels)
+            self.lastupdate = time.time()
+            self.lastsent = self.levels[:]
+    def considersendupdate(self, use_after_loop=0):
+        """If use_after_loop is true, it is the period of the after loop."""
+        if self.lastsent != self.levels or time.time() > self.lastupdate + 1:
+            self.sendupdate()
+        if use_after_loop:
+            self.after(use_after_loop, self.considersendupdate, use_after_loop)
+    def set_levels(self, levels):
+        self.levels[:] = levels
+        dispatcher.send("levelchanged")
+
+def Savebox(master, levels, verb="Save", cmd=None):
+    f=tk.Frame(master,bd=2,relief='raised')
+    tk.Label(f,text="Sub name:").pack(side='left')
+    e=tk.Entry(f)
+    e.pack(side='left',exp=1,fill='x')
+    def cb(*args):
+        subname=e.get()
+        cmd(levels,subname)
+        print "sub",verb,subname
+    e.bind("<Return>",cb)
+    tk.Button(f,text=verb,command=cb).pack(side='left')
+    return f
+
+def open_sub_editing_window(subname, use_mainloop=1, dmxdummy=0):
+    if use_mainloop:
+        toplevel = tk.Tk()
+    else:
+        toplevel = tk.Toplevel()
+    if dmxdummy: 
+        dummy_str = ' (dummy)'
+    else:
+        dummy_str = ''
+    toplevel.title("Subcomposer: %s%s" % (subname, dummy_str))
+    sc = Subcomposer(toplevel, use_persistentlevels=0, dmxdummy=dmxdummy)
+    sc.pack(fill='both', expand=1)
+    sc.loadsub(None, subname) # don't ask
+    sc.considersendupdate(use_after_loop=10)
+    if use_mainloop:
+        tk.mainloop()
+    
+#############################
+
+if __name__ == "__main__":
+    root=tk.Tk()
+    root.config(bg='black')
+    root.tk_setPalette("#004633")
+
+    sc = Subcomposer(root, dmxdummy=0)
+    sc.pack()
+
+    while 1:
+        if 0:
+            for i in range(20): # don't let Tk take all the time
+                tk._tkinter.dooneevent()
+            print "loop"
+        else:
+            root.update()
+        
+        sc.considersendupdate()
+        time.sleep(.01)

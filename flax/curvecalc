@@ -1,0 +1,405 @@
+#!/usr/bin/python
+
+"""
+todo: curveview should preserve more objects, for speed maybe
+
+"""
+from __future__ import division
+import xmlrpclib,time,socket,sys,textwrap,math,glob
+from bisect import bisect_left,bisect,bisect_right
+import Tkinter as tk
+from dispatch import dispatcher
+from twisted.internet import reactor,tksupport
+from twisted.web.xmlrpc import Proxy
+
+sys.path.append("../light8")
+import dmxclient
+import Submaster
+from TLUtility import make_attributes_from_args
+
+from zoomcontrol import Zoomcontrol
+
+class Curve:
+    """curve does not know its name. see Curveset"""
+    points = None # x-sorted list of (x,y)
+    def __init__(self):
+        self.points = []
+
+    def load(self,filename):
+        for line in file(filename):
+            self.points.append(tuple([float(a) for a in line.split()]))
+        self.points.sort()
+        dispatcher.send("points changed",sender=self)
+
+    def save(self,filename):
+        f = file(filename,'w')
+        for p in self.points:
+            f.write("%s %s\n" % p)
+        f.close()
+
+    def eval(self,t):
+        i = bisect_left(self.points,(t,None))-1
+
+        if self.points[i][0]>t:
+            return self.points[i][1]
+        if i>=len(self.points)-1:
+            return self.points[i][1]
+
+        p1,p2 = self.points[i],self.points[i+1]
+        frac = (t-p1[0])/(p2[0]-p1[0])
+        y = p1[1]+(p2[1]-p1[1])*frac
+        return y
+
+    __call__=eval
+
+class Curveview(tk.Canvas):
+    def __init__(self,master,curve,**kw):
+        self.curve=curve
+        tk.Canvas.__init__(self,master,width=10,height=10,
+                           relief='sunken',bd=1,
+                           closeenough=5,**kw)
+        self.selected_points=[] # idx of points being dragged
+        self.update()
+        self.bind("<Enter>",self.focus)
+        dispatcher.connect(self.input_time,"input time")
+        dispatcher.connect(self.update,"zoom changed")
+        dispatcher.connect(self.update,"points changed",sender=self.curve)
+        self.bind("<Configure>",self.update)
+    def screen_from_world(self,p):
+        start,end = self.zoom
+        ht = self.winfo_height()
+        return (p[0]-start)/(end-start)*self.winfo_width(), (ht-5)-p[1]*(ht-10)
+    def world_from_screen(self,x,y):
+        start,end = self.zoom
+        ht = self.winfo_height()
+        return x/self.winfo_width()*(end-start)+start, ((ht-5)-y)/(ht-10)
+    
+    def input_time(self,val):
+        t=val
+        pts = self.screen_from_world((val,0))+self.screen_from_world((val,1))
+        self.delete('timecursor')
+        self.create_line(*pts,**dict(width=2,fill='red',tags=('timecursor',)))
+    def update(self,*args):
+
+        self.zoom = dispatcher.send("zoom area")[0][1]
+        cp = self.curve.points
+
+        visible_x = (self.world_from_screen(0,0)[0],
+                     self.world_from_screen(self.winfo_width(),0)[0])
+
+        visleftidx = max(0,bisect_left(cp,(visible_x[0],None))-1)
+        visrightidx = min(len(cp)-1,bisect_left(cp,(visible_x[1],None))+1)
+                             
+        visible_points = cp[visleftidx:visrightidx+1]
+        
+        self.delete('curve')
+        linepts=[]
+        for p in visible_points:
+            linepts.extend(self.screen_from_world(p))
+        if not linepts:
+            return
+        line = self.create_line(*linepts,**{'tags':'curve'})
+
+        # canvas doesnt have keyboard focus, so i can't easily change the
+        # cursor when ctrl is pressed
+        #        def curs(ev):
+        #            print ev.state
+        #        self.bind("<KeyPress>",curs)
+        #        self.bind("<KeyRelease-Control_L>",lambda ev: curs(0))
+        self.tag_bind(line,"<Control-ButtonPress-1>",self.newpoint)
+
+        self.dots = {} # idx : canvas rectangle
+
+        if len(visible_points)<50: 
+            for i,p in enumerate(visible_points):
+                rad=3
+                p = self.screen_from_world(p)
+                dot = self.create_rectangle(p[0]-rad,p[1]-rad,p[0]+rad,p[1]+rad,
+                                            outline='black',fill='blue',
+                                            tags=('curve','point'))
+                self.tag_bind(dot,"<ButtonPress-1>",
+                              lambda ev,i=i: self.dotpress(ev,i))
+                self.bind("<Motion>",
+                          lambda ev,i=i: self.dotmotion(ev,i))
+                self.bind("<ButtonRelease-1>",
+                          lambda ev,i=i: self.dotrelease(ev,i))
+                self.dots[i]=dot
+
+            self.highlight_selected_dots()
+
+    def newpoint(self,ev):
+        cp = self.curve.points
+        
+        p = self.world_from_screen(ev.x,ev.y)
+        i = bisect(cp,(p[0],None))
+
+        self.unselect()
+        cp.insert(i,p)
+        self.update()
+
+    def highlight_selected_dots(self):
+        for i,d in self.dots.items():
+            if i in self.selected_points:
+                self.itemconfigure(d,fill='red')
+            else:
+                self.itemconfigure(d,fill='blue')
+        
+    def dotpress(self,ev,dotidx):
+        self.selected_points=[dotidx]
+        self.highlight_selected_dots()
+
+    def dotmotion(self,ev,dotidx):
+        cp = self.curve.points
+
+        moved=0
+        for idx in self.selected_points:
+            x,y = self.world_from_screen(ev.x,ev.y)
+            y = max(0,min(1,y))
+            if idx>0 and x<=cp[idx-1][0]:
+                continue
+            if idx<len(cp)-1 and x>=cp[idx+1][0]:
+                continue
+            moved=1
+            cp[idx] = (x,y)
+        if moved:
+            self.update()
+    def unselect(self):
+        self.selected_points=[]
+        self.highlight_selected_dots()
+        
+    def dotrelease(self,ev,dotidx):
+        self.unselect()
+        
+class Curveset:
+    curves = None # curvename : curve
+    def __init__(self):
+        self.curves = {}
+    def load(self,basename):
+        """find all files that look like basename-curvename and add
+        curves with their contents"""
+        for filename in glob.glob("%s-*"%basename):
+            curvename = filename[filename.rfind('-')+1:]
+            c=Curve()
+            c.load(filename)
+            self.add_curve(curvename,c)            
+    def save(self,basename):
+        """writes a file for each curve with a name
+        like basename-curvename"""
+        for name,cur in self.curves.items():
+            cur.save("%s-%s" % (basename,name))
+    def add_curve(self,name,curve):
+        self.curves[name] = curve
+        dispatcher.send("add_curve",sender=self,name=name)
+    def globalsdict(self):
+        return self.curves.copy()
+
+class Curvesetview(tk.Frame):
+    curves = None # curvename : Curveview
+    def __init__(self,master,curveset,**kw):
+        self.curves = {}
+        self.curveset = curveset
+        tk.Frame.__init__(self,master,**kw)
+        dispatcher.connect(self.add_curve,"add_curve",sender=self.curveset)
+    def add_curve(self,name):
+        f = tk.Frame(self,relief='raised',bd=1)
+        f.pack(side='top',fill='both',exp=1)
+        tk.Label(f,text="curve %r"%name).pack(side='left')
+        cv = Curveview(f,self.curveset.curves[name])
+        cv.pack(side='right',fill='both',exp=1)
+        self.curves[name] = cv
+
+class Music:
+    def __init__(self):
+        self.player=None # xmlrpc Proxy to player
+        self.recenttime=0
+        
+    def current_time(self):
+        """return deferred which gets called with the current time"""
+        if self.player is None:
+            self.player = Proxy("http://spot:8040")
+            d = self.player.callRemote("songlength")
+            d.addCallback(lambda l: dispatcher.send("max time",maxtime=l))
+            d = self.player.callRemote("songname")
+            d.addCallback(lambda n: dispatcher.send("songname",name=n))
+        d = self.player.callRemote('gettime')
+        def sendtime(t):
+            dispatcher.send("input time",val=t)
+            return t # pass along to the real receiver
+        def error(e):
+            pass#self.player=None
+        d.addCallback(sendtime)
+        return d
+        
+class Subexpr:
+    curveset = None
+    def __init__(self,curveset):
+        self.curveset = curveset
+        self.lasteval = None
+        self.expr=""
+    def eval(self,t):
+        if self.expr=="":
+            dispatcher.send("expr_error",sender=self,exc="no expr, using 0")
+            return 0
+        glo = self.curveset.globalsdict()
+        glo['t'] = t
+        try:
+            self.lasteval = eval(self.expr,glo)
+        except Exception,e:
+            dispatcher.send("expr_error",sender=self,exc=e)
+        else:
+            dispatcher.send("expr_error",sender=self,exc="no errors")
+        return self.lasteval
+
+    def expr():
+        doc = "python expression for level as a function of t, using curves"
+        def fget(self):
+            return self._expr
+        def fset(self, value):
+            self._expr = value
+            dispatcher("expr_changed",sender=self)
+        return locals()
+    expr = property(**expr())
+
+class Subexprview(tk.Frame):
+    def __init__(self,master,se,**kw):
+        self.subexpr=se
+        tk.Frame.__init__(self,master,**kw)
+        self.evar = tk.StringVar()
+        e = self.ent = tk.Entry(master,textvariable=self.evar)
+        e.pack(side='left',fill='both',exp=1)
+        self.expr_changed()
+        self.evar.trace_variable('w',self.evar_changed)
+        dispatcher.connect(self.expr_changed,"expr_changed",
+                           sender=self.subexpr)
+        self.error = tk.Label(master)
+        self.error.pack(side='left')
+        dispatcher.connect(lambda exc: self.error.config(text=str(exc)),
+                           "expr_error",sender=self.subexpr,weak=0)
+    def expr_changed(self):
+        if self.subexpr.expr!=self.evar.get():
+            self.evar.set(self.subexpr.expr)
+    def evar_changed(self,*args):
+        self.subexpr.expr = self.evar.get()
+
+class Subterm:
+    """one Submaster and its Subexpr"""
+    def scaled(self,t):
+        return self.sub * self.subexpr.eval(t)
+
+class Subtermview(tk.Frame):
+    def __init__(self,master,st,**kw):
+        self.subterm = st
+        tk.Frame.__init__(self,master,bd=1,relief='raised',**kw)
+        tk.Label(self,text="sub %r" % self.subterm.sub.name).pack(side='left')
+        sev=Subexprview(self,self.subterm.subexpr)
+        sev.pack(side='left',fill='both',exp=1)
+
+class Output:
+    def __init__(self,subterms):
+        make_attributes_from_args('subterms')
+    def send_dmx(self,t):
+
+        scaledsubs=[]
+        for st in self.subterms:
+            scl = st.scaled(t)
+            scaledsubs.append(scl)
+        out = Submaster.sub_maxes(*scaledsubs)
+        dispatcher.send("output levels",val=out.get_levels())
+        dmxclient.outputlevels(out.get_dmx_list(),twisted=1)
+
+def create_status_lines(master):
+    for signame,textfilter in [
+        ('input time',lambda t: "%.2fs"%t),
+        ('output levels',
+         lambda levels: textwrap.fill("; ".join(["%s:%.2f"%(n,v)
+                                                 for n,v in
+                                                 levels.items()]),70)),
+        ('update period',lambda t: "%.1fms"%(t*1000)),
+        ]:
+        l = tk.Label(master,anchor='w',justify='left')
+        l.pack(side='top',fill='x')
+        dispatcher.connect(lambda val,l=l,sn=signame,tf=textfilter:
+                           l.config(text=sn+": "+tf(val)),
+                           signame,weak=0)
+
+def savesubterms(filename,subterms):
+    f = file(filename,'w')
+    for st in subterms:
+        f.write("%s %s\n" % (st.sub.name,st.subexpr.expr))
+    f.close()
+
+def save(song,subterms,curveset):
+    savesubterms("subterms/"+song,subterms)
+    curveset.save(basename="curves/"+song)
+
+#######################################################################
+root=tk.Tk()
+root.wm_geometry("790x930")
+#root.tk_focusFollowsMouse()
+
+music=Music()
+
+zc = Zoomcontrol(root)
+zc.pack(side='top',fill='x')
+
+curveset = Curveset()
+csv = Curvesetview(root,curveset)
+csv.pack(side='top',fill='both',exp=1)
+
+song = "16mix.wav"
+
+curveset.load(basename="curves/"+song)
+
+subterms = []
+for line in file("subterms/"+song):
+    subname,expr = line.strip().split(" ",1)
+
+    term = Subterm()
+
+    sexpr = Subexpr(curveset)
+    sexpr.expr = expr
+    
+    term.sub = Submaster.Submaster(subname)
+    term.subexpr = sexpr
+    subterms.append(term)
+    
+    stv=Subtermview(root,term)
+    stv.pack(side='top',fill='x')
+
+out = Output(subterms)
+
+#save(song,subterms,curveset)
+
+create_status_lines(root)
+    
+recent_t=[]
+later = None
+def update():
+    global later
+    d = music.current_time()
+    d.addCallback(update2)
+    d.addErrback(updateerr)
+def updateerr(e):
+    global later
+    print "err",e
+    if later and not later.cancelled and not later.called: later.cancel()
+    later = reactor.callLater(1,update)
+def update2(t):
+    global recent_t,later
+
+    if later and not later.cancelled and not later.called: later.cancel()
+    later = reactor.callLater(.01,update)
+
+    recent_t = recent_t[-50:]+[t]
+    period = (recent_t[-1]-recent_t[0])/len(recent_t)
+    dispatcher.send("update period",val=period)
+    out.send_dmx(t)
+update()
+
+tksupport.install(root,ms=10)
+if 0:
+    sys.path.append("/home/drewp/projects/editor/pour")
+    from utils import runstats
+    runstats("reactor.run()")
+else:
+    reactor.run()

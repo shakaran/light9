@@ -1,0 +1,8 @@
+#!/usr/bin/python
+
+"""loads and saves timelines. lets you edit the timings and select the
+functions. you should be able to edit the functions' parameters also.
+"""
+
+import Tkinter as tk
+

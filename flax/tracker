@@ -1,0 +1,273 @@
+#!/usr/bin/python
+from __future__ import division,nested_scopes
+
+import sys
+sys.path.append("../../editor/pour")
+sys.path.append("../light8")
+
+from Submaster import Submaster
+from skim.zooming import Zooming,Pair
+from math import sqrt,sin,cos
+from pygame.rect import Rect
+from xmlnodebase import xmlnodeclass,collectiveelement,xmldocfile
+from dispatch import dispatcher
+
+import dmxclient
+
+import Tkinter as tk
+
+defaultfont="arial 8"
+
+def pairdist(pair1,pair2):
+    return pair1.dist(pair2)
+
+def canvashighlighter(canvas,obj,attribute,normalval,highlightval):
+    """creates bindings on a canvas obj that make attribute go
+    from normal to highlight when the mouse is over the obj"""
+    canvas.tag_bind(obj,"<Enter>",
+                    lambda ev: canvas.itemconfig(obj,**{attribute:highlightval}))
+    canvas.tag_bind(obj,"<Leave>",
+                    lambda ev: canvas.itemconfig(obj,**{attribute:normalval}))
+
+class Field(xmlnodeclass):
+    
+    """one light has a field of influence. for any point on the
+    canvas, you can ask this field how strong it is. """
+
+    def name(self,newval=None):
+        """light/sub name"""
+        return self._getorsetattr("name",newval)
+    def center(self,x=None,y=None):
+        """x,y float coords for the center of this light in the field. returns
+        a Pair, although it accepts x,y"""
+        return Pair(self._getorsettypedattr("x",float,x),
+                    self._getorsettypedattr("y",float,y))
+
+    def falloff(self,dist=None):
+        
+        """linear falloff from 1 at center, to 0 at dist pixels away
+        from center"""
+        return self._getorsettypedattr("falloff",float,dist)
+
+    def getdistforintensity(self,intens):
+        """returns the distance you'd have to be for the given intensity (0..1)"""
+        return (1-intens)*self.falloff()
+
+    def calc(self,x,y):
+        """returns field strength at point x,y"""
+        dist=pairdist(Pair(x,y),self.center())
+        return max(0,(self.falloff()-dist)/self.falloff())
+
+class Fieldset(collectiveelement):
+    """group of fields. persistent."""
+    def childtype(self): return Field
+
+    def version(self):
+        """read-only version attribute on fieldset tag"""
+        return self._getorsetattr("version",None)
+
+    def report(self,x,y):
+        """reports active fields and their intensities"""
+        active=0
+        for f in self.getall():
+            name=f.name()
+            intens=f.calc(x,y)
+            if intens>0:
+                print name,intens,
+                active+=1
+        if active>0:
+            print
+        self.dmxsend(x,y)
+    def dmxsend(self,x,y):
+        """output lights to dmx"""
+        levels=dict([(f.name(),f.calc(x,y)) for f in self.getall()])
+        dmxlist=Submaster(None,levels).get_dmx_list()
+        dmxclient.outputlevels(dmxlist)
+        
+        
+    def getbounds(self):
+        """returns xmin,xmax,ymin,ymax for the non-zero areas of this field"""
+        r=None
+        for f in self.getall():
+            rad=f.getdistforintensity(0)
+            fx,fy=f.center()
+            fieldrect=Rect(fx-rad,fy-rad,rad*2,rad*2)
+            if r is None:
+                r=fieldrect
+            else:
+                r=r.union(fieldrect)
+        return r.left,r.right,r.top,r.bottom
+
+class Fieldsetfile(xmldocfile):
+    def __init__(self,filename):
+        self._openornew(filename,topleveltype=Fieldset)
+    def fieldset(self):
+        return self._gettoplevel()
+
+########################################################################
+########################################################################
+
+class FieldDisplay:
+    """the view for a Field."""
+    def __init__(self,canvas,field):
+        self.canvas=canvas
+        self.field=field
+        self.tags=[str(id(self))] # canvas tag to id our objects
+        
+    def setcoords(self):
+        """adjust canvas obj coords to match the field"""
+        # this uses the canvas object ids saved by makeobjs
+        f=self.field
+        c=self.canvas
+        w2c=self.canvas.world2canvas
+
+        # rings
+        for intens,ring in self.rings.items():
+            rad=f.getdistforintensity(intens)
+            p1=w2c(*(f.center()-Pair(rad,rad)))
+            p2=w2c(*(f.center()+Pair(rad,rad)))
+            c.coords(ring,p1[0],p1[1],p2[0],p2[1])
+
+        # text
+        p1=w2c(*f.center())
+        c.coords(self.txt,*p1)
+
+    def makeobjs(self):
+        """(re)create the canvas objs (null coords) and make their bindings"""
+        c=self.canvas
+        f=self.field
+        c.delete(self.tags)
+
+        w2c=self.canvas.world2canvas
+
+        # make rings
+        self.rings={} # rad,canvasobj
+        for intens,color in (#(1,'white'),
+                             (.8,'gray90'),(.6,'gray80'),(.4,'gray60'),(.2,'gray50'),
+                             (0,'#000080')):
+            self.rings[intens]=c.create_oval(0,0,0,0,
+                                          outline=color,width=2,tags=self.tags,
+                                          outlinestipple='gray50')
+
+        # make text
+        self.txt=c.create_text(0,0,text=f.name(),font=defaultfont+" bold",
+                               fill='white',anchor='c',
+                               tags=self.tags)
+
+        # highlight text bindings
+        canvashighlighter(c,self.txt,'fill',normalval='white',highlightval='red')
+
+        # position drag bindings
+        def press(ev):
+            self._lastmouse=ev.x,ev.y
+        def motion(ev):
+            dcan=Pair(*[a-b for a,b in zip((ev.x,ev.y),self._lastmouse)])
+            dworld=c.canvas2world_vector(*dcan)
+            self.field.center(*(self.field.center()+dworld))
+            self._lastmouse=ev.x,ev.y
+            self.setcoords() # redraw
+        def release(ev):
+            if hasattr(self,'_lastmouse'):
+                del self._lastmouse
+            dispatcher.send("field coord changed") # updates bounds
+            
+        c.tag_bind(self.txt,"<ButtonPress-1>",press)
+        c.tag_bind(self.txt,"<B1-Motion>",motion)
+        c.tag_bind(self.txt,"<B1-ButtonRelease>",release)
+
+        # radius drag bindings
+        outerring=self.rings[0]
+        canvashighlighter(c,outerring,
+                          'outline',normalval='#000080',highlightval='#4040ff')
+        def motion(ev):
+            worldmouse=self.canvas.canvas2world(ev.x,ev.y)
+            currentdist=pairdist(worldmouse,self.field.center())
+            self.field.falloff(currentdist)
+            self.setcoords()
+        c.tag_bind(outerring,"<B1-Motion>",motion)
+        c.tag_bind(outerring,"<B1-ButtonRelease>",release) # from above
+
+        self.setcoords()
+    
+class Tracker(tk.Frame):
+
+    """whole tracker widget, which is mostly a view for a
+    Fieldset. tracker makes its own fieldset"""
+
+    # world coords of the visible canvas (preserved even in window resizes)
+    xmin=0
+    xmax=100
+    ymin=0
+    ymax=100
+
+    fieldsetfile=None
+    displays=None # Field : FieldDisplay. we keep these in sync with the fieldset
+    
+    def __init__(self,master):
+        tk.Frame.__init__(self,master)
+
+        self.displays={}
+        
+        c=self.canvas=Zooming(self,bg='black',closeenough=5)
+        c.pack(fill='both',exp=1)
+
+        # preserve edge coords over window resize
+        c.bind("<Configure>",self.configcoords)
+        
+        c.bind("<Motion>",
+               lambda ev: self._fieldset().report(*c.canvas2world(ev.x,ev.y)))
+        def save(ev):
+            print "saving"
+            self.fieldsetfile.save()
+        master.bind("<Key-s>",save)
+        dispatcher.connect(self.autobounds,"field coord changed")
+
+    def _fieldset(self):
+        return self.fieldsetfile.fieldset()
+
+    def load(self,filename):
+        self.fieldsetfile=Fieldsetfile(filename)
+        self.displays.clear()
+        for f in self.fieldsetfile.fieldset().getall():
+            self.displays[f]=FieldDisplay(self.canvas,f)
+            self.displays[f].makeobjs()
+        self.autobounds()
+
+    def configcoords(self,*args):
+        # force our canvas coords to stay at the edges of the window
+        c=self.canvas
+        cornerx,cornery=c.canvas2world(0,0)
+        c.move(cornerx-self.xmin,
+               cornery-self.ymin)
+        c.setscale(0,0,
+                   c.winfo_width()/(self.xmax-self.xmin),
+                   c.winfo_height()/(self.ymax-self.ymin))
+
+    def autobounds(self):
+        """figure out our bounds from the fieldset, and adjust the display zooms.
+        writes the corner coords onto the canvas."""
+        self.xmin,self.xmax,self.ymin,self.ymax=self._fieldset().getbounds()
+
+        self.configcoords()
+        
+        c=self.canvas
+        c.delete('cornercoords')
+        for x,anc2 in ((self.xmin,'w'),(self.xmax,'e')):
+            for y,anc1 in ((self.ymin,'n'),(self.ymax,'s')):
+                pos=c.world2canvas(x,y)
+                c.create_text(pos[0],pos[1],text="%s,%s"%(x,y),
+                              fill='white',anchor=anc1+anc2,
+                              tags='cornercoords')
+        [d.setcoords() for d in self.displays.values()]
+
+########################################################################
+########################################################################
+                
+root=tk.Tk()
+root.wm_geometry('700x350')
+tra=Tracker(root)
+tra.pack(fill='both',exp=1)
+
+tra.load("fieldsets/demo")
+
+root.mainloop()

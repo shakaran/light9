@@ -1,0 +1,51 @@
+#!/usr/bin/python
+
+from Tix import *
+
+def getallsubnames():
+    import Subs
+    Subs.reload_data(0)
+    allsubnames = Subs.subs.keys()
+    allsubnames.sort()
+    return allsubnames
+
+def parselog(f,data,datatime):
+    """reads log into the given record list and index lookup"""
+    while len(data)<8000:
+        l=f.readline()
+        if l=="":
+            break
+
+        cols=l[:-1].split("\t")
+        time,subdata = cols[0][:-1],cols[1:] # strip : on the time
+        record={}
+        for i in range(len(subdata)/2):
+            record[subdata[i*2]] = subdata[i*2+1]
+
+        data.append( (time,record) )
+        datatime[time]=len(data)-1
+
+
+allsubnames = getallsubnames()
+    
+data=[] # (time, { subname : level, ... })
+datatime={} # time : index
+f=open("show_7.13.log","rt")
+
+#parselog(f,data,datatime)
+
+root=Tk()
+print root
+pw=PanedWindow(root)
+pw.pack()
+
+pw.add("p1")
+pw.add("p2")
+
+for sn in allsubnames:
+    pw.add(sn)
+    pane=getattr(pw,sn)
+    Button(pane,text=sn).pack()
+
+
+root.mainloop()

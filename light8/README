@@ -1,0 +1,99 @@
+Light 8 Lighting Control
+------------------------
+
+Installation
+
+    You'll need Python 2.2, Tk 8.x.  Depending on your platform, you might
+    need SWIG as well.  We also assume you have the same hardware that
+    we built.  It shouldn't be too hard to adapt it to another system,
+    but we leave that as an exercise to the reader.
+
+1.  SWIG the parallel port C code. (optional, depending on platform,
+        compiler, etc.)
+
+    First,
+
+    shell> make parport_wrap.c
+
+    Then,
+
+    shell> make parportmodule.so
+
+2.  Create the necessary preference files.
+
+    shell> touch /tmp/light9.prefs
+    shell> touch /tmp/light9.prefs.dummy
+
+    Sadly, we didn't have the 5 seconds to add this to the code.
+
+3.  You're done.  Sadly, Light 8 needs to be run as root, due to the nature of
+    of the parallel port interface.  However, you can run it in dummy mode
+    without being root.
+
+    Live mode:
+    shell> su
+        <enter password>
+    shell> python light8.py real
+
+    or
+
+    Dummy mode:
+    shell> python light8.py
+
+
+Introduction and Usage
+
+    Light 8 is a quick-and-dirty hack to produce a working
+    DMX controller written in Python and Tk.  Our website,
+    http://light9.bigasterisk.com/danceshow, has more information.
+    We hope to produce a more elegant and flexible solution, known as
+    Light 9.  Nevertheless, we found Light 8 useful, and perhaps other
+    lighting designers will as well.
+
+    As an example, we have included the configuration files for the dance
+    show that we used Light 8 on.  Light 8 has two modes, dummy and live.
+    Each has it's own configuration file.  Dummy uses ConfigDummy.py and
+    live uses Config.py.  Speaking of which, you need to add something
+    after the command line to enter real mode so that you don't accidently
+    run the show (this may seem silly, but we were developing it on two
+    computers and didn't want to accidentally run it on both).
+
+    Dummy mode: 
+    shell> ./rsn.py
+
+    Real mode: 
+    shell> ./rsn.py real
+
+    (you could actually type anything for 'real', it just counts
+    arguments)
+
+    Config must include several structures.  patch is a dictionary,
+    mapping channels to dimmers.  However, unlike most light boards,
+    Light 8 supports named channels.  Additionally, channels may have
+    multiple names.  Furthermore, there is a 1-to-1 patch of channels
+    to dimmers.  Here's an example patch to illustrate:
+
+    patch = {
+        ('center neutral 1', 'main special') : 1, 
+        'SL blue' : 3, 
+        'SR blue' : 4,
+    }
+
+    In this patch, we can refer to dimmer 1 by two names, 'center
+    neutral 1' and 'main special'.  We can also refer to it as '1' or 1
+    (either a Python string or int.  Heck, maybe even a float, but I'm
+    not sure).  Dimmer 2 can only be referred to as '2' or 2, since
+    the patch omits a name.  Dimmer 3 can be referred to as 'SL blue',
+    '3', or 3.  And so on...
+
+Source file breakdown
+---------------------
+
+rsn.py - Main loop, I/O, GUI, persistence, etc
+Xfader.py - 2-group crossfader widget and algorithm
+Patch.py - Manages DMX channel naming
+util.py - Some cue arithmetic functions
+Subs.py - Submaster object, including effects gui api, 
+Config.py - Show-specific names and effect code
+ConfigDummy.py - Show-specific names and effect code for dummy site
+parport* - Parallel port interface code

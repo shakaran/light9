@@ -1,0 +1,16 @@
+
+
+'''
+
+        up
+        |\________
+       / \_      /\
+      /    \   /   \
+   d1        d2    d3
+
+
+   up has a single output that outputs {d1 : .8, d2:0.1}
+   
+
+'''
+

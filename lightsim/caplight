@@ -1,0 +1,10 @@
+#!/bin/zsh
+
+# grabs a DV frame and converts to ppm file named $1
+
+dvgrab --format dv2 --frames 1 oneframe
+dv2jpg oneframe001.avi oneframe.mjpeg
+rm oneframe001.avi
+lavtrans -f i -o oneframe.jpg oneframe.mjpeg
+djpeg oneframe.jpg > $1
+rm oneframe.*

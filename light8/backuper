@@ -1,0 +1,6 @@
+#!/bin/zsh
+
+cd ~dmcc/cvs/light9/light8
+DIR=backups/`date +%Y%m%d%H%M%S`
+mkdir -p $DIR
+cp *.py $DIR

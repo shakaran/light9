@@ -1,0 +1,1 @@
+cd .. && tar cvzf lightsim/lightsim-1.01.tgz lightsim/lightsim.py lightsim/room*
