@@ -94,7 +94,7 @@ class XMLRPCServe(xmlrpc.XMLRPC):
             if (self.num_unshown_updates is None or # first time
                 self.options.fast_updates or # show always
                 (self.combinedlevels!=self.lastshownlevels and # changed
-                 self.num_unshown_updates>10)): # not too frequent
+                 self.num_unshown_updates>5)): # not too frequent
                 self.num_unshown_updates=0
                 self.printlevels()
                 self.lastshownlevels=self.combinedlevels[:]
