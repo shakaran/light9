@@ -1,18 +1,15 @@
 from __future__ import nested_scopes
 
 from Tix import *
-import random
 from signal import signal, SIGINT
-import sys, cPickle
+import sys, cPickle, random
 
-import io
 from uihelpers import *
 from panels import *
 from Xfader import *
 from subediting import Subediting
 from Fader import Fader
-import stage
-import Subs, Patch
+import io, stage, Subs, Patch, ExternalInput
 
 class Pickles:
     def __init__(self, scalelevels, subs=None, windowpos=None):
@@ -31,7 +28,8 @@ class Lightboard:
 
         self.channel_levels = []
         self.scalelevels = {}
-        self.xfader = Xfader(self.scalelevels) # doesn't draw any UI yet-- look for self.xfader.setupwidget()
+        # doesn't draw any UI yet-- look for self.xfader.setupwidget()
+        self.xfader = Xfader(self.scalelevels) 
         self.oldlevels = [None] * 68 # never replace this; just clear it
         self.subediting = Subediting(currentoutputlevels=self.oldlevels)
 
@@ -46,22 +44,27 @@ class Lightboard:
         for w in self.master.winfo_children():
             w.destroy()
 
-        stage_tl = toplevelat('stage', self.windowpos)
+        stage_tl = toplevelat('stage')
         s = stage.Stage(stage_tl)
         stage.createlights(s)
         s.setsubediting(self.subediting)
         s.pack()
         self.stage = s # save it
 
-        sub_tl = toplevelat('sub', self.windowpos)
-        scene_tl = toplevelat('scenes',self.windowpos)
-        effect_tl = toplevelat('effect', self.windowpos)
+        sub_tl = toplevelat('sub')
+        scene_tl = toplevelat('scenes')
+        effect_tl = toplevelat('effect')
+
+        mapping_tl = toplevelat('mapping')
+        self.slidermapper = ExtSliderMapper(mapping_tl, self.scalelevels, 
+                ExternalInput.ExternalSliders())
+        self.slidermapper.pack()
 
         self.subpanels = Subpanels(sub_tl, effect_tl, scene_tl, self, self.scalelevels,
                                    Subs, self.xfader, self.changelevel,
                                    self.subediting, Subs.longestsubname())
 
-        leveldisplay_tl = toplevelat('leveldisplay', self.windowpos)
+        leveldisplay_tl = toplevelat('leveldisplay')
         leveldisplay_tl.bind('<Escape>', sys.exit)
 
         self.leveldisplay = Leveldisplay(leveldisplay_tl, self.channel_levels)
@@ -86,7 +89,7 @@ class Lightboard:
         self.xfader.setupwidget(xf)
         controlpanel.pack()
 
-        cuefader_tl = toplevelat('cuefader', self.windowpos)
+        cuefader_tl = toplevelat('cuefader')
         cuefader = Fader(cuefader_tl, Subs.cues, self.scalelevels)
         cuefader.pack()
 
@@ -149,6 +152,11 @@ class Lightboard:
                 levels[ch-1] = max(levels[ch-1], fadelev)
 
         levels = [int(l) for l in levels]
+
+        # load levels from external sliders
+        extlevels = self.slidermapper.get_levels()
+        for name, val in extlevels.items():
+            self.scalelevels[name].set(val)
         
         for lev,lab,oldlev,numlab in zip(levels, self.channel_levels, 
                                          self.oldlevels, 
@@ -202,6 +210,7 @@ class Lightboard:
             print "EOFrror: Couldn't load prefs (%s): %s" % (filename,e)
         except Exception,e:
             print "Couldn't load prefs (%s): %s" % (filename,e)
+        self.slidermapper.setup()
 
     def backgroundloop(self, *args):
         self.master.after(50, self.backgroundloop, ())
