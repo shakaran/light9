@@ -85,6 +85,16 @@ class Subpanels:
         sublist = Subs.subs.items()
         sublist.sort()
 
+        for p in scenesparent,effectsparent:
+            sw = ScrolledWindow(p)
+            sw.window.bind("<ButtonPress-4>",lambda s=sw.vsb: scrollscrolledwindow(s,-1))
+            sw.window.bind("<ButtonPress-5>",lambda s=sw.vsb: scrollscrolledwindow(s,1))
+            sw.pack(expand=1,fill=BOTH)
+            if p==scenesparent:
+                scenesparent = sw.window
+            else:
+                effectsparent = sw.window
+
         for name, sub in sublist:
             # choose one of the sub panels to add to
             if sub.is_effect:
@@ -107,6 +117,7 @@ class Subpanels:
             # make frame that surrounds the whole submaster
             f=Frame(parent, bd=1, relief='raised')
             f.pack(fill='both',exp=1,side=side2)
+            
 
             # make DoubleVar (there might be one left around from
             # before a refresh)
@@ -120,14 +131,14 @@ class Subpanels:
                 scaleopts['troughcolor'] = sub.color
 
             s = FlyingFader(f, label=str(name), variable=scalelevels[name],
-                            showvalue=0, length=300-17,
+                            showvalue=0, length=100,
                             width=14, sliderlength=14,
                             to=end1,res=.001,from_=end2,bd=1, font=stdfont,
                             orient=orient1,
                             labelwidth=width1,
                             **scaleopts)
 
-            # tell subediting what widget to highlight when it's
+            # tell subediting what widgets to highlight when it's
             # editing a sub
             for w in (s,s.label,s.vlabel, s.scale):
                 subediting.register(subname=name,widget=w)
@@ -137,7 +148,7 @@ class Subpanels:
 
             self.axisbuttons(f,s,xfader,stdfont,side1,name)
 
-            s.pack(side='left', fill=BOTH)
+            s.pack(side='left', fill=BOTH, expand=1)
 
             # effects frame?
             sframe = Frame(f,bd=2,relief='groove')
