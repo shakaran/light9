@@ -9,10 +9,8 @@ class Mass:
         
         self.v=0 # velocity
         self.maxspeed = .8 # maximum speed, in position/second
-
         self.maxaccel = 3 # maximum acceleration, in position/second^2
-
-        self.eps = .01 # epsilon - numbers within this much are considered the same
+        self.eps = .03 # epsilon - numbers within this much are considered the same
 
         self._lastupdate=time()
         self._stopped=1
@@ -45,10 +43,14 @@ class Mass:
         self._stopped=0
         dir = (-1.0,1,0)[self.xgoal>self.x]
 
+        if abs(self.xgoal-self.x) < abs(self.v*5*dt):
+            # apply the brakes on the last 5 steps
+            dir *= -.5
+
         self.v += dir*self.maxaccel*dt # velocity changes with acceleration in the right direction
         self.v = min(max(self.v,-self.maxspeed),self.maxspeed) # clamp velocity
 
-        print "x=%+.03f v=%+.03f a=%+.03f %f" % (self.x,self.v,self.maxaccel,self.xgoal)
+        #print "x=%+.03f v=%+.03f a=%+.03f %f" % (self.x,self.v,self.maxaccel,self.xgoal)
 
     def goto(self,newx):
         self.xgoal=newx
@@ -108,16 +110,15 @@ class FlyingFader(Frame):
 
     def newfade(self, newlevel, evt=None, length=None):
 
+        # these are currently unused-- Mass needs to accept a speed input
         mult = 1
-
         if evt.state & 8 and evt.state & 4: mult = 0.25 # both
         elif evt.state & 8: mult = 0.5 # alt
         elif evt.state & 4: mult = 2   # control
 
+
         self.mass.x = self.variable.get()
         self.mass.goto(newlevel)
-
-        self.scale['troughcolor'] = 'red'
 
         self.gofade()
 
@@ -125,10 +126,15 @@ class FlyingFader(Frame):
         self.mass.update()
         self.variable.set(self.mass.x)
 
-
         if not self.mass.ismoving():
             self.scale['troughcolor'] = self.oldtrough
             return
+        
+        # blink the trough while the thing's moving
+        if time()%.4>.2:
+            self.scale.config(troughcolor=self.oldtrough)
+        else:
+            self.scale.config(troughcolor='white')
 
 #        colorfade(self.scale, percent)
         self.after(30, self.gofade)
@@ -156,16 +162,8 @@ def colorfade(scale, lev):
     col="#%02X%02X%02X" % tuple(out)
     scale.config(troughcolor=col)
 
+
 if __name__ == '__main__':
-
-
-#    m=Mass()
-#    m.goto(3)
-#    while 1:
-#        m.update()
-#        print "%.03f %.03f" % (m.x, m.v)
-#        sleep(.02)
-    
     root = Tk()
     root.tk_focusFollowsMouse()
 
