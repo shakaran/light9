@@ -77,7 +77,7 @@ class Leveldisplay:
 
 class Subpanels:
     def __init__(self, scenesparent, effectsparent, scalelevels, Subs, xfader,
-        changelevel):
+        changelevel, subediting, longestname):
         
         sublist = Subs.subs.items()
         sublist.sort()
@@ -87,15 +87,17 @@ class Subpanels:
             if sub.is_effect:
                 parent=effectsparent
                 side1='bottom'
-                orient='vert'
+                orient1='vert'
                 end1=0
                 end2=1
+                width1=len(name)
             else:
                 parent=scenesparent
                 side1='right'
-                orient='horiz'
+                orient1='horiz'
                 end1=1
                 end2=0
+                width1=longestname
 
             # make frame that surrounds the whole submaster
             f=Frame(parent, bd=1, relief='raised')
@@ -115,9 +117,12 @@ class Subpanels:
                             showvalue=0, length=300-17,
                             width=18, sliderlength=18,
                             to=end1,res=.001,from_=end2,bd=0, font=stdfont,
-                            orient=orient,
-                            labelwidth=12, # this should be equal to the longest label name
+                            orient=orient1,
+                            labelwidth=width1,
                             **scaleopts)
+
+            eb = Button(f,text="E",font=stdfont,padx=0,pady=0,bd=1,command=lambda subediting=subediting,sub=sub: subediting.setsub(sub))
+            eb.pack(side=side1,fill='both',padx=0,pady=0)
 
             for axis in ('y','x'):
                 cvar=IntVar()
