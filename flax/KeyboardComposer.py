@@ -20,24 +20,37 @@ class SubScale(Scale, Fadable):
         self.scale_var = kw.get('variable') or DoubleVar()
         kw.update({'variable' : self.scale_var,
                    'from' : 1, 'to' : 0, 'showvalue' : 0,
-                   'sliderlength' : 30, 'res' : 0.01,
-                   'width' : 50})
+                   'sliderlength' : 15, 'res' : 0.01,
+                   'width' : 40, 'troughcolor' : 'black', 'bg' : 'grey40',
+                   'highlightthickness' : 1, 'bd' : 1,
+                   'highlightcolor' : 'red', 'highlightbackground' : 'black',
+                   'activebackground' : 'red'})
         Scale.__init__(self, master, *args, **kw)
         Fadable.__init__(self, var=self.scale_var, wheel_step=0.05)
+        self.draw_indicator_colors()
+    def draw_indicator_colors(self):
+        if self.scale_var.get() == 0:
+            self['troughcolor'] = 'black'
+        else:
+            self['troughcolor'] = 'blue'
 
 class SubmasterTk(Frame):
     def __init__(self, master, name, current_level):
-        Frame.__init__(self, master, bd=1, relief='raised')
+        Frame.__init__(self, master, bd=1, relief='raised', bg='black')
         self.slider_var = DoubleVar()
         self.slider_var.set(current_level)
         self.scale = SubScale(self, variable=self.slider_var, width=20)
-        textlabel = Label(self, text=name)
-        textlabel.pack(side=TOP)
+        namelabel = Label(self, text=name, font="Arial 8", bg='black',
+            fg='white')
+        namelabel.pack(side=TOP)
+        levellabel = Label(self, textvariable=self.slider_var, font="Arial 8",
+            bg='black', fg='white')
+        levellabel.pack(side=TOP)
         self.scale.pack(side=BOTTOM, expand=1, fill=BOTH)
 
 class KeyboardComposer(Frame):
     def __init__(self, root, submasters, current_sub_levels=None):
-        Frame.__init__(self, root)
+        Frame.__init__(self, root, bg='black')
         self.submasters = submasters
         self.current_sub_levels = {}
         if current_sub_levels:
@@ -62,8 +75,17 @@ class KeyboardComposer(Frame):
         self.highlight_row(self.current_row)
         self.rows[self.current_row].focus()
 
-        self.refreshbutton = Button(self, text="Refresh", command=self.refresh)
-        self.refreshbutton.pack(side=BOTTOM)
+        self.buttonframe = Frame(self, bg='black')
+        self.buttonframe.pack(side=BOTTOM)
+        self.refreshbutton = Button(self.buttonframe, text="Refresh", 
+            command=self.refresh, bg='black', fg='white')
+        self.refreshbutton.pack(side=LEFT)
+        self.save_stage_button = Button(self.buttonframe, text="Save", 
+            command=lambda: self.save_current_stage(self.sub_name.get()), 
+            bg='black', fg='white')
+        self.save_stage_button.pack(side=LEFT)
+        self.sub_name = Entry(self.buttonframe, bg='black', fg='white')
+        self.sub_name.pack(side=LEFT)
         self.stop_frequent_update_time = 0
     def make_key_hints(self):
         keyhintrow = Frame(self)
@@ -77,7 +99,7 @@ class KeyboardComposer(Frame):
 
             # another what a hack!
             keylabel = Label(keyhintrow, text='%s\n%s' % (upkey, downkey), 
-                width=8, font=('Arial', 12), bg='red', fg='white', anchor='c')
+                width=1, font=('Arial', 10), bg='red', fg='white', anchor='c')
             keylabel.pack(side=LEFT, expand=1, fill=X)
             col += 1
 
@@ -105,7 +127,7 @@ class KeyboardComposer(Frame):
 
     def change_row(self, event):
         diff = 1
-        if event.keysym in ('Prior', '<Control-p>'):
+        if event.keysym in ('Prior', 'p'):
             diff = -1
         old_row = self.current_row
         self.current_row += diff
@@ -127,14 +149,6 @@ class KeyboardComposer(Frame):
                 subtk.scale.fade(0)
             else:
                 subtk.scale.decrease()
-        # self.maybe_update()
-    def maybe_update(self, dur=1.05):
-        now = time.time()
-        if now > self.stop_frequent_update_time:
-            self.stop_frequent_update_time = now + dur
-            self.send_frequent_updates()
-        else:
-            self.stop_frequent_update_time = now + dur
     def draw_sliders(self):
         self.tk_focusFollowsMouse()
 
@@ -150,9 +164,13 @@ class KeyboardComposer(Frame):
             col += 1
             col %= 10
 
-            subtk.slider_var.trace('w', lambda x, y, z: self.send_levels())
+            def slider_changed(x, y, z, subtk=subtk):
+                subtk.scale.draw_indicator_colors()
+                self.send_levels()
+
+            subtk.slider_var.trace('w', slider_changed)
     def make_row(self):
-        row = Frame(self, bd=2)
+        row = Frame(self, bd=2, bg='black')
         row.pack(expand=1, fill=BOTH)
         self.setup_key_nudgers(row)
         self.rows.append(row)
@@ -169,16 +187,22 @@ class KeyboardComposer(Frame):
         row['bg'] = 'red'
     def unhighlight_row(self, row):
         row = self.rows[row]
-        row['bg'] = '#d9d9d9'
+        row['bg'] = 'black'
     def get_levels(self):
         return dict([(name, slidervar.get()) 
             for name, slidervar in self.slider_vars.items()])
-    def get_dmx_list(self):
+    def get_levels_as_sub(self):
         scaledsubs = [self.submasters.get_sub_by_name(sub) * level \
             for sub, level in self.get_levels().items()]
 
         maxes = sub_maxes(*scaledsubs)
-        return maxes.get_dmx_list()
+        return maxes
+    def save_current_stage(self, subname):
+        print "saving current levels as", subname
+        sub = self.get_levels_as_sub()
+        sub.name = subname
+        sub.save()
+
     def save(self):
         pickle.dump(self.get_levels(), 
                     file('.keyboardcomposer.savedlevels', 'w'))
@@ -187,6 +211,10 @@ class KeyboardComposer(Frame):
         if time.time() <= self.stop_frequent_update_time:
             self.send_levels()
             self.after(10, self.send_frequent_updates)
+
+    def get_dmx_list(self):
+        maxes = self.get_levels_as_sub()
+        return maxes.get_dmx_list()
     def send_levels(self):
         levels = self.get_dmx_list()
         dmxclient.outputlevels(levels)
@@ -202,7 +230,7 @@ class KeyboardComposer(Frame):
         for r in self.rows:
             r.destroy()
         self.keyhints.destroy()
-        self.refreshbutton.destroy()
+        self.buttonframe.destroy()
         self.draw_ui()
 
 if __name__ == "__main__":
