@@ -66,7 +66,8 @@ class CueFader(Tk.Frame):
     def __init__(self, master, cuelist):
         Tk.Frame.__init__(self, master)
         self.cuelist = cuelist
-        self.auto_shift = 0
+        self.auto_shift = Tk.IntVar()
+        self.auto_shift.set(1)
 
         self.scales = {}
         self.shift_buttons = {}
@@ -77,13 +78,16 @@ class CueFader(Tk.Frame):
         self.update_cue_display()
         topframe.pack()
         
+        bottomframe = Tk.Frame(self)
+        self.auto_shift_checkbutton = Tk.Checkbutton(self, 
+            variable=self.auto_shift, text='Autoshift', 
+            command=self.toggle_autoshift)
+        self.auto_shift_checkbutton.pack()
+        bottomframe.pack(side='bottom')
+
+        middleframe = Tk.Frame(self)
         for name, start, end, side in (('Prev', 1, 0, 'left'),
                                        ('Next', 0, 1, 'right')):
-
-            shift = Tk.Button(self, text="Shift %s" % name, state='disabled',
-                command=lambda name=name: self.shift(name))
-            shift.pack(side=side, fill='both', expand=1)
-            
             frame = Tk.Frame(self)
             scale = LabelledScale(frame, name, from_=start, to_=end, 
                 res=0.01, orient='horiz')
@@ -92,15 +96,26 @@ class CueFader(Tk.Frame):
             go.pack(fill='both', expand=1)
             frame.pack(side=side, fill='both', expand=1)
         
+            shift = Tk.Button(frame, text="Shift %s" % name, state='disabled',
+                command=lambda name=name: self.shift(name))
+
             self.scales[name] = scale
             self.shift_buttons[name] = shift
 
             scale.scale_var.trace('w', \
                 lambda x, y, z, name=name, scale=scale: self.xfade(name, scale))
+        middleframe.pack(side='bottom', fill='both', expand=1)
+    def toggle_autoshift(self):
+        for name, button in self.shift_buttons.items():
+            if not self.auto_shift.get():
+                button.pack(side='bottom', fill='both', expand=1)
+            else:
+                button.pack_forget()
+
     def shift(self, name):
         for scale in self.scales.values():
             scale.scale_var.set(0)
-            if name == 'Next': scale.update()
+            scale.scale.update()
         print "shift", name
         self.cuelist.shift((-1, 1)[name == 'Next'])
         self.update_cue_display()
@@ -111,7 +126,7 @@ class CueFader(Tk.Frame):
         scale_val = scale.scale_var.get() 
 
         if scale_val == 1:
-            if self.auto_shift:
+            if self.auto_shift.get():
                 self.shift(name)
             else:
                 self.shift_buttons[name]['state'] = 'normal'
