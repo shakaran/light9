@@ -2,22 +2,22 @@ from Tkinter import *
 from time import time
 
 class FlyingFader(Frame):
-    def __init__(self, master, variable, label, time=1.5, font=('Arial', 8),
+    def __init__(self, master, variable, label, fadedur=1.5, font=('Arial', 8),
                  **kw):
         Frame.__init__(self, master)
         self.name = label
         self.variable = variable
-        self.fadelength = time
+        self.fadedur = fadedur
         self.curfade = None
         self.fadetimes = 0, 0
 
         self.config({'bd':1, 'relief':'raised'})
-        scaleopts = {'variable' : variable, 'showvalue' : 0, 'from' : 100,
-                     'to' : 0, 'res' : 0.1, 'width' : 20, 'length' : 200}
+        scaleopts = {'variable' : variable, 'showvalue' : 0, 'from' : 1.0,
+                     'to' : 0, 'res' : 0.001, 'width' : 20, 'length' : 200}
         scaleopts.update(kw)
         
         self.scale = Scale(self, scaleopts)
-        self.vlabel = Label(self, text="0.0", font=font)
+        self.vlabel = Label(self, text="0.0", width=6, font=font)
         self.label = Label(self, text=label, wraplength=40, font=font)
 
         self.oldtrough = self.scale['troughcolor']
@@ -48,9 +48,12 @@ class FlyingFader(Frame):
         target = float(self.tk.call(self.scale, 'get', evt.x, evt.y))
         self.newfade(target, evt)
 
+    def isfading(self):
+        return self.fadetimes[0] or self.fadetimes[1]
+
     def newfade(self, newlevel, evt=None, length=None):
         if length is None:
-            length = self.fadelength
+            length = self.fadedur
         mult = 1
 
         if evt.state & 8 and evt.state & 4: mult = 0.25 # both
@@ -58,8 +61,23 @@ class FlyingFader(Frame):
         elif evt.state & 4: mult = 2   # control
 
         now = time()
-        self.fadetimes = (now, now + (mult * length))
-        self.curfade = (self.variable.get(), newlevel)
+        if not self.isfading():
+            self.fadetimes = (now, now + (mult * length))
+            self.curfade = (self.variable.get(), newlevel)
+        else:
+            # already fading
+            t1,t2=self.fadetimes
+            v1,v2=self.curfade
+            rate = abs((v2-v1)/(t2-t1))
+
+            vnow=self.variable.get()
+            newdist=abs(newlevel-vnow)
+            newdur=newdist/rate
+
+            self.fadetimes = (now,now+newdur)
+            self.curfade=(vnow,newlevel)
+            
+            
 
         self.scale['troughcolor'] = 'red'
 
@@ -78,7 +96,7 @@ class FlyingFader(Frame):
         newvalue = (percent * (lend - lstart)) + lstart
         self.variable.set(newvalue)
         colorfade(self.scale, percent)
-        self.after(10, self.gofade)
+        self.after(30, self.gofade)
 
     def updatelabel(self, *args):
         self.vlabel['text'] = "%.3f" % self.variable.get()
