@@ -10,7 +10,7 @@ import sys
 sys.path.append("../light8")
 import Patch
 from uihelpers import make_frame, colorlabel, eventtoparent
-from dispatch import dispatcher
+import dispatcher
 
 stdfont = ('Arial', 10)
 
@@ -34,7 +34,7 @@ class Onelevel(tk.Frame):
 
         # text description of channel
         self.desc_lab=tk.Label(self, text=Patch.get_channel_name(channelnum),
-                               width=14, font=stdfont, anchor='w',
+                               width=8, font=stdfont, anchor='w',
                                padx=0, pady=0, bd=0, 
                  height=1, bg='black', fg='white')
         self.desc_lab.pack(side='left')

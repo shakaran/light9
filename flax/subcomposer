@@ -1,0 +1,99 @@
+#!/usr/bin/python
+
+from __future__ import division, nested_scopes
+import Tkinter as tk
+from dmxchanedit import Levelbox
+import sys,os,time,atexit
+sys.path.append("../light8")
+import dmxclient
+import Patch
+import Submaster
+
+import dispatcher
+
+def persistentlevels():
+    """adjusts levels from subcomposer.savedlevels, if possible; and
+    arranges to save the levels in that file upon exit"""    
+    global levels
+    try:
+        levels[:]=map(float,file("subcomposer.savedlevels","r").read().split())
+    except IOError:
+        pass
+
+    atexit.register(lambda: file("subcomposer.savedlevels","w").
+                    write(" ".join(map(str,levels))))
+
+def levelchanged(channel,newlevel):
+    global lb, levels
+    if channel>len(levels):
+        return
+    levels[channel-1]=max(0,min(1,float(newlevel)))
+    lb.setlevels(levels)
+
+def savenewsub(levels,subname):
+    leveldict={}
+    for i,lev in zip(range(len(levels)),levels):
+        if lev!=0:
+            leveldict[Patch.get_channel_name(i+1)]=lev
+        
+    s=Submaster.Submaster(subname,leveldict)
+    s.save()
+def Savebox(master,levels):
+    f=tk.Frame(master,bd=2,relief='raised')
+    tk.Label(f,text="Save this as:").pack(side='left')
+    e=tk.Entry(f)
+    e.pack(side='left',exp=1,fill='x')
+    def cmd():
+        subname=e.get()
+        savenewsub(levels,subname)
+        print "saved new sub",subname
+    tk.Button(f,text="Save",command=cmd).pack(side='left')
+    return f
+    
+#############################
+
+levels=[0]*68 # levels should never get overwritten, just edited
+persistentlevels()
+    
+root=tk.Tk()
+root.config(bg='black')
+
+lb=Levelbox(root)
+lb.pack(side='top')
+
+savebox=Savebox(root,levels)
+savebox.pack(side='top')
+
+# the dmx levels we edit and output, range is 0..1 (dmx chan 1 is
+# the 0 element)
+lb.setlevels(levels)
+
+dispatcher.connect(levelchanged,"levelchanged")
+
+lastupdate=0 # time we last sent to dmx
+
+root.update() # get the windows drawn
+
+lastsent=[] # copy of levels
+
+def sendupdate():
+    global levels,lastupdate,lastsent
+    dmxclient.outputlevels(levels)
+    lastupdate=time.time()
+    lastsent=levels[:]
+
+dispatcher.connect(sendupdate,"levelchanged")
+
+while 1:
+
+    if 0:
+        for i in range(20): # don't let Tk take all the time
+            tk._tkinter.dooneevent()
+        print "loop"
+    else:
+        root.update()
+        
+    if lastsent!=levels or time.time()>lastupdate+1:
+        sendupdate()
+
+    time.sleep(.01)
