@@ -1,6 +1,9 @@
 #!/usr/bin/python
-
 from __future__ import division,nested_scopes
+
+import sys
+sys.path.append("../../editor/pour")
+
 from skim.zooming import Zooming,Pair
 from math import sqrt,sin,cos
 from pygame.rect import Rect
