@@ -164,7 +164,9 @@ class Subpanels:
         
     def subeditingbuttons(self,f,side1,sub,name,lightboard,subediting):
         for txt,cmd in (("Edit",lambda subediting=subediting,sub=sub: self.subediting_edit(subediting,sub)),
-                        ("Save",lambda sub=sub,name=name,lightboard=lightboard: self.subediting_save(name,sub,lightboard))):
+                        ("Save",lambda sub=sub,name=name,lightboard=lightboard: self.subediting_save(name,sub,lightboard)),
+                        ("SaveStg",lambda l=lightboard,name=name: l.save_sub(name,l.stageassub())),
+                        ):
             eb = Button(f,text=txt,font=stdfont,padx=0,pady=0,
                         bd=1,command=cmd)
             eb.pack(side=side1,fill='both',padx=0,pady=0)
