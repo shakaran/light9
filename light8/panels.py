@@ -101,9 +101,7 @@ class Subpanels:
                 cb.pack(side='bottom',fill='both', padx=0, pady=0)
                 xfader.registerbutton(name,axis,cvar)
 
-            s.pack(side='left')
-            s.bind('<3>', 
-                lambda evt, v=scalelevels[name]: toggle_slider(v))
+            s.pack(side='left', fill=BOTH)
 
             # effects frame?
             sframe = Frame(f,bd=2,relief='groove')
