@@ -8,10 +8,17 @@ stdfont = ('Arial', 8)
 class Param: # abstract
     def get_value(self):
         pass
-    def set_value(self):
+    def set_value(self, v):
         pass
     def draw_tk(self, frame):
         pass
+    def __getstate__(self):
+        print "get_state:", self.get_value()
+        return {'value' : self.get_value()}
+    def __setstate__(self, dict):
+        print "set_state to", dict
+        self.value = StringVar()
+        self.set_value(dict['value'])
 
 class CheckboxParam(Param):
     def __init__(self, initial=0):
@@ -84,6 +91,8 @@ class LabelParam(Param):
     def get_value(self):
         return self.value.get()
     def set_value(self, v):
+        if 'value' not in self.__dict__:
+            self.value = StringVar()
         self.value.set(v)
     def draw_tk(self, frame):
         l = Label(frame, textvariable=self.value, font=stdfont)
@@ -143,15 +152,23 @@ class SliderAdjuster:
     def get(self, level):
         if self.var is not None:
             return self.var.get()
-
         return None
     def justturnedon(self):
         return self.atzero
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        # remove var (non-pickleable)
+        try:
+            del state['var']
+        except KeyError:
+            pass
+        return state
+    # no setstate needed
 
 class Sub:
     def __init__(self, levels, dimmers=68, color=None):
         self.levels = levels
-        self.dimmers = dimmers
+        self.dimmers = dimmers # needed?
         self.is_effect = callable(self.levels)
         self.slideradjuster = SliderAdjuster()
         if self.is_effect:
@@ -166,7 +183,14 @@ class Sub:
         if self.is_effect:
             self.params.draw_tk(frame)
     def get_state(self):
-        pass
+        state = self.__dict__.copy()
+        if self.is_effect:
+            del state['levels']
+            del state['generator']
+
+        return state
+    def set_state(self, statedict):
+        self.__dict__.update(statedict)
     def get_levels(self, level):
         d = {}
         if level == 0: 
@@ -194,7 +218,7 @@ def reload_data(dummy):
         if type(name) == TupleType:
             name, color = name
         else:
-            color=None
+            color = None
 
         subs[name] = Sub(levels, color=color)
 

@@ -127,8 +127,15 @@ class Lightboard:
                     self.scalelevels[s].set(v)
                 except:
                     print "Couldn't set %s -> %s" % (s, v)
-        except:
-            print "Couldn't load prefs (%s)" % filename
+            for name, substate in p.substate.items():
+                try:
+                    Subs.subs[name].set_state(substate)
+                except:
+                    print "Couldn't set sub %s state" % name
+        except IOError:
+            print "IOError: Couldn't load prefs (%s)" % filename
+        except EOFError:
+            print "EOFrror: Couldn't load prefs (%s)" % filename
 
     def make_sub(self, name):
         i = 1
@@ -161,19 +168,26 @@ class Lightboard:
         self.master.after(50, self.backgroundloop, ())
         self.changelevel()
     def quit(self, *args):
+        self.save()
+        root.destroy()
+        sys.exit()
+    def save(self, *args):
         filename = '/tmp/light9.prefs'
         if DUMMY:
             filename += '.dummy'
         print "Saving to", filename
         file = open(filename, 'w')
-        cPickle.dump(Pickles(self.scalelevels), file)
-        root.destroy()
-        sys.exit()
+        try:
+            cPickle.dump(Pickles(self.scalelevels, Subs.subs.items()), file)
+        except cPickle.UnpickleableError:
+            print "UnpickleableError!  There's yer problem."
 
 class Pickles:
-    def __init__(self, scalelevels):
+    def __init__(self, scalelevels, subs=None):
         self.scalelevels = dict([(name, lev.get()) 
-            for name,lev in scalelevels.items()])
+            for name, lev in scalelevels.items()])
+        self.substate = dict([(name, subobj.get_state())
+            for name, subobj in subs])
 
 mr_lightboard = Lightboard(root)
 
