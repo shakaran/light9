@@ -87,8 +87,9 @@ class Subpanels:
 
         for p in scenesparent,effectsparent:
             sw = ScrolledWindow(p)
-            sw.window.bind("<ButtonPress-4>",lambda s=sw.vsb: scrollscrolledwindow(s,-1))
-            sw.window.bind("<ButtonPress-5>",lambda s=sw.vsb: scrollscrolledwindow(s,1))
+            for but,units in ( (4,-4),(5,4) ):
+                sw.window.bind("<ButtonPress-%s>"%but,lambda ev,s=sw.vsb,u=units: s.tk.call('tkScrollByUnits',s,'hv',u))
+
             sw.pack(expand=1,fill=BOTH)
             if p==scenesparent:
                 scenesparent = sw.window

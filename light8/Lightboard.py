@@ -49,7 +49,7 @@ class Lightboard:
         s.setsubediting(self.subediting)
         s.pack()
 
-        sub_tl = toplevelat(0,0)
+        sub_tl = toplevelat(0,0,w=440,h=610)
         effect_tl = toplevelat(462,4)
 
         self.subpanels = Subpanels(sub_tl, effect_tl, self, self.scalelevels,

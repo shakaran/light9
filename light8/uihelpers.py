@@ -50,10 +50,6 @@ def eventtoparent(ev,sequence):
         ev.widget.nametowidget(par).event_generate(sequence,**evdict)
     #else the event made it all the way to the top, unhandled
 
-def scrollscrolledwindow(widget,amount):
-    print "scroll",widget,amount
-    
-
 def colorlabel(label):
     """color a label based on its own text"""
     txt=label['text'] or "0"
