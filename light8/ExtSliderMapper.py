@@ -2,14 +2,14 @@
 from Tix import *
 
 class SliderMapping:
-    def __init__(self, default='disconnected', attached=0, extinputlevel=0, 
+    def __init__(self, default='disconnected', synced=0, extinputlevel=0, 
                  sublevel=0):
         self.subname = StringVar() # name of submaster we're connected to
         self.subname.set(default)
         self.sublevel = DoubleVar() # scalelevel variable of that submaster
         self.sublevel.set(sublevel)
-        self.attached = BooleanVar() # currently attached
-        self.attached.set(attached)
+        self.synced = BooleanVar() # currently synced
+        self.synced.set(synced)
         self.extlevel = DoubleVar() # external slider's input
         self.extlevel.set(extinputlevel)
         self.widgets = [] # list of widgets drawn
@@ -17,56 +17,79 @@ class SliderMapping:
                              # it so we can change its textvariable
         self.lastbgcolor = None # last background color drawn to avoid unnecessary
                                 # updates
-    def attach(self):
-        self.attached.set(1)
-        self.color_text()
-    def detach(self):
-        self.attached.set(0)
-        self.color_text()
-    def isattached(self):
-        return self.attached.get()
+        self.ignoreunsync = 0   # whether to ignore the next request to unsync
+                                # this is because we trace the slider variable, but
+                                # we are also semi-responsible for setting it in
+                                # Lightboard.changelevels.
+    def ignorenextunync(self):
+        print "skipping next unsync"
+        self.ignoreunsync += 1
+        self.sync()
+        # self.color_bg()
+    def sync(self, *args):
+        # print "syncing"
+        self.synced.set(1)
+        # self.color_bg()
+    def unsync(self, *args):
+        if self.ignoreunsync > 0:
+            print "skipped unsync", self.ignoreunsync
+            self.synced.set(1)
+            self.color_bg()
+            self.ignoreunsync -= 1
+            return 
+        '''
+        print "unsyncing"
+        '''
+        self.synced.set(0)
+        # self.color_bg()
+    def issynced(self):
+        return self.synced.get()
+    def disconnect(self, *args):
+        self.set_subname('disconnected') # a bit hack-like
+        self.sublabel.configure(text="N/A")
+        self.color_bg()
     def isdisconnected(self):
         return self.subname.get() == 'disconnected'
-    def check_attached(self):
-        'If external level is higher than the sublevel, it attaches'
+    def check_synced(self, *args):
+        'If external level is near than the sublevel, it synces'
         if self.isdisconnected(): 
-            self.detach()
+            self.unsync()
             return
 
-        if self.extlevel.get() > self.sublevel.get():
-            self.attached.set(1)
-        self.color_text()
+        if abs(self.extlevel.get() - self.sublevel.get()) <= 0.02:
+            self.sync()
     def changed_extinput(self, newlevel):
         'When a new external level is received, this incorporates it'
         self.extlevel.set(newlevel)
-        self.check_attached()
-        self.color_text()
+        self.check_synced()
+        self.color_bg()
     def set_subname(self, newname):
         self.subname.set(newname)
-        self.detach()
-        self.color_text()
-    def color_text(self):
+        self.unsync()
+        self.color_bg()
+    def color_bg(self):
         if self.widgets:
+            self.check_synced()
             if self.isdisconnected():
                 color = 'honeyDew4'
-            elif self.isattached():
+            elif self.issynced():
+            # elif abs(self.extlevel.get() - self.sublevel.get()) <= 0.02:
                 color = 'honeyDew2'
-            else: # detached
+            else: # unsynced
                 color = 'red'
 
+            # print "color", color, "lastbgcolor", self.lastbgcolor
             if self.lastbgcolor == color: return
             for widget in self.widgets:
                 widget.configure(bg=color)
             self.lastbgcolor = color
-    def disconnect(self):
-        self.set_subname('disconnected') # a bit hack-like
-        self.sublabel.configure(text="N/A")
     def set_sublevel_var(self, newvar):
         'newvar is one of the variables in scalelevels'
         self.sublevel = newvar
+        self.sublevel.trace('w', self.unsync)
         if self.sublabel:
             self.sublabel.configure(textvariable=newvar)
-        self.check_attached()
+        self.check_synced()
     def get_mapping(self):
         'Get name of submaster currently mapped'
         return self.subname.get()
@@ -82,8 +105,8 @@ class SliderMapping:
             c.slistbox.listbox.insert(END, s)
         c.entry.configure(width=12)
         statframe = Frame(frame)
-        cb = Checkbutton(statframe, variable=self.attached, 
-            text="Attached")
+        cb = Checkbutton(statframe, variable=self.synced, 
+            text="Synced")
         cb.grid(columnspan=2, sticky=W)
         ilabel = Label(statframe, text="Input", fg='blue')
         ilabel.grid(row=1, sticky=W)
@@ -161,9 +184,17 @@ class ExtSliderMapper(Frame):
             slidermap.changed_extinput(rawlev)
 
         outputlevels = {}
+        for m in self.current_mappings:
+            if m.issynced():
+                k, v = m.get_level_pair()
+                outputlevels[k] = v
+                m.ignorenextunync()
+        return outputlevels
+        '''
         return dict([m.get_level_pair()
             for m in self.current_mappings
-            if m.isattached()])
+            if m.issynced()])
+        '''
     def draw_interface(self):
         self.reallevellabels = []
         subchoiceframe = Frame(self)
