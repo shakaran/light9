@@ -36,9 +36,9 @@ signal(SIGINT, mr_lightboard.quit)
 #
 # start net slider server in separate thread 
 #
-print "Light 8.8: External input server spawned"
-import ExternalInput, thread
-thread.start_new_thread(ExternalInput.start_server,())
+print "Light 8.8: External input server DISABLED"
+#import ExternalInput, thread
+#thread.start_new_thread(ExternalInput.start_server,())
 
 bindkeys(root,'<Escape>', mr_lightboard.quit)
 
@@ -46,7 +46,12 @@ root.bind_class("all","<ButtonPress-4>",lambda ev: eventtoparent(ev,"<ButtonPres
 root.bind_class("all","<ButtonPress-5>",lambda ev: eventtoparent(ev,"<ButtonPress-5>"))
 
 print 'Light 8.8: "Uh...Shiny McShine?"'
-root.mainloop() # Receiver switches main
+if 1:
+    root.mainloop() # Receiver switches main
+else:
+    sys.path.append("/home/drewp/projects/editor/pour")
+    from utils import runstats
+    runstats("root.mainloop()")
 
 #import profile
 #profile.run("root.mainloop()","profile/idlemanysubs")
