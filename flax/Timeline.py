@@ -22,16 +22,20 @@ class MissingBlender(Exception):
 FORWARD = 1
 BACKWARD = -1
 
+MISSING = 'missing'
+
 class TimedEvent:
     """Container for a Frame which includes a time that it occurs at,
     and which blender occurs after it."""
-    def __init__(self, time, frame, blender=None, level=1.0):
+    def __init__(self, time, frame=MISSING, blender=None, level=1.0):
         make_attributes_from_args('time', 'frame')
         self.next_blender = blender
         self.level = level
     def __float__(self):
         return self.time
     def __cmp__(self, other):
+        if other is None:
+            raise "I can't compare with a None.  I am '%s'" % str(self)
         if type(other) in (float, int):
             return cmp(self.time, other)
         else:
@@ -48,11 +52,12 @@ class Blender:
     """Blenders are functions that merge the effects of two LevelFrames."""
     def __init__(self):
         pass
-    def __call__(self, startframe, endframe, blendtime):
+    def __call__(self, startframe, endframe, blendtime,  time_since_startframe):
         """Return a LevelFrame combining two LevelFrames (startframe and 
         endframe).  blendtime is how much of the blend should be performed
         and will be expressed as a percentage divided by 100, i.e. a float
-        between 0.0 and 1.0.  
+        between 0.0 and 1.0.  time_since_startframe is the time since the
+        startframe was on screen in seconds (float).
         
         Very important note: Blenders will *not* be asked for values
         at end points (i.e. blendtime=0.0 and blendtime=1.0).
@@ -74,24 +79,20 @@ class Blender:
         0.25 * endframe.  This function is included since many blenders are
         just functions on the percentage and still combine start and end frames
         in this way."""
-        # print "linear_blend", startframe, endframe, blendtime
         if startframe.frame == endframe.frame:
-            # print "same frames"
-            startlevel = startframe.level * (1.0 - blendtime)
-            endlevel = endframe.level * blendtime
-            levels = {startframe.frame : max(startlevel, endlevel)}
+            level = startframe.level + (blendtime * \
+                (endframe.level - startframe.level))
+            levels = {startframe.frame : level}
         else:
-            # print "diff frames"
             levels = {startframe.frame : (1.0 - blendtime) * startframe.level,
                 endframe.frame : blendtime * endframe.level}
-        # print "return", levels
         return levels
 
 class InstantEnd(Blender):
     """Instant change from startframe to endframe at the end.  In other words,
     the value returned will be the startframe all the way until the very end
     of the blend."""
-    def __call__(self, startframe, endframe, blendtime):
+    def __call__(self, startframe, endframe, blendtime, time_since_startframe):
         # "What!?" you say, "Why don't you care about blendtime?"
         # This is because Blenders never be asked for blenders at the endpoints
         # (after all, they wouldn't be blenders if they were). Please see
@@ -102,7 +103,7 @@ class InstantStart(Blender):
     """Instant change from startframe to endframe at the beginning.  In other
     words, the value returned will be the startframe at the very beginning
     and then be endframe at all times afterwards."""
-    def __call__(self, startframe, endframe, blendtime):
+    def __call__(self, startframe, endframe, blendtime, time_since_startframe):
         # "What!?" you say, "Why don't you care about blendtime?"
         # This is because Blenders never be asked for blenders at the endpoints
         # (after all, they wouldn't be blenders if they were). Please see
@@ -111,7 +112,7 @@ class InstantStart(Blender):
 
 class LinearBlender(Blender):
     """Linear fade from one frame to another"""
-    def __call__(self, startframe, endframe, blendtime):
+    def __call__(self, startframe, endframe, blendtime, time_since_startframe):
         return self.linear_blend(startframe, endframe, blendtime)
 
 class ExponentialBlender(Blender):
@@ -120,7 +121,7 @@ class ExponentialBlender(Blender):
     as LinearBlender."""
     def __init__(self, exponent):
         self.exponent = exponent
-    def __call__(self, startframe, endframe, blendtime):
+    def __call__(self, startframe, endframe, blendtime, time_since_startframe):
         blendtime = blendtime ** self.exponent
         return self.linear_blend(startframe, endframe, blendtime)
 
@@ -129,19 +130,42 @@ class ExponentialBlender(Blender):
 class SmoothBlender(Blender):
     """Drew's "Smoove" Blender function.  Hopefully he'll document and
     parametrize it."""
-    def __call__(self, startframe, endframe, blendtime):
+    def __call__(self, startframe, endframe, blendtime, time_since_startframe):
         blendtime = (-1 * blendtime) * blendtime * (blendtime - 1.5) * 2
         return self.linear_blend(startframe, endframe, blendtime)
+
+class Strobe(Blender):
+    "Strobes the frame on the right side between offlevel and onlevel."
+    def __init__(self, ontime, offtime, onlevel=1, offlevel=0):
+        "times are in seconds"
+        make_attributes_from_args('ontime', 'offtime', 'onlevel', 'offlevel')
+        self.cycletime = ontime + offtime
+    def __call__(self, startframe, endframe, blendtime, time_since_startframe):
+        # time into the current period
+        period_time = time_since_startframe % self.cycletime
+        if period_time <= self.ontime:
+            return {endframe.frame : self.onlevel}
+        else:
+            return {endframe.frame : self.offlevel}
 
 class TimelineTrack:
     """TimelineTrack is a single track in a Timeline.  It consists of a
     list of TimedEvents and a name.  Length is automatically the location
     of the last TimedEvent.  To extend the Timeline past that, add an
     EmptyTimedEvent (which doesn't exist :-/)."""
-    def __init__(self, name, *timedevents):
+    def __init__(self, name, *timedevents, **kw):
+        if kw.get('default_frame'):
+            self.default_frame = kw['default_frame']
+        else:
+            self.default_frame = None
         self.name = name
         self.events = list(timedevents)
         self.events.sort()
+        self.fill_in_missing_subs()
+    def fill_in_missing_subs(self):
+        for event in self.events:
+            if event.frame == MISSING:
+                event.frame = self.default_frame
     def __str__(self):
         return "<TimelineTrack with events: %r>" % self.events
     def has_events(self):
@@ -206,10 +230,10 @@ class TimelineTrack:
             percent = elapsed / diff
             if not before.next_blender:
                 raise MissingBlender, before
-            return before.next_blender(before, after, percent)
+            return before.next_blender(before, after, percent, elapsed)
 
 class Timeline:
-    def __init__(self, tracks, rate=1, direction=FORWARD):
+    def __init__(self, name, tracks, rate=1, direction=FORWARD):
         """
         Most/all of this is old:
 
@@ -223,7 +247,7 @@ class Timeline:
         is bounded by their last frame.  You can put an EmptyFrame at
         some time if you want to extend a Timeline."""
         
-        make_attributes_from_args('tracks', 'rate', 'direction')
+        make_attributes_from_args('name', 'tracks', 'rate', 'direction')
         self.current_time = 0
         self.last_clock_time = None
         self.stopped = 1
@@ -323,7 +347,7 @@ if __name__ == '__main__':
         T(18, 'blue', level=1.0),
         T(20, 'blue', level=0.0))
 
-    tl = Timeline([track1, track2, track3])
+    tl = Timeline('test', [track1, track2, track3])
 
     tl.play()
 
