@@ -159,20 +159,34 @@ class FancyDoubleVar(DoubleVar):
         DoubleVar.__init__(self,master)
         self.callbacklist = {}
     def trace_variable(self,mode,callback):
+        """Define a trace callback for the variable.
 
+        MODE is one of "r", "w", "u" for read, write, undefine.
+        CALLBACK must be a function which is called when
+        the variable is read, written or undefined.
+
+        Return the name of the callback.
+        """
+        cbname = self._master._register(callback)
+        self._tk.call("trace", "variable", self._name, mode, cbname)
+        
         # we build a list of the trace callbacks (the py functrions and the tcl functionnames)
-        id=DoubleVar.trace_variable(self,mode,callback)
-
-        self.callbacklist[id]= [mode,callback]
-
-        return id
-
+        self.callbacklist[cbname]= mode
+        print "added trace:",callback,cbname
+        
+        return cbname
+    trace=trace_variable
     def disable_traces(self):
-        for k,v in self.callbacklist.items():
-            self.trace_vdelete(v[0],k)
+        for cb,mode in self.callbacklist.items():
+#            DoubleVar.trace_vdelete(self,v[0],k)
+            self._tk.call("trace", "vdelete", self._name, mode,cb)
+            # but no master delete!
+            
     def recreate_traces(self):
-        for k,v in self.callbacklist.items():
-            self.trace_variable(v[0],v[1])
+        for cb,mode in self.callbacklist.items():
+#            self.trace_variable(v[0],v[1])
+            self._tk.call("trace", "variable", self._name, mode,cb)
+
 
 if __name__=='__main__':
     root=Tk()
