@@ -61,7 +61,7 @@ class Subediting:
                 # level was not in the sub
                 cl = self.getcurrentlevel(l)
                 if cl is None:
-                    print "light isn't even in the patch! skipping"
+                    print "light '%s' isn't even in the patch! skipping" % l
                     return
                 print "copying current light level",cl,"into the sub"
                 self.startlevels[l] = cl 
