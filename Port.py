@@ -15,7 +15,7 @@ class Port:
         pass
 
 class InputPort(Port):
-    def __init__(self, allowedtype, required=1, maxpins=ANY):
+    def __init__(self, required=1, maxpins=ANY):
         self.pins = []
 
 class OutputPort(Port):
