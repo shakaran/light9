@@ -132,9 +132,11 @@ class FlyingFader(Frame):
         
         # blink the trough while the thing's moving
         if time()%.4>.2:
-            self.scale.config(troughcolor=self.oldtrough)
+            # self.scale.config(troughcolor=self.oldtrough)
+            self.scale.config(troughcolor='orange')
         else:
-            self.scale.config(troughcolor='white')
+            # self.scale.config(troughcolor='white')
+            self.scale.config(troughcolor='yellow')
 
 #        colorfade(self.scale, percent)
         self.after(30, self.gofade)
