@@ -14,7 +14,7 @@ cue_state_indicator_colors = {
 class LabelledScale(Tk.Frame):
     """Scale with two labels: a name and current value"""
     def __init__(self, master, label, **opts):
-        Tk.Frame.__init__(self, master, bd=2, relief='raised')
+        Tk.Frame.__init__(self, master, bd=2, relief='raised', bg='black')
         opts.setdefault('variable', Tk.DoubleVar())
         opts.setdefault('showvalue', 0)
 
@@ -25,9 +25,9 @@ class LabelledScale(Tk.Frame):
         self.scale_var = opts['variable']
         self.scale = Tk.Scale(self, **opts)
         self.scale.pack(side='top', expand=1, fill='both')
-        self.name = Tk.Label(self, text=label)
+        self.name = Tk.Label(self, text=label, bg='black', fg='white')
         self.name.pack(side='bottom')
-        self.scale_value = Tk.Label(self, width=6)
+        self.scale_value = Tk.Label(self, width=6, bg='black', fg='white')
         self.scale_value.pack(side='bottom')
         self.scale_var.trace('w', self.update_value_label)
         self.update_value_label()
@@ -54,15 +54,17 @@ class LabelledScale(Tk.Frame):
 class TimedGoButton(Tk.Frame):
     """Go button, fade time entry, and time fader"""
     def __init__(self, master, name, scale_to_fade, **kw):
-        Tk.Frame.__init__(self, master)
+        Tk.Frame.__init__(self, master, bg='black')
         self.name = name
         self.scale_to_fade = scale_to_fade
         self.button = Tk.Button(self, text=name, command=self.start_fade, **kw)
         self.button.pack(fill='both', expand=1, side='left')
-        self.timer_var = Tk.StringVar()
-        self.timer_entry = Tk.Entry(self, textvariable=self.timer_var, width=5)
+
+        self.timer_var = Tk.DoubleVar()
+        self.timer_entry = Tk.Control(self, step=0.5, min=0, integer=0)
+        self.timer_entry.entry.configure(textvariable=self.timer_var, width=5, 
+            bg='black', fg='white')
         self.timer_entry.pack(fill='y', side='left')
-        self.timer_var.set("2")
         self.disabled = (self.button['state'] == 'disabled')
     def start_fade(self, end_level=1):
         try:
@@ -97,10 +99,12 @@ class TimedGoButton(Tk.Frame):
         if self.disabled:
             self.button['state'] = 'normal'
             self.disabled = 0
+    def set_time(self, time):
+        self.timer_var.set(time)
 
 class CueFader(Tk.Frame):
     def __init__(self, master, cuelist):
-        Tk.Frame.__init__(self, master)
+        Tk.Frame.__init__(self, master, bg='black')
         self.cuelist = cuelist
         self.auto_shift = Tk.IntVar()
         self.auto_shift.set(1)
@@ -115,7 +119,7 @@ class CueFader(Tk.Frame):
         self.shift_buttons = {}
         self.go_buttons = {}
         
-        topframe = Tk.Frame(self)
+        topframe = Tk.Frame(self, bg='black')
 
         self.set_prev_button = Tk.Button(topframe, text='Set Prev',
             command=lambda: cuelist.set_selection_as_prev(),
@@ -124,7 +128,7 @@ class CueFader(Tk.Frame):
 
         self.auto_shift_checkbutton = Tk.Checkbutton(topframe, 
             variable=self.auto_shift, text='Autoshift', 
-            command=self.toggle_autoshift)
+            command=self.toggle_autoshift, bg='black', fg='white')
         self.auto_shift_checkbutton.pack(side='left')
 
         self.set_next_button = Tk.Button(topframe, text='Set Next',
@@ -134,11 +138,11 @@ class CueFader(Tk.Frame):
 
         topframe.pack(side='top')
 
-        faderframe = Tk.Frame(self)
+        faderframe = Tk.Frame(self, bg='black')
         self.direction_info = (('Prev', 1, 0, 'left', 'blue'),
                                ('Next', 0, 1, 'right', 'red'))
         for name, start, end, side, color in self.direction_info:
-            frame = Tk.Frame(self)
+            frame = Tk.Frame(self, bg='black')
             scale = LabelledScale(frame, name, from_=start, to_=end, 
                 res=0.0001, orient='horiz', flashtroughcolor=color)
             scale.pack(fill='x', expand=0)
@@ -290,6 +294,7 @@ class CueList:
     def __del__(self):
         self.save()
     def save(self):
+        print "Saving cues to", self.filename
         self.treedict.save(self.filename)
     def reload(self):
         # TODO: we probably will need to make sure that indices still make
@@ -299,15 +304,22 @@ class CueList:
 class TkCueList(CueList, Tk.Frame):
     def __init__(self, master, filename):
         CueList.__init__(self, filename)
-        Tk.Frame.__init__(self, master)
+        Tk.Frame.__init__(self, master, bg='black')
         
-        self.columns = ('name', 'time', 'page', 'desc')
+        self.edit_tl = Tk.Toplevel()
+        self.editor = CueEditron(self.edit_tl, changed_callback=self.redraw_cue)
+        self.editor.pack(fill='both', expand=1)
+
+        def edit_cue(index):
+            index = int(index)
+            self.editor.set_cue_to_edit(self.cues[index])
             
+        self.columns = ('name', 'time', 'page', 'desc')
         self.scrolled_hlist = Tk.ScrolledHList(self,
             options='hlist.columns %d hlist.header 1' % len(self.columns))
         self.hlist = self.scrolled_hlist.hlist
         self.hlist.configure(fg='white', bg='black', 
-            command=self.select_callback)
+            command=self.select_callback, browsecmd=edit_cue)
         self.scrolled_hlist.pack(fill='both', expand=1)
 
         boldfont = self.tk.call('tix', 'option', 'get', 
@@ -323,8 +335,27 @@ class TkCueList(CueList, Tk.Frame):
         for count, cue in enumerate(self.cues):
             self.display_cue(count, cue)
         self.update_cue_indicators()
-    def display_cue(self, cue_count, cue):
-        # cue_count is the path in the hlist -- this probably isn't ideal
+
+    def redraw_cue(self, cue):
+        if 0:
+            # TODO: this is really inefficient
+            self.hlist.delete_all()
+            for count, cue in enumerate(self.cues):
+                self.display_cue(count, cue)
+            self.update_cue_indicators()
+        else:
+            path = self.cues.index(cue)
+            for col, header in enumerate(self.columns):
+                try:
+                    text = getattr(cue, header)
+                except AttributeError:
+                    text = ''
+
+                if col == 0:
+                    self.cue_label_windows[path]['text'] = text
+                else:
+                    self.hlist.item_configure(path, col, text=text)
+    def display_cue(self, path, cue):
         for col, header in enumerate(self.columns):
             try:
                 text = getattr(cue, header)
@@ -334,15 +365,15 @@ class TkCueList(CueList, Tk.Frame):
             if col == 0:
                 lab = Tk.Label(self.hlist, text=text, fg='white', bg='black')
                 def select_and_highlight(event):
-                    self.select_callback(cue_count)
+                    self.select_callback(path)
                     self.hlist.selection_clear()
-                    self.hlist.selection_set(cue_count)
+                    self.hlist.selection_set(path)
 
                 lab.bind("<Double-1>", select_and_highlight)
-                self.hlist.add(cue_count, itemtype='window', window=lab)
-                self.cue_label_windows[cue_count] = lab
+                self.hlist.add(path, itemtype='window', window=lab)
+                self.cue_label_windows[path] = lab
             else:
-                self.hlist.item_create(cue_count, col, text=text)
+                self.hlist.item_create(path, col, text=text)
     def reset_cue_indicators(self, cue_indices=None):
         """If cue_indices is None, we'll reset all of them."""
         cue_indices = cue_indices or self.cue_label_windows.keys()
@@ -387,16 +418,70 @@ class TkCueList(CueList, Tk.Frame):
         if sel:
             self.set_next(int(sel[0]))
 
+class CueEditron(Tk.Frame):
+    def __init__(self, master, changed_callback=None, cue=None):
+        Tk.Frame.__init__(self, master, bg='black')
+        self.master = master
+        self.cue = cue
+        self.changed_callback = changed_callback
+        self.enable_callbacks = 1
+
+        self.setup_editing_forms()
+        self.set_cue_to_edit(cue)
+    def set_cue_to_edit(self, cue):
+        if cue != self.cue:
+            self.cue = cue
+            self.fill_in_cue_info()
+            self.set_title()
+    def set_title(self):
+            try:
+                self.master.title("Editing '%s'" % self.cue.name)
+            except AttributeError:
+                pass
+    def setup_editing_forms(self):
+        self.variables = {}
+        for row, field in enumerate(('name', 'time', 'page', 'desc')):
+            lab = Tk.Label(self, text=field, fg='white', bg='black')
+            lab.grid(row=row, column=0, sticky='nsew')
+
+            entryvar = Tk.StringVar()
+            entry = Tk.Entry(self, fg='white', bg='black', 
+                textvariable=entryvar)
+            entry.grid(row=row, column=1, sticky='nsew')
+
+            self.variables[field] = entryvar
+
+            def field_changed(x, y, z, field=field, entryvar=entryvar):
+                if self.cue:
+                    setattr(self.cue, field, entryvar.get())
+                    if self.enable_callbacks and self.changed_callback:
+                        self.changed_callback(self.cue)
+                if field == 'name':
+                    self.set_title()
+
+            entryvar.trace('w', field_changed)
+        self.columnconfigure(1, weight=1)
+    def fill_in_cue_info(self):
+        self.enable_callbacks = 0
+        for row, field in enumerate(('name', 'time', 'page', 'desc')):
+            text = ''
+            if self.cue:
+                try:
+                    text = getattr(self.cue, field)
+                except AttributeError:
+                    pass
+            self.variables[field].set(text)
+        self.enable_callbacks = 1
+
 if __name__ == "__main__":
     root = Tk.Tk()
+    root.title("ShowMaster 9000")
     cl = TkCueList(root, 'cues/cuelist1')
     cl.pack(fill='both', expand=1)
 
-    # to populate cue list
-    if 0:
-        for x in range(20):
-            cl.add_cue(Cue('cue %d' % x, time=x, some_attribute=3))
-
     fader = CueFader(root, cl)
     fader.pack(fill='both', expand=1)
-    Tk.mainloop()
+    try:
+        Tk.mainloop()
+    except KeyboardInterrupt:
+        root.destroy()
