@@ -1,3 +1,4 @@
+#!/usr/bin/python
 """
 
 this is the only process to talk to the dmx hardware. other clients
@@ -16,18 +17,23 @@ clients shall connect to the xmlrpc server and send:
 
 server is port 8030; xmlrpc method is called outputlevels(pid,levellist).
 
+
+todo:
+  save dmx on quit and restore on restart
+  if parport fails, run in dummy mode (and make an option for that too)
 """
 
 from __future__ import division
 from twisted.internet import reactor
 from twisted.web import xmlrpc, server
-
-import sys
-sys.path.append("../light8")
+import sys,time
 from io import ParportDMX
 
 class XMLRPCServe(xmlrpc.XMLRPC):
     def __init__(self):
+
+        xmlrpc.XMLRPC.__init__(self)
+        
         self.clientlevels={} # clientPID : list of levels
         self.combinedlevels=[] # list of levels, after max'ing the clients
         self.clientschanged=1 # have clients sent anything since the last send?
@@ -37,13 +43,15 @@ class XMLRPCServe(xmlrpc.XMLRPC):
         self.parportdmx.golive()
 
         # start the loop
-        self.numupdates=0
+        self.num_unshown_updates=None
         self.sendlevels()
+
 
     def sendlevels(self):
         reactor.callLater(.02,self.sendlevels)
         if self.clientschanged:
             # recalc levels
+            oldlevels=self.combinedlevels[:]
             self.combinedlevels=[]
             for chan in range(0,self.parportdmx.dimmers):
                 x=0
@@ -52,12 +60,19 @@ class XMLRPCServe(xmlrpc.XMLRPC):
                         x=max(x,clientlist[chan])
                 self.combinedlevels.append(x)
 
-        self.numupdates=self.numupdates+1
-        if (self.numupdates%200)==0:
-            print self.combinedlevels
-            
+            if self.num_unshown_updates is None or (self.combinedlevels!=oldlevels and
+                                                    self.num_unshown_updates>10):
+                self.num_unshown_updates=0
+                print "Levels:","".join(["% 2d "%x for x in self.combinedlevels])
+            else:
+                self.num_unshown_updates+=1
+
+        if (self.num_unshown_updates-1)%100==0:
+            sys.stdout.write("dmxserver up at %s   \r"%time.strftime("%H:%M:%S"))
+            sys.stdout.flush()
         # now send combinedlevels (they'll get divided by 100)
-        self.parportdmx.sendlevels([l*100 for l in self.combinedlevels]) 
+        if self.parportdmx:
+            self.parportdmx.sendlevels([l*100 for l in self.combinedlevels]) 
         
     def xmlrpc_echo(self,x):
         return x
@@ -67,7 +82,7 @@ class XMLRPCServe(xmlrpc.XMLRPC):
         self.clientschanged=1
         return "ok"
 
-print "starting server on 8030"
+print "starting xmlrpc server on port 8030"
 reactor.listenTCP(8030,server.Site(XMLRPCServe()))
 reactor.run()
 
