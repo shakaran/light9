@@ -51,4 +51,5 @@ patch = {
     'storefill' : 17,
     'dayback' : 41,
     'judge' : 19,
+    ('c-scp', 'c-scoop') : 38,
 }
