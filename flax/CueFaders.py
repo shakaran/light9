@@ -95,6 +95,8 @@ class TimedGoButton(Tk.Frame):
         self.start_time = 0
         self.fading = 0
         self.last_after_key = 0
+    def manual_override(self, *args):
+        self.end_fade()
     def wheelscroll(self, event):
         """Mouse wheel increments or decrements timer."""
         if event.num == 4: # scroll up
@@ -108,14 +110,13 @@ class TimedGoButton(Tk.Frame):
         self.end_level = end_level
 
         if self.fading == 1: # if we're already fading
-            print "already fading!"
-            # fade_time = old_fade_length - 
             self.fading = 'paused'
-            self.fade_length = time.time() - self.last_start_time
-            print "fade_length", self.fade_length
-            self.end_fade()
+            # new fade should be as long as however much was left
+            self.fade_length = self.fade_length - \
+                (time.time() - self.last_start_time)
+            self.button['text'] = 'Unpause'
+            self.after_cancel(self.last_after_key)
         else:
-            print "not already fading or continuing a fade"
             try:
                 fade_time = float(self.timer_var.get())
             except ValueError:
@@ -124,10 +125,10 @@ class TimedGoButton(Tk.Frame):
                 print ">>> Can't fade -- bad time", self.timer_var.get()
                 return
 
-            # TODO fix
+            # if we're not already fading, we get our time from the entry
             if self.fading != 'paused':
                 self.fade_length = fade_time
-            print "fade_length", self.fade_length
+
             self.button['text'] = 'Pause'
             self.fading = 1
             self.do_fade()
@@ -339,6 +340,7 @@ class CueFader(Tk.Frame):
         for scale_name, scale in self.scales.items():
             # print "shift: setting scale to 0", scale_name
             scale.scale.set(0)
+            self.go_buttons[scale_name].manual_override()
         self.update_cue_cache(compute_dmx_levels=1)
 
         if self.auto_load_times.get():
