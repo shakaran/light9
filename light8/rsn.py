@@ -38,156 +38,149 @@ get_data()
 
 io.init(DUMMY)
 
-channel_levels = []
-scalelevels = {}
-fades = {}
+class Lightboard:
+    def __init__(self, master):
+        self.master = master
 
-_oldlevels=[None] * 68
+        self.channel_levels = []
+        self.scalelevels = {}
+        self.oldlevels = [None] * 68
 
-# this is called on a loop, and ALSO by the Scales
-def changelevel(*args):
-    'Amp trims slider'
-    global _oldlevels
+        self.buildinterface()
+        self.load()
+        self.backgroundloop()
+    def buildinterface(self):
+        for w in self.master.winfo_children():
+            w.destroy()
 
-    levels = [0] * 68
-    for name, s in Subs.subs.items():
-        newlevels = s.get_levels(level=scalelevels[name].get())
-        for (ch, fadelev) in newlevels.items():
-            levels[ch-1] = max(levels[ch-1], fadelev)
+        stage_tl = toplevelat(165,90)
+        s = stage.Stage(stage_tl)
+        stage.createlights(s)
+        s.pack()
 
-    levels = [int(l) for l in levels]
+        sub_tl = toplevelat(0,0)
+        effect_tl = toplevelat(0,352)
 
-    for lev,lab,oldlev in zip(levels, channel_levels, _oldlevels):
-        if lev != oldlev:
-            lab.config(text="%d" % lev)
-            colorlabel(lab)
+        self.xfader = Xfader(self.scalelevels)
 
-    _oldlevels = levels[:]
+        self.subpanels = Subpanels(sub_tl, effect_tl, self.scalelevels, Subs, 
+            self.xfader, self.changelevel)
+
+        leveldisplay_tl = toplevelat(873,400)
+        leveldisplay_tl.bind('<Escape>', sys.exit)
+
+        leveldisplay = Leveldisplay(leveldisplay_tl, self.channel_levels)
+
+        Console()
+
+        # root frame
+        controlpanel = Controlpanel(root, self.xfader, self.refresh, quit)
         
-    io.sendlevels(levels)
+        xf=Frame(root)
+        xf.pack(side='right')
 
-def backgroundloop(*args):
-    root.after(50, backgroundloop, ())
-    changelevel()
+        root.bind('<q>', quit)
+        root.bind('<r>', self.refresh)
+        leveldisplay_tl.bind('<q>', quit)
+        leveldisplay_tl.bind('<r>', self.refresh)
 
-buildinterface = None # temporary
-def refresh(*args):
-    get_data()
-    buildinterface()
-    bindkeys(root,'<Escape>', quit)
+        self.xfader.setupwidget(xf)
+        controlpanel.pack()
 
-def quit(*args):
-    filename = '/tmp/light9.prefs'
-    if DUMMY:
-        filename += '.dummy'
-    print "Saving to", filename
-    file = open(filename, 'w')
-    cPickle.dump(Pickles(scalelevels), file)
-    root.destroy()
-    sys.exit()
+    def refresh(self, *args):
+        'rebuild interface, reload data'
+        get_data()
+        self.buildinterface()
+        bindkeys(root,'<Escape>', quit)
 
+    # this is called on a loop, and ALSO by the Scales
+    def changelevel(self, *args):
+        'Amp trims slider'
 
-xfader=Xfader(scalelevels)
+        levels = [0] * 68
+        for name, s in Subs.subs.items():
+            newlevels = s.get_levels(level=self.scalelevels[name].get())
+            for (ch, fadelev) in newlevels.items():
+                levels[ch-1] = max(levels[ch-1], fadelev)
 
-def buildinterface(*args):
-    global channel_levels, _oldlevels, leveldisplay, xfader
-    for w in root.winfo_children():
-        w.destroy()
+        levels = [int(l) for l in levels]
 
-    stage_tl=toplevelat(165,90)
-    s=stage.Stage(stage_tl)
-    stage.createlights(s)
-    s.pack()
+        for lev,lab,oldlev in zip(levels, self.channel_levels, self.oldlevels):
+            if lev != oldlev:
+                lab.config(text="%d" % lev)
+                colorlabel(lab)
 
-    sub_tl = toplevelat(0,0)
-    effect_tl = toplevelat(0,352)
+        self.oldlevels = levels[:]
+            
+        io.sendlevels(levels)
 
-    Subpanels(sub_tl,effect_tl,scalelevels,Subs,xfader,changelevel)
+    def load(self):
+        try:
+            filename = '/tmp/light9.prefs'
+            if DUMMY:
+                filename += '.dummy'
+            print "Loading from", filename
+            file = open(filename, 'r')
+            p = cPickle.load(file)
+            for s, v in p.scalelevels.items():
+                try:
+                    self.scalelevels[s].set(v)
+                except:
+                    print "Couldn't set %s -> %s" % (s, v)
+        except:
+            print "Couldn't load prefs (%s)" % filename
 
-    # def event_printer(evt):
-        # print dir(evt)
+    def make_sub(self, name):
+        i = 1
+        # name = console_entry.get() # read from console
+        if not name:
+            print "Enter sub name in console."
+            return
 
-    # sub_tl.bind('<b>', event_printer)
-    leveldisplay=toplevelat(873,400)
-    leveldisplay.bind('<Escape>', sys.exit)
+        st = ''
+        linebuf = 'subs["%s"] = {' % name
+        for l in self.oldlevels:
+            if l:
+                if len(linebuf) > 60: 
+                    st += linebuf + '\n   '
+                    linebuf = ''
 
-    Leveldisplay(leveldisplay,_oldlevels,channel_levels)
-
-    Console()
-
-    # root frame
-    controlpanel = Controlpanel(root,xfader,refresh,quit)
-    
-    xf=Frame(root)
-    xf.pack(side='right')
-
-    root.bind('<q>', quit)
-    root.bind('<r>', refresh)
-    leveldisplay.bind('<q>', quit)
-    leveldisplay.bind('<r>', refresh)
-
-    xfader.setupwidget(xf)
-    controlpanel.pack()
-
-
-buildinterface()
+                linebuf += ' "%s" : %d,' % (Patch.get_channel_name(i), l)
+            i += 1
+        st += linebuf + '}\n'
+        if DUMMY:
+            filename = 'ConfigDummy.py'
+        else:
+            filename = 'Config.py'
+        f = open(filename, 'a')
+        f.write(st)
+        f.close()
+        print 'Added sub:', st
+        self.refresh()
+    def backgroundloop(self, *args):
+        self.master.after(50, self.backgroundloop, ())
+        self.changelevel()
+    def quit(self, *args):
+        filename = '/tmp/light9.prefs'
+        if DUMMY:
+            filename += '.dummy'
+        print "Saving to", filename
+        file = open(filename, 'w')
+        cPickle.dump(Pickles(self.scalelevels), file)
+        root.destroy()
+        sys.exit()
 
 class Pickles:
     def __init__(self, scalelevels):
         self.scalelevels = dict([(name, lev.get()) 
             for name,lev in scalelevels.items()])
 
-def load():
-    try:
-        filename = '/tmp/light9.prefs'
-        if DUMMY:
-            filename += '.dummy'
-        print "Loading from", filename
-        file = open(filename, 'r')
-        p = cPickle.load(file)
-        for s, v in p.scalelevels.items():
-            try:
-                scalelevels[s].set(v)
-            except:
-                print "Couldn't set %s -> %s" % (s, v)
-    except:
-        print "Couldn't load prefs (%s)" % filename
+mr_lightboard = Lightboard(root)
 
-def make_sub(name):
-    global _oldlevels
-    i = 1
-    # name = console_entry.get() # read from console
-    if not name:
-        print "Enter sub name in console."
-        return
-
-    st = ''
-    linebuf = 'subs["%s"] = {' % name
-    for l in _oldlevels:
-        if l:
-            if len(linebuf) > 60: 
-                st += linebuf + '\n   '
-                linebuf = ''
-
-            linebuf += ' "%s" : %d,' % (Patch.get_channel_name(i), l)
-        i += 1
-    st += linebuf + '}\n'
-    if DUMMY:
-        filename = 'ConfigDummy.py'
-    else:
-        filename = 'Config.py'
-    f = open(filename, 'a')
-    f.write(st)
-    f.close()
-    print 'Added sub:', st
-    refresh()
-
-load()
-signal(SIGINT, quit)
-bindkeys(root,'<Escape>', quit)
+signal(SIGINT, mr_lightboard.quit)
+bindkeys(root,'<Escape>', mr_lightboard.quit)
 
 # bindkeys(root,'<q>', quit)
 # bindkeys(root,'<r>', refresh)
 # bindkeys(root,'<s>', make_sub)
-backgroundloop()
 root.mainloop() # Receiver switches main

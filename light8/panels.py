@@ -8,12 +8,10 @@ from FlyingFader import FlyingFader
 stdfont = ('Arial', 8)
 monofont = ('Courier', 8)
 
-
-
 class Controlpanel(Frame):
-    def __init__(self,parent,xfader,refresh_cb,quit_cb):
+    def __init__(self, parent, xfader, refresh_cb, quit_cb):
         Frame.__init__(self,parent)
-        controlpanel=self
+        controlpanel = self
         for txt,cmd in (
             ('Quit',       quit_cb),
             ('Refresh',    refresh_cb),
@@ -22,8 +20,8 @@ class Controlpanel(Frame):
             ('Clear X',     lambda: xfader.clearallbuttons('x')),
             ('On -> Y',     lambda: xfader.grab('y')),
             ('Clear Y',     lambda: xfader.clearallbuttons('y'))):
-            Button(controlpanel, text=txt, command=cmd).pack(side='top', fill='x')
-
+            Button(controlpanel, text=txt, command=cmd).pack(side='top', 
+                fill='x')
 
 class Console:
     def __init__(self):
@@ -32,7 +30,8 @@ class Console:
         self.frame = Frame(t)
         self.entry=Entry(self.frame)
         self.entry.pack(expand=1, fill='x')
-        self.entry.bind('<Return>', lambda evt: self.execute(evt, self.entry.get()))
+        self.entry.bind('<Return>', lambda evt: self.execute(evt, 
+            self.entry.get()))
         self.frame.pack(fill=BOTH, expand=1)
     
     def execute(evt, str):
@@ -44,23 +43,36 @@ class Console:
         self.frame.focus()
 
 class Leveldisplay:
-    def __init__(self,parent,_oldlevels,channel_levels):
-        
+    def __init__(self, parent, channel_levels, num_channels=68):
         frames = (make_frame(parent), make_frame(parent))
         channel_levels[:]=[]
-        for channel in range(1, 69):
-            f=Frame(frames[channel > 34])
-            Label(f,text=str(channel), width=3, bg='lightPink', 
-                font=stdfont, padx=0, pady=0, bd=0, height=1).pack(side='left')
-            Label(f,text=Patch.get_channel_name(channel), width=8, 
-                font=stdfont, anchor='w', padx=0, pady=0, bd=0, height=1).pack(side='left')
-            l=Label(f, width=3, bg='lightBlue', #text=_oldlevels[channel-1],
-                font=stdfont, anchor='e', padx=1, pady=0, bd=0, height=1)
+        self.number_labels = {}
+        for channel in range(1, num_channels+1):
+
+            # frame for this channel
+            f = Frame(frames[channel > (num_channels/2)])
+            # channel number -- will turn yellow when being altered
+            num_lab = Label(f, text=str(channel), width=3, bg='lightPink', 
+                font=stdfont, padx=0, pady=0, bd=0, height=1)
+            num_lab.pack(side='left')
+            self.number_labels[channel] = num_lab
+
+            # text description of channel
+            Label(f, text=Patch.get_channel_name(channel), width=8, 
+                font=stdfont, anchor='w', padx=0, pady=0, bd=0, 
+                height=1).pack(side='left')
+
+            # current level of channel, shows intensity with color
+            l = Label(f, width=3, bg='lightBlue', font=stdfont, anchor='e', 
+                      padx=1, pady=0, bd=0, height=1)
             l.pack(side='left')
             colorlabel(l)
             channel_levels.append(l)
             f.pack(side='top')
-        # channel_levels is an output - changelevel will use it to access these labels
+
+        self.channel_levels = channel_levels
+        # channel_levels is an output - changelevel will use it to access 
+        # these labels
 
 class Subpanels:
     def __init__(self, scenesparent, effectsparent, scalelevels, Subs, xfader,

@@ -7,12 +7,10 @@ def make_frame(parent):
     f.pack(side='left')
     return f
 
-
 def bindkeys(root,key, func):
     root.bind(key, func)
     for w in root.winfo_children():
         w.bind(key, func)
-
 
 def toplevelat(x,y,w=None,h=None):
     tl=Toplevel()
@@ -21,7 +19,6 @@ def toplevelat(x,y,w=None,h=None):
     else:
         tl.wm_geometry("+%d+%d"%(x,y))
     return tl
-
 
 def toggle_slider(s):
     if s.get() == 0:
@@ -33,7 +30,6 @@ def toggle_slider(s):
 def printout(t):
     print t
     
-
 def colorlabel(label):
     """color a label based on its own text"""
     txt=label['text'] or "0"
