@@ -74,14 +74,14 @@ class Lightboard:
         Console()
 
         # root frame
-        controlpanel = Controlpanel(root, self.xfader, self.refresh, quit)
+        controlpanel = Controlpanel(root, self.xfader, self.refresh, self.quit)
         
         xf=Frame(root)
         xf.pack(side='right')
 
-        root.bind('<q>', quit)
+        root.bind('<q>', self.quit)
         root.bind('<r>', self.refresh)
-        leveldisplay_tl.bind('<q>', quit)
+        leveldisplay_tl.bind('<q>', self.quit)
         leveldisplay_tl.bind('<r>', self.refresh)
 
         self.xfader.setupwidget(xf)
@@ -91,7 +91,7 @@ class Lightboard:
         'rebuild interface, reload data'
         get_data()
         self.buildinterface()
-        bindkeys(root,'<Escape>', quit)
+        bindkeys(root,'<Escape>', self.quit)
 
     # this is called on a loop, and ALSO by the Scales
     def changelevel(self, *args):
