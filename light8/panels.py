@@ -121,8 +121,9 @@ class Subpanels:
                             labelwidth=width1,
                             **scaleopts)
 
-            eb = Button(f,text="E",font=stdfont,padx=0,pady=0,bd=1,command=lambda subediting=subediting,sub=sub: subediting.setsub(sub))
-            eb.pack(side=side1,fill='both',padx=0,pady=0)
+            if not sub.is_effect:
+                eb = Button(f,text="E",font=stdfont,padx=0,pady=0,bd=1,command=lambda subediting=subediting,sub=sub: subediting.setsub(sub))
+                eb.pack(side=side1,fill='both',padx=0,pady=0)
 
             for axis in ('y','x'):
                 cvar=IntVar()
