@@ -29,8 +29,16 @@ class Lightboard:
         self.jostle_mode = 0
         self.lastline = None
 
-        self.channel_levels = []
+        self.channel_levels = [] # these are actually the labels for the
+                                 # channel levels, and should probably be moved
+                                 # to panels.Leveldisplay
         self.scalelevels = {}
+
+        self.lastsublevels = {}  # to determine which subs changed
+        self.unchangedeffect = {} # dict of levels for lights that didn't 
+                                  # change last time
+        self.lastunchangedgroup = {}
+
         # doesn't draw any UI yet-- look for self.xfader.setupwidget()
         self.xfader = Xfader(self.scalelevels) 
         self.oldlevels = [None] * 68 # never replace this; just clear it
@@ -72,18 +80,23 @@ class Lightboard:
         self.slidermapper.pack()
 
         print "\tsubmaster control"
-        self.subpanels = Subpanels(sub_tl, effect_tl, scene_tl, self, self.scalelevels,
-                                   Subs, self.xfader, self.changelevel,
-                                   self.subediting, Subs.longestsubname())
+        self.subpanels = Subpanels(sub_tl, effect_tl, scene_tl, self, 
+                                   self.scalelevels, Subs, self.xfader, 
+                                   self.changelevel, self.subediting, 
+                                   Subs.longestsubname())
+
+        for n, lev in self.scalelevels.items():
+            self.lastsublevels[n] = lev.get()
 
         print "\tlevel display"
         leveldisplay_tl = toplevelat('leveldisplay')
         leveldisplay_tl.bind('<Escape>', sys.exit)
 
         self.leveldisplay = Leveldisplay(leveldisplay_tl, self.channel_levels)
-        for i in range(0,len(self.channel_levels)):
-            self.channel_levels[i].config(text=self.oldlevels[i])
-            colorlabel(self.channel_levels[i])
+        # I don't think we need this
+        # for i in range(0,len(self.channel_levels)):
+            # self.channel_levels[i].config(text=self.oldlevels[i])
+            # colorlabel(self.channel_levels[i])
 
         print "\tconsole"
         Console(self)
@@ -92,7 +105,7 @@ class Lightboard:
         print "\tcontrol panel"
         self.master.configure(bg='black')
         controlpanel = Controlpanel(self.master, self.xfader, self.refresh, 
-            self.quit, self.toggle_jostle)
+            self.quit, self.toggle_jostle, self.nonzerosubs)
         
         print "\tcrossfader"
         xf=Frame(self.master)
@@ -171,22 +184,92 @@ class Lightboard:
     def changelevel(self, *args):
         'Amp trims slider'
 
-        levels = [0] * 68
-        for name, s in Subs.subs.items():
-            newlevels = s.get_levels(level=self.scalelevels[name].get())
-            for (ch, fadelev) in newlevels.items():
-                levels[ch-1] = max(levels[ch-1], fadelev)
-
-        levels = [int(l) for l in levels]
-
         # load levels from external sliders
         extlevels = self.slidermapper.get_levels()
         for name, val in extlevels.items():
             if name in self.scalelevels:
                 sl = self.scalelevels[name]
-                # sl.disable_traces()
                 sl.set(val)
-                # sl.recreate_traces()
+        
+        # newstart = time()
+
+        # learn what changed
+        unchangedgroup = {}
+        changedgroup = {}
+        for name, lastlevel in self.lastsublevels.items():
+            newlevel = self.scalelevels[name].get()
+            if lastlevel != newlevel:
+                changedgroup[name] = newlevel
+            else:
+                unchangedgroup[name] = newlevel
+
+        changedeffect = {}
+        if not changedgroup:
+            # should load levels from last time
+            pass
+        else:
+            # calculate effect of new group.  this should take no time if 
+            # nothing changed
+            for name, level in changedgroup.items():
+                newlevels = Subs.subs[name].get_levels(level=level)
+                for (ch, fadelev) in newlevels.items():
+                    changedeffect[ch-1] = \
+                        max(changedeffect.get(ch-1, 0), fadelev)
+
+        if unchangedgroup != self.lastunchangedgroup:
+            # unchanged group changed! (confusing, huh?)
+            # this means: the static subs from the last time are not the same 
+            # as they are this time, so we recalculate effect of unchanged group
+            self.unchangedeffect = {}
+            for name, level in unchangedgroup.items():
+                newlevels = Subs.subs[name].get_levels(level=level)
+                for (ch, fadelev) in newlevels.items():
+                    self.unchangedeffect[ch-1] = \
+                        max(self.unchangedeffect.get(ch-1, 0), fadelev)
+            self.lastunchangedgroup = unchangedgroup
+                
+        # record sublevels for future generations (iterations, that is)
+        for name in self.lastsublevels:
+            self.lastsublevels[name] = self.scalelevels[name]
+
+        # merge effects together
+        levels = [0] * 68
+        if changedeffect:
+            levels = [int(max(changedeffect.get(ch, 0), 
+                              self.unchangedeffect.get(ch, 0)))
+                        for ch in range(0, 68)]
+        else:
+            levels = [int(self.unchangedeffect.get(ch, 0))
+                        for ch in range(0, 68)]
+
+        '''
+        newend = time()
+
+        levels_opt = levels
+        
+        oldstart = time()
+        # i tried to optimize this to a dictionary, but there was no speed
+        # improvement
+        levels = [0] * 68
+        for name, s in Subs.subs.items():
+            sublevel = self.scalelevels[name].get()
+            newlevels = s.get_levels(level=sublevel)
+            self.lastsublevels[name] = sublevel # XXX remove
+            for (ch, fadelev) in newlevels.items():
+                levels[ch-1] = max(levels[ch-1], fadelev)
+        levels = [int(l) for l in levels]
+        oldend = time()
+
+        newtime = newend - newstart
+        oldtime = oldend - oldstart
+        print "new", newtime, 'old', (oldend - oldstart), 'sup', \
+               oldtime / newtime
+        
+        if levels != levels_opt: 
+            raise "not equal"
+            # for l, lo in zip(levels, levels_opt):
+                # print l, lo
+        '''
         
         for lev,lab,oldlev,numlab in zip(levels, self.channel_levels, 
                                          self.oldlevels, 
@@ -201,7 +284,9 @@ class Lightboard:
             else:
                 numlab['bg'] = 'grey40'
 
-        self.oldlevels[:] = levels[:] # replace the elements in oldlevels - don't make a new list (Subediting is watching it)
+        # replace the elements in oldlevels - don't make a new list 
+        # (Subediting is watching it)
+        self.oldlevels[:] = levels[:]
             
         if self.jostle_mode:
             delta = random.randrange(-1, 2, 1) # (-1, 0, or 1)
@@ -264,7 +349,15 @@ class Lightboard:
             print "UnpickleableError!  There's yer problem."
     def toggle_jostle(self, *args):
         self.jostle_mode = not self.jostle_mode
-        print "Light 8.8: Jostle mode", ('off', 'on')[self.jostle_mode]
+        if self.jostle_mode:
+            print 'Light 8.8: Perhaps we can jost-le your memory?'
+        else:
+            print 'Light 8.8: He remembers! (jostle off)'
+    def nonzerosubs(self, *args):
+        print "Light 8.8: Active subs:"
+        for n, dv in self.scalelevels.items():
+            if dv.get() > 0:
+                print "%-.4f: %s" % (dv.get(), n)
     def record_start(self):
         print "Light 8.8: Recorder started"
         self.rec_file.write("%s:\t%s\n" % (time(), "--- Start ---"))

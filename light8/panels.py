@@ -10,7 +10,8 @@ stdfont = ('Arial', 8)
 monofont = ('Courier', 8)
 
 class Controlpanel(Frame):
-    def __init__(self, parent, xfader, refresh_cb, quit_cb, jostle_cb):
+    def __init__(self, parent, xfader, refresh_cb, quit_cb, jostle_cb, 
+                 whatsup_cb):
         Frame.__init__(self,parent, bg='black')
         controlpanel = self
         for txt,cmd in (
@@ -20,7 +21,8 @@ class Controlpanel(Frame):
             ('On -> X',     lambda: xfader.grab('x')),
             ('Clear X',     lambda: xfader.clearallbuttons('x')),
             ('On -> Y',     lambda: xfader.grab('y')),
-            ('Clear Y',     lambda: xfader.clearallbuttons('y'))):
+            ('Clear Y',     lambda: xfader.clearallbuttons('y')),
+            ("What's up?",     whatsup_cb)):
             Button(controlpanel, text=txt, command=cmd, bg='black', 
                 fg='white').pack(side='top', fill='x')
         # jostle button
