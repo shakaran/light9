@@ -2,8 +2,7 @@ from Tkinter import *
 from time import time
 
 class FlyingFader(Frame):
-    def __init__(self, master, variable, label, time=1.5, font=('Arial', 8), 
-                 **kw):
+    def __init__(self, master, variable, label, time=1.5, font=('Arial', 8)):
         Frame.__init__(self, master)
         self.name = label
         self.variable = variable
@@ -31,6 +30,7 @@ class FlyingFader(Frame):
         self.scale.bind("<grave>", lambda evt: self.newfade(0, evt))
 
         self.scale.bind("<1>", self.cancelfade)
+        self.scale.bind("<2>", self.cancelfade)
         self.scale.bind("<3>", self.mousefade)
 
         self.variable.trace('w', self.updatelabel)
@@ -73,7 +73,7 @@ class FlyingFader(Frame):
         percent = (now - start) / (end - start)
         newvalue = (percent * (lend - lstart)) + lstart
         self.variable.set(newvalue)
-        colortrough(self.scale, percent)
+        colorfade(self.scale, percent)
         self.after(10, self.gofade)
 
     def updatelabel(self, *args):
@@ -85,11 +85,17 @@ class FlyingFader(Frame):
         else:
             self.vlabel['fg'] = 'blue'
 
+    def get(self):
+        return self.scale.get()
 
-def colortrough(scale, lev):
+    def set(self, val):
+        self.scale.set(val)
+
+
+def colorfade(scale, lev):
     low = (255, 255, 255)
     high = (0, 0, 0)
-    out = [int(l+lev*(h-l)) for h,l in zip(high,low)]
+    out = [int(l+lev*(h-l)) for h, l in zip(high,low)]
     col="#%02X%02X%02X" % tuple(out)
     scale.config(troughcolor=col)
 
