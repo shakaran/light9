@@ -88,10 +88,14 @@ class Subpanels:
                 parent=effectsparent
                 side1='bottom'
                 orient='vert'
+                end1=0
+                end2=1
             else:
                 parent=scenesparent
                 side1='right'
                 orient='horiz'
+                end1=1
+                end2=0
 
             # make frame that surrounds the whole submaster
             f=Frame(parent, bd=1, relief='raised')
@@ -110,7 +114,7 @@ class Subpanels:
             s = FlyingFader(f, label=str(name), variable=scalelevels[name],
                             showvalue=0, length=300-17,
                             width=18, sliderlength=18,
-                            to=1,res=.001,from_=0,bd=0, font=stdfont,
+                            to=end1,res=.001,from_=end2,bd=0, font=stdfont,
                             orient=orient,
                             labelwidth=12, # this should be equal to the longest label name
                             **scaleopts)
