@@ -10,7 +10,7 @@ It lets functions take any number of arguments and throw them away.
 Callbacks do this, and we typically don't care about what they have to say. """
 
 from Tix import *
-from uihelpers import FancyDoubleVar
+from uihelpers import FancyDoubleVar, get_selection
 
 stdfont = ('Arial', 8)
 
@@ -33,6 +33,7 @@ class SliderMapping:
         self.statuslabel = None # tells us sync status
         self.lastbgcolor = None # last background color drawn to avoid 
                                 # unnecessary redraws
+        self.subnames = [] # we need to keep track of this for idiotic reasons
     def sync(self, *args):
         self.synced.set(1)
         self.color_bg()
@@ -74,6 +75,17 @@ class SliderMapping:
         self.check_synced()
         self.color_bg()
     def set_subname(self, newname):
+        try:
+            self.listbox.listbox.select_clear(0, END)
+        except IndexError:
+            pass
+        try:
+            newindex = self.subnames.index(newname)
+            self.listbox.listbox.select_set(newindex)
+            self.listbox.listbox.see(newindex)
+        except ValueError:
+            pass
+
         self.subname.set(newname)
         self.unsync()
         self.color_bg()
@@ -132,24 +144,29 @@ class SliderMapping:
     def get_level_pair(self):
         'Returns suitable output for ExtSliderMapper.get_levels()'
         return (self.subname.get(), self.extlevel.get())
+    def listbox_cb(self, *args):
+        self.subname.set(self.subnames[get_selection(self.listbox.listbox)-0])
     def draw_interface(self, master, subnames):
         'Draw interface into master, given a list of submaster names'
-        frame = Frame(master)
-        c = ComboBox(frame, variable=self.subname, dropdown=0)
-        c.slistbox.listbox.insert(END, "disconnected")
-        # c.listbox.insert(END, "disconnected")
+        self.subnames = subnames
+        frame = Frame(master, bg='black')
+        self.listbox = ScrolledListBox(frame, scrollbar='y', bg='black')
+        self.listbox.listbox.bind("<<ListboxSelect>>", self.listbox_cb, add=1)
+        self.listbox.listbox.configure(font=stdfont, exportselection=0, 
+            selectmode=BROWSE, bg='black', fg='white')
+        self.listbox.vsb.configure(troughcolor='black')
+        # self.listbox.listbox.insert(END, "disconnected")
         for s in subnames:
-            c.slistbox.listbox.insert(END, s)
-            # c.listbox.insert(END, s)
-        c.entry.configure(width=12, font=stdfont)
-        c.slistbox.listbox.configure(font=stdfont, exportselection=0)
-        statframe = Frame(frame)
+            self.listbox.listbox.insert(END, s)
+        statframe = Frame(frame, bg='black')
 
-        self.statuslabel = Label(statframe, text="No sync", width=15, font=stdfont)
+        self.statuslabel = Label(statframe, text="No sync", width=15, 
+            font=stdfont)
         self.statuslabel.grid(columnspan=2, sticky=W)
         ilabel = Label(statframe, text="Input", fg='blue', font=stdfont)
         ilabel.grid(row=1, sticky=W)
-        extlabel = Label(statframe, textvariable=self.extlevel, width=5, font=stdfont)
+        extlabel = Label(statframe, textvariable=self.extlevel, width=5, 
+            font=stdfont)
         extlabel.grid(row=1, column=1)
         rlabel = Label(statframe, text="Real", font=stdfont)
         rlabel.grid(row=2, sticky=W)
@@ -159,17 +176,17 @@ class SliderMapping:
             command=self.disconnect, padx=0, pady=0, font=stdfont)
         disc_button.grid(row=3, columnspan=2)
         statframe.pack(side=BOTTOM, expand=1, fill=BOTH)
-        c.pack(expand=1, fill=BOTH)
+        self.listbox.pack(expand=1, fill=BOTH)
         frame.pack(side=LEFT, expand=1, fill=BOTH)
 
-        self.widgets = [frame, c, statframe, self.statuslabel, ilabel, extlabel,
-                        rlabel, self.sublabel, disc_button]
+        self.widgets = [frame, self.listbox, statframe, self.statuslabel, 
+                        ilabel, extlabel, rlabel, self.sublabel, disc_button]
 
 class ExtSliderMapper(Frame):
     def __init__(self, parent, sliderlevels, sliderinput, filename='slidermapping',
                  numsliders=4):
         'Slider levels is scalelevels, sliderinput is an ExternalInput object'
-        Frame.__init__(self, parent)
+        Frame.__init__(self, parent, bg='black')
         self.parent = parent
         self.sliderlevels = sliderlevels
         self.sliderinput = sliderinput
@@ -213,6 +230,7 @@ class ExtSliderMapper(Frame):
             try:
                 v = self.sliderlevels[slidermap.get_mapping()]
                 slidermap.set_sublevel_var(v)
+                # print "ESM: Yes submaster named", slidermap.get_mapping()
             except KeyError:
                 name = slidermap.get_mapping()
                 if name != 'disconnected':
@@ -233,24 +251,33 @@ class ExtSliderMapper(Frame):
             if m.issynced()])
     def draw_interface(self):
         self.reallevellabels = []
-        subchoiceframe = Frame(self)
+        subchoiceframe = Frame(self, bg='black')
         for m in self.current_mappings:
             m.draw_interface(subchoiceframe, self.subnames)
         subchoiceframe.pack()
         
-        presetframe = Frame(self)
-        Label(presetframe, text="Preset:").pack(side=LEFT)
+        presetframe = Frame(self, bg='black')
+        Label(presetframe, text="Preset:", font=('Arial', 10), bg='black', 
+            fg='white').pack(side=LEFT)
         self.presetcombo = ComboBox(presetframe, variable=self.current_preset, 
-                                    editable=1, command=self.apply_preset)
+                                    editable=1, command=self.apply_preset,
+                                    dropdown=1)
+        self.presetcombo.slistbox.configure(bg='black')
+        self.presetcombo.slistbox.listbox.configure(bg='black', fg='white')
+        self.presetcombo.entry.configure(bg='black', fg='white')
         self.draw_presets()
         self.presetcombo.pack(side=LEFT)
-        Button(presetframe, text="Add", padx=0, pady=0, 
+        Button(presetframe, text="Add", padx=0, pady=0, bg='black', 
+                fg='white', font=stdfont, 
                 command=self.add_preset).pack(side=LEFT)
-        Button(presetframe, text="Delete", padx=0, pady=0, 
+        Button(presetframe, text="Delete", padx=0, pady=0, bg='black', 
+                fg='white', font=stdfont,
                 command=self.delete_preset).pack(side=LEFT)
-        Button(presetframe, text="Disconnect", padx=0, pady=0, 
+        Button(presetframe, text="Disconnect", padx=0, pady=0, bg='black', 
+                fg='white', font=stdfont,
                 command=self.disconnect_all).pack(side=LEFT)
-        Button(presetframe, text="Reload", padx=0, pady=0, 
+        Button(presetframe, text="Reload", padx=0, pady=0, bg='black', 
+                fg='white', font=stdfont,
                 command=self.load_presets).pack(side=LEFT)
         presetframe.pack(side=BOTTOM)
     def apply_preset(self, preset):

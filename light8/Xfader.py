@@ -45,7 +45,7 @@ class Xfader(Canvas):
     def height(self):
         return int(self['height'])
     def setupwidget(self,parent):
-        Canvas.__init__(self,parent,width=150,height=150,bg="#ff0000")
+        Canvas.__init__(self,parent,width=150,height=150,bg="grey40")
         self.pack(side='bottom')
         self.create_rectangle(5,5,self.width()-5,self.height()-5)
         self.create_line(0,self.height()/2,150,self.height()/2)

@@ -71,7 +71,7 @@ class Stage(Canvas):
     def setimage(self,stageimage):
         img = Image('photo',file=stageimage)
         self.img=img # can't lose this!
-        print img.width()
+        # print img.width()
 #        self.create_image(0,0,anchor='nw',image=img)
 #        self.config(width=img.width(),height=img.height())
 

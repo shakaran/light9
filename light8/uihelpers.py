@@ -16,7 +16,7 @@ windowlocations = {
 }
 
 def make_frame(parent):
-    f = Frame(parent, bd=0)
+    f = Frame(parent, bd=0, bg='black')
     f.pack(side='left')
     return f
 
@@ -75,7 +75,12 @@ def printevent(ev):
     print ""
     
 def eventtoparent(ev,sequence):
-    "passes an event to the parent"
+    "passes an event to the parent, screws up TixComboBoxes"
+
+    wid_class = str(ev.widget.__class__)
+    if wid_class == 'Tix.ComboBox' or wid_class == 'Tix.TixSubWidget':
+        return
+
     evdict={}
     for x in ['state', 'time', 'y', 'x', 'serial']:
         evdict[x]=getattr(ev,x)
@@ -208,8 +213,10 @@ class FancyDoubleVar(DoubleVar):
         else:
             print "FancyDoubleVar: attempted to delete named %s which wasn't set to any function" % name
 
-
-
+def get_selection(listbox):
+    'Given a listbox, returns first selection as integer'
+    selection = int(listbox.curselection()[0]) # blech
+    return selection
 
 if __name__=='__main__':
     root=Tk()
@@ -221,12 +228,3 @@ if __name__=='__main__':
     t.pack()
     Entry(root,textvariable=iv).pack()
     root.mainloop()
-
-
-
-
-
-
-
-
-

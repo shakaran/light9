@@ -2,6 +2,7 @@ from Tix import *
 from time import time # time is on my side
 from util import subsetdict
 from FlyingFader import FlyingFader
+from uihelpers import get_selection
 
 # statuses are:
 # stopped - no cue is loaded or cue is stopped
@@ -9,11 +10,6 @@ from FlyingFader import FlyingFader
 # finished - cue is finished, next is loaded
 
 stdfont = ('Arial', 10)
-
-def get_selection(listbox):
-    'Given a listbox, returns first selection as integer'
-    selection = int(listbox.curselection()[0]) # blech
-    return selection
 
 class Fader(Frame):
     'User interface for cue fader'

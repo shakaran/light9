@@ -38,13 +38,16 @@ class Lightboard:
         self.get_data()
         self.buildinterface()
         self.load()
+        print "Light 8.8: Enterring backgroundloop"
         self.backgroundloop()
         self.updatestagelevels()
         
     def buildinterface(self):
+        print "Light 8.8: Constructing interface..."
         for w in self.master.winfo_children():
             w.destroy()
 
+        print "\tstage"
         stage_tl = toplevelat('stage')
         s = stage.Stage(stage_tl)
         stage.createlights(s)
@@ -56,16 +59,19 @@ class Lightboard:
         scene_tl = toplevelat('scenes')
         effect_tl = toplevelat('effect')
 
+        print "\tslider patching"
         mapping_tl = toplevelat('mapping')
         self.slidermapper = ExtSliderMapper.ExtSliderMapper(mapping_tl, 
                                                             self.scalelevels, 
                                                             ExternalSliders())
         self.slidermapper.pack()
 
+        print "\tsubmaster control"
         self.subpanels = Subpanels(sub_tl, effect_tl, scene_tl, self, self.scalelevels,
                                    Subs, self.xfader, self.changelevel,
                                    self.subediting, Subs.longestsubname())
 
+        print "\tlevel display"
         leveldisplay_tl = toplevelat('leveldisplay')
         leveldisplay_tl.bind('<Escape>', sys.exit)
 
@@ -74,12 +80,16 @@ class Lightboard:
             self.channel_levels[i].config(text=self.oldlevels[i])
             colorlabel(self.channel_levels[i])
 
+        print "\tconsole"
         Console(self)
 
         # root frame
+        print "\tcontrol panel"
+        self.master.configure(bg='black')
         controlpanel = Controlpanel(self.master, self.xfader, self.refresh, 
             self.quit, self.toggle_jostle)
         
+        print "\tcrossfader"
         xf=Frame(self.master)
         xf.pack(side='right')
 
@@ -91,15 +101,18 @@ class Lightboard:
         self.xfader.setupwidget(xf)
         controlpanel.pack()
 
-        cuefader_tl = toplevelat('cuefader')
-        cuefader = Fader(cuefader_tl, Subs.cues, self.scalelevels)
-        cuefader.pack()
+        print "\tcue fader (skipped)"
+        # cuefader_tl = toplevelat('cuefader')
+        # cuefader = Fader(cuefader_tl, Subs.cues, self.scalelevels)
+        # cuefader.pack()
+        print "Light 8.8: Everything's under control"
+
 
     def get_data(self,*args):
         Subs.reload_data(self.DUMMY)
         Patch.reload_data(self.DUMMY)
-        print "Patch:", Patch.patch
-        print "Subs:", ', '.join(Subs.subs.keys())
+        print "Light 8.8:", len(Patch.patch), "dimmers patched"
+        print "Light 8.8:", len(Subs.subs), "submasters loaded"
 
     def refresh(self, *args):
         'rebuild interface, reload data'
@@ -176,7 +189,7 @@ class Lightboard:
                 else:
                     numlab['bg'] = 'red'
             else:
-                numlab['bg'] = 'lightPink'
+                numlab['bg'] = 'grey40'
 
         self.oldlevels[:] = levels[:] # replace the elements in oldlevels - don't make a new list (Subediting is watching it)
             
@@ -198,7 +211,7 @@ class Lightboard:
             filename = '/tmp/light9.prefs'
             if self.DUMMY:
                 filename += '.dummy'
-            print "Loading from", filename
+            print "Light 8.8: Loading from", filename
             file = open(filename, 'r')
             p = cPickle.load(file)
             for s, v in p.scalelevels.items():
