@@ -9,11 +9,10 @@ import dmxclient
 import Patch
 import Submaster
 
-from dispatch import dispatcher
+import dispatcher
 
 class Subcomposer(tk.Frame):
-    def __init__(self, master, levelboxopts=None, dmxdummy=0, numchannels=68,
-        use_persistentlevels=0):
+    def __init__(self, master, levelboxopts=None, dmxdummy=0, numchannels=68):
         tk.Frame.__init__(self, master, bg='black')
         self.dmxdummy = dmxdummy
         self.numchannels = numchannels
@@ -41,8 +40,7 @@ class Subcomposer(tk.Frame):
         dispatcher.connect(self.levelchanged,"levelchanged")
         dispatcher.connect(self.sendupdate,"levelchanged")
 
-        if use_persistentlevels:
-            self.persistentlevels()
+        self.persistentlevels()
 
         self.lastupdate=0 # time we last sent to dmx
 
@@ -69,7 +67,7 @@ class Subcomposer(tk.Frame):
                 return
             self.levels[channel-1]=max(0,min(1,float(newlevel)))
         self.levelbox.setlevels(self.levels)
-    def savenewsub(self, levels, subname):
+    def savenewsub(self, subname):
         leveldict={}
         for i,lev in zip(range(len(self.levels)),self.levels):
             if lev!=0:
@@ -77,7 +75,7 @@ class Subcomposer(tk.Frame):
         
         s=Submaster.Submaster(subname,leveldict)
         s.save()
-    def loadsub(self, levels, subname):
+    def loadsub(self, subname):
         """puts a sub into the levels, replacing old level values"""
         s=Submaster.Submasters().get_sub_by_name(subname)
         self.levels[:]=[0]*68
@@ -110,32 +108,14 @@ def Savebox(master, levels, verb="Save", cmd=None):
     e.bind("<Return>",cb)
     tk.Button(f,text=verb,command=cb).pack(side='left')
     return f
-
-def open_sub_editing_window(subname, use_mainloop=1, dmxdummy=0):
-    if use_mainloop:
-        toplevel = tk.Tk()
-    else:
-        toplevel = tk.Toplevel()
-    if dmxdummy: 
-        dummy_str = ' (dummy)'
-    else:
-        dummy_str = ''
-    toplevel.title("Subcomposer: %s%s" % (subname, dummy_str))
-    sc = Subcomposer(toplevel, use_persistentlevels=0, dmxdummy=dmxdummy)
-    sc.pack(fill='both', expand=1)
-    sc.loadsub(None, subname) # don't ask
-    sc.considersendupdate(use_after_loop=10)
-    if use_mainloop:
-        tk.mainloop()
     
 #############################
 
 if __name__ == "__main__":
     root=tk.Tk()
     root.config(bg='black')
-    root.tk_setPalette("#004633")
 
-    sc = Subcomposer(root, dmxdummy=0)
+    sc = Subcomposer(root, dmxdummy=1)
     sc.pack()
 
     while 1:
