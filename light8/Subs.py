@@ -170,11 +170,19 @@ class Sub:
         self.dimmers = dimmers # needed?
         self.is_effect = callable(self.levels)
         self.slideradjuster = SliderAdjuster()
+        self.namecache = {}
         if self.is_effect:
             self.params = Params()
             self.generator = self.levels(self.params, self.slideradjuster)
             self.generator.next()
         self.color = color
+    def resolve_name(self, ch_name):
+        if ch_name in self.namecache:
+            return self.namecache[ch_name]
+        else:
+            resolved = get_dmx_channel(ch_name)
+            self.namecache[ch_name] = resolved
+            return resolved
     def set_slider_var(self, slidervar):
         if self.is_effect:
             self.slideradjuster.var = slidervar
@@ -191,7 +199,8 @@ class Sub:
     def set_state(self, statedict):
         self.__dict__.update(statedict)
     def get_levels(self, level):
-        """returns a scaled version of the levels in the sub; channel names are resolved to numbers"""
+        """returns a scaled version of the levels in the sub; channel names 
+        are resolved to numbers"""
         d = {}
         if level == 0: 
             self.slideradjuster.atzero = 1
@@ -199,10 +208,12 @@ class Sub:
         if self.is_effect: # effect
             d = self.generator.next()
             self.slideradjuster.atzero = 0
+            return dict([(get_dmx_channel(ch), float(lev) * float(level)) 
+                for ch, lev in d.items()])
         else: # dictionary (standard)
             d = self.levels
-        return dict([(get_dmx_channel(ch), float(lev) * float(level)) 
-            for ch, lev in d.items()])
+            return dict([(self.resolve_name(ch), float(lev) * float(level)) 
+                for ch, lev in d.items()])
 
     #
     # methods for Subediting to use
