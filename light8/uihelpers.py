@@ -26,11 +26,33 @@ def bindkeys(root,key, func):
     for w in root.winfo_children():
         w.bind(key, func)
 
+
+def toplevel_savegeometry(tl,name):
+    try:
+        f=open(".light9-window-geometry-%s" % name.replace(' ','_'),'w')
+        f.write(tl.geometry())
+    except:
+        # it's ok if there's no saved geometry
+        pass
+
+    # this would get called repeatedly for each child of the window (i
+    # dont know why) so we unbind after the first Destroy event
+    tl.unbind("<Destroy>",tl._toplevelat_funcid)
+
 def toplevelat(name):
     tl = Toplevel()
 
+    try:
+        f=open(".light9-window-geometry-%s" % name.replace(' ','_'))
+        windowlocations[name]=f.read() # file has no newline
+    except:
+        # it's ok if there's no saved geometry
+        pass
+
     if name in windowlocations:
-        tl.wm_geometry(windowlocations[name])
+        tl.geometry(windowlocations[name])
+
+    tl._toplevelat_funcid=tl.bind("<Destroy>",lambda ev,tl=tl,name=name: toplevel_savegeometry(tl,name))
 
     return tl
 
