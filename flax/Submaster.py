@@ -92,7 +92,18 @@ class Submasters:
             self.submasters[filename] = Submaster(filename)
     def get_all_subs(self):
         "All Submaster objects"
-        return self.submasters.values()
+        l = self.submasters.items()
+        l.sort()
+        l = [x[1] for x in l]
+        songs = []
+        notsongs = []
+        for s in l:
+            if s.name.startswith('song'):
+                songs.append(s)
+            else:
+                notsongs.append(s)
+        combined = notsongs + songs
+        return combined
     def get_sub_by_name(self, name):
         "Makes a new sub if there isn't one."
         return self.submasters.get(name, Submaster(name))
