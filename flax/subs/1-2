@@ -1,3 +1,4 @@
+42 : 1.0
 44 : 1.0
 c-scp : 0.765
 dayback : 0.52
@@ -12,5 +13,5 @@ main-r-blue : 0.555
 main-r-red : 0.78
 r-scp : 0.755
 ramp9-stairs : 0.57
-storefill : 0.9
+storefill : 1.0
 upstairs above : 0.44
