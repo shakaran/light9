@@ -9,7 +9,8 @@ from panels import *
 from Xfader import *
 from subediting import Subediting
 from Fader import Fader
-import io, stage, Subs, Patch, ExternalInput
+from ExternalInput import ExternalSliders
+import io, stage, Subs, Patch, ExtSliderMapper
 
 class Pickles:
     def __init__(self, scalelevels, subs=None, windowpos=None):
@@ -56,8 +57,9 @@ class Lightboard:
         effect_tl = toplevelat('effect')
 
         mapping_tl = toplevelat('mapping')
-        self.slidermapper = ExtSliderMapper(mapping_tl, self.scalelevels, 
-                ExternalInput.ExternalSliders())
+        self.slidermapper = ExtSliderMapper.ExtSliderMapper(mapping_tl, 
+                                                            self.scalelevels, 
+                                                            ExternalSliders())
         self.slidermapper.pack()
 
         self.subpanels = Subpanels(sub_tl, effect_tl, scene_tl, self, self.scalelevels,
@@ -156,7 +158,8 @@ class Lightboard:
         # load levels from external sliders
         extlevels = self.slidermapper.get_levels()
         for name, val in extlevels.items():
-            self.scalelevels[name].set(val)
+            if name in self.scalelevels:
+                self.scalelevels[name].set(val)
         
         for lev,lab,oldlev,numlab in zip(levels, self.channel_levels, 
                                          self.oldlevels, 
