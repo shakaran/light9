@@ -168,7 +168,7 @@ class TimelineTrack:
         """This makes sure all events are in the right order and have defaults
         filled in if they have missing frames."""
         self.events.sort()
-        self.fill_in_missing frames()
+        self.fill_in_missing_frames()
     def add_event(self, event):
         """Add a TimedEvent object to this TimelineTrack"""
         self.events.append(event)
@@ -188,7 +188,7 @@ class TimelineTrack:
         self.events = [e for e in self.events
             if e.time >= starttime and e.time <= endtime]
         self._cleaup_events(self.events)
-    def fill_in_missing frames(self):
+    def fill_in_missing_frames(self):
         """Runs through all events and sets TimedEvent with missing frames to
         the default frame."""
         for event in self.events:

@@ -1,5 +1,3 @@
-
-
 from Timeline import *
 from Submaster import Submasters, sub_maxes
 
@@ -36,6 +34,9 @@ class Show:
         "set time of current timeline"
         self.current_time = time
         self.current_timeline.set_time(time)
+    def get_timelines(self):
+        "Get names of all timelines"
+        return self.timelines.keys()
 
 # this is the default blender
 linear = LinearBlender()

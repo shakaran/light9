@@ -189,7 +189,7 @@ class KeyboardComposer(Frame):
             self.after(10, self.send_frequent_updates)
     def send_levels(self):
         levels = self.get_dmx_list()
-        # dmxclient.outputlevels(levels)
+        dmxclient.outputlevels(levels)
         # print "sending levels", levels
     def send_levels_loop(self):
         self.send_levels()
