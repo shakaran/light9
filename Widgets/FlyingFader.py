@@ -28,7 +28,7 @@ class FlyingFader(Frame):
 
         for k in range(1, 10):
             self.scale.bind("<Key-%d>" % k, 
-                lambda evt, k=k: self.newfade(k * 10, evt))
+                lambda evt, k=k: self.newfade(k / 10, evt))
 
         self.scale.bind("<Key-0>", lambda evt: self.newfade(100, evt))
         self.scale.bind("<grave>", lambda evt: self.newfade(0, evt))
@@ -81,7 +81,7 @@ class FlyingFader(Frame):
         self.after(10, self.gofade)
 
     def updatelabel(self, *args):
-        self.vlabel['text'] = "%.1f" % self.variable.get()
+        self.vlabel['text'] = "%.3f" % self.variable.get()
         if self.fadetimes[1] == 0: # no fade
             self.vlabel['fg'] = 'black'
         elif self.curfade[1] > self.curfade[0]:
