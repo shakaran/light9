@@ -630,7 +630,7 @@ if __name__ == "__main__":
     root = Tk.Tk()
     root.title("ShowMaster 9000")
     root.geometry("500x555")
-    cl = TkCueList(root, 'cues/cuelist1')
+    cl = TkCueList(root, 'cues/dolly')
     cl.pack(fill='both', expand=1)
 
     fader = CueFader(root, cl)
