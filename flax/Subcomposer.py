@@ -69,7 +69,7 @@ class Subcomposer(tk.Frame):
                 return
             self.levels[channel-1]=max(0,min(1,float(newlevel)))
         self.levelbox.setlevels(self.levels)
-    def savenewsub(self, subname):
+    def savenewsub(self, levels, subname):
         leveldict={}
         for i,lev in zip(range(len(self.levels)),self.levels):
             if lev!=0:
@@ -77,7 +77,7 @@ class Subcomposer(tk.Frame):
         
         s=Submaster.Submaster(subname,leveldict)
         s.save()
-    def loadsub(self, subname):
+    def loadsub(self, levels, subname):
         """puts a sub into the levels, replacing old level values"""
         s=Submaster.Submasters().get_sub_by_name(subname)
         self.levels[:]=[0]*68
@@ -123,7 +123,7 @@ def open_sub_editing_window(subname, use_mainloop=1, dmxdummy=0):
     toplevel.title("Subcomposer: %s%s" % (subname, dummy_str))
     sc = Subcomposer(toplevel, use_persistentlevels=0, dmxdummy=dmxdummy)
     sc.pack(fill='both', expand=1)
-    sc.loadsub(subname)
+    sc.loadsub(None, subname) # don't ask
     sc.considersendupdate(use_after_loop=10)
     if use_mainloop:
         tk.mainloop()

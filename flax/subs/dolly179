@@ -1,11 +1,11 @@
-14:.46
-15:.8
-23:.63
-27:.63
-31:.63
-35:.63
-37:.63
-39:.30
-43:.80
-49:.48
-64:.71
+43 : 0.8
+blue1 : 0.63
+blue2 : 0.63
+blue3 : 0.63
+blue4 : 0.63
+downfill-right : 0.46
+main-r-blue : 0.71
+main-r-red : 0.48
+r-scp : 0.63
+upstairs above : 0.3
+upstairs front : 0.8
