@@ -15,12 +15,21 @@ def bindkeys(root,key, func):
     for w in root.winfo_children():
         w.bind(key, func)
 
-def toplevelat(x,y,w=None,h=None):
+# def toplevelat(x,y,w=None,h=None):
+def toplevelat(name, windowpos):
     tl = Toplevel()
-    if w and h:
-        tl.wm_geometry("%dx%d+%d+%d" % (w,h,x,y))
+
+    if name in windowpos:
+        tkname, geom = windowpos[name]
+        tl.wm_geometry(geom)
+        windowpos[name] = str(tl), geom
     else:
-        tl.wm_geometry("+%d+%d" % (x,y))
+        windowpos[name] = str(tl), '+0+0'
+
+    # if w and h:
+        # tl.wm_geometry("%dx%d+%d+%d" % (w,h,x,y))
+    # else:
+        # tl.wm_geometry("+%d+%d" % (x,y))
     return tl
 
 def toggle_slider(s):

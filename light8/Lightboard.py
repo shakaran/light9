@@ -4,6 +4,7 @@ from Tix import *
 from time import sleep
 from signal import signal, SIGINT
 import sys, cPickle
+import shelve
 
 import io
 from uihelpers import *
@@ -15,12 +16,12 @@ import stage
 import Subs, Patch
 
 class Pickles:
-    def __init__(self, scalelevels, subs=None):
+    def __init__(self, scalelevels, subs=None, windowpos=None):
         self.scalelevels = dict([(name, lev.get()) 
             for name, lev in scalelevels.items()])
         self.substate = dict([(name, subobj.get_state())
             for name, subobj in subs])
-        # print "substate", self.substate 
+        self.windowpos = windowpos
 
 class Lightboard:
     def __init__(self, master, parportdmx, DUMMY):
@@ -34,6 +35,8 @@ class Lightboard:
         self.oldlevels = [None] * 68 # never replace this; just clear it
         self.subediting = Subediting(currentoutputlevels=self.oldlevels)
 
+        self.shelf = shelve.open('/tmp/light9.newprefs')
+        self.windowpos = self.shelf.get('window', {})
         self.get_data()
         self.buildinterface()
         self.load()
@@ -44,21 +47,21 @@ class Lightboard:
         for w in self.master.winfo_children():
             w.destroy()
 
-        stage_tl = toplevelat(22,30)
+        stage_tl = toplevelat('stage', self.windowpos)
         s = stage.Stage(stage_tl)
         stage.createlights(s)
         s.setsubediting(self.subediting)
         s.pack()
         self.stage = s # save it
 
-        sub_tl = toplevelat(0,0,w=440,h=610)
-        effect_tl = toplevelat(462,4)
+        sub_tl = toplevelat('sub', self.windowpos)
+        effect_tl = toplevelat('effect', self.windowpos)
 
         self.subpanels = Subpanels(sub_tl, effect_tl, self, self.scalelevels,
                                    Subs, self.xfader, self.changelevel,
                                    self.subediting, Subs.longestsubname())
 
-        leveldisplay_tl = toplevelat(873,400)
+        leveldisplay_tl = toplevelat('leveldisplay', self.windowpos)
         leveldisplay_tl.bind('<Escape>', sys.exit)
 
         self.leveldisplay = Leveldisplay(leveldisplay_tl, self.channel_levels)
@@ -82,7 +85,7 @@ class Lightboard:
         self.xfader.setupwidget(xf)
         controlpanel.pack()
 
-        cuefader_tl = toplevelat(78, 480)
+        cuefader_tl = toplevelat('cuefader', self.windowpos)
         cuefader = Fader(cuefader_tl, Subs.cues, self.scalelevels)
         cuefader.pack()
 
@@ -199,11 +202,32 @@ class Lightboard:
         self.master.destroy()
         sys.exit()
     def save(self, *args):
+
+
         filename = '/tmp/light9.prefs'
         if self.DUMMY:
             filename += '.dummy'
         print "Saving to", filename
         file = open(filename, 'w')
+
+        # {name : (tkname, geom)}
+        windowitems = self.windowpos.items()
+        windowmapping = dict([(pair[0], name) for name, pair in windowitems])
+        # print "windowmapping", windowmapping
+        # print "windowpos", self.windowpos
+
+        for w in self.master.winfo_children():
+            tkname, geom = str(w), w.winfo_geometry()
+            try:
+                name = windowmapping[tkname]
+                self.windowpos[name] = (tkname, geom)
+                # print name, "geom is", geom
+            except:
+                # print "failed to save windowpos"
+                pass
+        self.shelf['window'] = self.windowpos
+        self.shelf.close()
+
         try:
             cPickle.dump(Pickles(self.scalelevels, Subs.subs.items()), file)
         except cPickle.UnpickleableError:

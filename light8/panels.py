@@ -28,7 +28,7 @@ class Controlpanel(Frame):
 class Console:
     def __init__(self,lightboard):
         print "Light 8: Everything's under control"
-        t=toplevelat(267,717,w=599,h=19)
+        t=toplevelat('console', lightboard.windowpos)
         self.frame = Frame(t)
         self.entry=Entry(self.frame)
         self.entry.pack(expand=1, fill='x')
