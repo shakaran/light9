@@ -415,3 +415,19 @@ subs["*1-01-0-justback"] = { "sidefill2" : 47, "sidefill1" : 47,
     "phone" : 0, "main 9" : 14, "main 8" : 13, "cycleft" : 41, "edge" : 0,
     "b13" : 16, "rock" : 0, "marry2" : 16, "marry1" : 16, "cuba1" : 16,
     "cuba2" : 0, "side r" : 0,}
+subs["*2-06-0"] = { "cycright" : 100, "main 11" : 13, "main 10" : 0,
+    "upfill1" : 48, "b34" : 0, "b24" : 100, "b23" : 62, "b22" : 0,
+    "desk2" : 0, "hotbox2" : 64, "hotbox1" : 88, "upfill4" : 48,
+    "b32" : 0, "main 2" : 63, "main 4" : 97, "main 7" : 42, "main 9" : 52,
+    "edge" : 0, "rock" : 0, "marry2" : 0, "marry1" : 41, "side r" : 0,}
+subs["*cuba floor show"] = { "cycright" : 100, "main 11" : 13, "main 10" : 0,
+    "upfill1" : 48, "b34" : 0, "b24" : 100, "b23" : 62, "b22" : 0,
+    "desk2" : 0, "hotbox2" : 64, "hotbox1" : 88, "upfill4" : 48,
+    "b32" : 0, "main 2" : 63, "main 4" : 97, "main 7" : 42, "main 9" : 52,
+    "edge" : 0, "rock" : 0, "marry2" : 0, "marry1" : 41, "side r" : 0,}
+subs["*cuba floor show"] = { "cycright" : 100, "main 11" : 13,
+    "main 10" : 0, "upfill1" : 48, "b34" : 0, "b24" : 100, "b23" : 62,
+    "b22" : 0, "b32" : 0, "hotbox2" : 64, "hotbox1" : 88, "upfill4" : 48,
+    "desk2" : 0, "main 2" : 63, "main 5" : 47, "main 4" : 86, "main 7" : 66,
+    "main 9" : 52, "edge" : 0, "rock" : 0, "marry2" : 0, "marry1" : 96,
+    "hotback" : 57, "side r" : 0,}

@@ -11,7 +11,7 @@ monofont = ('Courier', 8)
 
 class Controlpanel(Frame):
     def __init__(self, parent, xfader, refresh_cb, quit_cb, jostle_cb, 
-                 whatsup_cb):
+                 whatsup_cb=None):
         Frame.__init__(self,parent, bg='black')
         controlpanel = self
         for txt,cmd in (
@@ -24,7 +24,7 @@ class Controlpanel(Frame):
             ('Clear Y',     lambda: xfader.clearallbuttons('y')),
             ("What's up?",     whatsup_cb)):
             Button(controlpanel, text=txt, command=cmd, bg='black', 
-                fg='white').pack(side='top', fill='x')
+                fg='white',font=stdfont, padx=0, pady=0).pack(side='top', fill='x')
         # jostle button
         Checkbutton(controlpanel, text="Jostle", bg='black', fg='white',
             command=jostle_cb).pack(side=TOP, fill=X)
