@@ -1,10 +1,9 @@
 from __future__ import nested_scopes
 
 from Tix import *
-from time import sleep
+import random
 from signal import signal, SIGINT
 import sys, cPickle
-# import shelve
 
 import io
 from uihelpers import *
@@ -28,6 +27,7 @@ class Lightboard:
         self.master = master
         self.parportdmx = parportdmx
         self.DUMMY = DUMMY
+        self.jostle_mode = 0
 
         self.channel_levels = []
         self.scalelevels = {}
@@ -35,8 +35,6 @@ class Lightboard:
         self.oldlevels = [None] * 68 # never replace this; just clear it
         self.subediting = Subediting(currentoutputlevels=self.oldlevels)
 
-        # self.shelf = shelve.open('/tmp/light9.newprefs')
-        # self.windowpos = self.shelf.get('window', {})
         self.windowpos = 0
         self.get_data()
         self.buildinterface()
@@ -74,7 +72,8 @@ class Lightboard:
         Console(self)
 
         # root frame
-        controlpanel = Controlpanel(self.master, self.xfader, self.refresh, self.quit)
+        controlpanel = Controlpanel(self.master, self.xfader, self.refresh, 
+            self.quit, self.toggle_jostle)
         
         xf=Frame(self.master)
         xf.pack(side='right')
@@ -150,7 +149,7 @@ class Lightboard:
                 levels[ch-1] = max(levels[ch-1], fadelev)
 
         levels = [int(l) for l in levels]
-
+        
         for lev,lab,oldlev,numlab in zip(levels, self.channel_levels, 
                                          self.oldlevels, 
                                          self.leveldisplay.number_labels):
@@ -166,6 +165,12 @@ class Lightboard:
 
         self.oldlevels[:] = levels[:] # replace the elements in oldlevels - don't make a new list (Subediting is watching it)
             
+        if self.jostle_mode:
+            delta = random.randrange(-1, 2, 1) # (-1, 0, or 1)
+            # print "delta", delta
+            levels = [min(100, max(x + delta, 0)) for x in levels]
+            # print "jostled", levels
+
         self.parportdmx.sendlevels(levels)
 
     def updatestagelevels(self):
@@ -206,35 +211,15 @@ class Lightboard:
         self.master.destroy()
         sys.exit()
     def save(self, *args):
-
-
         filename = '/tmp/light9.prefs'
         if self.DUMMY:
             filename += '.dummy'
         print "Saving to", filename
         file = open(filename, 'w')
 
-        '''
-        # {name : (tkname, geom)}
-        windowitems = self.windowpos.items()
-        windowmapping = dict([(pair[0], name) for name, pair in windowitems])
-        # print "windowmapping", windowmapping
-        # print "windowpos", self.windowpos
-
-        for w in self.master.winfo_children():
-            tkname, geom = str(w), w.winfo_geometry()
-            try:
-                name = windowmapping[tkname]
-                self.windowpos[name] = (tkname, geom)
-                # print name, "geom is", geom
-            except:
-                # print "failed to save windowpos"
-                pass
-        # self.shelf['window'] = self.windowpos
-        # self.shelf.close()
-        '''
-
         try:
             cPickle.dump(Pickles(self.scalelevels, Subs.subs.items()), file)
         except cPickle.UnpickleableError:
             print "UnpickleableError!  There's yer problem."
+    def toggle_jostle(self, *args):
+        self.jostle_mode = not self.jostle_mode
