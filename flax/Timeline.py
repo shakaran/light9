@@ -4,13 +4,10 @@ from time import time
 from __future__ import division # "I'm sending you back to future!"
 
 """
-Changelog:
-Fri May 16 15:17:34 PDT 2003
-    Project started (roughly).
-
-Mon May 19 17:56:24 PDT 2003
-    Timeline is more or less working.  Still bugs with skipping
-    FunctionFrames at random times.
+Quote of the Build (from Ghostbusters II)
+Dana:  Okay, but after dinner, I don't want you putting any of your old cheap 
+       moves on me. 
+Peter: Ohhhh no! I've got all NEW cheap moves.
 
 Timeline idea
 =============
@@ -177,15 +174,17 @@ class BounceFunction(FunctionFrame):
 class LoopFunction(FunctionFrame):
     def __call__(self, timeline, timedevent, node):
         timeline.set_time(0)
-        print 'looped!'
+        # print 'looped!'
 
 class DoubleTimeFunction(FunctionFrame):
     def __call__(self, timeline, timedevent, node):
         timeline.set_rate(2 * timeline.rate)
+        print 'doubled!', timeline.rate
 
 class HalfTimeFunction(FunctionFrame):
     def __call__(self, timeline, timedevent, node):
         timeline.set_rate(0.5 * timeline.rate)
+        print 'halved!', timeline.rate
 
 class TimedEvent:
     """Container for a Frame which includes a time that it occurs at,
@@ -326,6 +325,8 @@ class TimelineTrack:
         be included.  This is because this is used to find FunctionFrames
         and we assume that any function frames at the start point (which
         could be i or j) have been processed."""
+        return [e for e in self.events if e >= i and e <= j]
+
         if direction == FORWARD:
             return [e for e in self.events if e > i and e <= j]
         else:
@@ -416,8 +417,6 @@ class Timeline:
             last_clock = clock_time
         diff = clock_time - last_clock
         new_time = (self.direction * self.rate * diff) + last_time
-        new_time = max(new_time, 0)
-        new_time = min(new_time, self.length())
         
         # update the time
         self.last_clock_time = clock_time
@@ -426,6 +425,7 @@ class Timeline:
         # now, find out if we missed any functions
         if self.fn_track.has_events():
             lower_time, higher_time = last_time, new_time
+            if lower_time == higher_time: print "zarg!"
             if lower_time > higher_time:
                 lower_time, higher_time = higher_time, lower_time
             
@@ -436,6 +436,11 @@ class Timeline:
                 # they better be FunctionFrames
                 event.frame(self, event, None) # the None should be a Node, 
                                                # but that part is coming later
+        
+        # now we make sure we're in bounds (we don't do this before, since it
+        # can cause us to skip events that are at boundaries.
+        self.current_time = max(self.current_time, 0)
+        self.current_time = min(self.current_time, self.length())
     def reverse_direction(self):
         """Reverses the direction of play for this node"""
         self.direction = self.direction * -1
@@ -475,18 +480,20 @@ if __name__ == '__main__':
         T(10, scene3, blender=smoove),
         T(15, scene2)) # last TimedEvent doesn't need a blender
 
-    if 1:
+    halver = HalfTimeFunction('1/2x')
+    doubler = DoubleTimeFunction('2x')
+    if 0:
         # bounce is semiworking
         bouncer = BounceFunction('boing')
-        halver = HalfTimeFunction('1/2x')
-        doubler = DoubleTimeFunction('2x')
         tl = Timeline([track1], [T(0, bouncer), 
                                  T(0, halver),
                                  T(15, bouncer),
                                  T(15, doubler)])
     else:
         looper = LoopFunction('loop1')
-        tl = Timeline([track1], [T(14, looper)])
+        tl = Timeline([track1], [T(0, doubler),
+                                 T(5, halver),
+                                 T(14, looper)])
     tl.play()
 
     import Tix
