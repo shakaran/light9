@@ -39,3 +39,46 @@ def colorlabel(label):
     out = [int(l+lev*(h-l)) for h,l in zip(high,low)]
     col="#%02X%02X%02X" % tuple(out)
     label.config(bg=col)
+
+class Togglebutton(Button):
+    """works like a single radiobutton, but it's a button so the label's on the button face, not to the side"""
+    def __init__(self,parent,**kw):
+        if kw['variable']:
+            self.variable = kw['variable']
+            self.variable.trace('w',self.varchanged)
+            del kw['variable']
+        else:
+            self.variable=None
+        self.oldcommand = kw.get('command',None)
+        kw['command'] = self.invoke
+        Button.__init__(self,parent,**kw)
+
+        self.origbkg = self.cget('bg')
+
+        self.state=0
+        if self.variable:
+            self.state = self.variable.get()
+
+        self.setstate(self.state)
+
+        self.bind("<Enter>",lambda ev: self.setstate)
+        self.bind("<Leave>",lambda ev: self.setstate)
+
+    def varchanged(self,*args):
+        self.setstate(self.variable.get())
+        
+    def invoke(self):
+        self.setstate(not self.state)
+        
+        if self.oldcommand:
+            self.oldcommand()
+
+    def setstate(self,newstate):
+        self.variable.set(newstate)
+        if newstate: # set
+            self.tk.call('tkButtonDown',self)
+            self.config(bg='green')
+        else: # unset
+            self.tk.call('tkButtonUp',self)
+            self.config(bg=self.origbkg)
+        return "break"

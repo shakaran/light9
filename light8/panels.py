@@ -4,6 +4,7 @@ from Tkinter import *
 from uihelpers import *
 import Patch
 from FlyingFader import FlyingFader
+import Pmw
 
 stdfont = ('Arial', 8)
 monofont = ('Courier', 8)
@@ -82,14 +83,21 @@ class Subpanels:
         sublist.sort()
 
         for name, sub in sublist:
+            # choose one of the sub panels to add to
             if sub.is_effect:
                 parent=effectsparent
+                side1='bottom'
+                orient='vert'
             else:
                 parent=scenesparent
+                side1='right'
+                orient='horiz'
 
+            # make frame that surrounds the whole submaster
             f=Frame(parent, bd=1, relief='raised')
-            f.pack(fill='both',exp=1,side='left')
+            f.pack(fill='both',exp=1,side=('top','left')[sub.is_effect])
 
+            # make DoubleVar (there might be one left around from before a refresh)
             if name not in scalelevels:
                 scalelevels[name]=DoubleVar()
 
@@ -100,17 +108,19 @@ class Subpanels:
                 scaleopts['troughcolor'] = sub.color
 
             s = FlyingFader(f, label=str(name), variable=scalelevels[name],
-                    showvalue=0, length=300-17,
-                    width=20, to=0,res=.001,from_=1,bd=1, font=stdfont,
-                    **scaleopts)
+                            showvalue=0, length=300-17,
+                            width=18, sliderlength=18,
+                            to=1,res=.001,from_=0,bd=0, font=stdfont,
+                            orient=orient,
+                            labelwidth=12, # this should be equal to the longest label name
+                            **scaleopts)
 
             for axis in ('y','x'):
                 cvar=IntVar()
-                cb=Checkbutton(f,text=axis,variable=cvar,font=stdfont, padx=0, 
+                cb=Togglebutton(f,text=axis.upper(),variable=cvar,font=stdfont, padx=0, 
                                pady=0, bd=1)
-                button = ('Alt','Control')[axis=='y'] # unused?
-                # s.bind('<Key-%s>'%axis, lambda ev,cb=cb: cb.invoke)
-                cb.pack(side='bottom',fill='both', padx=0, pady=0)
+                cb.pack(side=side1,fill='both', padx=0, pady=0)
+                s.bind('<Key-%s>'%axis, lambda ev,cb=cb: cb.invoke)
                 xfader.registerbutton(name,axis,cvar)
 
             s.pack(side='left', fill=BOTH)

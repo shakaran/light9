@@ -23,7 +23,7 @@ else:
 
 root = Tk()
 root.wm_title(window_title)
-root.wm_geometry('+447+373')
+root.wm_geometry('+462+470')
 root.tk_focusFollowsMouse()
 
 import Subs, Patch
@@ -53,13 +53,13 @@ class Lightboard:
         for w in self.master.winfo_children():
             w.destroy()
 
-        stage_tl = toplevelat(165,90)
+        stage_tl = toplevelat(65,37)
         s = stage.Stage(stage_tl)
         stage.createlights(s)
         s.pack()
 
         sub_tl = toplevelat(0,0)
-        effect_tl = toplevelat(0,352)
+        effect_tl = toplevelat(462,4)
 
         self.xfader = Xfader(self.scalelevels)
 
