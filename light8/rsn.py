@@ -22,7 +22,11 @@ root.wm_title(window_title)
 root.wm_geometry('+462+470')
 root.tk_focusFollowsMouse()
 
-parportdmx = io.ParportDMX(DUMMY)
+parportdmx = io.ParportDMX()
+
+if not DUMMY:
+    # this turns the parportdmx from dummy to live
+    parportdmx.golive()
 
 mr_lightboard = Lightboard(root,parportdmx,DUMMY)
 root.tk_setPalette('gray40')

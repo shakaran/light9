@@ -15,7 +15,7 @@ cues = [
 patch = {
     
     ('side l','sidepost1') : 45, # posts
-    ('side r','sidepost2') : 4s6,
+    ('side r','sidepost2') : 46,
     
     'sidefill1' : 13,
     'sidefill2' : 14,
