@@ -28,7 +28,7 @@ class FlyingFader(Frame):
 
         for k in range(1, 10):
             self.scale.bind("<Key-%d>" % k, 
-                lambda evt, k=k: self.newfade(k / 10, evt))
+                lambda evt, k=k: self.newfade(k / 10.0, evt))
 
         self.scale.bind("<Key-0>", lambda evt: self.newfade(100, evt))
         self.scale.bind("<grave>", lambda evt: self.newfade(0, evt))
