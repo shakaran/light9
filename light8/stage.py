@@ -153,9 +153,11 @@ class Stage(Canvas):
         if self.lmbstate=='rectangle':
             sr = self.find_withtag('selectrect')
             if not sr:
-                sr=self.create_rectangle( self.lmbstart[0],self.lmbstart[1],coords[0],coords[1],tag='selectrect')
-#                sr=self.create_rectangle( *(self.lmbstart+coords), tag='selectrect' )
+                sr=self.create_rectangle( self.lmbstart[0],self.lmbstart[1],coords[0],coords[1],
+                                          outlinestipple='gray50',
+                                          tag='selectrect')
 
+            # move rectangle with mouse
             self.coords(sr,*(self.lmbstart+coords))
 
             # redo the dynselection with the new rectangle
@@ -236,7 +238,7 @@ class Stage(Canvas):
 root=Tk()
 root.wm_geometry("+376+330")
 s=Stage(root)
-s.setimage('guysanddolls.ppm')
+s.setimage('guysanddolls.gif')
 s.pack()
 s.addlight('drew',(330,640),(90,20))
 s.addlight('house',(360,640))
