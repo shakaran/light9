@@ -4,6 +4,7 @@ from Tix import *
 from time import sleep
 from signal import signal, SIGINT
 import sys, cPickle
+# import shelve
 
 import io
 from uihelpers import *
@@ -34,6 +35,8 @@ class Lightboard:
         self.oldlevels = [None] * 68 # never replace this; just clear it
         self.subediting = Subediting(currentoutputlevels=self.oldlevels)
 
+        # self.shelf = shelve.open('/tmp/light9.newprefs')
+        # self.windowpos = self.shelf.get('window', {})
         self.windowpos = 0
         self.get_data()
         self.buildinterface()
@@ -147,15 +150,11 @@ class Lightboard:
                 levels[ch-1] = max(levels[ch-1], fadelev)
 
         levels = [int(l) for l in levels]
-        lenlevels = len(levels)
-        changed = [] # list of changed levels
 
-        for lev,lab,oldlev,numlab,idx in zip(levels, self.channel_levels, 
+        for lev,lab,oldlev,numlab in zip(levels, self.channel_levels, 
                                          self.oldlevels, 
-                                         self.leveldisplay.number_labels,
-                                         xrange(1, lenlevels + 2)):
+                                         self.leveldisplay.number_labels):
             if lev != oldlev:
-                changed.extend((idx, lev))
                 lab.config(text="%d" % lev) # update labels in lev display
                 colorlabel(lab)             # recolor labels
                 if lev < oldlev:
@@ -165,12 +164,9 @@ class Lightboard:
             else:
                 numlab['bg'] = 'lightPink'
 
-        # replace the elements in oldlevels - don't make a new list 
-        # (Subediting is watching it)
-        self.oldlevels[:] = levels[:] 
+        self.oldlevels[:] = levels[:] # replace the elements in oldlevels - don't make a new list (Subediting is watching it)
             
-        # self.parportdmx.sendlevels(levels)
-        self.parportdmx.sendupdates(changed)
+        self.parportdmx.sendlevels(levels)
 
     def updatestagelevels(self):
         self.master.after(100, self.updatestagelevels)
