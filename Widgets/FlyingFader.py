@@ -1,5 +1,60 @@
 from Tkinter import *
-from time import time
+from time import time,sleep
+from __future__ import division
+
+class Mass:
+    def __init__(self):
+        self.x=0 # position
+        self.xgoal=0 # position goal
+        
+        self.v=0 # velocity
+        self.maxspeed = .8 # maximum speed, in position/second
+
+        self.maxaccel = 3 # maximum acceleration, in position/second^2
+
+        self.eps = .01 # epsilon - numbers within this much are considered the same
+
+        self._lastupdate=time()
+        self._stopped=1
+
+    def equal(self,a,b):
+        return abs(a-b)<self.eps
+
+    def stop(self):
+        self.v=0
+        self.xgoal=self.x
+        self._stopped=1
+        
+    def update(self):
+        t0 = self._lastupdate
+        tnow = time()
+        self._lastupdate = tnow
+
+        dt = tnow-t0
+
+        self.x += self.v*dt
+        # hitting the ends stops the slider
+        if self.x>1: self.v=max(self.v,0); self.x=1
+        if self.x<0: self.v=min(self.v,0); self.x=0
+            
+        if self.equal(self.x,self.xgoal):
+            self.x=self.xgoal # clean up value
+            self.stop()
+            return
+        
+        self._stopped=0
+        dir = (-1.0,1,0)[self.xgoal>self.x]
+
+        self.v += dir*self.maxaccel*dt # velocity changes with acceleration in the right direction
+        self.v = min(max(self.v,-self.maxspeed),self.maxspeed) # clamp velocity
+
+        print "x=%+.03f v=%+.03f a=%+.03f %f" % (self.x,self.v,self.maxaccel,self.xgoal)
+
+    def goto(self,newx):
+        self.xgoal=newx
+
+    def ismoving(self):
+        return not self._stopped
 
 class FlyingFader(Frame):
     def __init__(self, master, variable, label, fadedur=1.5, font=('Arial', 8),
@@ -7,10 +62,9 @@ class FlyingFader(Frame):
         Frame.__init__(self, master)
         self.name = label
         self.variable = variable
-        self.fadedur = fadedur
-        self.curfade = None
-        self.fadetimes = 0, 0
 
+        self.mass = Mass()
+        
         self.config({'bd':1, 'relief':'raised'})
         scaleopts = {'variable' : variable, 'showvalue' : 0, 'from' : 1.0,
                      'to' : 0, 'res' : 0.001, 'width' : 20, 'length' : 200}
@@ -30,7 +84,7 @@ class FlyingFader(Frame):
             self.scale.bind("<Key-%d>" % k, 
                 lambda evt, k=k: self.newfade(k / 10.0, evt))
 
-        self.scale.bind("<Key-0>", lambda evt: self.newfade(100, evt))
+        self.scale.bind("<Key-0>", lambda evt: self.newfade(1.0, evt))
         self.scale.bind("<grave>", lambda evt: self.newfade(0, evt))
 
         self.scale.bind("<1>", self.cancelfade)
@@ -40,72 +94,53 @@ class FlyingFader(Frame):
         self.variable.trace('w', self.updatelabel)
 
     def cancelfade(self, evt):
-        self.fadetimes = 0, 0
-        self.curfade = 0, self.variable.get()
+        self.fadegoal = self.variable.get()
+        self.fadevel = self.fadeacc = 0
+
         self.scale['troughcolor'] = self.oldtrough
 
     def mousefade(self, evt):
         target = float(self.tk.call(self.scale, 'get', evt.x, evt.y))
         self.newfade(target, evt)
 
-    def isfading(self):
-        return self.fadetimes[0] or self.fadetimes[1]
+    def ismoving(self):
+        return self.fadevel!=0 or self.fadeacc!=0
 
     def newfade(self, newlevel, evt=None, length=None):
-        if length is None:
-            length = self.fadedur
+
         mult = 1
 
         if evt.state & 8 and evt.state & 4: mult = 0.25 # both
         elif evt.state & 8: mult = 0.5 # alt
         elif evt.state & 4: mult = 2   # control
 
-        now = time()
-        if not self.isfading():
-            self.fadetimes = (now, now + (mult * length))
-            self.curfade = (self.variable.get(), newlevel)
-        else:
-            # already fading
-            t1,t2=self.fadetimes
-            v1,v2=self.curfade
-            rate = abs((v2-v1)/(t2-t1))
-
-            vnow=self.variable.get()
-            newdist=abs(newlevel-vnow)
-            newdur=newdist/rate
-
-            self.fadetimes = (now,now+newdur)
-            self.curfade=(vnow,newlevel)
-            
-            
+        self.mass.x = self.variable.get()
+        self.mass.goto(newlevel)
 
         self.scale['troughcolor'] = 'red'
 
         self.gofade()
 
     def gofade(self):
-        now = time()
-        start, end = self.fadetimes
-        lstart, lend = self.curfade
-        if now > end: 
-            self.fadetimes = 0, 0
-            self.variable.set(lend)
+        self.mass.update()
+        self.variable.set(self.mass.x)
+
+
+        if not self.mass.ismoving():
             self.scale['troughcolor'] = self.oldtrough
             return
-        percent = (now - start) / (end - start)
-        newvalue = (percent * (lend - lstart)) + lstart
-        self.variable.set(newvalue)
-        colorfade(self.scale, percent)
+
+#        colorfade(self.scale, percent)
         self.after(30, self.gofade)
 
     def updatelabel(self, *args):
         self.vlabel['text'] = "%.3f" % self.variable.get()
-        if self.fadetimes[1] == 0: # no fade
-            self.vlabel['fg'] = 'black'
-        elif self.curfade[1] > self.curfade[0]:
-            self.vlabel['fg'] = 'red'
-        else:
-            self.vlabel['fg'] = 'blue'
+#        if self.fadetimes[1] == 0: # no fade
+#            self.vlabel['fg'] = 'black'
+#        elif self.curfade[1] > self.curfade[0]:
+#            self.vlabel['fg'] = 'red'
+#        else:
+#            self.vlabel['fg'] = 'blue'
 
     def get(self):
         return self.scale.get()
@@ -122,6 +157,15 @@ def colorfade(scale, lev):
     scale.config(troughcolor=col)
 
 if __name__ == '__main__':
+
+
+#    m=Mass()
+#    m.goto(3)
+#    while 1:
+#        m.update()
+#        print "%.03f %.03f" % (m.x, m.v)
+#        sleep(.02)
+    
     root = Tk()
     root.tk_focusFollowsMouse()
 
