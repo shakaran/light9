@@ -72,7 +72,7 @@ class ListParam(Param):
     def draw_tk(self, frame):
         self.l = Listbox(frame, selectmode=self.selectmode, font=stdfont,
                          width=max([len(o) for o in self.options]),
-                         height=len(self.options))
+                         height=len(self.options), exportselection=0)
         for o in self.options:
             self.l.insert(END, o)
         self.l.pack()
