@@ -32,7 +32,28 @@ def toggle_slider(s):
 # for lambda callbacks    
 def printout(t):
     print t
+
+def printevent(ev):
+    for k in dir(ev):
+        if not k.startswith('__'):
+            print k,getattr(ev,k)
+    print ""
     
+def eventtoparent(ev,sequence):
+    "passes an event to the parent"
+    evdict={}
+    for x in ['state', 'time', 'y', 'x', 'serial']:
+        evdict[x]=getattr(ev,x)
+#    evdict['button']=ev.num
+    par=ev.widget.winfo_parent()
+    if par!=".":
+        ev.widget.nametowidget(par).event_generate(sequence,**evdict)
+    #else the event made it all the way to the top, unhandled
+
+def scrollscrolledwindow(widget,amount):
+    print "scroll",widget,amount
+    
+
 def colorlabel(label):
     """color a label based on its own text"""
     txt=label['text'] or "0"
