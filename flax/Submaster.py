@@ -8,14 +8,17 @@ import Patch
 
 class Submaster:
     "Contain a dictionary of levels, but you didn't need to know that"
-    def __init__(self, name, leveldict=None):
+    def __init__(self, name, leveldict=None, temporary=0):
         self.name = name
+        self.temporary = temporary
         if leveldict:
             self.levels = leveldict
         else:
             self.levels = {}
             self.reload()
     def reload(self):
+        if self.temporary:
+            return
         try:
             self.levels.clear()
             subfile = file("subs/%s" % self.name)
@@ -33,6 +36,9 @@ class Submaster:
         except IOError:
             print "Can't read file for sub: %s" % self.name
     def save(self):
+        if self.temporary:
+            return
+
         subfile = file("subs/%s" % self.name, 'w')
         names = self.levels.keys()
         names.sort()
@@ -52,7 +58,7 @@ class Submaster:
         return self.levels
     def __mul__(self, scalar):
         return Submaster("%s*%s" % (self.name, scalar), 
-            dict_scale(self.levels, scalar))
+            dict_scale(self.levels, scalar), temporary=1)
     __rmul__ = __mul__
     def max(self, *othersubs):
         return sub_maxes(self, *othersubs)
@@ -69,12 +75,45 @@ class Submaster:
 
         return levels
     def normalize_patch_names(self):
+        """Use only the primary patch names."""
         # possibly busted -- don't use unless you know what you're doing
         self.set_all_levels(self.levels.copy())
+    def get_normalized_copy(self):
+        """Get a copy of this sumbaster that only uses the primary patch 
+        names.  The levels will be the same."""
+        newsub = Submaster("%s (normalized)" % self.name, temporary=1)
+        newsub.set_all_levels(self.levels)
+        return newsub
+    def crossfade(self, othersub, amount):
+        """Returns a new sub that is a crossfade between this sub and
+        another submaster.  
+        
+        NOTE: You should only crossfade between normalized submasters."""
+        otherlevels = othersub.get_levels()
+        keys_set = {}
+        for k in self.levels.keys() + otherlevels.keys():
+            keys_set[k] = 1
+        all_keys = keys_set.keys()
+
+        xfaded_sub = Submaster("xfade", temporary=1)
+        for k in all_keys:
+            xfaded_sub.set_level(k, 
+                                 linear_fade(self.levels.get(k, 0),
+                                             otherlevels.get(k, 0),
+                                             amount))
+
+        return xfaded_sub
+                                            
+def linear_fade(start, end, amount):
+    """Fades between two floats by an amount.  amount is a float between
+    0 and 1.  If amount is 0, it will return the start value.  If it is 1,
+    the end value will be returned."""
+    level = start + (amount * (end - start))
+    return level
 
 def sub_maxes(*subs):
     return Submaster("max(%r)" % (subs,),
-        dict_max(*[sub.levels for sub in subs]))
+        dict_max(*[sub.levels for sub in subs]), temporary=1)
 
 class Submasters:
     "Collection o' Submaster objects"

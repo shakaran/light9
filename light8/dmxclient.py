@@ -20,7 +20,8 @@ def outputlevels(levellist):
     global _dmx,_id
 
     if _dmx is None:
-        _dmx=xmlrpclib.Server("http://dash:8030")
+        host = os.getenv('DMXHOST', 'localhost')
+        _dmx=xmlrpclib.Server("http://%s:8030" % host)
 
     try:
         _dmx.outputlevels(_id,levellist)
@@ -31,3 +32,9 @@ def outputlevels(levellist):
         print "outputlevels had xml fault: %s" % e
         time.sleep(1)
     
+dummy = os.getenv('DMXDUMMY')
+if dummy:
+    print "dmxclient: DMX is in dummy mode."
+    def bogus(*args):
+        pass
+    outputlevels = bogus

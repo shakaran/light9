@@ -241,7 +241,7 @@ if __name__ == "__main__":
 
     root = Tk()
     tl = toplevelat("Keyboard Composer", existingtoplevel=root)
-    kc = KeyboardComposer(tl, s, dmxdummy=1)
+    kc = KeyboardComposer(tl, s, dmxdummy=0)
     kc.pack(fill=BOTH, expand=1)
     atexit.register(kc.save)
     try:
