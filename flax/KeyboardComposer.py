@@ -60,7 +60,7 @@ class KeyboardComposer(Frame):
 
             # another what a hack!
             keylabel = Label(keyhintrow, text='%s\n%s' % (upkey, downkey), 
-                width=3, font=('Arial Bold', 12), bg='red', fg='white')
+                width=3, font=('Arial', 12), bg='red', fg='white')
             keylabel.pack(side=LEFT, expand=1, fill=X)
             col += 1
 
