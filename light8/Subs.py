@@ -13,10 +13,8 @@ class Param: # abstract
     def draw_tk(self, frame):
         pass
     def __getstate__(self):
-        print "get_state:", self.get_value()
         return {'value' : self.get_value()}
     def __setstate__(self, dict):
-        print "set_state to", dict
         self.value = StringVar()
         self.set_value(dict['value'])
 
@@ -196,7 +194,7 @@ class Sub:
         if level == 0: 
             self.slideradjuster.atzero = 1
             return d
-        if self.is_effect:
+        if self.is_effect: # effect
             d = self.generator.next()
             self.slideradjuster.atzero = 0
         else: # dictionary (standard)

@@ -36,7 +36,7 @@ def get_data(*args):
 
 get_data()
 
-io.init(DUMMY)
+parportdmx = io.ParportDMX(DUMMY)
 
 class Lightboard:
     def __init__(self, master):
@@ -112,7 +112,7 @@ class Lightboard:
 
         self.oldlevels = levels[:]
             
-        io.sendlevels(levels)
+        parportdmx.sendlevels(levels)
 
     def load(self):
         try:
@@ -136,10 +136,10 @@ class Lightboard:
             print "IOError: Couldn't load prefs (%s)" % filename
         except EOFError:
             print "EOFrror: Couldn't load prefs (%s)" % filename
-
+        except:
+            print "BigTrouble: Couldn't load prefs (%s)" % filename
     def make_sub(self, name):
         i = 1
-        # name = console_entry.get() # read from console
         if not name:
             print "Enter sub name in console."
             return
@@ -188,13 +188,11 @@ class Pickles:
             for name, lev in scalelevels.items()])
         self.substate = dict([(name, subobj.get_state())
             for name, subobj in subs])
+        # print "substate", self.substate
 
 mr_lightboard = Lightboard(root)
 
 signal(SIGINT, mr_lightboard.quit)
 bindkeys(root,'<Escape>', mr_lightboard.quit)
 
-# bindkeys(root,'<q>', quit)
-# bindkeys(root,'<r>', refresh)
-# bindkeys(root,'<s>', make_sub)
 root.mainloop() # Receiver switches main
