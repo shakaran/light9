@@ -1,144 +1,144 @@
 <?xml version="1.0"?>
 <!DOCTYPE PyObject SYSTEM "PyObjects.dtd">
 <PyObject family="obj" type="builtin_wrapper"  class="_EmptyClass">
-<attr name="__toplevel__" family="map" type="__compound__" extra="None TreeDict" id="138329300" >
+<attr name="__toplevel__" family="map" type="__compound__" extra="None TreeDict" id="138331628" >
   <entry>
     <key type="string" value="cues" />
-    <val type="list" id="139739116" >
-      <item type="PyObject" id="139739148" class="Cue">
+    <val type="list" id="139721548" >
+      <item type="PyObject" id="140191300" class="Cue">
         <attr name="desc" type="string" value="whoa - this works" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="tevya special" />
         <attr name="page" type="string" value="3.2" />
         <attr name="time" type="string" value="0" />
       </item>
-      <item type="PyObject" id="140193340" class="Cue">
+      <item type="PyObject" id="140191340" class="Cue">
         <attr name="desc" type="string" value="music flourish" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="lady luck" />
         <attr name="page" type="string" value="1.1.5" />
         <attr name="time" type="string" value="1" />
       </item>
-      <item type="PyObject" id="139732196" class="Cue">
+      <item type="PyObject" id="139672340" class="Cue">
         <attr name="desc" type="string" value="tevya: &quot;what&apos;s happening to the tradition?&quot;" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="dolly solo" />
         <attr name="page" type="string" value="1.2.10" />
         <attr name="time" type="string" value="2" />
       </item>
-      <item type="PyObject" id="139670412" class="Cue">
+      <item type="PyObject" id="140195900" class="Cue">
         <attr name="desc" type="string" value="the third cue" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 3" />
         <attr name="page" type="string" value="1.2.14" />
         <attr name="time" type="string" value="41" />
       </item>
-      <item type="PyObject" id="139670188" class="Cue">
+      <item type="PyObject" id="139671436" class="Cue">
         <attr name="time" type="string" value="42" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="heart" />
         <attr name="page" type="string" value="1.3.13" />
         <attr name="desc" type="string" value="&quot;you&apos;ve gotta have heart&quot;" />
       </item>
-      <item type="PyObject" id="140189388" class="Cue">
+      <item type="PyObject" id="139673348" class="Cue">
         <attr name="time" type="string" value="5" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="more musical refs" />
         <attr name="page" type="string" value="1.3.17" />
         <attr name="desc" type="string" value="etc." />
       </item>
-      <item type="PyObject" id="139668940" class="Cue">
+      <item type="PyObject" id="139671036" class="Cue">
         <attr name="time" type="string" value="6" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="rainbow shimmer" />
         <attr name="page" type="string" value="1.4.2" />
         <attr name="desc" type="string" value="curtain close" />
       </item>
-      <item type="PyObject" id="139669364" class="Cue">
+      <item type="PyObject" id="138625292" class="Cue">
         <attr name="time" type="string" value="7" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="fade up" />
         <attr name="page" type="string" value="2.1.1" />
         <attr name="desc" type="string" value="stage manager: &quot;worklights, please&quot;" />
       </item>
-      <item type="PyObject" id="139669612" class="Cue">
+      <item type="PyObject" id="140192780" class="Cue">
         <attr name="time" type="string" value="8" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="blackout" />
         <attr name="page" type="string" value="2.1.2" />
         <attr name="desc" type="string" value="&quot;lights out!&quot;" />
       </item>
-      <item type="PyObject" id="140191124" class="Cue">
+      <item type="PyObject" id="139661388" class="Cue">
         <attr name="time" type="string" value="4.2" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="sill" />
         <attr name="page" type="string" value="2.2.4" />
         <attr name="desc" type="string" value="another description" />
       </item>
-      <item type="PyObject" id="139659252" class="Cue">
+      <item type="PyObject" id="139661252" class="Cue">
         <attr name="desc" type="string" value="mr. cue 10" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="front only" />
         <attr name="page" type="string" value="2.7.3" />
         <attr name="time" type="string" value="10" />
       </item>
-      <item type="PyObject" id="139668700" class="Cue">
+      <item type="PyObject" id="140192452" class="Cue">
         <attr name="desc" type="string" value="" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 11" />
         <attr name="page" type="string" value="" />
         <attr name="time" type="string" value="11" />
       </item>
-      <item type="PyObject" id="140191524" class="Cue">
+      <item type="PyObject" id="139670252" class="Cue">
         <attr name="desc" type="string" value="" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 12" />
         <attr name="page" type="string" value="" />
         <attr name="time" type="string" value="12" />
       </item>
-      <item type="PyObject" id="140192284" class="Cue">
+      <item type="PyObject" id="139670324" class="Cue">
         <attr name="desc" type="string" value="" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 13" />
         <attr name="page" type="string" value="" />
         <attr name="time" type="string" value="13" />
       </item>
-      <item type="PyObject" id="136493292" class="Cue">
+      <item type="PyObject" id="139670436" class="Cue">
         <attr name="desc" type="string" value="" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 14" />
         <attr name="page" type="string" value="" />
         <attr name="time" type="string" value="14" />
       </item>
-      <item type="PyObject" id="140192468" class="Cue">
+      <item type="PyObject" id="139670548" class="Cue">
         <attr name="desc" type="string" value="" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 15" />
         <attr name="page" type="string" value="" />
         <attr name="time" type="string" value="15" />
       </item>
-      <item type="PyObject" id="140183372" class="Cue">
+      <item type="PyObject" id="139664044" class="Cue">
         <attr name="desc" type="string" value="" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 16" />
         <attr name="page" type="string" value="" />
         <attr name="time" type="string" value="16" />
       </item>
-      <item type="PyObject" id="138407588" class="Cue">
+      <item type="PyObject" id="140194148" class="Cue">
         <attr name="desc" type="string" value="" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 17" />
         <attr name="page" type="string" value="" />
         <attr name="time" type="string" value="17" />
       </item>
-      <item type="PyObject" id="139668204" class="Cue">
+      <item type="PyObject" id="140185996" class="Cue">
         <attr name="desc" type="string" value="" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="some name" />
         <attr name="page" type="string" value="" />
         <attr name="time" type="string" value="18" />
       </item>
-      <item type="PyObject" id="140191596" class="Cue">
+      <item type="PyObject" id="139662308" class="Cue">
         <attr name="desc" type="string" value="" />
         <attr name="some_attribute" type="numeric" value="3" />
         <attr name="name" type="string" value="cue 19" />

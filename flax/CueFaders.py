@@ -15,19 +15,28 @@ class LabelledScale(Tk.Frame):
     """Scale with two labels: a name and current value"""
     def __init__(self, master, label, **opts):
         Tk.Frame.__init__(self, master, bd=2, relief='raised', bg='black')
+        self.labelformatter = opts.get('labelformatter')
+        try:
+            del opts['labelformatter']
+        except KeyError:
+            pass
+
         opts.setdefault('variable', Tk.DoubleVar())
         opts.setdefault('showvalue', 0)
 
         self.normaltrough = opts.get('troughcolor', 'black')
         self.flashtrough = opts.get('flashtroughcolor', 'red')
-        del opts['flashtroughcolor']
+        try:
+            del opts['flashtroughcolor']
+        except KeyError:
+            pass
 
         self.scale_var = opts['variable']
         self.scale = Tk.Scale(self, **opts)
         self.scale.pack(side='top', expand=1, fill='both')
         self.name = Tk.Label(self, text=label, bg='black', fg='white')
         self.name.pack(side='bottom')
-        self.scale_value = Tk.Label(self, width=6, bg='black', fg='white')
+        self.scale_value = Tk.Label(self, bg='black', fg='white')
         self.scale_value.pack(side='bottom')
         self.scale_var.trace('w', self.update_value_label)
         self.update_value_label()
@@ -36,7 +45,11 @@ class LabelledScale(Tk.Frame):
         self.name['text'] = label
     def update_value_label(self, *args):
         val = self.scale_var.get() * 100
-        self.scale_value['text'] = "%0.2f" % val
+        if self.labelformatter:
+            format = self.labelformatter(val)
+        else:
+            format = "%0.2f" % val
+        self.scale_value['text'] = format
         if val != 0:
             self.scale['troughcolor'] = self.flashtrough
         else:
@@ -101,6 +114,8 @@ class TimedGoButton(Tk.Frame):
             self.disabled = 0
     def set_time(self, time):
         self.timer_var.set(time)
+    def get_time(self):
+        return self.timer_var.get()
 
 class CueFader(Tk.Frame):
     def __init__(self, master, cuelist):
@@ -128,8 +143,9 @@ class CueFader(Tk.Frame):
 
         self.auto_shift_checkbutton = Tk.Checkbutton(topframe, 
             variable=self.auto_shift, text='Autoshift', 
-            command=self.toggle_autoshift, bg='black', fg='white')
-        self.auto_shift_checkbutton.pack(side='left')
+            command=self.toggle_autoshift, bg='black', fg='white',
+            highlightbackground='black')
+        self.auto_shift_checkbutton.pack(fill='both', side='left')
 
         self.set_next_button = Tk.Button(topframe, text='Set Next',
             command=lambda: cuelist.set_selection_as_next(),
@@ -144,7 +160,9 @@ class CueFader(Tk.Frame):
         for name, start, end, side, color in self.direction_info:
             frame = Tk.Frame(self, bg='black')
             scale = LabelledScale(frame, name, from_=start, to_=end, 
-                res=0.0001, orient='horiz', flashtroughcolor=color)
+                res=0.0001, orient='horiz', flashtroughcolor=color,
+                labelformatter=lambda val, name=name: self.get_scale_desc(val, 
+                                                                          name))
             scale.pack(fill='x', expand=0)
             go = TimedGoButton(frame, 'Go %s' % name, scale, bg=color, 
                 fg='white')
@@ -171,6 +189,13 @@ class CueFader(Tk.Frame):
             scale.scale.bind("<ButtonPress>", button_press)
             scale.scale.bind("<ButtonRelease>", button_release)
         faderframe.pack(side='bottom', fill='both', expand=1)
+    def get_scale_desc(self, val, name):
+        go_button = self.go_buttons.get(name)
+        if go_button:
+            time = go_button.get_time()
+            return "%0.2f%%, %0.1fs left" % (val, time - ((val / 100.0) * time))
+        else:
+            return "%0.2f%%" % val
     def toggle_autoshift(self):
         for name, button in self.shift_buttons.items():
             if not self.auto_shift.get():
@@ -320,6 +345,8 @@ class TkCueList(CueList, Tk.Frame):
         self.hlist = self.scrolled_hlist.hlist
         self.hlist.configure(fg='white', bg='black', 
             command=self.select_callback, browsecmd=edit_cue)
+        self.hlist.bind("<4>", self.wheelscroll)
+        self.hlist.bind("<5>", self.wheelscroll)
         self.scrolled_hlist.pack(fill='both', expand=1)
 
         boldfont = self.tk.call('tix', 'option', 'get', 
@@ -335,26 +362,24 @@ class TkCueList(CueList, Tk.Frame):
         for count, cue in enumerate(self.cues):
             self.display_cue(count, cue)
         self.update_cue_indicators()
-
+    def wheelscroll(self, evt):
+        """Perform mouse wheel scrolling"""
+        amount = 2
+        if evt.num == 4:
+            amount = -2
+        self.hlist.yview('scroll', amount, 'units')
     def redraw_cue(self, cue):
-        if 0:
-            # TODO: this is really inefficient
-            self.hlist.delete_all()
-            for count, cue in enumerate(self.cues):
-                self.display_cue(count, cue)
-            self.update_cue_indicators()
-        else:
-            path = self.cues.index(cue)
-            for col, header in enumerate(self.columns):
-                try:
-                    text = getattr(cue, header)
-                except AttributeError:
-                    text = ''
+        path = self.cues.index(cue)
+        for col, header in enumerate(self.columns):
+            try:
+                text = getattr(cue, header)
+            except AttributeError:
+                text = ''
 
-                if col == 0:
-                    self.cue_label_windows[path]['text'] = text
-                else:
-                    self.hlist.item_configure(path, col, text=text)
+            if col == 0:
+                self.cue_label_windows[path]['text'] = text
+            else:
+                self.hlist.item_configure(path, col, text=text)
     def display_cue(self, path, cue):
         for col, header in enumerate(self.columns):
             try:
@@ -476,6 +501,7 @@ class CueEditron(Tk.Frame):
 if __name__ == "__main__":
     root = Tk.Tk()
     root.title("ShowMaster 9000")
+    root.geometry("500x555")
     cl = TkCueList(root, 'cues/cuelist1')
     cl.pack(fill='both', expand=1)
 
