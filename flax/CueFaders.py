@@ -213,11 +213,9 @@ class CueList:
                      cur, 
                      self.next_pointer or cur + 1)]
     def get_current_cues(self):
-        # print "get_current_cue_indices", self.get_current_cue_indices()
         return [self.get_cue_by_index(index) 
             for index in self.get_current_cue_indices()]
     def get_cue_by_index(self, index):
-        # print "get_cue_by_index", index
         if index:
             return self.cues[self.bound_index(index)]
         else:
@@ -228,19 +226,14 @@ class CueList:
         self.treedict.save(self.filename)
 
 if __name__ == "__main__":
+    cl = CueList('cues/cuelist1')
+
+    # to populate cue list
     if 0:
-        z = CueList('cues/cuelist1')
-        z.add_cue(Cue('cue %s' % time.asctime(), time=2, a=7, b=8))
-        print 'cues', z.cues
-    else:
-        cl = CueList('cues/cuelist1')
+        for x in range(20):
+            cl.add_cue(Cue('cue %d' % x, time=x, some_attribute=3))
 
-        # to populate cue list
-        if 0:
-            for x in range(20):
-                cl.add_cue(Cue('cue %d' % x, time=x, some_attribute=3))
-
-        root = Tk.Tk()
-        fader = CueFader(root, cl)
-        fader.pack(fill='both', expand=1)
-        Tk.mainloop()
+    root = Tk.Tk()
+    fader = CueFader(root, cl)
+    fader.pack(fill='both', expand=1)
+    Tk.mainloop()
