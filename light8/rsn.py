@@ -6,6 +6,7 @@ from signal import signal, SIGINT
 from uihelpers import *
 from Fader import Fader
 from Lightboard import Lightboard
+import time # time is on our side
 
 if len(sys.argv) >= 2:
     DUMMY = 0
@@ -36,7 +37,7 @@ signal(SIGINT, mr_lightboard.quit)
 #
 # start net slider server in separate thread 
 #
-print "Light 8.8: External input server DISABLED"
+print "Light 8.8: External input server DELETED!"
 #import ExternalInput, thread
 #thread.start_new_thread(ExternalInput.start_server,())
 
@@ -46,8 +47,12 @@ root.bind_class("all","<ButtonPress-4>",lambda ev: eventtoparent(ev,"<ButtonPres
 root.bind_class("all","<ButtonPress-5>",lambda ev: eventtoparent(ev,"<ButtonPress-5>"))
 
 print 'Light 8.8: "Uh...Shiny McShine?"'
+root.update_idletasks()
+
 if 1:
-    root.mainloop() # Receiver switches main
+    while 1:
+        root.update() # Receiver switches main
+        time.sleep(0.01)
 else:
     sys.path.append("/home/drewp/projects/editor/pour")
     from utils import runstats
