@@ -4,7 +4,7 @@ from __future__ import nested_scopes
 from Tkinter import *
 from time import sleep
 from signal import *
-import sys, thread, cPickle
+import sys, thread, cPickle, math
 
 import io
 from uihelpers import *
@@ -69,7 +69,7 @@ class Lightboard:
         leveldisplay_tl = toplevelat(873,400)
         leveldisplay_tl.bind('<Escape>', sys.exit)
 
-        leveldisplay = Leveldisplay(leveldisplay_tl, self.channel_levels)
+        self.leveldisplay = Leveldisplay(leveldisplay_tl, self.channel_levels)
 
         Console()
 
@@ -105,10 +105,18 @@ class Lightboard:
 
         levels = [int(l) for l in levels]
 
-        for lev,lab,oldlev in zip(levels, self.channel_levels, self.oldlevels):
+        for lev,lab,oldlev,numlab in zip(levels, self.channel_levels, 
+                                         self.oldlevels, 
+                                         self.leveldisplay.number_labels):
             if lev != oldlev:
                 lab.config(text="%d" % lev)
                 colorlabel(lab)
+                if lev < oldlev:
+                    numlab['bg'] = 'red'
+                else:
+                    numlab['bg'] = 'blue'
+            else:
+                numlab['bg'] = 'lightPink'
 
         self.oldlevels = levels[:]
             

@@ -47,7 +47,7 @@ class Leveldisplay:
     def __init__(self, parent, channel_levels, num_channels=68):
         frames = (make_frame(parent), make_frame(parent))
         channel_levels[:]=[]
-        self.number_labels = {}
+        self.number_labels = []
         for channel in range(1, num_channels+1):
 
             # frame for this channel
@@ -56,7 +56,7 @@ class Leveldisplay:
             num_lab = Label(f, text=str(channel), width=3, bg='lightPink', 
                 font=stdfont, padx=0, pady=0, bd=0, height=1)
             num_lab.pack(side='left')
-            self.number_labels[channel] = num_lab
+            self.number_labels.append(num_lab)
 
             # text description of channel
             Label(f, text=Patch.get_channel_name(channel), width=8, 

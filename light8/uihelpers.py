@@ -1,6 +1,7 @@
 """all the tiny tk helper functions"""
 
 from Tkinter import *
+from types import StringType
 
 def make_frame(parent):
     f = Frame(parent, bd=0)
@@ -39,6 +40,18 @@ def colorlabel(label):
     out = [int(l+lev*(h-l)) for h,l in zip(high,low)]
     col="#%02X%02X%02X" % tuple(out)
     label.config(bg=col)
+
+# TODO: get everyone to use this
+def colorfade(low, high, percent):
+    '''not foolproof.  make sure 0 < percent < 1'''
+    out = [int(l+percent*(h-l)) for h,l in zip(high,low)]
+    col="#%02X%02X%02X" % tuple(out)
+    return col
+
+def colortotuple(anytkobj, colorname):
+    'pass any tk object and a color name, like "yellow"'
+    rgb = anytkobj.winfo_rgb(colorname)
+    return [v / 256 for v in rgb]
 
 class Togglebutton(Button):
     """works like a single radiobutton, but it's a button so the label's on the button face, not to the side"""
