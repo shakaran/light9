@@ -3,8 +3,8 @@ from __future__ import nested_scopes
 
 from Tkinter import *
 from time import sleep
-from signal import *
-import sys, thread, cPickle, math
+from signal import signal, SIGINT
+import sys, cPickle
 
 import io
 from uihelpers import *
@@ -112,9 +112,9 @@ class Lightboard:
                 lab.config(text="%d" % lev)
                 colorlabel(lab)
                 if lev < oldlev:
-                    numlab['bg'] = 'red'
-                else:
                     numlab['bg'] = 'blue'
+                else:
+                    numlab['bg'] = 'red'
             else:
                 numlab['bg'] = 'lightPink'
 
