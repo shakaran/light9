@@ -164,7 +164,8 @@ class SliderAdjuster:
     # no setstate needed
 
 class Sub:
-    def __init__(self, levels, dimmers=68, color=None):
+    def __init__(self, name, levels, dimmers=68, color=None):
+        self.name = name # keep this consistent please
         self.levels = levels
         self.dimmers = dimmers # needed?
         self.is_effect = callable(self.levels)
@@ -190,6 +191,7 @@ class Sub:
     def set_state(self, statedict):
         self.__dict__.update(statedict)
     def get_levels(self, level):
+        """returns a scaled version of the levels in the sub; channel names are resolved to numbers"""
         d = {}
         if level == 0: 
             self.slideradjuster.atzero = 1
@@ -201,6 +203,17 @@ class Sub:
             d = self.levels
         return dict([(get_dmx_channel(ch), float(lev) * float(level)) 
             for ch, lev in d.items()])
+
+    #
+    # methods for Subediting to use
+    #
+    def getlevels(self):
+        return self.levels.copy()
+    def reviselevels(self,levels):
+        # we can accept these new levels; subediting has done all the work
+        self.levels.update(levels)
+                
+    
 
 def reload_data(dummy):
     global subs
@@ -218,6 +231,8 @@ def reload_data(dummy):
         else:
             color = None
 
-        subs[name] = Sub(levels, color=color)
+        subs[name] = Sub(name, levels, color=color)
 
     # subs = dict([(name, Sub(levels)) for name, levels in Config.subs.items()])
+def longestsubname():
+    return max([len(x) for x in subs.keys()])
