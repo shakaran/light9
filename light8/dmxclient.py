@@ -20,12 +20,12 @@ def outputlevels(levellist):
     global _dmx,_id
 
     if _dmx is None:
-        _dmx=xmlrpclib.Server("http://localhost:8030")
+        _dmx=xmlrpclib.Server("http://dash:8030")
 
     try:
         _dmx.outputlevels(_id,levellist)
     except socket.error,e:
-        print "dmx server error %r, waiting"%e
+        print "dmx server error %s, waiting"%e
         time.sleep(1)
     except xmlrpclib.Fault,e:
         print "outputlevels had xml fault: %s" % e
