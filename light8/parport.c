@@ -6,15 +6,13 @@
 #include <fcntl.h>
 #include <Python.h>
 
-int getparport() {
+void getparport() {
     if( ioperm(888,3,1) ) {
       printf("Couldn't get parallel port at 888-890\n");
 
       // the following doesn't have any effect!
       PyErr_SetString(PyExc_IOError,"Couldn't get parallel port at 888-890");
-      return 0;
     } 
-    return 1;
 }
 
 void outdata(unsigned char val) {

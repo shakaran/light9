@@ -1,6 +1,6 @@
 from Patch import *
 from time import time
-from Tix import *
+from Tkinter import *
 from types import TupleType
 
 stdfont = ('Arial', 8)
@@ -8,15 +8,10 @@ stdfont = ('Arial', 8)
 class Param: # abstract
     def get_value(self):
         pass
-    def set_value(self, v):
+    def set_value(self):
         pass
     def draw_tk(self, frame):
         pass
-    def __getstate__(self):
-        return {'value' : self.get_value()}
-    def __setstate__(self, dict):
-        self.value = StringVar()
-        self.set_value(dict['value'])
 
 class CheckboxParam(Param):
     def __init__(self, initial=0):
@@ -77,7 +72,7 @@ class ListParam(Param):
     def draw_tk(self, frame):
         self.l = Listbox(frame, selectmode=self.selectmode, font=stdfont,
                          width=max([len(o) for o in self.options]),
-                         height=len(self.options), exportselection=0)
+                         height=len(self.options))
         for o in self.options:
             self.l.insert(END, o)
         self.l.pack()
@@ -89,8 +84,6 @@ class LabelParam(Param):
     def get_value(self):
         return self.value.get()
     def set_value(self, v):
-        if 'value' not in self.__dict__:
-            self.value = StringVar()
         self.value.set(v)
     def draw_tk(self, frame):
         l = Label(frame, textvariable=self.value, font=stdfont)
@@ -150,39 +143,22 @@ class SliderAdjuster:
     def get(self, level):
         if self.var is not None:
             return self.var.get()
+
         return None
     def justturnedon(self):
         return self.atzero
-    def __getstate__(self):
-        state = self.__dict__.copy()
-        # remove var (non-pickleable)
-        try:
-            del state['var']
-        except KeyError:
-            pass
-        return state
-    # no setstate needed
 
 class Sub:
-    def __init__(self, name, levels, dimmers=68, color=None):
-        self.name = name # keep this consistent please
+    def __init__(self, levels, dimmers=68, color=None):
         self.levels = levels
-        self.dimmers = dimmers # needed?
+        self.dimmers = dimmers
         self.is_effect = callable(self.levels)
         self.slideradjuster = SliderAdjuster()
-        self.namecache = {}
         if self.is_effect:
             self.params = Params()
             self.generator = self.levels(self.params, self.slideradjuster)
             self.generator.next()
         self.color = color
-    def resolve_name(self, ch_name):
-        if ch_name in self.namecache:
-            return self.namecache[ch_name]
-        else:
-            resolved = get_dmx_channel(ch_name)
-            self.namecache[ch_name] = resolved
-            return resolved
     def set_slider_var(self, slidervar):
         if self.is_effect:
             self.slideradjuster.var = slidervar
@@ -190,44 +166,22 @@ class Sub:
         if self.is_effect:
             self.params.draw_tk(frame)
     def get_state(self):
-        state = self.__dict__.copy()
-        if self.is_effect:
-            del state['levels']
-            del state['generator']
-
-        return state
-    def set_state(self, statedict):
-        self.__dict__.update(statedict)
+        pass
     def get_levels(self, level):
-        """returns a scaled version of the levels in the sub; channel names 
-        are resolved to numbers"""
         d = {}
         if level == 0: 
             self.slideradjuster.atzero = 1
             return d
-        if self.is_effect: # effect
+        if self.is_effect:
             d = self.generator.next()
             self.slideradjuster.atzero = 0
-            return dict([(get_dmx_channel(ch), float(lev) * float(level)) 
-                for ch, lev in d.items()])
         else: # dictionary (standard)
             d = self.levels
-            return dict([(self.resolve_name(ch), float(lev) * float(level)) 
-                for ch, lev in d.items()])
-
-    #
-    # methods for Subediting to use
-    #
-    def getlevels(self):
-        return self.levels.copy()
-    def reviselevels(self,levels):
-        # we can accept these new levels; subediting has done all the work
-        self.levels.update(levels)
-                
-    
+        return dict([(get_dmx_channel(ch), float(lev) * float(level)) 
+            for ch, lev in d.items()])
 
 def reload_data(dummy):
-    global subs, cues
+    global subs
     if dummy:
         import ConfigDummy as Config
     else:
@@ -240,13 +194,8 @@ def reload_data(dummy):
         if type(name) == TupleType:
             name, color = name
         else:
-            color = None
+            color=None
 
-        subs[name] = Sub(name, levels, color=color)
+        subs[name] = Sub(levels, color=color)
 
     # subs = dict([(name, Sub(levels)) for name, levels in Config.subs.items()])
-
-    cues = Config.cues
-
-def longestsubname():
-    return max([len(x) for x in subs.keys()])
