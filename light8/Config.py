@@ -396,3 +396,22 @@ subs["*2-06-0"] = { "cycright" : 100, "main 11" : 13, "main 10" : 0,
     "desk2" : 23, "hotbox2" : 89, "hotbox1" : 88, "upfill4" : 48,
     "b32" : 0, "main 2" : 63, "main 4" : 97, "main 7" : 42, "main 9" : 52,
     "edge" : 0, "rock" : 0, "marry2" : 0, "marry1" : 41, "side r" : 0,}
+subs["*2-02-0"] = { "main 2" : 53, "main 5" : 18, "main 4" : 24,
+    "main 7" : 42, "main 9" : 60, "main 8" : 36, "b24" : 52, "b23" : 76,
+    "side r" : 34, "blue1" : 72, "marry2" : 38, "blue3" : 72, "blue2" : 72,
+    "blue4" : 72, "main 10" : 53,}
+subs["*2-03-20-luckcover"] = { "red3" : 75, "red2" : 75, "red1" : 75,
+    "b24" : 20, "upfill3" : 26, "upfill2" : 31, "upfill1" : 27, "red4" : 97,
+    "b25" : 20, "side l" : 31, "b23" : 20, "b22" : 20, "upfill4" : 17,
+    "side r" : 31, "blue1" : 70, "blue3" : 70, "blue2" : 70, "blue4" : 92,
+    "main 7" : 100, "gree2" : 75, "gree3" : 75, "gree1" : 75, "gree4" : 75,
+    "hotback" : 40, "main 8" : 0, "cuba1" : 5,}
+subs["*1-01-0-justback"] = { "sidefill2" : 47, "sidefill1" : 47,
+    "cycright" : 41, "upfill3" : 60, "main 10" : 100, "upfill1" : 56,
+    "b34" : 16, "b25" : 16, "side l" : 0, "b23" : 16, "b22" : 16,
+    "b32" : 7, "desk1" : 0, "hotbox2" : 100, "hotbox1" : 72, "upfill4" : 68,
+    "b24" : 16, "desk2" : 0, "main 11" : 100, "upfill2" : 91, "main 3" : 13,
+    "main 2" : 13, "main 5" : 13, "main 4" : 100, "main 7" : 100,
+    "phone" : 0, "main 9" : 14, "main 8" : 13, "cycleft" : 41, "edge" : 0,
+    "b13" : 16, "rock" : 0, "marry2" : 16, "marry1" : 16, "cuba1" : 16,
+    "cuba2" : 0, "side r" : 0,}

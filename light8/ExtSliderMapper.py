@@ -214,7 +214,7 @@ class ExtSliderMapper(Frame):
             self.current_mappings.append(SliderMapping(color))
 
         self.draw_interface()
-    def load_presets(self):
+    def load_presets(self, *args):
         self.presets = {}
         self.file = open(self.filename, 'r')
         lines = self.file.readlines()
@@ -223,6 +223,8 @@ class ExtSliderMapper(Frame):
             name = tokens.pop(0)
             self.presets[name] = tokens
         self.file.close()
+        if args: # called from callback
+            self.draw_interface()
     def save_presets(self):
         self.file = open(self.filename, 'w')
         self.file.seek(0)
@@ -289,6 +291,12 @@ class ExtSliderMapper(Frame):
         self.presetcombo.entry.configure(bg='black', fg='white')
         self.draw_presets()
         self.presetcombo.pack(side=LEFT)
+        Button(presetframe, text="Prev", padx=0, pady=0, bg='black', 
+                fg='white', font=stdfont, 
+                command=self.prev_preset).pack(side=LEFT)
+        Button(presetframe, text="Next", padx=0, pady=0, bg='black', 
+                fg='white', font=stdfont, 
+                command=self.next_preset).pack(side=LEFT)
         Button(presetframe, text="Add", padx=0, pady=0, bg='black', 
                 fg='white', font=stdfont, 
                 command=self.add_preset).pack(side=LEFT)
@@ -309,6 +317,20 @@ class ExtSliderMapper(Frame):
         self.disconnect_all()
         for subname, slidermap in zip(preset_mapping, self.current_mappings):
             slidermap.set_subname(subname)
+    def change_preset_by_index(self, delta):
+        preset_names = self.presets.keys()
+        preset_names.sort()
+        try:
+            next = preset_names[preset_names.index(self.current_preset.get())
+                + delta]
+            self.current_preset.set(next)
+            self.apply_preset(next)
+        except (IndexError, ValueError):
+            print "Light 8.8: Can't go in that direction.  Dig up!"
+    def next_preset(self, *args):
+        self.change_preset_by_index(1)
+    def prev_preset(self, *args):
+        self.change_preset_by_index(-1)
     def delete_preset(self, *args):
         del self.presets[self.current_preset.get()]
         self.presetcombo.slistbox.listbox.delete(0, END)
@@ -320,6 +342,7 @@ class ExtSliderMapper(Frame):
         self.presetcombo.slistbox.listbox.delete(0, END)
         self.draw_presets()
         self.save_presets()
+        self.draw_interface()
     def draw_presets(self):
         preset_names = self.presets.keys()
         preset_names.sort()
