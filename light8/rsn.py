@@ -33,6 +33,12 @@ root.tk_setPalette('gray40')
 
 signal(SIGINT, mr_lightboard.quit)
 
+#
+# start net slider server in separate thread 
+#
+import ExternalInput, thread
+thread.start_new_thread(ExternalInput.start_server,())
+
 bindkeys(root,'<Escape>', mr_lightboard.quit)
 
 root.bind_class("all","<ButtonPress-4>",lambda ev: eventtoparent(ev,"<ButtonPress-4>"))

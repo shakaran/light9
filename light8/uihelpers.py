@@ -29,8 +29,11 @@ def bindkeys(root,key, func):
 
 def toplevel_savegeometry(tl,name):
     try:
-        f=open(".light9-window-geometry-%s" % name.replace(' ','_'),'w')
-        f.write(tl.geometry())
+        geo = tl.geometry()
+        if not geo.startswith("1x1"):
+            f=open(".light9-window-geometry-%s" % name.replace(' ','_'),'w')
+            f.write(tl.geometry())
+        # else the window never got mapped
     except:
         # it's ok if there's no saved geometry
         pass
