@@ -60,7 +60,7 @@ class Lightboard:
         for w in self.master.winfo_children():
             w.destroy()
 
-        stage_tl = toplevelat(44,723)
+        stage_tl = toplevelat(22,30)
         s = stage.Stage(stage_tl)
         stage.createlights(s)
         s.setsubediting(self.subediting)
@@ -69,9 +69,9 @@ class Lightboard:
         sub_tl = toplevelat(0,0)
         effect_tl = toplevelat(462,4)
 
-        self.subpanels = Subpanels(sub_tl, effect_tl, self.scalelevels, Subs, 
-            self.xfader, self.changelevel, self.subediting, 
-            Subs.longestsubname())
+        self.subpanels = Subpanels(sub_tl, effect_tl, self, self.scalelevels,
+                                   Subs, self.xfader, self.changelevel,
+                                   self.subediting, Subs.longestsubname())
 
         leveldisplay_tl = toplevelat(873,400)
         leveldisplay_tl.bind('<Escape>', sys.exit)
@@ -79,12 +79,9 @@ class Lightboard:
         self.leveldisplay = Leveldisplay(leveldisplay_tl, self.channel_levels)
         for i in range(0,len(self.channel_levels)):
             self.channel_levels[i].config(text=self.oldlevels[i])
+            colorlabel(self.channel_levels[i])
 
-        if DUMMY:
-            filename = 'ConfigDummy.py'
-        else:
-            filename = 'Config.py'
-        Console(self.refresh,currentlevels=self.oldlevels,configfilename=filename)
+        Console(self)
 
         # root frame
         controlpanel = Controlpanel(root, self.xfader, self.refresh, self.quit)
@@ -100,15 +97,49 @@ class Lightboard:
         self.xfader.setupwidget(xf)
         controlpanel.pack()
 
-        cuefader_tl = toplevelat(98, 480)
-        cuefader = Fader(cuefader_tl, Subs.cues, self.scalelevels)
-        cuefader.pack()
+        # cuefader_tl = toplevelat(98, 480)
+        # cuefader = Fader(cuefader_tl, Subs.cues, self.scalelevels)
+        # cuefader.pack()
 
     def refresh(self, *args):
         'rebuild interface, reload data'
         get_data()
+        self.subediting.refresh()
         self.buildinterface()
         bindkeys(root,'<Escape>', self.quit)
+
+    def stageassub(self):
+        """returns the current onstage lighting as a levels
+        dictionary, skipping the zeros, and using names where
+        possible"""
+        levs=self.oldlevels
+        
+        return dict([(Patch.get_channel_name(i),l) for i,l
+                     in zip(range(1,len(levs)+1),levs)
+                     if l>0])
+    def save_sub(self, name, levels):
+        if not name:
+            print "Enter sub name in console."
+            return
+
+        st = ''
+        linebuf = 'subs["%s"] = {' % name
+        for channame,lev in levels.items():
+            if len(linebuf) > 60: 
+                st += linebuf + '\n   '
+                linebuf = ''
+
+            linebuf += ' "%s" : %d,' % (channame, lev)
+        st += linebuf + '}\n'
+        if DUMMY:
+            filename = 'ConfigDummy.py'
+        else:
+            filename = 'Config.py'
+        f = open(filename, 'a')
+        f.write(st)
+        f.close()
+        print 'Added sub:', st
+        self.refresh()
 
     # this is called on a loop, and ALSO by the Scales
     def changelevel(self, *args):

@@ -6,7 +6,7 @@ def printevent(ev):
             print k,getattr(ev,k)
     print ""
 
-textstyle={'font':'arial 7','fill':'white'}
+textstyle={'font':'arial 9','fill':'white'}
 
 class Stage(Canvas):
     
@@ -185,12 +185,14 @@ class Stage(Canvas):
 
         if self.mode=='deselect-or-rectangle':
             if (coords[0]-self.mousedownpos[0])**2+(coords[1]-self.mousedownpos[1])**2>self.halo**2:
+                if not shifted and not control:
+                    self.clearselection()
                 # they moved enough, it's a level change
                 self.startrectangleselect()
                 
 
         if self.mode=='levelchange':
-            delta = (self.mousedownpos[1]-ev.y)
+            delta = 1.5 * (self.mousedownpos[1]-ev.y)
             if self.subeditor:
                 self.subeditor.levelchange(self.selectedlights,delta)
 
@@ -334,6 +336,25 @@ def createlights(s):
     s.addlight('patio2',(675, 553),(793, 514))
 
     s.addlight('hotback',(413, 476),(414, 396))
+
+    s.addlight('main 2',(120, 563) ,aim=(241, 472))
+    s.addlight('main 3',(162, 562) ,aim=(140, 425))
+    s.addlight('main 4',(208, 560) ,aim=(342, 423))
+    s.addlight('main 5',(259, 558) ,aim=(433, 450))
+    s.addlight('main 7',(494, 551) ,aim=(420, 458))
+    s.addlight('main 8',(528, 554) ,aim=(503, 477))
+    s.addlight('main 9',(559, 554) ,aim=(544, 479))
+    s.addlight('main 10',(597, 556),aim=(339, 444))
+    s.addlight('main 11',(636, 556),aim=(449, 409))
+
+    s.addlight('sidepost2', (785, 609))
+    s.addlight('sidepost1', (8, 613))
+
+
+
+
+
+
 
 
 

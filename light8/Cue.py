@@ -7,12 +7,11 @@ class Cue:
     given time.  They contain Fades, which are actually children of Cue,
     meaning that Cues can contain Cues.  This is similar to the Light9 concept
     of Cues and Fades, but without all the Nodes."""
-    def __init__(self, name, starttime, endtime=None, dur=None, *fades):
+    def __init__(self, name, starttime, dur, *fades):
         'Create a cue'
-        if not endtime:
-            endtime = starttime + dur
-        else:
-            dur = endtime - starttime
+
+        endtime = starttime + dur
+        dur = endtime - starttime
 
         self.name = name
         self.starttime = starttime
@@ -55,11 +54,9 @@ class Cue:
 
 class Fade(Cue):
     'See Cue.__doc__'
-    def __init__(self, channel, starttime, endtime=None, endlevel=0, dur=None,
-                 param=None):
+    def __init__(self, channel, starttime, dur=None, endlevel=0, param=None):
         'Fades are simple Cues'
-        Cue.__init__(self, "%s -> %f" % (channel, endlevel), starttime, endtime,
-            dur)
+        Cue.__init__(self, "%s -> %f" % (channel, endlevel), starttime, dur)
         self.channel = channel
         self.endlevel = endlevel
         self.dur = dur

@@ -10,12 +10,28 @@ class Subediting:
     20:41:37 drewp: if you drag a light that's in the sub you're editing, you'll adjust it from it's position in the sub (Even if that sub is not visialbe, or if the light is doing someting else)
     20:41:57 drewp: but if you touch a light that wasnt in the sub, the current light brightness from the stage gets copied into the sub, and then you adjust frmo there
     20:42:05 drewp: i dont know any other rules; but these seem odd
-    20:42:29 drewp: it may be necessary to highlight which lights are already in the sub, so you know what you're doing as soon as you click on one
+    20:42:29 drewp: it may be necessary to highluight which lights are already in the sub, so you know what you're doing as soon as you click on one
     """
     def __init__(self,currentoutputlevels):
         self.sub=None
         self.currentoutputlevels = currentoutputlevels
+        self.widgets={} # subname : widget list
+        self.oldcolors={} # widget : bgcolor
 
+    def refresh(self):
+        self.sub=None # this wouldn't last even if we wanted it to;
+        # the Sub objects are rebuilt upon reload
+        self.widgets={}
+        self.oldcolors={}
+
+    def register(self,subname,widget):
+        """tell subediting about any widgets that should be highlighted
+        when a sub is being edited"""
+        if subname not in self.widgets:
+            self.widgets[subname]=[]
+        self.widgets[subname].append(widget)
+        self.oldcolors[widget] = widget.cget('bg')
+    
     def setsub(self,sub):
         """sets which (one) sub object should the stage be editing.
 
@@ -24,12 +40,26 @@ class Subediting:
         
         print "subedit: editing ",sub.name
         self.sub = sub
+        self.highlighteditsub()
+    def highlighteditsub(self):
+        """based on how widgets got self.register'd, we highlight
+        just the row that's being edited"""
 
+        # highlight that row only
+        for n,wl in self.widgets.items():
+            if n==self.sub.name:
+                for w in wl:
+                    w.config(bg='red')
+            else:
+                for w in wl:
+                    w.config(bg=self.oldcolors[w])
+        
     #
     # next two methods are called by the Stage
     #
     def startlevelchange(self):
-        "stage is about to send some level changes. this method is called by the Stage."
+        """stage is about to send some level changes. this method is
+        called by the Stage."""
         print "subedit: start-------"
         if self.sub is None:
             print "not editing any sub!"
@@ -49,7 +79,7 @@ class Subediting:
         0..1 measured from the last startlevelchange call. this method is
         called by the Stage"""
 
-        print "subedit: level change",lightnames,delta
+#        print "subedit: level change",lightnames,delta
         if self.sub is None:
             print "not editing any sub!"
             return
@@ -62,7 +92,7 @@ class Subediting:
                 cl = self.getcurrentlevel(l)
                 if cl is None:
                     print "light '%s' isn't even in the patch! skipping" % l
-                    return
+                    continue
                 print "copying current light level",cl,"into the sub"
                 self.startlevels[l] = cl 
 

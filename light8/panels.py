@@ -26,7 +26,7 @@ class Controlpanel(Frame):
                 fill='x')
 
 class Console:
-    def __init__(self,refresh,currentlevels,configfilename):
+    def __init__(self,lightboard):
         print "Light 8: Everything's under control"
         t=toplevelat(267,717,w=599,h=19)
         self.frame = Frame(t)
@@ -35,40 +35,15 @@ class Console:
         self.entry.bind('<Return>',
                         lambda evt: self.execute(evt, self.entry.get()))
         self.frame.pack(fill=BOTH, expand=1)
-        self.refreshcmd=refresh
-        self.currentlevels=currentlevels
-        self.configfilename=configfilename
+        self.lightboard=lightboard
     
     def execute(self, evt, str):
-        if str[0] == '*': # make a new sub
-            self.make_sub(str)
+        if str[0] == '*': # make a new sub from the current levels
+            self.lightboard.save_sub(str,self.lightboard.stageassub())
         else:
             print '>>>', str
             print eval(str)
-        self.frame.focus()
-
-    def make_sub(self, name):
-        i = 1
-        if not name:
-            print "Enter sub name in console."
-            return
-
-        st = ''
-        linebuf = 'subs["%s"] = {' % name
-        for l in self.currentlevels:
-            if l:
-                if len(linebuf) > 60: 
-                    st += linebuf + '\n   '
-                    linebuf = ''
-
-                linebuf += ' "%s" : %d,' % (Patch.get_channel_name(i), l)
-            i += 1
-        st += linebuf + '}\n'
-        f = open(self.configfilename, 'a')
-        f.write(st)
-        f.close()
-        print 'Added sub:', st
-        self.refreshcmd()
+            self.frame.focus()
 
 class Leveldisplay:
     def __init__(self, parent, channel_levels, num_channels=68):
@@ -103,8 +78,9 @@ class Leveldisplay:
         # these labels
 
 class Subpanels:
-    def __init__(self, scenesparent, effectsparent, scalelevels, Subs, xfader,
-        changelevel, subediting, longestname):
+    def __init__(self, scenesparent, effectsparent, lightboard,
+                 scalelevels, Subs, xfader,
+                 changelevel, subediting, longestname):
         
         sublist = Subs.subs.items()
         sublist.sort()
@@ -132,37 +108,34 @@ class Subpanels:
             f=Frame(parent, bd=1, relief='raised')
             f.pack(fill='both',exp=1,side=side2)
 
-            # make DoubleVar (there might be one left around from before a refresh)
+            # make DoubleVar (there might be one left around from
+            # before a refresh)
             if name not in scalelevels:
                 scalelevels[name]=DoubleVar()
 
             sub.set_slider_var(scalelevels[name])
 
-            scaleopts = {}
+            scaleopts = {'troughcolor' : 'grey70'}
             if sub.color:
                 scaleopts['troughcolor'] = sub.color
 
             s = FlyingFader(f, label=str(name), variable=scalelevels[name],
                             showvalue=0, length=300-17,
-                            width=18, sliderlength=18,
-                            to=end1,res=.001,from_=end2,bd=0, font=stdfont,
+                            width=14, sliderlength=14,
+                            to=end1,res=.001,from_=end2,bd=1, font=stdfont,
                             orient=orient1,
                             labelwidth=width1,
                             **scaleopts)
 
-            if not sub.is_effect:
-                eb = Togglebutton(f,text="Edit",font=stdfont,padx=0,pady=0,bd=1,
-                                  command=lambda: subediting.setsub(sub))
-                eb.pack(side=side1,fill='both',padx=0,pady=0)
+            # tell subediting what widget to highlight when it's
+            # editing a sub
+            for w in (s,s.label,s.vlabel, s.scale):
+                subediting.register(subname=name,widget=w)
 
-            for axis in ('y','x'):
-                cvar=IntVar()
-                eb_color = ('red', 'green')[axis == 'y']
-                cb=Togglebutton(f,text=axis.upper(),variable=cvar,font=stdfont, 
-                                padx=0, pady=0, bd=1, downcolor=eb_color)
-                cb.pack(side=side1,fill='both', padx=0, pady=0)
-                s.bind('<Key-%s>'%axis, lambda ev,cb=cb: cb.invoke)
-                xfader.registerbutton(name,axis,cvar)
+            if not sub.is_effect:
+                self.subeditingbuttons(f,side1,sub,name,lightboard,subediting)
+
+            self.axisbuttons(f,s,xfader,stdfont,side1,name)
 
             s.pack(side='left', fill=BOTH)
 
@@ -170,3 +143,28 @@ class Subpanels:
             sframe = Frame(f,bd=2,relief='groove')
             sub.draw_tk(sframe)
             sframe.pack(side='left',fill='y')
+
+    def subediting_edit(self,subediting,sub):
+        subediting.setsub(sub)
+        
+    def subediting_save(self,name,sub,lightboard):
+        lightboard.save_sub(name,sub.getlevels())
+        
+    def subeditingbuttons(self,f,side1,sub,name,lightboard,subediting):
+        for txt,cmd in (("Edit",lambda subediting=subediting,sub=sub: self.subediting_edit(subediting,sub)),
+                        ("Save",lambda sub=sub,name=name,lightboard=lightboard: self.subediting_save(name,sub,lightboard))):
+            eb = Button(f,text=txt,font=stdfont,padx=0,pady=0,
+                        bd=1,command=cmd)
+            eb.pack(side=side1,fill='both',padx=0,pady=0)
+            
+    def axisbuttons(self,f,s,xfader,stdfont,side1,name):
+        for axis in ('y','x'):
+            cvar=IntVar()
+            eb_color = ('red', 'green')[axis == 'y']
+            cb=Togglebutton(f,text=axis.upper(),variable=cvar,font=stdfont, 
+                            padx=3, pady=0, bd=1, downcolor=eb_color)
+            cb.pack(side=side1,fill='both', padx=0, pady=0)
+            s.bind('<Key-%s>'%axis, lambda ev,cb=cb: cb.invoke)
+            xfader.registerbutton(name,axis,cvar)
+
+                    
