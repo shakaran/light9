@@ -3,7 +3,7 @@ import Tix as Tk
 import time
 from TreeDict import TreeDict, allow_class_to_be_pickled
 from TLUtility import enumerate
-import Submaster
+import Submaster, dmxclient
 
 cue_state_indicator_colors = {
              # bg       fg
@@ -75,19 +75,30 @@ class TimedGoButton(Tk.Frame):
         self.button.pack(fill='both', expand=1, side='left')
 
         self.timer_var = Tk.DoubleVar()
-        self.timer_entry = Tk.Control(self, step=0.5, min=0, integer=0)
-        self.timer_entry.entry.configure(textvariable=self.timer_var, width=5, 
-            bg='black', fg='white')
+        self.timer_entry = Tk.Control(self, step=0.5, min=0, integer=0, 
+            variable=self.timer_var, selectmode='immediate')
+        for widget in (self.timer_entry, self.timer_entry.entry, 
+            self.timer_entry.incr, self.timer_entry.decr, self.button, self):
+            widget.bind("<4>", self.wheelscroll)
+            widget.bind("<5>", self.wheelscroll)
+        self.timer_entry.entry.configure(width=5, bg='black', fg='white')
         self.timer_entry.pack(fill='y', side='left')
+        self.timer_var.set(2)
         self.disabled = (self.button['state'] == 'disabled')
         self.fading = 0
+    def wheelscroll(self, event):
+        """Mouse wheel increments or decrements timer."""
+        if event.num == 4: # scroll up
+            self.timer_entry.increment()
+        else:            # scroll down
+            self.timer_entry.decrement()
     def start_fade(self, end_level=1):
         try:
             fade_time = float(self.timer_var.get())
         except ValueError:
             # since we use a control now, i don't think we need to worry about
             # validation any more.
-            print "can't fade -- bad time"
+            print ">>> Can't fade -- bad time", self.timer_var.get()
             return
 
         self.start_time = time.time()
@@ -130,8 +141,11 @@ class CueFader(Tk.Frame):
     def __init__(self, master, cuelist):
         Tk.Frame.__init__(self, master, bg='black')
         self.cuelist = cuelist
-        self.auto_shift = Tk.IntVar()
-        self.auto_shift.set(1)
+        self.cuelist.set_fader(self)
+
+        self.last_levels_sent = 0
+        self.current_dmx_levels = [0] * 68
+        self.after(0, self.send_dmx_levels_loop) # start DMX sending loop
 
         # this is a mechanism to stop Tk from autoshifting too much.
         # if this variable is true, the mouse button is down.  we don't want
@@ -150,11 +164,23 @@ class CueFader(Tk.Frame):
             fg='white', bg='blue')
         self.set_prev_button.pack(side='left')
 
+        self.auto_shift = Tk.IntVar()
+        self.auto_shift.set(1)
+
         self.auto_shift_checkbutton = Tk.Checkbutton(topframe, 
             variable=self.auto_shift, text='Autoshift', 
             command=self.toggle_autoshift, bg='black', fg='white',
             highlightbackground='black')
         self.auto_shift_checkbutton.pack(fill='both', side='left')
+
+        self.auto_load_times = Tk.IntVar()
+        self.auto_load_times.set(1)
+
+        self.auto_load_times_checkbutton = Tk.Checkbutton(topframe, 
+            variable=self.auto_load_times, text='Autoload Times', 
+            command=self.toggle_autoshift, bg='black', fg='white', 
+            highlightbackground='black')
+        self.auto_load_times_checkbutton.pack(fill='both', side='left')
 
         self.set_next_button = Tk.Button(topframe, text='Set Next',
             command=lambda: cuelist.set_selection_as_next(),
@@ -188,6 +214,8 @@ class CueFader(Tk.Frame):
 
             scale.scale_var.trace('w', \
                 lambda x, y, z, name=name, scale=scale: self.xfade(name, scale))
+            go.timer_var.trace('w',
+                lambda x, y, z, scale=scale: scale.update_value_label())
 
             def button_press(event, name=name, scale=scale):
                 self.no_shifts_until_release = 1 # prevent shifts until release
@@ -198,8 +226,48 @@ class CueFader(Tk.Frame):
             scale.scale.bind("<ButtonPress>", button_press)
             scale.scale.bind("<ButtonRelease>", button_release)
         faderframe.pack(side='bottom', fill='both', expand=1)
+
+        self.current_dir = 'Next'
         self.cues_as_subs = {}
+        self.update_cue_cache()
+    def reload_cue_times(self):
+        prev, cur, next = self.cuelist.get_current_cues()
+        self.go_buttons['Next'].set_time(next.time)
+    def update_cue_cache(self):
+        """Rebuilds subs from the current cues.  As this is expensive, we don't
+        do it unless necessary (i.e. whenever we shift or a cue is edited)"""
+        # load the subs to fade between
+        for cue, name in zip(self.cuelist.get_current_cues(), 
+                             ('Prev', 'Cur', 'Next')):
+            self.cues_as_subs[name] = cue.get_levels_as_sub()
+        self.compute_dmx_levels()
+    def compute_dmx_levels(self):
+        """Compute the DMX levels to send.  This should get called whenever the
+        DMX levels could change: either during a crossfade or when a cue is
+        edited.  Since this is called when we know that a change might occur,
+        we will send the new levels too."""
+        cur_sub = self.cues_as_subs.get('Cur')
+        if cur_sub:
+            scale = self.scales[self.current_dir]
+            scale_val = scale.scale_var.get() 
+
+            other_sub = self.cues_as_subs[self.current_dir]
+            current_levels_as_sub = cur_sub.crossfade(other_sub, scale_val)
+            self.current_dmx_levels = current_levels_as_sub.get_dmx_list()
+            self.send_dmx_levels()
+    def send_dmx_levels(self):
+        # print "send_dmx_levels", self.current_dmx_levels
+        dmxclient.outputlevels(self.current_dmx_levels)
+        self.last_levels_sent = time.time()
+    def send_dmx_levels_loop(self):
+        diff = time.time() - self.last_levels_sent
+        if diff >= 2: # too long since last send
+            self.send_dmx_levels()
+            self.after(200, self.send_dmx_levels_loop)
+        else:
+            self.after(int((2 - diff) * 100), self.send_dmx_levels_loop)
     def get_scale_desc(self, val, name):
+        """Returns a description to the TimedGoButton"""
         go_button = self.go_buttons.get(name)
         if go_button:
             time = go_button.get_time()
@@ -221,11 +289,9 @@ class CueFader(Tk.Frame):
             scale.scale.set(0)
         self.cuelist.shift((-1, 1)[name == 'Next'])
 
-        # now load the subs to fade between
-        for cue, name in zip(self.cuelist.get_current_cues(), 
-                             ('Prev', 'Cur', 'Next')):
-            self.cues_as_subs[name] = cue.get_levels_as_sub()
-        print "cues_as_subs", self.cues_as_subs
+        self.update_cue_cache()
+        if self.auto_load_times.get():
+            self.reload_cue_times()
     def autoshift(self, name, scale):
         scale_val = scale.scale_var.get() 
 
@@ -254,13 +320,8 @@ class CueFader(Tk.Frame):
             self.scales[d].enable()
             self.go_buttons[d].enable()
 
-        cur_sub = self.cues_as_subs.get('Cur')
-        if cur_sub:
-            other_sub = self.cues_as_subs[name]
-            # print 'fade between %s and %s (%.2f)' % (cur_sub, other_sub, scale_val)
-            self.current_levels_as_sub = cur_sub.crossfade(other_sub, scale_val)
-            print "current levels", self.current_levels_as_sub.get_dmx_list()
-            # print
+        self.current_dir = name
+        self.compute_dmx_levels()
     def opposite_direction(self, d):
         if d == 'Next':
             return 'Prev'
@@ -282,19 +343,17 @@ class Cue:
         will reload the submasters from disk, combine all subs together, and
         then compute the normalized form."""
         subdict = {}
-        try:
-            print self, self.sub_levels
-            for line in self.sub_levels.split(','):
+        for line in self.sub_levels.split(','):
+            try:
                 line = line.strip()
-                # print 'line', line
+                if not line: 
+                    continue
                 sub, scale = line.split(':')
-                # print 'sub', sub, 'scale', scale
                 sub = sub.strip()
                 scale = float(scale)
                 subdict[sub] = scale
-            # print 'subdict', subdict
-        except (ValueError, AttributeError):
-            print "parsing error when computing sub for", self
+            except ValueError:
+                print "Parsing error for '%s' in %s" % (self.sub_levels, self)
 
         s = Submaster.Submasters()
         newsub = Submaster.sub_maxes(*[s[sub] * scale 
@@ -347,23 +406,27 @@ class CueList:
     def set_prev(self, index):
         self.prev_pointer = index
     def bound_index(self, index):
-        if not self.cues:
+        if not self.cues or index < 0:
             return None
         else:
-            return max(0, min(index, len(self.cues) - 1))
+            return min(index, len(self.cues) - 1)
     def get_current_cue_indices(self):
+        """Returns a list of the indices of three cues: the previous cue,
+        the current cue, and the next cue."""
         cur = self.current_cue_index
         return [self.bound_index(index) for index in
                     (self.prev_pointer or cur - 1, 
                      cur, 
                      self.next_pointer or cur + 1)]
     def get_current_cues(self):
+        """Returns a list of three cues: the previous cue, the current cue,
+        and the next cue."""
         return [self.get_cue_by_index(index) 
             for index in self.get_current_cue_indices()]
     def get_cue_by_index(self, index):
-        if index:
+        try:
             return self.cues[self.bound_index(index)]
-        else:
+        except TypeError:
             return empty_cue
     def __del__(self):
         self.save()
@@ -379,9 +442,11 @@ class TkCueList(CueList, Tk.Frame):
     def __init__(self, master, filename):
         CueList.__init__(self, filename)
         Tk.Frame.__init__(self, master, bg='black')
+        self.fader = None
         
         self.edit_tl = Tk.Toplevel()
-        self.editor = CueEditron(self.edit_tl, changed_callback=self.redraw_cue)
+        self.editor = CueEditron(self.edit_tl, 
+            changed_callback=self.cue_changed)
         self.editor.pack(fill='both', expand=1)
 
         def edit_cue(index):
@@ -411,13 +476,16 @@ class TkCueList(CueList, Tk.Frame):
         for count, cue in enumerate(self.cues):
             self.display_cue(count, cue)
         self.update_cue_indicators()
+    def set_fader(self, fader):
+        self.fader = fader
     def wheelscroll(self, evt):
         """Perform mouse wheel scrolling"""
-        amount = 2
-        if evt.num == 4:
+        if evt.num == 4: # scroll down
             amount = -2
+        else:            # scroll up
+            amount = 2
         self.hlist.yview('scroll', amount, 'units')
-    def redraw_cue(self, cue):
+    def cue_changed(self, cue):
         path = self.cues.index(cue)
         for col, header in enumerate(self.columns):
             try:
@@ -429,6 +497,10 @@ class TkCueList(CueList, Tk.Frame):
                 self.cue_label_windows[path]['text'] = text
             else:
                 self.hlist.item_configure(path, col, text=text)
+
+        if cue in self.get_current_cues() and self.fader:
+            self.fader.update_cue_cache()
+            self.fader.reload_cue_times()
     def display_cue(self, path, cue):
         for col, header in enumerate(self.columns):
             try:
@@ -452,6 +524,8 @@ class TkCueList(CueList, Tk.Frame):
         """If cue_indices is None, we'll reset all of them."""
         cue_indices = cue_indices or self.cue_label_windows.keys()
         for key in cue_indices:
+            if key is None:
+                continue
             window = self.cue_label_windows[key]
             window.configure(fg='white', bg='black')
     def update_cue_indicators(self):
@@ -459,6 +533,8 @@ class TkCueList(CueList, Tk.Frame):
                      ('prev', 'cur', 'next')))
 
         for count, state in states.items():
+            if count is None:
+                continue
             window = self.cue_label_windows[count]
             bg, fg = cue_state_indicator_colors[state]
             window.configure(bg=bg, fg=fg)
@@ -469,7 +545,8 @@ class TkCueList(CueList, Tk.Frame):
         # try to see all indices, but next takes priority over all, and cur
         # over prev
         for index in self.get_current_cue_indices():
-            self.hlist.see(index)
+            if index is not None:
+                self.hlist.see(index)
     def select_callback(self, index):
         new_next = int(index)
         self.set_next(new_next)
@@ -514,7 +591,8 @@ class CueEditron(Tk.Frame):
                 pass
     def setup_editing_forms(self):
         self.variables = {}
-        for row, field in enumerate(('name', 'time', 'page', 'desc', 'sub_levels')):
+        for row, field in enumerate(('name', 'time', 'page', 'desc', 
+            'sub_levels')):
             lab = Tk.Label(self, text=field, fg='white', bg='black')
             lab.grid(row=row, column=0, sticky='nsew')
 
@@ -537,7 +615,8 @@ class CueEditron(Tk.Frame):
         self.columnconfigure(1, weight=1)
     def fill_in_cue_info(self):
         self.enable_callbacks = 0
-        for row, field in enumerate(('name', 'time', 'page', 'desc', 'sub_levels')):
+        for row, field in enumerate(('name', 'time', 'page', 'desc', 
+            'sub_levels')):
             text = ''
             if self.cue:
                 try:
