@@ -12,7 +12,7 @@ import Patch
 from uihelpers import make_frame, colorlabel, eventtoparent
 from dispatch import dispatcher
 
-stdfont = ('Arial', 10)
+stdfont = ('Arial', 12)
 
 class Onelevel(tk.Frame):
     """a name/level pair"""
@@ -53,20 +53,23 @@ class Onelevel(tk.Frame):
             self.desc_lab.config(bg='cyan')
             self._start_y=ev.y
             self._start_lev=self.currentlevel
-#        self.bind("<ButtonPress-1>",b1down)
         def b1motion(ev):
             delta=self._start_y-ev.y
             self.changelevel(self._start_lev+delta*.005)
-#        self.bind("<B1-Motion>",b1motion)
         def b1up(ev):
             self.desc_lab.config(bg='black')
-#        self.bind("<B1-ButtonRelease>",b1up)
+        def b3up(ev):
+            self.changelevel(0.0)
+        def b3down(ev):
+            self.changelevel(1.0)
 
         # make the buttons work in the child windows
         for w in self.winfo_children():
             for e,func in (('<ButtonPress-1>',b1down),
                            ('<B1-Motion>',b1motion),
-                           ('<ButtonRelease-1>',b1up)):
+                           ('<ButtonRelease-1>',b1up),
+                           ('<ButtonRelease-3>', b3up),
+                           ('<ButtonPress-3>', b3down)):
                 w.bind(e,func)
 #                w.bind(e,lambda ev,e=e: eventtoparent(ev,e))
         

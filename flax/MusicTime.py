@@ -34,7 +34,7 @@ class MusicTimeTk(tk.Frame, MusicTime):
         self.after(100, self.update_time)
 
 if __name__ == "__main__":
-    from optik import OptionParser
+    from optparse import OptionParser
     parser = OptionParser()
     parser.add_option("-s", "--server", default='dash')
     parser.add_option("-p", "--port", default=8040, type='int')

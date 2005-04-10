@@ -27,7 +27,7 @@ class ShowRunner(tk.Frame):
         print "TimelineDMX: set timeline to", tlname
         self.show.set_timeline(tlname)
     def find_player(self):
-        self.player = xmlrpclib.Server("http://localhost:8040")
+        self.player = xmlrpclib.Server("http://spot:8040")
     def send_levels(self):
         levels = self.show.calc_active_submaster().get_dmx_list()
         

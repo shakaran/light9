@@ -4,6 +4,8 @@ from dispatch import dispatcher
 
 class Zoomcontrol(object,tk.Canvas):
 
+    mintime=-5
+
     def maxtime():
         doc = "seconds at the right edge of the bar"
         def fget(self): return self._maxtime
@@ -15,7 +17,7 @@ class Zoomcontrol(object,tk.Canvas):
     
     def start():
         def fget(self): return self._start
-        def fset(self,v): self._start = max(0,v)
+        def fset(self,v): self._start = max(self.mintime,v)
         return locals()
     start = property(**start())
 
@@ -39,26 +41,67 @@ class Zoomcontrol(object,tk.Canvas):
         self.updatewidget()
         self.bind("<Configure>",self.updatewidget)
 
-        self.bind("<ButtonPress-1>",lambda ev: setattr(self,'lastx',ev.x))
-        self.tag_bind(self.leftbrack,"<B1-Motion>",
-                      lambda ev: self.adjust('start',ev))
-        self.tag_bind(self.rightbrack,"<B1-Motion>",
-                      lambda ev: self.adjust('end',ev))
-        self.tag_bind(self.shade,"<B1-Motion>",
-                      lambda ev: self.adjust('offset',ev))
+        if 0:
+            # works, but you have to stay in the widget while you drag
+            self.bind("<ButtonPress-1>",self.press)
+            self.tag_bind(self.leftbrack,"<B1-Motion>",
+                          lambda ev: self.adjust(ev,'start'))
+            self.tag_bind(self.rightbrack,"<B1-Motion>",
+                          lambda ev: self.adjust(ev,'end'))
+            self.tag_bind(self.shade,"<B1-Motion>",
+                          lambda ev: self.adjust(ev,'offset'))
+        else:
+            # works better
+            # bind to buttonpress wasnt working, but Enter is good enough
+            self.tag_bind(self.leftbrack,"<Enter>",
+                          lambda ev: self.press(ev,'start'))
+            self.tag_bind(self.shade,"<Enter>",
+                          lambda ev: self.press(ev,'offset'))
+            self.tag_bind(self.rightbrack,"<Enter>",
+                          lambda ev: self.press(ev,'end'))
+            self.bind("<B1-Motion>",self.adjust)
+            self.bind("<ButtonRelease-1>",self.release)
+        
         dispatcher.connect(lambda: (self.start,self.end),"zoom area",weak=0)
         dispatcher.connect(self.input_time,"input time")
-        dispatcher.connect(lambda maxtime: (setattr(self,'maxtime',maxtime),
-                                            self.updatewidget()),"max time",weak=0)
+        dispatcher.connect(lambda maxtime: (setattr(self,'maxtime',maxtime+15),
+                                            self.updatewidget()),
+                           "max time",weak=0)
+        dispatcher.connect(self.zoom_about_mouse,"zoom about mouse")
+        dispatcher.connect(self.see_time,"see time")
         self.created=1
+    def zoom_about_mouse(self,t,factor):
+        self.start = t - factor*(t-self.start)
+        self.end = t + factor*(self.end-t)
+        self.updatewidget()
+        dispatcher.send("zoom changed")
+    def see_time(self,t):
+        margin = (self.end-self.start)*.5 # centering is nicest
+        if t<self.start:
+            self.offset-=(self.start-t)+margin
+        if t>self.end:
+            self.offset+=(t-self.end)+margin
+        self.updatewidget()
+        dispatcher.send("zoom changed")
+            
     def input_time(self,val):
         t=val
         x=self.can_for_t(t)
         self.coords(self.time,x,0,x,self.winfo_height())
+    def press(self,ev,attr):
+        self.adjustingattr = attr
+        
+    def release(self,ev):
+        if hasattr(self,'adjustingattr'): del self.adjustingattr
+        if hasattr(self,'lastx'): del self.lastx
+    def adjust(self,ev,attr=None):
 
-    def adjust(self,attr,ev):
-        if not hasattr(self,'lastx'):
+        if not hasattr(self,'adjustingattr'):
             return
+        attr = self.adjustingattr
+        
+        if not hasattr(self,'lastx'):
+            self.lastx = ev.x
         new = self.can_for_t(getattr(self,attr)) + (ev.x - self.lastx)
         self.lastx = ev.x
         setattr(self,attr,self.t_for_can(new))
@@ -77,9 +120,9 @@ class Zoomcontrol(object,tk.Canvas):
     offset = property(**offset())
 
     def can_for_t(self,t):
-        return t/self.maxtime*(self.winfo_width()-30)+20
+        return (t-self.mintime)/(self.maxtime-self.mintime)*(self.winfo_width()-30)+20
     def t_for_can(self,x):
-        return (x-20)/(self.winfo_width()-30)*self.maxtime
+        return (x-20)/(self.winfo_width()-30)*(self.maxtime-self.mintime)+self.mintime
 
     def updatewidget(self,*args):
         """redraw pieces based on start/end"""
@@ -90,7 +133,7 @@ class Zoomcontrol(object,tk.Canvas):
         ecan = self.can_for_t(self.end)
         self.coords(self.leftbrack,scan+lip,y1,scan,y1,scan,y2,scan+lip,y2)
         self.coords(self.rightbrack,ecan-lip,y1,ecan,y1,ecan,y2,ecan-lip,y2)
-        self.coords(self.shade,scan+3,y1+lip,ecan-3,y2-lip)
+        self.coords(self.shade,scan+5,y1+lip,ecan-5,y2-lip)
         self.delete("tics")
         lastx=-1000
         for t in range(0,int(self.maxtime)):

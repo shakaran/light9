@@ -1,8 +1,10 @@
-from __future__ import nested_scopes
+from __future__ import division,nested_scopes
 import sys, time
 sys.path.append('..')
 from Widgets.Fadable import Fadable
 
+from twisted.internet import reactor,tksupport
+from twisted.web import xmlrpc, server
 from Tix import *
 import math, atexit, pickle
 from Submaster import Submasters, sub_maxes
@@ -40,10 +42,10 @@ class SubmasterTk(Frame):
         self.slider_var = DoubleVar()
         self.slider_var.set(current_level)
         self.scale = SubScale(self, variable=self.slider_var, width=20)
-        namelabel = Label(self, text=name, font="Arial 8", bg='black',
+        namelabel = Label(self, text=name, font="Arial 11", bg='black',
             fg='white')
         namelabel.pack(side=TOP)
-        levellabel = Label(self, textvariable=self.slider_var, font="Arial 8",
+        levellabel = Label(self, textvariable=self.slider_var, font="Arial 11",
             bg='black', fg='white')
         levellabel.pack(side=TOP)
         self.scale.pack(side=BOTTOM, expand=1, fill=BOTH)
@@ -70,6 +72,7 @@ class KeyboardComposer(Frame):
         self.rows = [] # this holds Tk Frames for each row
         self.slider_vars = {} # this holds subname:sub Tk vars
         self.slider_table = {} # this holds coords:sub Tk vars
+        self.name_to_subtk = {} # subname : SubmasterTk instance
         self.current_row = 0
         
         self.make_key_hints()
@@ -123,13 +126,16 @@ class KeyboardComposer(Frame):
                     lambda evt, num=keys.index(key), d=d: \
                         self.got_nudger(num, d, full=1))
 
-        # page up and page down change the row
-        for key in '<Prior> <Next> <Control-n> <Control-p>'.split():
+        # Row changing:
+        # Page dn, C-n, and ] do down
+        # Page up, C-p, and ' do up
+        for key in '<Prior> <Next> <Control-n> <Control-p> ' \
+                   '<Key-bracketright> <Key-apostrophe>'.split():
             tkobject.bind(key, self.change_row)
 
     def change_row(self, event):
         diff = 1
-        if event.keysym in ('Prior', 'p'):
+        if event.keysym in ('Prior', 'p', 'bracketright'):
             diff = -1
         old_row = self.current_row
         self.current_row += diff
@@ -163,6 +169,7 @@ class KeyboardComposer(Frame):
             current_level = self.current_sub_levels.get(sub.name, 0)
             subtk = self.draw_sub_slider(row, col, sub.name, current_level)
             self.slider_table[(rowcount, col)] = subtk
+            self.name_to_subtk[sub.name] = subtk
             col += 1
             col %= 10
 
@@ -203,6 +210,7 @@ class KeyboardComposer(Frame):
         print "saving current levels as", subname
         sub = self.get_levels_as_sub()
         sub.name = subname
+        sub.temporary = 0
         sub.save()
 
     def save(self):
@@ -236,6 +244,20 @@ class KeyboardComposer(Frame):
         self.buttonframe.destroy()
         self.draw_ui()
 
+class LevelServer(xmlrpc.XMLRPC):
+    def __init__(self,name_to_subtk):
+        self.name_to_subtk = name_to_subtk
+        
+    def xmlrpc_fadesub(self,subname,level,secs):
+        """submaster will fade to level in secs"""
+        try:
+            self.name_to_subtk[subname].scale.fade(level,secs)
+            ret='ok'
+        except Exception,e:
+            ret=str(e)
+        return ret
+
+
 if __name__ == "__main__":
     s = Submasters()
 
@@ -243,9 +265,12 @@ if __name__ == "__main__":
     tl = toplevelat("Keyboard Composer", existingtoplevel=root)
     kc = KeyboardComposer(tl, s, dmxdummy=0)
     kc.pack(fill=BOTH, expand=1)
-    atexit.register(kc.save)
-    try:
-        mainloop()
-    except KeyboardInterrupt:
-        tl.destroy()
-        sys.exit()
+
+    ls = LevelServer(kc.name_to_subtk)
+    reactor.listenTCP(8050, server.Site(ls))
+
+    root.bind("<Destroy>",reactor.stop)
+    root.protocol('WM_DELETE_WINDOW', reactor.stop)
+    reactor.addSystemEventTrigger('after','shutdown',kc.save)
+    tksupport.install(root,ms=10)
+    reactor.run()

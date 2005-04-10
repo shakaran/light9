@@ -37,6 +37,7 @@ class Submaster:
             print "Can't read file for sub: %s" % self.name
     def save(self):
         if self.temporary:
+            print "not saving temporary sub named",self.name
             return
 
         subfile = file("subs/%s" % self.name, 'w')
