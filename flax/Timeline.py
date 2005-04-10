@@ -1,6 +1,7 @@
 from TLUtility import make_attributes_from_args, dict_scale, dict_max, \
     DummyClass, last_less_than, first_greater_than
 from time import time
+import random
 from __future__ import division # "I'm sending you back to future!"
 
 """
@@ -147,6 +148,41 @@ class Strobe(Blender):
             return {endframe.frame : self.onlevel}
         else:
             return {endframe.frame : self.offlevel}
+
+class Sine(Blender):
+    "Strobes the frame on the right side between offlevel and onlevel."
+    def __init__(self, period, onlevel=1, offlevel=0):
+        "times are in seconds (floats)"
+        make_attributes_from_args('period', 'onlevel', 'offlevel')
+    def __call__(self, startframe, endframe, blendtime, time_since_startframe):
+        sin = math.sin(time_since_startframe / self.period * 2 * math.pi)
+        zerotoone = (sin / 2) + 0.5
+        level = offlevel + (zerotoone * (onlevel - offlevel))
+        return {endframe.frame : level}
+
+class RandomStrobe(Blender):
+    def __init__(self, minwaitlen=0.1, maxwaitlen=0.6, burstlen=0.14, \
+        burstintensity=1, offintensity=0.05, tracklen=500):
+        "times are in seconds (floats)"
+        make_attributes_from_args('burstlen', 'burstintensity', 'offintensity')
+        self.burstintervals = []
+        timecursor = 0
+
+        while timecursor < tracklen:
+            waitlen = minwaitlen + (random.random() * (maxwaitlen - minwaitlen))
+            timecursor += waitlen
+            self.burstintervals.append((timecursor, timecursor + burstlen))
+    def __call__(self, startframe, endframe, blendtime, time_since_startframe):
+        found_burst = 0
+        for intstart, intend in self.burstintervals:
+            if intstart <= time_since_startframe <= intend:
+                found_burst = 1
+                break
+
+        if found_burst:
+            return {endframe.frame : self.burstintensity}
+        else:
+            return {endframe.frame : self.offintensity}
 
 class TimelineTrack:
     """TimelineTrack is a single track in a Timeline.  It consists of a

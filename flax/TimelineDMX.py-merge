@@ -1,0 +1,145 @@
+import sys, time, socket
+sys.path.append("../light8")
+import Tix as tk
+
+import Patch, Timeline, dmxclient, xmlrpclib
+import TheShow
+
+Patch.reload_data()
+
+<<<<<<< TimelineDMX.py
+class ShowRunner(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self, master)
+        self.master = master
+
+        self.lastsenttime=0 # time of last send to dmx server
+        self.lastsentlevels=None # levels last sent to dmx server
+
+        self.show = TheShow.show
+=======
+class ShowRunner(tk.Frame):
+    def __init__(self, master, show):
+        tk.Frame.__init__(self, master)
+        self.master = master
+
+        self.show = show
+>>>>>>> 1.2
+        self.find_player()
+<<<<<<< TimelineDMX.py
+        self.draw_ui()
+
+    def draw_ui(self):
+        self.build_timeline_list()
+        self.draw_buttons()
+    def draw_buttons(self):
+        self.buttonframe = tk.Frame(self, bd=2, relief='raised')
+        self.refreshbutton = tk.Button(self.buttonframe, command=self.refresh,
+            text="Refresh", bg='blue')
+        self.refreshbutton.pack()
+        self.nothing =  tk.Button(self.buttonframe, \
+            command=lambda: self.set_timeline(None), text="Nothing", \
+            bg='red')
+        self.nothing.pack()
+        self.buttonframe.pack()
+    def build_timeline_list(self):
+        self.tl_list = tk.Frame(self)
+        timelines = self.show.get_timelines()
+        timelines.sort()
+        for tl in timelines:
+            b=tk.Button(self.tl_list,text=tl,
+                        anchor='w',pady=1)
+            b.config(command=lambda tl=tl: self.set_timeline(tl))
+            b.pack(side='top',fill='x')
+        self.tl_list.pack()
+    def set_timeline(self, tlname):
+        print "TimelineDMX: set timeline to", tlname
+        self.show.set_timeline(tlname)
+=======
+        self.build_timeline_list()
+    def build_timeline_list(self):
+        self.tl_list = tk.Frame(self)
+        for tl in self.show.get_timelines():
+            b=tk.Button(self.tl_list,text=tl,
+                        anchor='w',pady=1)
+            b.config(command=lambda tl=tl: self.set_timeline(tl))
+            b.pack(side='top',fill='x')
+        self.tl_list.pack()
+    def set_timeline(self, tlname):
+        print "TimelineDMX: set timeline to", tlname
+        self.show.set_timeline(tlname)
+>>>>>>> 1.2
+    def find_player(self):
+        self.player = xmlrpclib.Server("http://dash:8040")
+    def send_levels(self):
+<<<<<<< TimelineDMX.py
+        try:
+            # avoid sending the same levels too often (send only
+            # when there's a change, or if a second has passed)
+            levels = self.show.calc_active_submaster().get_dmx_list()
+            if levels!=self.lastsentlevels or time.time()>self.lastsenttime+1:
+                dmxclient.outputlevels(levels)
+                self.lastsentlevels=levels[:]
+                self.lastsenttime=time.time()
+                
+        except AttributeError: # hackified!
+            pass
+=======
+        levels = self.show.calc_active_submaster().get_dmx_list()
+        
+        dmxclient.outputlevels(levels)
+>>>>>>> 1.2
+    def sync_times(self):
+        try:
+            playtime = self.player.gettime()
+            self.show.set_time(playtime)
+        except socket.error, e:
+            print "Server error %s, waiting"%e
+            time.sleep(2)
+    def mainloop(self):
+        try:
+            while 1:
+                self.sync_times()
+                self.send_levels()
+                time.sleep(0.01)
+                self.master.update()
+        except KeyboardInterrupt:
+            sys.exit(0)
+    def refresh(self):
+        print "refresh..."
+        # :)
+        # print "reserved for future feature"
+        import TheShow
+        self.show = TheShow.show
+        self.tl_list.destroy()
+        self.buttonframe.destroy()
+        self.draw_ui()
+
+if __name__ == "__main__":
+<<<<<<< TimelineDMX.py
+    root = tk.Tk()
+    s = ShowRunner(root)
+    # s.show.set_timeline('song01')
+    s.pack()
+
+    import atexit
+    def stop_sending_levels():
+        s.set_timeline(None)
+        dmxclient.outputlevels([])
+    atexit.register(stop_sending_levels)
+
+    import sys
+    try:
+        timelinename = sys.argv[1]
+        s.set_timeline(timelinename)
+        root.withdraw()
+    except: # uh oh
+        pass
+
+=======
+    root = tk.Tk()
+    s = ShowRunner(root, TheShow.show)
+    s.show.set_timeline('strobe test')
+    s.pack()
+>>>>>>> 1.2
+    s.mainloop()

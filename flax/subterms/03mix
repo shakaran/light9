@@ -1,0 +1,8 @@
+bow bow(t)
+song03 song(t)
+song03-dark dark(t)
+downfront music(t)*flash(t)
+zip_red (.1<music(t)<.2)*flash(t)
+zip_blue (.3<music(t)<.4)*flash(t)
+zip_orange (.2<music(t)<.3)*flash(t)
+edges bow(t)*.5

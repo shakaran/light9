@@ -10,7 +10,7 @@ _dmx=None
 
 _id="%s-%s" % (sys.argv[0].replace('.py','').replace('./',''),os.getpid())
 
-def outputlevels(levellist,twisted=0):
+def outputlevels(levellist,twisted=0,clientid=_id):
     """present a list of dmx channel levels, each scaled from
     0..1. list can be any length- it will apply to the first len() dmx
     channels.
@@ -30,7 +30,7 @@ def outputlevels(levellist,twisted=0):
 
     if not twisted:
         try:
-            _dmx.outputlevels(_id,levellist)
+            _dmx.outputlevels(clientid,levellist)
         except socket.error,e:
             print "dmx server error %s, waiting"%e
             time.sleep(1)
@@ -41,7 +41,7 @@ def outputlevels(levellist,twisted=0):
         def err(error):
             print "dmx server error",error
             time.sleep(1)
-        d = _dmx.callRemote('outputlevels',_id,levellist)
+        d = _dmx.callRemote('outputlevels',clientid,levellist)
         d.addErrback(err)
 
     

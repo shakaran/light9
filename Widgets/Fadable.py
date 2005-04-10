@@ -6,7 +6,8 @@ class Fadable:
     """Fading mixin: must mix in with a Tk widget (or something that has
     'after' at least) This is currently used by VolumeBox and MixerTk.
     It's probably too specialized to be used elsewhere, but could possibly
-    work with an Entry or a Meter, I guess.
+    work with an Entry or a Meter, I guess.  (Actually, this is used by
+    KeyboardComposer and KeyboardRecorder now too.)
 
     var is a Tk variable that should be used to set and get the levels.
     If use_fades is true, it will use fades to move between levels.
@@ -38,7 +39,7 @@ class Fadable:
             for k in range(1, 10):
                 self.bind("<Key-%d>" % k,
                     lambda evt, k=k: self.fade(k / 10.0))
-            self.bind("<Key-0>", lambda evt: self.fade(100))
+            self.bind("<Key-0>", lambda evt: self.fade(1.0))
             self.bind("<grave>", lambda evt: self.fade(0))
 
             # up / down arrows
@@ -63,17 +64,23 @@ class Fadable:
         self.last_level = 0 # used for muting
     def fade(self, value, length=0.5, step_time=10):
         """Fade to value in length seconds with steps every step_time
-        seconds"""
-        self.fade_start_time = time.time()
-        self.fade_length = length
+        milliseconds"""
+        if length == 0: # 0 seconds fades happen right away and prevents
+                        # and prevents us from entering the fade loop,
+                        # which would cause a divide by zero
+            self.fade_var.set(value)
+            self.fading = 0 # we stop all fades
+        else: # the general case
+            self.fade_start_time = time.time()
+            self.fade_length = length
 
-        self.fade_start_level = self.fade_var.get()
-        self.fade_end_level = value
-        
-        self.fade_step_time = step_time
-        if not self.fading:
-            self.fading = 1
-            self.do_fade()
+            self.fade_start_level = self.fade_var.get()
+            self.fade_end_level = value
+            
+            self.fade_step_time = step_time
+            if not self.fading:
+                self.fading = 1
+                self.do_fade()
     def do_fade(self):
         """Actually performs the fade for Fadable.fade.  Shouldn't be called
         directly."""
@@ -138,6 +145,6 @@ if __name__ == "__main__":
 
     root = Tk()
     root.tk_focusFollowsMouse()
-    ss = SubScale(root, from_=100, to_=0,)
+    ss = SubScale(root, from_=1, to_=0, res=0.01)
     ss.pack()
     mainloop()

@@ -1,0 +1,11 @@
+bow bow(t)
+song16 song(t)
+blacklight blacklight(t)>0
+cyc music(t+.12)*cyc(t)*2
+zip_orange 0
+left1 music(t+.18)*2*justinl(t)
+right2 sidemusic(t)*nsin(.3*t+.5)
+left2 sidemusic(t)*nsin(.3*t)
+greentoblue greentoblue(t)
+downfront upflicker(t)*music(t+.12)*1.5
+right1 music(t+.18)*2*(1-justinl(t))*within(168,173)

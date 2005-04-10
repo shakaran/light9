@@ -1,0 +1,9 @@
+bow bow(t)
+song11 song(t)
+blacklight blacklight(t)>0
+zip_blue blue(t)
+zip_red red(t)+nsin(t*3)*within(161,203) + within(77,80)*music(t+.2)*3
+cyc music(t)*2*cycscl(t)+within(75,76.5)*music(t)*10
+left1 within(71,72.5)*music(t+.18)*20
+right1 within(73,74.5)*music(t+.18)*20
+downfront within(77,80)*music(t+.2)*1
