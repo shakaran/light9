@@ -1,3 +1,5 @@
+import os
+
 def resolve_name(channelname):
     "Ensure that we're talking about the primary name of the light."
     return get_channel_name(get_dmx_channel(channelname))
@@ -26,10 +28,11 @@ def get_channel_name(dmxnum):
 
 def reload_data():
     global patch, reverse_patch
-    import light9.patchdata
 
-    reload(light9.patchdata)
-    loadedpatch = light9.patchdata.patch
+    loc = {}
+    execfile(os.path.join(os.getenv("LIGHT9_SHOW"),"patchdata.py"), loc)
+    
+    loadedpatch = loc['patch']
     patch = {}
     reverse_patch = {}
     for k, v in loadedpatch.items():
