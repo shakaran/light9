@@ -1,10 +1,6 @@
 from __future__ import division
-from TLUtility import dict_scale, dict_max
-
-import sys
-sys.path.append('../light8')
-
-import Patch
+from light9.TLUtility import dict_scale, dict_max
+from light9 import Patch
 
 class Submaster:
     "Contain a dictionary of levels, but you didn't need to know that"

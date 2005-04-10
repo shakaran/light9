@@ -27,8 +27,9 @@ from twisted.internet import reactor
 from twisted.web import xmlrpc, server
 import sys,time,os
 from optparse import OptionParser
-from io import ParportDMX
-from updatefreq import Updatefreq
+import run_local
+from light9.io import ParportDMX
+from light9.updatefreq import Updatefreq
 
 class XMLRPCServe(xmlrpc.XMLRPC):
     def __init__(self,options):

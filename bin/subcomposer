@@ -1,15 +1,13 @@
 #!/usr/bin/python
 
 from __future__ import division, nested_scopes
-import Tkinter as tk
-from dmxchanedit import Levelbox
 import sys,os,time,atexit
-sys.path.append("../light8")
-import dmxclient
-import Patch
-import Submaster
-
+import Tkinter as tk
 from dispatch import dispatcher
+
+import run_local
+from light9.dmxchanedit import Levelbox
+from light9 import dmxclient, Patch, Submaster
 
 class Subcomposer(tk.Frame):
     def __init__(self, master, levelboxopts=None, dmxdummy=0, numchannels=68,
