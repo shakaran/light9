@@ -26,10 +26,10 @@ def get_channel_name(dmxnum):
 
 def reload_data():
     global patch, reverse_patch
-    import patchdata
+    import light9.patchdata
 
-    reload(patchdata)
-    loadedpatch = patchdata.patch
+    reload(light9.patchdata)
+    loadedpatch = light9.patchdata.patch
     patch = {}
     reverse_patch = {}
     for k, v in loadedpatch.items():

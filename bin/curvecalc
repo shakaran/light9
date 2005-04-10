@@ -5,7 +5,7 @@ todo: curveview should preserve more objects, for speed maybe
 
 """
 from __future__ import division
-import xmlrpclib,time,socket,sys,textwrap,math,glob,random
+import xmlrpclib,time,socket,sys,textwrap,math,glob,random,os
 from bisect import bisect_left,bisect,bisect_right
 import Tkinter as tk
 from dispatch import dispatcher
@@ -13,14 +13,13 @@ from twisted.internet import reactor,tksupport
 import twisted
 from twisted.web.xmlrpc import Proxy
 
-sys.path.append("../light8")
-import dmxclient
-sys.path.append("../../semprini")
-from lengther import wavelength
-import Submaster
-from TLUtility import make_attributes_from_args
+import run_local
+from light9 import Submaster, dmxclient
+from light9.TLUtility import make_attributes_from_args
+from light9.zoomcontrol import Zoomcontrol
 
-from zoomcontrol import Zoomcontrol
+sys.path.append("../../semprini")
+from lengther import wavelength # for measuring duration of .wav
 
 class Curve:
     """curve does not know its name. see Curveset"""
@@ -486,23 +485,23 @@ class SubtermSetView(tk.Frame):
         if self.cur_col == 0:
             self.cur_row += 1
 
-def add_one_subterm(subname, curveset, subterms, root, expr=''):
+def add_one_subterm(subname, curveset, subterms, root, ssv, expr=''):
     term = Subterm(Submaster.Submaster(subname), Subexpr(curveset,expr))
     subterms.append(term)
 
     stv=Subtermview(ssv,term)
     # stv.pack(side='top',fill='x')
-    global ssv
+
     ssv.add_subtermview(stv)
 
     return term
 
-def subterm_adder(master, curveset, subterms, root):
+def subterm_adder(master, curveset, subterms, root, ssv):
     f=tk.Frame(master,relief='raised',bd=1)
     newname = tk.StringVar()
 
     def add_cmd():
-        add_one_subterm(newname.get(), curveset, subterms, root, '')
+        add_one_subterm(newname.get(), curveset, subterms, root, ssv, '')
 
     tk.Button(f,text="new subterm named:", command=add_cmd).pack(side='left')
     tk.Entry(f,textvariable=newname).pack(side='left',fill='x',exp=1)
@@ -529,18 +528,21 @@ ssv.pack(side='top', fill='x')
 song = sys.argv[1]
 root.title("Curemaster 2000MX - %s" % song)
 
-musicfilename = "/my/music/projects/sharlyn2004/%s.wav" % song
+musicfilename = os.path.join(os.getenv("LIGHT9_SHOW"),'music',
+                             "%s.wav" % song)
 maxtime = wavelength(musicfilename)
 dispatcher.send("max time",maxtime=maxtime)
 dispatcher.connect(lambda: maxtime, "get max time",weak=0)
-curveset.load(basename="curves/"+song)
+curveset.load(basename=os.path.join(os.getenv("LIGHT9_SHOW"),"curves",song))
 
 subterms = []
-subterm_adder(root, curveset, subterms, root).pack(side='top',fill='x')
-for line in file("subterms/"+song):
+subterm_adder(root, curveset, subterms, root, ssv).pack(side='top',fill='x')
+for line in file(os.path.join(os.getenv("LIGHT9_SHOW"),
+                              "subterms",
+                              song)):
     subname,expr = line.strip().split(" ",1)
 
-    term = add_one_subterm(subname, curveset, subterms, root, expr)
+    term = add_one_subterm(subname, curveset, subterms, root, ssv, expr)
     
     # stv=Subtermview(root,term)
     # stv.pack(side='top',fill='x')
@@ -549,7 +551,8 @@ out = Output(subterms)
 
 def savekey(*args):
     print "saving",song
-    savesubterms("subterms/"+song,subterms)
+    savesubterms(os.path.join(os.getenv("LIGHT9_SHOW"),"subterms",song),
+                 subterms)
     curveset.save(basename="curves/"+song)
     print "saved"
 

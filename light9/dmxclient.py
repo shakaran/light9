@@ -6,6 +6,7 @@ client id is formed from sys.argv[0] and the PID.  """
 
 import xmlrpclib,os,sys,socket,time
 from twisted.web.xmlrpc import Proxy
+from light9 import networking
 _dmx=None
 
 _id="%s-%s" % (sys.argv[0].replace('.py','').replace('./',''),os.getpid())
@@ -21,8 +22,7 @@ def outputlevels(levellist,twisted=0,clientid=_id):
     global _dmx,_id
 
     if _dmx is None:
-        host = os.getenv('DMXHOST', 'localhost')
-        url = "http://%s:8030" % host
+        url = networking.dmxServerUrl()
         if not twisted:
             _dmx=xmlrpclib.Server(url)
         else:

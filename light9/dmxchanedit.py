@@ -6,13 +6,16 @@ not actually match what dmxserver is outputting.
 """
 from __future__ import nested_scopes,division
 import Tkinter as tk
-import sys
-sys.path.append("../light8")
-import Patch
-from uihelpers import make_frame, colorlabel, eventtoparent
+import time
+from light9 import Patch
+from light9.uihelpers import make_frame, colorlabel, eventtoparent
 from dispatch import dispatcher
 
+# this font makes each label take 16ms to create, so startup is slow.
+# with default font, each labl takes about .5ms to create.
 stdfont = ('Arial', 12)
+import tkFont
+# see replacement stdfont below
 
 class Onelevel(tk.Frame):
     """a name/level pair"""
@@ -34,14 +37,16 @@ class Onelevel(tk.Frame):
 
         # text description of channel
         self.desc_lab=tk.Label(self, text=Patch.get_channel_name(channelnum),
-                               width=14, font=stdfont, anchor='w',
+                               width=14, font=stdfont,
+                               anchor='w',
                                padx=0, pady=0, bd=0, 
                  height=1, bg='black', fg='white')
         self.desc_lab.pack(side='left')
-        
+
         # current level of channel, shows intensity with color
         self.level_lab = tk.Label(self, width=3, bg='lightBlue',
-                                  font=stdfont, anchor='e', 
+                                  font=stdfont,
+                                  anchor='e', 
                                   padx=1, pady=0, bd=0, height=1)
         self.level_lab.pack(side='left')
 
@@ -108,7 +113,8 @@ class Onelevel(tk.Frame):
 class Levelbox(tk.Frame):
     def __init__(self, parent, num_channels=68):
         tk.Frame.__init__(self,parent)
-
+        global stdfont
+        stdfont = tkFont.Font(size=9)
         self.levels = [] # Onelevel objects
 
         frames = (make_frame(self), make_frame(self))
@@ -120,7 +126,6 @@ class Levelbox(tk.Frame):
 
             self.levels.append(f)
             f.pack(side='top')
-
         #dispatcher.connect(setalevel,"setlevel")
 
     def setlevels(self,newlevels):

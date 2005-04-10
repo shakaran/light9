@@ -30,6 +30,7 @@ from optparse import OptionParser
 import run_local
 from light9.io import ParportDMX
 from light9.updatefreq import Updatefreq
+from light9 import networking
 
 class XMLRPCServe(xmlrpc.XMLRPC):
     def __init__(self,options):
@@ -181,7 +182,8 @@ parser.add_option("-r","--updates-per-sec",type='float',default=20,
 
 print options
 
-print "starting xmlrpc server on port 8030"
-reactor.listenTCP(8030,server.Site(XMLRPCServe(options)))
+port = networking.dmxServerPort()
+print "starting xmlrpc server on port %s" % port
+reactor.listenTCP(port,server.Site(XMLRPCServe(options)))
 reactor.run()
 

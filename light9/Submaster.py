@@ -1,4 +1,5 @@
 from __future__ import division
+import os
 from light9.TLUtility import dict_scale, dict_max
 from light9 import Patch
 
@@ -17,7 +18,8 @@ class Submaster:
             return
         try:
             self.levels.clear()
-            subfile = file("subs/%s" % self.name)
+            subfile = file(os.path.join(os.getenv("LIGHT9_SHOW"),
+                                        "subs",self.name))
             for line in subfile.readlines():
                 if not line.strip(): # if line is only whitespace
                     continue # "did i say newspace?"
@@ -36,7 +38,8 @@ class Submaster:
             print "not saving temporary sub named",self.name
             return
 
-        subfile = file("subs/%s" % self.name, 'w')
+        subfile = file(os.path.join(os.getenv("LIGHT9_SHOW"),
+                                    "subs",self.name), 'w')
         names = self.levels.keys()
         names.sort()
         for name in names:
