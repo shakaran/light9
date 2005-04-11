@@ -107,13 +107,13 @@ class Subexprview(tk.Frame):
         self.subexpr=se
         tk.Frame.__init__(self,master,**kw)
         self.evar = tk.StringVar()
-        e = self.ent = tk.Entry(master,textvariable=self.evar)
-        e.pack(side='left',fill='both',exp=1)
+        e = self.ent = tk.Entry(self,textvariable=self.evar)
+        e.pack(side='left',fill='x',exp=1)
         self.expr_changed()
         self.evar.trace_variable('w',self.evar_changed)
         dispatcher.connect(self.expr_changed,"expr_changed",
                            sender=self.subexpr)
-        self.error = tk.Label(master)
+        self.error = tk.Label(self)
         self.error.pack(side='left')
         dispatcher.connect(lambda exc: self.error.config(text=str(exc)),
                            "expr_error",sender=self.subexpr,weak=0)
