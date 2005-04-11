@@ -1,15 +1,18 @@
+#!/usr/bin/python
+
 from __future__ import division,nested_scopes
 import sys, time
-sys.path.append('..')
-from Widgets.Fadable import Fadable
 
 from twisted.internet import reactor,tksupport
 from twisted.web import xmlrpc, server
 from Tix import *
 import math, atexit, pickle
-from Submaster import Submasters, sub_maxes
-import dmxclient
-from uihelpers import toplevelat
+
+import run_local
+from light9.Fadable import Fadable
+from light9.Submaster import Submasters, sub_maxes
+from light9 import dmxclient
+from light9.uihelpers import toplevelat
 
 nudge_keys = {
     'up' : list('qwertyuiop'),

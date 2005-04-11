@@ -56,6 +56,8 @@ class Submaster:
         self.save()
     def get_levels(self):
         return self.levels
+    def all_zeros(self):
+        return not (max(self.levels.values()) > 0)
     def __mul__(self, scalar):
         return Submaster("%s*%s" % (self.name, scalar), 
             dict_scale(self.levels, scalar), temporary=1)
@@ -70,7 +72,13 @@ class Submaster:
 
         levels = [0] * 68
         for k, v in leveldict.items():
-            dmxchan = Patch.get_dmx_channel(k) - 1
+            if v == 0:
+                continue
+            try:
+                dmxchan = Patch.get_dmx_channel(k) - 1
+            except ValueError:
+                print "error trying to compute dmx levels for submaster %s" % self.name
+                raise
             levels[dmxchan] = max(v, levels[dmxchan])
 
         return levels
@@ -112,16 +120,18 @@ def linear_fade(start, end, amount):
     return level
 
 def sub_maxes(*subs):
-    return Submaster("max(%r)" % (subs,),
-        dict_max(*[sub.levels for sub in subs]), temporary=1)
+    nonzero_subs = [s for s in subs if not s.all_zeros()]
+    name = "max(%s)" % ", ".join([repr(s) for s in nonzero_subs])
+    return Submaster(name,
+                     dict_max(*[sub.levels for sub in nonzero_subs]),
+                     temporary=1)
 
 class Submasters:
     "Collection o' Submaster objects"
     def __init__(self):
         self.submasters = {}
 
-        import os
-        files = os.listdir('subs')
+        files = os.listdir(os.path.join(os.getenv("LIGHT9_SHOW"),'subs'))
 
         for filename in files:
             # we don't want these files
