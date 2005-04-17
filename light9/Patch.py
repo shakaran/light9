@@ -1,4 +1,5 @@
 import os
+from light9 import showconfig
 
 def resolve_name(channelname):
     "Ensure that we're talking about the primary name of the light."

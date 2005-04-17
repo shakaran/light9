@@ -19,7 +19,7 @@ from light9.TLUtility import make_attributes_from_args
 from light9.zoomcontrol import Zoomcontrol
 from light9.curve import Curve, Curveview, Curveset, Curvesetview
 
-sys.path.append("../../semprini")
+sys.path.extend(["../semprini","../../semprini"])
 from lengther import wavelength # for measuring duration of .wav
 
 class Music:
@@ -249,7 +249,7 @@ curveset.load(basename=os.path.join(showconfig.curvesDir(),song))
 
 subterms = []
 subterm_adder(root, curveset, subterms, root, ssv).pack(side='top',fill='x')
-for line in file(showconfig.subtermsForSong()):
+for line in file(showconfig.subtermsForSong(song)):
     subname,expr = line.strip().split(" ",1)
 
     term = add_one_subterm(subname, curveset, subterms, root, ssv, expr)
