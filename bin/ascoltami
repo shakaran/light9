@@ -162,83 +162,126 @@ def buildsonglist(root,songfiles,player):
                 b['bg'] = 'black'
         player.filename_var.trace("w", color_buttons)
     return songlist
+ 
 
-def buildseeker(master,player):
-    seeker=tk.Frame(master,bg='black')
+class Seeker(tk.Frame):
+    """scale AND labels below it"""
+    def __init__(self,master,player):
+        tk.Frame.__init__(self,master,bg='black')
 
-    scl=tk.Scale(seeker, orient="horiz",
-                 from_=-4,to_=100,
-                 sliderlen=20,width=20,
-                 res=0.001,
-                 showvalue=0,
-                 variable=player.current_time,
-                 troughcolor='black',
-                 bg='lightblue3',
-                 )
-    scl.pack(fill='x',side='top')
+        self.scl = scl = tk.Scale(self, orient="horiz",
+                                  from_=-4,to_=100,
+                                  sliderlen=20,width=20,
+                                  res=0.001,
+                                  showvalue=0,
+                                  variable=player.current_time,
+                                  troughcolor='black',
+                                  bg='lightblue3',
+                                  )
+        scl.pack(fill='x',side='top')
 
-    left_var=tk.DoubleVar()
-    for txt,var,fmt in (('Current',player.current_time,"%.2f"),
-                    ('Song len',player.total_time,"%.2f",),
-                    ('Left',left_var, "%.2f"),
-                    ('Song',player.filename_var, "%s"),
-                    ('State', player.state, "%s")):
-        tk.Label(seeker,text=txt,
-                 relief='raised',bd=1,font='arial 9',
-                 **appstyle).pack(side='left')
-        l = tk.Label(seeker,width=7, anchor='w', text=var.get(),
-                 relief='sunken',bd=1,font='arial 12 bold',
-                 bg='#800000',fg='white')
-        if txt == 'Song':
-            l.config(anchor='e')
-        l.pack(side='left',expand=1, fill='x')
+        self.buildstatus(player)
 
-        var.trace_variable('w', lambda a,b,c,l=l,fmt=fmt,var=var: l.config(text=fmt % var.get()))
 
-    # update end time as the song changes
-    player.total_time.trace("w",lambda *args: (
-        scl.config(to_=player.total_time.get()+15)))
+        # dragging the scl changes the player time (which updates the scl)
 
-    def fixleft(*args):
-        # update time-left variable
-        left_var.set(player.total_time.get()-player.current_time.get())
+        # due to mpd having to seemingly play a whole block at every new
+        # seek point, we may want a mode that pauses playback while the
+        # mouse is down (or is moving too fast; or we've sent a seek too
+        # recently)
 
-        if 1: # new dmcc code
+        scl.mouse_state=0
+        def set_mouse_state(evt):
+            scl.mouse_state = evt.state
+        def seeker_cb(time):
+            if scl.mouse_state:
+                player.seek_to(float(time))
+
+        scl.config(command=seeker_cb)
+        scl.bind("<Motion>", set_mouse_state)
+        scl.bind("<B1-Motion>",set_mouse_state)
+
+        def b1down(evt):
+            scl.mouse_state = 1
+        def b1up(evt):
+            scl.mouse_state = 0
+        scl.bind("<ButtonPress-1>", b1down)
+        scl.bind("<ButtonRelease-1>", b1up)
+
+    def buildstatus(self,player):
+        left_var=tk.DoubleVar()
+        for txt,var,fmt in (('Current',player.current_time,"%.2f"),
+                            ('Song len',player.total_time,"%.2f",),
+                            ('Left',left_var, "%.2f"),
+                            ('Song',player.filename_var, "%s"),
+                            ('State', player.state, "%s")):
+            tk.Label(self,text=txt,
+                     relief='raised',bd=1,font='arial 9',
+                     **appstyle).pack(side='left')
+            l = tk.Label(self,width=7, anchor='w', text=var.get(),
+                         relief='sunken',bd=1,font='arial 12 bold',
+                         bg='#800000',fg='white')
+            if txt == 'Song':
+                l.config(anchor='e')
+            l.pack(side='left',expand=1, fill='x')
+
+            var.trace_variable('w',
+                               lambda a,b,c,l=l,fmt=fmt,var=var:
+                               l.config(text=fmt % var.get()))
+
+        # update end time as the song changes
+        player.total_time.trace("w",lambda *args: (
+            self.scl.config(to_=player.total_time.get()+15)))
+
+        def fixleft(*args):
+            # update time-left variable
+            left_var.set(player.total_time.get()-player.current_time.get())
+
             if player.current_time.get() < 0 or left_var.get() < 0:
-                scl['troughcolor'] = 'blue'
+                self.scl['troughcolor'] = 'blue'
             else:
-                scl['troughcolor'] = 'black'
+                self.scl['troughcolor'] = 'black'
 
+        player.total_time.trace("w",fixleft)
+        player.current_time.trace("w",fixleft)
 
-    player.total_time.trace("w",fixleft)
-    player.current_time.trace("w",fixleft)
+class ControlButtons(tk.Frame):
+    def __init__(self,master):
+        tk.Frame.__init__(self,master,bg='black')
+        
+        self.statebuttons = {} # lowercased name : Button
+        for txt,cmd,key in (('Stop', player.stop, "<Control-s>"),
+                            ('Pause', player.play_pause_toggle, "<Control-p>"),
+                            ('Skip Intro',lambda: player.seek_to(-.5), "<Control-i>"),
+                            ):
+            b = tk.Button(self, text=txt, command=cmd, font='arial 16 bold',
+                          height=3,**appstyle)
+            b.pack(side='left', fill='x', expand=1)
+            # keyboard bindings
+            root.bind(key, lambda evt, cmd=cmd: cmd())
+            self.statebuttons[txt.lower()] = b
 
-    # dragging the scl changes the player time (which updates the scl)
+    def update_state_buttons(self,*args):
+        state = player.state.get()
+        print "State", state
 
-    # due to mpd having to seemingly play a whole block at every new
-    # seek point, we may want a mode that pauses playback while the
-    # mouse is down (or is moving too fast; or we've sent a seek too
-    # recently)
+        if state in ('stop', 'pause'):
+            self.statebuttons['pause']['text'] = 'Play'
+        else:
+            self.statebuttons['pause']['text'] = 'Pause'
 
-    scl.mouse_state=0
-    def set_mouse_state(evt):
-        scl.mouse_state = evt.state
-    def seeker_cb(time):
-        if scl.mouse_state:
-            player.seek_to(float(time))
-            
-    scl.config(command=seeker_cb)
-    scl.bind("<Motion>", set_mouse_state)
-    scl.bind("<B1-Motion>",set_mouse_state)
+        colors = {'stop' : 'red',
+                  'play' : 'blue',
+                  'pause' : 'green'} # very confusing -- play and pause supply colors
+                                     # for each other!
+        for name, button in self.statebuttons.items():
+            if name == 'pause' and state not in ('stop', 'pause'):
+                name = 'play'
 
-    def b1down(evt):
-        scl.mouse_state = 1
-    def b1up(evt):
-        scl.mouse_state = 0
-    scl.bind("<ButtonPress-1>", b1down)
-    scl.bind("<ButtonRelease-1>", b1up)
-    
-    return seeker
+            if state == name: # name gets changed sometimes for 'pause' -- see right above
+                button['bg'] = colors.get(name, 'black')
+            else:
+                button['bg'] = 'black'
 
 ############################
         
@@ -256,76 +299,29 @@ root.wm_geometry("656x736+263+0")
 root.config(bg="black")
 player=Player(None,None)
 
-
-songlist=buildsonglist(root,songfiles,player)
+songlist = buildsonglist(root,songfiles,player)
 songlist.pack(fill='both',exp=1)
 
-f2=tk.Frame(bg='black')
-f3=tk.Frame(f2,bg='black')
-statebuttons = {} # lowercased name : Button
-for txt,cmd,key in (('Stop', player.stop, "<Control-s>"),
-                ('Pause', player.play_pause_toggle, "<Control-p>"),
-                ('Skip Intro',lambda: player.seek_to(-.5), "<Control-i>"),
-                ):
-    b = tk.Button(f3,text=txt,command=cmd, font='arial 16 bold', height=3,**appstyle)
-    b.pack(side='left', fill='x', expand=1)
-    # keyboard bindings
-    root.bind(key, lambda evt, cmd=cmd: cmd())
-    statebuttons[txt.lower()] = b
+f2 = tk.Frame(bg='black')
+buts = ControlButtons(f2)
+buts.pack(side='top',fill='x')
 
-f3.pack(side='top',fill='x')
+player.state.trace_variable('w', buts.update_state_buttons)
+buts.update_state_buttons()
 
-def update_state_buttons(*args):
-    global statebuttons
-    state = player.state.get()
-    print "State", state
-
-    if state in ('stop', 'pause'):
-        statebuttons['pause']['text'] = 'Play'
-    else:
-        statebuttons['pause']['text'] = 'Pause'
-
-    colors = {'stop' : 'red',
-              'play' : 'blue',
-              'pause' : 'green'} # very confusing -- play and pause supply colors
-                                 # for each other!
-    for name, button in statebuttons.items():
-        if name == 'pause' and state not in ('stop', 'pause'):
-            name = 'play'
-
-        if state == name: # name gets changed sometimes for 'pause' -- see right above
-            button['bg'] = colors.get(name, 'black')
-        else:
-            button['bg'] = 'black'
-
-player.state.trace_variable('w', update_state_buttons)
-update_state_buttons()
-
-seeker=buildseeker(f2,player)
+seeker = Seeker(f2,player)
 seeker.pack(fill='x',exp=1)
 f2.pack(side='bottom',fill='x')
 
 tksupport.install(root,ms=10)
 
 try:
-  reactor.listenTCP(networking.musicPort(),server.Site(XMLRPCServe(player)))
-  print "started server on %s" % networking.musicPort()
+    reactor.listenTCP(networking.musicPort(),server.Site(XMLRPCServe(player)))
+    print "started server on %s" % networking.musicPort()
 except CannotListenError:
-  print "no server started- %s is in use" % networking.musicPort()
+    print "no server started- %s is in use" % networking.musicPort()
 
 root.bind("<Destroy>",lambda ev: reactor.stop)
 root.protocol('WM_DELETE_WINDOW', reactor.stop)
-
-def func_tracer(frame, event, arg):
-    if event == "call":
-        co = frame.f_code
-        if 'twisted' not in co.co_filename and \
-            'python2.3' not in co.co_filename and \
-            co.co_filename != '<string>':
-            print co.co_filename, co.co_name #, co_firstlineno
-
-    return func_tracer
-
-# sys.settrace(func_tracer)
 
 reactor.run()
