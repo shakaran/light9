@@ -30,7 +30,7 @@ def reload_data():
     global patch, reverse_patch
 
     loc = {}
-    execfile(os.path.join(os.getenv("LIGHT9_SHOW"),"patchdata.py"), loc)
+    execfile(showconfig.patchData(), loc)
     
     loadedpatch = loc['patch']
     patch = {}

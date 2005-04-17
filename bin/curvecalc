@@ -14,7 +14,7 @@ import twisted
 from twisted.web.xmlrpc import Proxy
 
 import run_local
-from light9 import Submaster, dmxclient, networking
+from light9 import Submaster, dmxclient, networking, showconfig
 from light9.TLUtility import make_attributes_from_args
 from light9.zoomcontrol import Zoomcontrol
 from light9.curve import Curve, Curveview, Curveset, Curvesetview
@@ -241,18 +241,15 @@ ssv.pack(side='top', fill='x')
 song = sys.argv[1]
 root.title("Curemaster 2000MX - %s" % song)
 
-musicfilename = os.path.join(os.getenv("LIGHT9_SHOW"),'music',
-                             "%s.wav" % song)
+musicfilename = showconfig.songFilename(song)
 maxtime = wavelength(musicfilename)
 dispatcher.send("max time",maxtime=maxtime)
 dispatcher.connect(lambda: maxtime, "get max time",weak=0)
-curveset.load(basename=os.path.join(os.getenv("LIGHT9_SHOW"),"curves",song))
+curveset.load(basename=os.path.join(showconfig.curvesDir(),song))
 
 subterms = []
 subterm_adder(root, curveset, subterms, root, ssv).pack(side='top',fill='x')
-for line in file(os.path.join(os.getenv("LIGHT9_SHOW"),
-                              "subterms",
-                              song)):
+for line in file(showconfig.subtermsForSong()):
     subname,expr = line.strip().split(" ",1)
 
     term = add_one_subterm(subname, curveset, subterms, root, ssv, expr)
@@ -264,8 +261,7 @@ out = Output(subterms)
 
 def savekey(*args):
     print "saving",song
-    savesubterms(os.path.join(os.getenv("LIGHT9_SHOW"),"subterms",song),
-                 subterms)
+    savesubterms(showconfig.subtermsForSong(song),subterms)
     curveset.save(basename="curves/"+song)
     print "saved"
 

@@ -1,7 +1,7 @@
 from __future__ import division
 import os
 from light9.TLUtility import dict_scale, dict_max
-from light9 import Patch
+from light9 import Patch, showconfig
 
 class Submaster:
     "Contain a dictionary of levels, but you didn't need to know that"
@@ -18,8 +18,7 @@ class Submaster:
             return
         try:
             self.levels.clear()
-            subfile = file(os.path.join(os.getenv("LIGHT9_SHOW"),
-                                        "subs",self.name))
+            subfile = file(showconfig.subFile(self.name))
             for line in subfile.readlines():
                 if not line.strip(): # if line is only whitespace
                     continue # "did i say newspace?"
@@ -38,8 +37,7 @@ class Submaster:
             print "not saving temporary sub named",self.name
             return
 
-        subfile = file(os.path.join(os.getenv("LIGHT9_SHOW"),
-                                    "subs",self.name), 'w')
+        subfile = file(showconfig.subFile(self.name), 'w')
         names = self.levels.keys()
         names.sort()
         for name in names:
@@ -131,7 +129,7 @@ class Submasters:
     def __init__(self):
         self.submasters = {}
 
-        files = os.listdir(os.path.join(os.getenv("LIGHT9_SHOW"),'subs'))
+        files = os.listdir(showconfig.subsDir())
 
         for filename in files:
             # we don't want these files
