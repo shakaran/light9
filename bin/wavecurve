@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+import os, sys, optparse
+import run_local
+from light9.wavepoints import simp
+
+parser = optparse.OptionParser()
+parser.add_option("-t",type="float",default=.01,
+                  help="seconds per sample (default .01, .07 is smooth)")
+options,args = parser.parse_args()
+
+inpath,outpath = args
+
+points = simp(inpath, seconds_per_average=options.t)
+
+f = file(outpath, 'w')
+for time_val in points:
+    print >>f, "%s %s" % time_val
