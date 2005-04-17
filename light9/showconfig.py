@@ -3,11 +3,23 @@ from os import path,getenv
 def root():
     r = getenv("LIGHT9_SHOW")
     if r is None:
-        raise OSError("LIGHT9_SHOW env variable has not been set to the show root")
+        raise OSError(
+            "LIGHT9_SHOW env variable has not been set to the show root")
     return r
 
 def musicDir():
     return path.join(root(),"music")
+
+def songInMpd(song):
+
+    """mpd only works off its own musicroot, which for me is
+    /my/music. song is a file in musicDir; this function returns a
+    version starting with the mpd path, but minus the mpd root itself.
+    the mpc ~/.mpdconf """
+    
+    if 'dance2005' in root():
+        return "projects/dance2005/%s" % song
+    raise NotImplementedError
 
 def curvesDir():
     return path.join(root(),"curves")

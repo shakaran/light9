@@ -109,6 +109,9 @@ class Player:
         reactor.callLater(.05, self.pollStatus)
 
     def play(self, song_path):
+        self.mpd.clear()
+        p = showconfig.songInMpd(song_path)
+        self.mpd.add(p)
         self.mpd.play()
 
     def stop(self):
