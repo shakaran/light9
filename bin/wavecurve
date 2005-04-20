@@ -3,7 +3,7 @@ import os, sys, optparse
 import run_local
 from light9.wavepoints import simp
 
-parser = optparse.OptionParser()
+parser = optparse.OptionParser(usage="%prog inputSong.wav outputCurve")
 parser.add_option("-t",type="float",default=.01,
                   help="seconds per sample (default .01, .07 is smooth)")
 options,args = parser.parse_args()
