@@ -16,10 +16,6 @@ todo:
 
 presong and postsong silence
 
-never continue through playlist. maybe use 1-song mpd playlists?
-
-install pympd, (pypi too)
-
 """
 
 from __future__ import division,nested_scopes
@@ -35,8 +31,6 @@ from twisted.web import xmlrpc, server
 import run_local
 from light9 import networking, showconfig
 
-import sys
-sys.path.append("/home/drewp/projects/pympd")
 from pympd import Mpd
 
 appstyle={'fg':'white','bg':'black'}
@@ -63,10 +57,10 @@ class XMLRPCServe(xmlrpc.XMLRPC):
         return float(self.player.total_time.get())
     def xmlrpc_songname(self):
         """song filename, or None"""
-        return self.player.filename or "No song"
+        return self.player.filename_var.get() or "No song"
 
 class Player:
-    """semprini-style access to mpd"""
+    """semprini-style access to mpd. in here is where we add the padding"""
     
     def __init__(self, app, playlist, media=None):
 
@@ -220,9 +214,10 @@ class Seeker(tk.Frame):
                             ('State', player.state, "%s")):
             tk.Label(self,text=txt,
                      relief='raised',bd=1,font='arial 9',
-                     **appstyle).pack(side='left')
+                     **appstyle).pack(side='left',fill='y')
             l = tk.Label(self,width=7, anchor='w', text=var.get(),
                          relief='sunken',bd=1,font='arial 12 bold',
+                         padx=2,pady=2,
                          bg='#800000',fg='white')
             if txt == 'Song':
                 l.config(anchor='e')
@@ -298,7 +293,7 @@ if len(songfiles)<1:
 
 root=tk.Tk()
 root.wm_title("ascoltami")
-root.wm_geometry("656x736+263+0")
+root.wm_geometry("+263+0")
 root.config(bg="black")
 player=Player(None,None)
 
