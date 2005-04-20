@@ -65,7 +65,7 @@ class Player:
     def __init__(self, app, playlist, media=None):
 
         self.mpd = Mpd()
-        reactor.connectTCP('dash',6600,self.mpd)
+        reactor.connectTCP(*(networking.mpdServer()+(self.mpd,)))
 
         self.state = tk.StringVar()
         self.state.set("stop") # 'stop' 'pause' 'play'
