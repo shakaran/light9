@@ -1,0 +1,24 @@
+# keep the database of submasters, and mix up the current client
+# requests into dmx levels for dmxserver
+
+class SubServe:
+    """call the server with these messages"""
+    
+    def allSubs(self):
+        """list of all the known subs"""
+
+    def output(self,levels):
+        """pass a dict of {sub : level} mappings"""
+
+
+class SubClient:
+    """each client can receive these messages"""
+    
+    def subAdded(self,newsub):
+        """sub was just added to the db"""
+
+    def subRemove(self,pastsub):
+        """this sub is about to be removed from the db"""
+
+    def subChange(self,sub):
+        """this is a new version of an existing sub"""
