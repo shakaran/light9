@@ -14,3 +14,7 @@ def musicUrl():
 
 def musicPort():
     return 8040
+
+def mpdServer():
+    """servername, port"""
+    return 'dash',6600
