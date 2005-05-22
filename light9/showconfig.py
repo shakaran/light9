@@ -1,4 +1,5 @@
 from os import path,getenv
+import ConfigParser
 
 def root():
     r = getenv("LIGHT9_SHOW")
@@ -38,3 +39,8 @@ def subsDir():
 
 def patchData():
     return path.join(root(),"patchdata.py")
+
+def prePostSong():
+    p = ConfigParser.SafeConfigParser()
+    p.read([path.join(root(),'config')])
+    return p.get('music','preSong'), p.get('music','postSong')

@@ -21,7 +21,7 @@ presong and postsong silence
 from __future__ import division,nested_scopes
 
 from optparse import OptionParser
-import os,math
+import os,math,time
 import Tkinter as tk
 
 from twisted.internet import reactor,tksupport
@@ -51,7 +51,7 @@ class XMLRPCServe(xmlrpc.XMLRPC):
         return 'ok'
     def xmlrpc_gettime(self):
         """returns seconds from start of song"""
-        return float(self.player.current_time.get())
+        return float(self.player.smoothCurrentTime())
     def xmlrpc_songlength(self):
         """song length, in seconds"""
         return float(self.player.total_time.get())
@@ -74,45 +74,74 @@ class Player:
         self.total_time = tk.DoubleVar()
         self.filename_var = tk.StringVar()
 
+        self.pre_post_names = showconfig.prePostSong()
+
+        self.last_poll_time = None
+
         self.pollStatus()
-        
+
+
+    def smoothCurrentTime(self):
+        """like self.current_time.get, but more accurate"""
+        if self.last_poll_time and self.state.get() == 'play':
+            dt = time.time() - self.last_poll_time
+        else:
+            dt = 0
+        return self.current_time.get() + dt
+
     def pollStatus(self):
+        if self.state.get() == 'stop':
+            self.current_time.set(-4)
+            
         self.mpd.status().addCallback(self.pollStatus2)
         
-    def pollStatus2(self,stat):
-        for attr1,attr2 in [('state','state'),
-                            ('time_elapsed','current_time'),
-                            ('time_total','total_time')]:
-            if not hasattr(stat,attr1):
-                continue
-            v = getattr(stat,attr1)
-            if getattr(self,attr2).get() != v:
-                getattr(self,attr2).set(v)
-        self.mpd.currentsong().addCallback(self.pollStatus3)
+    def pollStatus2(self, stat):
 
-    def pollStatus3(self,song):
-        if hasattr(song,'file'):
-            self.filename_var.set(song.file)
+        if self.state.get() != stat.state:
+            self.state.set(stat.state)
 
-        # if we're stopped, there will be no file, and the UI will
-        # show a stale filename. that means Play might not play the
-        # indicated file (if another mpd client has changed the song
-        # choice). another method is needed to get the file that is
-        # about to play
-        
+
+        if hasattr(stat, 'time_elapsed'):
+            if stat.song == 1:
+                t = stat.time_elapsed
+            elif stat.song == 0:
+                t = stat.time_elapsed - stat.time_total
+            elif stat.song == 2:
+                t = self.total_time.get() + stat.time_elapsed
+
+            self.current_time.set(t)
+
+            self.last_poll_time = time.time()
+
         reactor.callLater(.05, self.pollStatus)
 
     def play(self, song_path):
         self.mpd.clear()
-        p = showconfig.songInMpd(song_path)
-        self.mpd.add(p)
-        self.mpd.play()
+        self.mpd.add(showconfig.songInMpd(self.pre_post_names[0]))
+        self.mpd.add(showconfig.songInMpd(song_path))
+        self.mpd.add(showconfig.songInMpd(self.pre_post_names[1]))
+        self.filename_var.set(song_path)
+
+        # jump to song 1 to get its total_time
+        self.mpd.seek(seconds=0, song=1)
+        self.mpd.pause()
+        self.mpd.status().addCallback(self.play2)
+
+    def play2(self, stat):
+        self.total_time.set(stat.time_total)
+        self.mpd.seek(seconds=0, song=0)
 
     def stop(self):
+        self.mpd.seek(seconds=0, song=0)
         self.mpd.stop()
         
     def seek_to(self, time):
-        self.mpd.seek(seconds=time)
+        if time < 0:
+            self.mpd.seek(seconds=time - (-4), song=0)
+        elif time > self.total_time.get():
+            self.mpd.seek(seconds=time - self.total_time.get(), song=2)
+        else:
+            self.mpd.seek(seconds=time, song=1)
 
     def play_pause_toggle(self):
         def finish(status):
