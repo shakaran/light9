@@ -322,7 +322,7 @@ if len(songfiles)<1:
 
 root=tk.Tk()
 root.wm_title("ascoltami")
-root.wm_geometry("+263+0")
+root.wm_geometry("+1270+440")
 root.config(bg="black")
 player=Player(None,None)
 

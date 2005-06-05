@@ -179,7 +179,7 @@ def create_status_lines(master):
 def savesubterms(filename,subterms):
     s=""
     for st in subterms:
-        s=s+"%s %s\n" % (st.submaster.name,st.subexpr.expr)
+        s=s+"%s %s\n" % (st.submaster.name, st.subexpr.expr)
     
     file(filename,'w').write(s)
 
