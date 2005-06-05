@@ -17,6 +17,12 @@ stdfont = ('Arial', 12)
 import tkFont
 # see replacement stdfont below
 
+
+def gradient(lev, low=(80,80,180), high=(255,55,50)):
+     out = [int(l+lev*(h-l)) for h,l in zip(high,low)]
+     col="#%02X%02X%02X" % tuple(out)
+     return col
+
 class Onelevel(tk.Frame):
     """a name/level pair"""
     def __init__(self, parent, channelnum):
@@ -82,11 +88,7 @@ class Onelevel(tk.Frame):
         """color the level label based on its own text (which is 0..100)"""
         txt=self.level_lab['text'] or "0"
         lev=float(txt)/100
-        low=(80,80,180)
-        high=(255,55,050)
-        out = [int(l+lev*(h-l)) for h,l in zip(high,low)]
-        col="#%02X%02X%02X" % tuple(out)
-        self.level_lab.config(bg=col)
+        self.level_lab.config(bg=gradient(lev))
 
     def setlevel(self,newlev):
         """the main program is telling us to change our
