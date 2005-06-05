@@ -131,10 +131,15 @@ def open_sub_editing_window(subname, use_mainloop=1, dmxdummy=0):
 if __name__ == "__main__":
     root=tk.Tk()
     root.config(bg='black')
+    root.wm_title("subcomposer")
     root.tk_setPalette("#004633")
 
     sc = Subcomposer(root, dmxdummy=0)
     sc.pack()
+
+    tk.Label(root,text="Bindings: B1 adjust level; B3 instant bump",
+             font="Helvetica -12 italic",anchor='w').pack(side='top',fill='x')
+    
 
     while 1:
         if 0:
