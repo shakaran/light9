@@ -250,7 +250,11 @@ curveset.load(basename=os.path.join(showconfig.curvesDir(),song))
 subterms = []
 subterm_adder(root, curveset, subterms, root, ssv).pack(side='top',fill='x')
 for line in file(showconfig.subtermsForSong(song)):
-    subname,expr = line.strip().split(" ",1)
+    try:
+        subname,expr = line.strip().split(" ",1)
+    except ValueError:
+        subname = line.strip()
+        expr = ""
 
     term = add_one_subterm(subname, curveset, subterms, root, ssv, expr)
     
@@ -262,7 +266,7 @@ out = Output(subterms)
 def savekey(*args):
     print "saving",song
     savesubterms(showconfig.subtermsForSong(song),subterms)
-    curveset.save(basename="curves/"+song)
+    curveset.save(basename=os.path.join(showconfig.curvesDir(),song))
     print "saved"
 
     
@@ -283,7 +287,7 @@ def update():
     d.addErrback(updateerr)
 def updateerr(e):
     global later
-    print "err",e
+    print "Update error",e
     if later and not later.cancelled and not later.called: later.cancel()
     later = reactor.callLater(1,update)
 def update2(t):

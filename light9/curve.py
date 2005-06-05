@@ -246,7 +246,7 @@ class Curveset:
         """find all files that look like basename-curvename and add
         curves with their contents"""
         for filename in glob.glob("%s-*"%basename):
-            curvename = filename[filename.find('-')+1:]
+            curvename = filename[filename.rfind('-')+1:]
             c=Curve()
             c.load(filename)
             curvename = curvename.replace('-','_')

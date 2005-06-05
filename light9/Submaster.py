@@ -54,8 +54,8 @@ class Submaster:
         self.save()
     def get_levels(self):
         return self.levels
-    def all_zeros(self):
-        return not (max(self.levels.values()) > 0)
+    def no_nonzero(self):
+        return (not self.levels.values()) or not (max(self.levels.values()) > 0)
     def __mul__(self, scalar):
         return Submaster("%s*%s" % (self.name, scalar), 
             dict_scale(self.levels, scalar), temporary=1)
@@ -118,7 +118,7 @@ def linear_fade(start, end, amount):
     return level
 
 def sub_maxes(*subs):
-    nonzero_subs = [s for s in subs if not s.all_zeros()]
+    nonzero_subs = [s for s in subs if not s.no_nonzero()]
     name = "max(%s)" % ", ".join([repr(s) for s in nonzero_subs])
     return Submaster(name,
                      dict_max(*[sub.levels for sub in nonzero_subs]),
