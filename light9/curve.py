@@ -7,6 +7,7 @@ from dispatch import dispatcher
 import run_local
 from light9 import Submaster, dmxclient, networking
 from light9.TLUtility import make_attributes_from_args
+from light9.dmxchanedit import gradient
 
 class Curve:
     """curve does not know its name. see Curveset"""
@@ -113,9 +114,19 @@ class Curveview(tk.Canvas):
         
         self.delete('curve')
 
+        for x in range(0,self.winfo_width(),3):
+            wx = self.world_from_screen(x,0)[0]
+            mag = self.curve.eval(wx)
+            self.create_line(x,0, x,70,
+                             fill=gradient(mag,
+                                           low=(20,10,50),
+                                           high=(255,187,255)),
+                             width=3, tags='curve')
+
+
         self._draw_markers(visible_x)
         
-        self._draw_line(visible_idxs,visible_points)
+        self._draw_line(visible_points)
         
         self.dots = {} # idx : canvas rectangle
 
@@ -146,7 +157,7 @@ class Curveview(tk.Canvas):
                          tags=('curve',))
 
 
-    def _draw_line(self,visible_idxs,visible_points):
+    def _draw_line(self,visible_points):
         linepts=[]
         step=1
         linewidth=2
