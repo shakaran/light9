@@ -76,11 +76,13 @@ class Zoomcontrol(object,tk.Canvas):
         self.updatewidget()
         dispatcher.send("zoom changed")
     def see_time(self,t):
-        margin = (self.end-self.start)*.5 # centering is nicest
-        if t<self.start:
-            self.offset-=(self.start-t)+margin
-        if t>self.end:
-            self.offset+=(t-self.end)+margin
+        vis_seconds = self.end - self.start
+        margin = vis_seconds * .9 # left side is nicest
+        if t < self.start:
+            self.offset -= (self.start - t) + margin
+        # t doesn't have to be ALL the way off-screen
+        if t > (self.end - vis_seconds * .3): 
+            self.offset += (t - self.end) + margin
         self.updatewidget()
         dispatcher.send("zoom changed")
             
