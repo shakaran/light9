@@ -163,9 +163,9 @@ def buildsonglist(root,songfiles,player):
     for i,sf in enumerate(songfiles):
         b=tk.Button(songlist,text=sf[prefixlen:],width=maxsfwidth,
                     anchor='w',pady=0,bd=0,relief='flat',
-                    font="arial 17 bold")
+                    font="arial 14 bold")
         b.bind("<Configure>",lambda ev,b=b:
-               b.config(font="arial %d bold" % min(15,int((ev.height-3)*.8))))
+               b.config(font="arial %d bold" % min(12,int((ev.height-3)*.8))))
         try:
             # rainbow colors
             frac=i/len(songfiles)
@@ -319,10 +319,11 @@ parser=OptionParser()
 if len(songfiles)<1:
     songfiles = [f for f in os.listdir(showconfig.musicDir())
                  if f.endswith('wav')]
+    songfiles.sort()
 
 root=tk.Tk()
 root.wm_title("ascoltami")
-root.wm_geometry("+1270+440")
+#root.wm_geometry("+1270+440")
 root.config(bg="black")
 player=Player(None,None)
 
