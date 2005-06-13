@@ -72,8 +72,8 @@ class Stage(Canvas):
         img = Image('photo',file=stageimage)
         self.img=img # can't lose this!
         # print img.width()
-#        self.create_image(0,0,anchor='nw',image=img)
-#        self.config(width=img.width(),height=img.height())
+        self.create_image(0,0,anchor='nw',image=img)
+        self.config(width=img.width(),height=img.height())
 
         # we had the picture removed for good luck, but we remember
         # what the dimensions formerly was
