@@ -5,7 +5,7 @@ todo: curveview should preserve more objects, for speed maybe
 
 """
 from __future__ import division
-import xmlrpclib,time,socket,sys,textwrap,math,glob,random,os
+import xmlrpclib,time,socket,sys,textwrap,math,glob,random,os,optparse
 from bisect import bisect_left,bisect,bisect_right
 import Tkinter as tk
 from dispatch import dispatcher
@@ -169,6 +169,7 @@ def create_status_lines(master):
                                                  levels.items()[:5]
                                                  if v>0]),70)),
         ('update period',lambda t: "%.1fms"%(t*1000)),
+        ('update status',lambda t: str(t)),
         ]:
         l = tk.Label(master,anchor='w',justify='left')
         l.pack(side='top',fill='x')
@@ -226,6 +227,14 @@ root.tk_setPalette("gray50")
 root.wm_geometry("1120x850")
 root.tk_focusFollowsMouse()
 
+parser = optparse.OptionParser()
+options,args = parser.parse_args()
+
+try:
+    song = args[0]
+except IndexError:
+    raise SystemExit("song name is required, e.g. '05-mix'")
+
 music=Music()
 
 zc = Zoomcontrol(root)
@@ -238,7 +247,6 @@ csv.pack(side='top',fill='both',exp=1)
 ssv = SubtermSetView(root)
 ssv.pack(side='top', fill='x')
 
-song = sys.argv[1]
 root.title("Curemaster 2000MX - %s" % song)
 
 musicfilename = showconfig.songFilename(song)
@@ -287,12 +295,13 @@ def update():
     d.addErrback(updateerr)
 def updateerr(e):
     global later
-    print "Update error",e
+    dispatcher.send("update status",val=e.getErrorMessage())
     if later and not later.cancelled and not later.called: later.cancel()
     later = reactor.callLater(1,update)
 def update2(t):
     global recent_t,later
-
+    dispatcher.send("update status",
+                    val="ok: receiving times from music player")
     if later and not later.cancelled and not later.called: later.cancel()
     later = reactor.callLater(.01,update)
 
