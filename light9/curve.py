@@ -49,6 +49,87 @@ class Curve:
         self.points.insert(i,new_pt)
     __call__=eval
 
+class RegionZoom:
+    """rigs c-a-b1 to drag out an area to zoom to."""
+    def __init__(self, canvas, world_from_screen, screen_from_world):
+        self.canvas, self.world_from_screen = canvas, world_from_screen
+        self.screen_from_world = screen_from_world
+
+        for evtype, method in [("ButtonPress-1",self.press),
+                               ("Motion",self.motion),
+                               ("ButtonRelease",self.release)]:
+            canvas.bind("<Control-Alt-%s>" % evtype, method)
+            if evtype != "ButtonPress-1":
+                canvas.bind("<%s>" % evtype, method)
+        canvas.bind("<Leave>", self.finish)
+        self.start_t = None
+
+    def press(self,ev):
+        if self.start_t is not None:
+            self.finish()
+            
+        self.start_t = self.end_t = self.world_from_screen(ev.x,0)[0]
+        self.start_x = ev.x
+        can = self.canvas
+
+        for pos in ('start_t','end_t','hi','lo'):
+            can.create_line(0,0,50,50, width=3, fill='black',
+                            tags=("regionzoom",pos))
+        # if updatelines isn't called here, subsequent updatelines
+        # will fail for reasons i don't understand
+        self.updatelines()
+
+        self.old_cursor = can.cget("cursor")
+        #xcursorgen
+        can.config(cursor="@/home/drewp/projects/light9/cout red")
+        
+    def updatelines(self):
+        can = self.canvas
+        pos_x = {}
+        height = can.winfo_height()
+        for pos in ('start_t', 'end_t'):
+            pos_x[pos] = x = self.screen_from_world((getattr(self,pos),0))[0]
+            cid = can.find_withtag("regionzoom && %s" % pos)
+            can.coords(cid, x, 0, x, height)
+            
+        for tag,frac in [('hi',.1),('lo',.9)]:
+            cid = can.find_withtag("regionzoom && %s" % tag)
+            can.coords(cid, pos_x['start_t'], frac * height,
+                       pos_x['end_t'], frac * height)
+
+    def motion(self,ev):
+        if self.start_t is None:
+            return
+
+        self.end_t = self.world_from_screen(ev.x,0)[0]
+        self.updatelines()
+
+    def release(self,ev):
+        if self.start_t is None:
+            return
+        
+        if abs(self.start_x - ev.x) < 10:
+            # clicked
+            factor = 1/1.5
+            if ev.state & 1:
+                factor = 1.5 # c-s-a-b1 zooms out
+            dispatcher.send("zoom about mouse",
+                            t=self.start_t,
+                            factor=factor)
+
+            self.finish()
+            return
+            
+        dispatcher.send("zoom to range",
+                        start=min(self.start_t, self.end_t),
+                        end=max(self.start_t, self.end_t))
+        self.finish()
+        
+    def finish(self, *ev):
+        self.canvas.delete("regionzoom")
+        self.start_t = None
+        self.canvas.config(cursor=self.old_cursor)
+
 class Curveview(tk.Canvas):
     def __init__(self,master,curve,**kw):
         self.curve=curve
@@ -80,6 +161,8 @@ class Curveview(tk.Canvas):
         self.bind("<Key-Escape>",lambda ev:
                   dispatcher.send("see time",
                                   t=self.current_time()))
+        RegionZoom(self, self.world_from_screen, self.screen_from_world)
+
     def current_time(self):
         return self._time
 
@@ -114,24 +197,27 @@ class Curveview(tk.Canvas):
         
         self.delete('curve')
 
-        for x in range(0,self.winfo_width(),3):
+        if self.winfo_height() < 30:
+            self._draw_gradient()
+        else:
+            self._draw_markers(visible_x)
+            self._draw_line(visible_points)
+
+            self.dots = {} # idx : canvas rectangle
+
+            if len(visible_points)<50:
+                self._draw_handle_points(visible_idxs,visible_points)
+
+    def _draw_gradient(self):
+        gradient_res = 3
+        for x in range(0,self.winfo_width(),gradient_res):
             wx = self.world_from_screen(x,0)[0]
             mag = self.curve.eval(wx)
             self.create_line(x,0, x,70,
                              fill=gradient(mag,
                                            low=(20,10,50),
                                            high=(255,187,255)),
-                             width=3, tags='curve')
-
-
-        self._draw_markers(visible_x)
-        
-        self._draw_line(visible_points)
-        
-        self.dots = {} # idx : canvas rectangle
-
-        if len(visible_points)<50:
-            self._draw_handle_points(visible_idxs,visible_points)
+                             width=gradient_res, tags='curve')
 
     def _draw_markers(self,visible_x):
         mark = self._draw_one_marker

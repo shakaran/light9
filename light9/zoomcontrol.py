@@ -11,19 +11,26 @@ class Zoomcontrol(object,tk.Canvas):
         def fget(self): return self._maxtime
         def fset(self, value):
             self._maxtime = value
-            self.updatewidget()
+            self.redrawzoom()
         return locals()
     maxtime = property(**maxtime())
-    
+
+    _end = _start = 0
     def start():
         def fget(self): return self._start
-        def fset(self,v): self._start = max(self.mintime,v)
+        def fset(self,v):
+            v = max(self.mintime,v)
+            if v < self._end:
+                self._start = v
         return locals()
     start = property(**start())
 
     def end():
         def fget(self): return self._end
-        def fset(self,v): self._end = min(self.maxtime,v)
+        def fset(self,v):
+            v = min(self.maxtime,v)
+            if v > self._start:
+                self._end = v
         return locals()
     end = property(**end())
         
@@ -38,8 +45,8 @@ class Zoomcontrol(object,tk.Canvas):
         self.rightbrack = self.create_line(0,0,0,0,0,0,0,0,width=5)
         self.shade = self.create_rectangle(0,0,0,0,fill='gray70',outline=None)
         self.time = self.create_line(0,0,0,0,fill='red',width=2)
-        self.updatewidget()
-        self.bind("<Configure>",self.updatewidget)
+        self.redrawzoom()
+        self.bind("<Configure>",self.redrawzoom)
 
         if 0:
             # works, but you have to stay in the widget while you drag
@@ -65,16 +72,22 @@ class Zoomcontrol(object,tk.Canvas):
         dispatcher.connect(lambda: (self.start,self.end),"zoom area",weak=0)
         dispatcher.connect(self.input_time,"input time")
         dispatcher.connect(lambda maxtime: (setattr(self,'maxtime',maxtime+15),
-                                            self.updatewidget()),
+                                            self.redrawzoom()),
                            "max time",weak=0)
         dispatcher.connect(self.zoom_about_mouse,"zoom about mouse")
         dispatcher.connect(self.see_time,"see time")
+        dispatcher.connect(self.zoom_to_range,"zoom to range")
         self.created=1
+    def zoom_to_range(self,start,end):
+        self.start = start
+        self.end = end
+        self.redrawzoom()
+
     def zoom_about_mouse(self,t,factor):
         self.start = t - factor*(t-self.start)
         self.end = t + factor*(self.end-t)
-        self.updatewidget()
-        dispatcher.send("zoom changed")
+        self.redrawzoom()
+
     def see_time(self,t):
         vis_seconds = self.end - self.start
         margin = vis_seconds * .9 # left side is nicest
@@ -83,8 +96,7 @@ class Zoomcontrol(object,tk.Canvas):
         # t doesn't have to be ALL the way off-screen
         if t > (self.end - vis_seconds * .3): 
             self.offset += (t - self.end) + margin
-        self.updatewidget()
-        dispatcher.send("zoom changed")
+        self.redrawzoom()
             
     def input_time(self,val):
         t=val
@@ -107,8 +119,7 @@ class Zoomcontrol(object,tk.Canvas):
         new = self.can_for_t(getattr(self,attr)) + (ev.x - self.lastx)
         self.lastx = ev.x
         setattr(self,attr,self.t_for_can(new))
-        self.updatewidget()
-        dispatcher.send("zoom changed")
+        self.redrawzoom()
         
     def offset():
         doc = "virtual attr that adjusts start and end together"
@@ -126,8 +137,9 @@ class Zoomcontrol(object,tk.Canvas):
     def t_for_can(self,x):
         return (x-20)/(self.winfo_width()-30)*(self.maxtime-self.mintime)+self.mintime
 
-    def updatewidget(self,*args):
+    def redrawzoom(self,*args):
         """redraw pieces based on start/end"""
+        dispatcher.send("zoom changed")
         if not hasattr(self,'created'): return
         y1,y2=3,self.winfo_height()-3
         lip = 6
@@ -149,3 +161,4 @@ class Zoomcontrol(object,tk.Canvas):
                 self.create_text(x,self.winfo_height()-1,anchor='s',
                                  text=txt,tags=('tics',),font='6x13')
                 lastx = x
+
