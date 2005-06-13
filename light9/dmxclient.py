@@ -48,6 +48,6 @@ def outputlevels(levellist,twisted=0,clientid=_id):
 dummy = os.getenv('DMXDUMMY')
 if dummy:
     print "dmxclient: DMX is in dummy mode."
-    def bogus(*args):
+    def bogus(*args,**kw):
         pass
     outputlevels = bogus
