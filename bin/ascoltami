@@ -137,6 +137,9 @@ class Player:
 
         reactor.callLater(.05, self.pollStatus)
 
+    def set_total_time(self, song_path):
+        raise NotImplementedError("get lengther.py from semprini")
+
     def play(self, song_path):
     
         self.autopausedthissong = False
@@ -146,13 +149,14 @@ class Player:
         self.mpd.add(showconfig.songInMpd(self.pre_post_names[1]))
         self.filename_var.set(song_path)
 
-        # jump to song 1 to get its total_time
-        self.mpd.seek(seconds=0, song=1)
-        self.mpd.pause()
-        self.mpd.status().addCallback(self.play2)
+        self.set_total_time(song_path)
+##         # jump to song 1 to get its total_time
+##         self.mpd.seek(seconds=0, song=1)
+##         self.mpd.pause()
+##         self.mpd.status().addCallback(self.play2)
 
-    def play2(self, stat):
-        self.total_time.set(stat.time_total)
+##     def play2(self, stat):
+##         self.total_time.set(stat.time_total)
         self.mpd.seek(seconds=0, song=0)
 
     def check_autopause(self):
