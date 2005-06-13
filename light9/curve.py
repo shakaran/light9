@@ -5,7 +5,7 @@ import Tkinter as tk
 from dispatch import dispatcher
 
 import run_local
-from light9 import Submaster, dmxclient, networking
+from light9 import Submaster, dmxclient, networking, cursors
 from light9.TLUtility import make_attributes_from_args
 from light9.dmxchanedit import gradient
 
@@ -57,16 +57,18 @@ class RegionZoom:
 
         for evtype, method in [("ButtonPress-1",self.press),
                                ("Motion",self.motion),
-                               ("ButtonRelease",self.release)]:
+                               ("ButtonRelease-1",self.release)]:
             canvas.bind("<Control-Alt-%s>" % evtype, method)
             if evtype != "ButtonPress-1":
                 canvas.bind("<%s>" % evtype, method)
         canvas.bind("<Leave>", self.finish)
-        self.start_t = None
+        self.start_t = self.old_cursor = None
+        self.state = None
 
     def press(self,ev):
-        if self.start_t is not None:
+        if self.state is not None:
             self.finish()
+        self.state = "buttonpress"
             
         self.start_t = self.end_t = self.world_from_screen(ev.x,0)[0]
         self.start_x = ev.x
@@ -79,11 +81,12 @@ class RegionZoom:
         # will fail for reasons i don't understand
         self.updatelines()
 
-        self.old_cursor = can.cget("cursor")
-        #xcursorgen
-        can.config(cursor="@/home/drewp/projects/light9/cout red")
+        cursors.push(can, "@/home/drewp/projects/light9/cursor1.xbm")
         
     def updatelines(self):
+
+        # better would be a gray25 rectangle over the region
+        
         can = self.canvas
         pos_x = {}
         height = can.winfo_height()
@@ -98,14 +101,14 @@ class RegionZoom:
                        pos_x['end_t'], frac * height)
 
     def motion(self,ev):
-        if self.start_t is None:
+        if self.state != "buttonpress":
             return
 
         self.end_t = self.world_from_screen(ev.x,0)[0]
         self.updatelines()
 
     def release(self,ev):
-        if self.start_t is None:
+        if self.state != "buttonpress":
             return
         
         if abs(self.start_x - ev.x) < 10:
@@ -126,9 +129,11 @@ class RegionZoom:
         self.finish()
         
     def finish(self, *ev):
-        self.canvas.delete("regionzoom")
-        self.start_t = None
-        self.canvas.config(cursor=self.old_cursor)
+        if self.state is not None:
+            self.state = None
+            self.canvas.delete("regionzoom")
+            self.start_t = None
+            cursors.pop(self.canvas)
 
 class Curveview(tk.Canvas):
     def __init__(self,master,curve,**kw):
