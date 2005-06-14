@@ -142,7 +142,10 @@ class Player:
         p = os.path.join(showconfig.musicDir(), song_path)
         self.total_time.set(wavelength.wavelength(p))
 
-    def play(self, song_path):
+    def play(self, song_path=None):
+        if song_path is None:
+            self.mpd.play()
+            return
     
         self.autopausedthissong = False
         self.mpd.clear()
@@ -184,6 +187,9 @@ class Player:
                 self.mpd.play()
         self.mpd.status().addCallback(finish)
 
+    def pause(self): self.mpd.pause()
+    def is_playing(self): return self.state.get() == "play"
+
 
 def buildsonglist(root,songfiles,player):
     songlist=tk.Frame(root,bd=2,relief='raised',bg='black')
@@ -223,24 +229,18 @@ def buildsonglist(root,songfiles,player):
     return songlist
  
 
-class Seeker(tk.Frame):
-    """scale AND labels below it"""
+class TimeScale(tk.Scale):
     def __init__(self,master,player):
-        tk.Frame.__init__(self,master,bg='black')
-
-        self.scl = scl = tk.Scale(self, orient="horiz",
-                                  from_=-4,to_=100,
-                                  sliderlen=20,width=20,
-                                  res=0.001,
-                                  showvalue=0,
-                                  variable=player.current_time,
-                                  troughcolor='black',
-                                  bg='lightblue3',
-                                  )
-        scl.pack(fill='x',side='top')
-
-        self.buildstatus(player)
-
+        self.player = player
+        tk.Scale.__init__(self, master, orient="horiz",
+                          from_=-4,to_=100,
+                          sliderlen=20,width=20,
+                          res=0.001,
+                          showvalue=0,
+                          variable=player.current_time,
+                          troughcolor='black',
+                          bg='lightblue3',
+                          )
 
         # dragging the scl changes the player time (which updates the scl)
 
@@ -249,23 +249,57 @@ class Seeker(tk.Frame):
         # mouse is down (or is moving too fast; or we've sent a seek too
         # recently)
 
-        scl.mouse_state=0
-        def set_mouse_state(evt):
-            scl.mouse_state = evt.state
-        def seeker_cb(time):
-            if scl.mouse_state:
-                player.seek_to(float(time))
+        self.dragging = False
+        self.just_started_dragging = False
+        self.player_state = None
 
-        scl.config(command=seeker_cb)
-        scl.bind("<Motion>", set_mouse_state)
-        scl.bind("<B1-Motion>",set_mouse_state)
+        self.config(command=self.seeker_cb)
+        self.bind("<Motion>", self.set_mouse_state)
+        self.bind("<B1-Motion>", self.set_mouse_state)
+        self.bind("<ButtonPress-1>", self.b1down)
+        self.bind("<ButtonRelease-1>", self.b1up)
 
-        def b1down(evt):
-            scl.mouse_state = 1
-        def b1up(evt):
-            scl.mouse_state = 0
-        scl.bind("<ButtonPress-1>", b1down)
-        scl.bind("<ButtonRelease-1>", b1up)
+    def set_mouse_state(self,evt):
+        pass#self.dragging = True
+
+    def b1down(self,evt):
+        self.just_started_dragging = True
+
+    def b1up(self,evt):
+        self.dragging = False
+        self.player.seek_to(float(self.newtime))
+        if self.player_state == "play":
+            self.player.play()
+        self.config(variable=player.current_time)
+
+    def seeker_cb(self, time):
+        if self.just_started_dragging:
+            self.just_started_dragging = False
+            self.player_state = self.player.state.get()
+            if self.player_state == "play":
+                player.pause()
+            self.config(variable=tk.DoubleVar())
+
+        self.newtime = time
+
+        if self.player_state != "play":
+            # ok to seek around when paused. this keeps the displayed time 
+            # up to date, which is how the user knows where he is
+            self.player.seek_to(float(self.newtime))
+
+
+        
+
+class Seeker(tk.Frame):
+    """includes scale AND labels below it"""
+    def __init__(self,master,player):
+        tk.Frame.__init__(self,master,bg='black')
+
+        self.scl = TimeScale(self,player)
+        self.scl.pack(fill='x',side='top')
+
+        self.buildstatus(player)
+
 
     def buildstatus(self,player):
         left_var=tk.DoubleVar()
