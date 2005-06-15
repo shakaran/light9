@@ -84,7 +84,8 @@ class AbstractSimpleController(SubClient):
 
 class TkGyro(Tk.Canvas, AbstractSimpleController):
     def __init__(self, master, subnames):
-        Tk.Canvas.__init__(self, master, bg='black', bd=0, highlightthickness=0)
+        Tk.Canvas.__init__(self, master, bg='black', bd=0, highlightthickness=0,
+            confine=None)
         AbstractSimpleController.__init__(self, subnames)
         self.send_levels_loop()
     def pack(self, *args, **kw):
@@ -98,7 +99,7 @@ class TkGyro(Tk.Canvas, AbstractSimpleController):
 
         self.modetext = self.create_text((width / 2, height / 2), 
             font='Courier 200', fill='white', text=self.keep_solo_mode,
-            tags='middle')
+            tags='middle', state='disabled')
         self.flashtextafter = ''
 
         def setfill(item, color):
@@ -110,8 +111,8 @@ class TkGyro(Tk.Canvas, AbstractSimpleController):
                 self.current_level = y
                 self.send_levels()
 
-        data = ((self.left, 'left', '#000077', self.prev), 
-                (self.right, 'right', '#770000', self.next))
+        data = ((self.left, 'left', '#000099', self.prev), 
+                (self.right, 'right', '#990000', self.next))
         for item, tag, color, method in data:
             self.tag_bind(tag, '<Enter>', 
                 lambda evt, item=item, color=color: setfill(item, color))
@@ -127,15 +128,6 @@ class TkGyro(Tk.Canvas, AbstractSimpleController):
             self.tag_bind(tag, '<Button-3>', 
                 lambda evt: self.toggle_keep_mode())
             self.tag_bind(tag, '<Double-Button-2>', 
-                lambda evt: self.clear_kept_levels())
-
-            # TODO: the text should pass Enter, Leave, and button-1 events
-            # to the rectangle under it
-
-            self.tag_bind('middle', '<Motion>', setlevel, '+')
-            self.tag_bind('middle', '<Button-3>', 
-                lambda evt: self.toggle_keep_mode())
-            self.tag_bind('middle', '<Double-Button-2>', 
                 lambda evt: self.clear_kept_levels())
     def toggle_keep_mode(self):
         AbstractSimpleController.toggle_keep_mode(self)
