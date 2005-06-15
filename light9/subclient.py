@@ -2,6 +2,8 @@ from light9 import dmxclient
 
 # later, this stuff will talk to a SubServer
 class SubClient:
+    def __init__(self):
+        pass # we may later need init code for network setup
     def get_levels_as_sub(self):
         """Subclasses must implement this method and return a Submaster
         object."""

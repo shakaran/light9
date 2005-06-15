@@ -2,7 +2,7 @@
 # vi: syntax=python
 
 import run_local
-from light9.Submaster import combine_subdict
+from light9.Submaster import Submasters, combine_subdict
 from light9.subclient import SubClient
 
 class circcycle:
@@ -19,11 +19,11 @@ class circcycle:
         self.index = (self.index + delta) % len(self.sequence)
     def next(self):
         ret = self.sequence[self.index]
-        self._change_index(1)
+        self.change_index(1)
         return ret
     def prev(self):
         ret = self.sequence[self.index]
-        self._change_index(-1)
+        self.change_index(-1)
         return ret
 
 class AbstractSimpleController(SubClient):
