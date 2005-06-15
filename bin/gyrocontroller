@@ -5,6 +5,9 @@ import run_local
 from light9.Submaster import Submasters, combine_subdict
 from light9.subclient import SubClient
 
+import Tix as Tk
+
+# TODO: move to Utility?
 class circcycle:
     """Like itertools.cycle, but with a prev() method too.  You lose
     all iterator benefits by using this, since it will store the whole
@@ -12,19 +15,23 @@ class circcycle:
     iterator, as it tuple'ifies the input."""
     def __init__(self, sequence):
         self.sequence = tuple(sequence)
-        self.index = 0
+        self.index = None
     def __iter__(self):
         return self
     def change_index(self, delta):
-        self.index = (self.index + delta) % len(self.sequence)
+        if self.index is None:
+            if delta > 0:
+                self.index = (-1 + delta) % len(self.sequence)
+            elif delta < 0:
+                self.index = delta % len(self.sequence)
+        else:
+            self.index = (self.index + delta) % len(self.sequence)
     def next(self):
-        ret = self.sequence[self.index]
         self.change_index(1)
-        return ret
+        return self.sequence[self.index]
     def prev(self):
-        ret = self.sequence[self.index]
         self.change_index(-1)
-        return ret
+        return self.sequence[self.index]
 
 class AbstractSimpleController(SubClient):
     """Simple controller with minimal input and output:
@@ -44,7 +51,7 @@ class AbstractSimpleController(SubClient):
         # reload subs from disk
         self.submasters = Submasters()
         self.all_subs = circcycle(self.subnames)
-        self.current_sub = self.all_subs.next()
+        self.current_sub = self.submasters.get_sub_by_name(self.all_subs.next())
         self.current_level = 1.0
         self.kept_levels = {} # subname : level [0..1]
         self.keep_solo_mode = 'keep' # either 'keep' or 'solo'
@@ -60,6 +67,11 @@ class AbstractSimpleController(SubClient):
             self.kept_levels[self.current_sub] = self.current_level
 
         self.current_sub = self.submasters.get_sub_by_name(self.all_subs.prev())
+    def toggle_keep_mode(self):
+        if self.keep_solo_mode == 'keep':
+            self.keep_solo_mode = 'solo'
+        else:
+            self.keep_solo_mode = 'keep'
 
     def get_levels_as_sub(self):
         if self.keep_solo_mode == 'keep':
@@ -70,8 +82,104 @@ class AbstractSimpleController(SubClient):
 
         return levelsub
 
+class TkGyro(Tk.Canvas, AbstractSimpleController):
+    def __init__(self, master, subnames):
+        Tk.Canvas.__init__(self, master, bg='black', bd=0, highlightthickness=0)
+        AbstractSimpleController.__init__(self, subnames)
+        self.send_levels_loop()
+    def pack(self, *args, **kw):
+        Tk.Canvas.pack(self, *args, **kw)
+        height = int(self.winfo_screenheight())
+        width = int(self.winfo_screenwidth())
+        self.left = self.create_rectangle((0, 0, width / 2, height),
+            tags='left', fill='black')
+        self.right = self.create_rectangle((width / 2, 0, width, height),
+            tags='right', fill='black')
+
+        self.modetext = self.create_text((width / 2, height / 2), 
+            font='Courier 200', fill='white', text=self.keep_solo_mode,
+            tags='middle')
+        self.flashtextafter = ''
+
+        def setfill(item, color):
+            self.itemconfig(item, fill=color)
+        def setlevel(evt):
+            if evt.state & 512:
+                y = (height - evt.y) / float(height)
+                self.flash_text('<%d>' % (y * 100))
+                self.current_level = y
+                self.send_levels()
+
+        data = ((self.left, 'left', '#000077', self.prev), 
+                (self.right, 'right', '#770000', self.next))
+        for item, tag, color, method in data:
+            self.tag_bind(tag, '<Enter>', 
+                lambda evt, item=item, color=color: setfill(item, color))
+            self.tag_bind(tag, '<Leave>', 
+                lambda evt, item=item, color=color: setfill(item, 'black'))
+            self.tag_bind(tag, '<ButtonPress-1>', 
+                lambda evt, item=item, color=color: setfill(item, 'green'), '+')
+            self.tag_bind(tag, '<ButtonRelease-1>', 
+                lambda evt, item=item, color=color: setfill(item, color), '+')
+            self.tag_bind(tag, '<Button-1>', 
+                lambda evt, method=method: method(), '+')
+            self.tag_bind(tag, '<Motion>', setlevel, '+')
+            self.tag_bind(tag, '<Button-3>', 
+                lambda evt: self.toggle_keep_mode())
+            self.tag_bind(tag, '<Double-Button-2>', 
+                lambda evt: self.clear_kept_levels())
+
+            # TODO: the text should pass Enter, Leave, and button-1 events
+            # to the rectangle under it
+
+            self.tag_bind('middle', '<Motion>', setlevel, '+')
+            self.tag_bind('middle', '<Button-3>', 
+                lambda evt: self.toggle_keep_mode())
+            self.tag_bind('middle', '<Double-Button-2>', 
+                lambda evt: self.clear_kept_levels())
+    def toggle_keep_mode(self):
+        AbstractSimpleController.toggle_keep_mode(self)
+        self.show_current_mode()
+        self.send_levels()
+    def show_current_mode(self):
+        if self.keep_solo_mode == 'keep':
+            self.keep_solo_mode = 'keep'
+        else:
+            self.keep_solo_mode = ''
+
+        self.itemconfig(self.modetext, text=self.keep_solo_mode)
+    def clear_kept_levels(self):
+        AbstractSimpleController.clear_kept_levels(self)
+        self.flash_text('cleared')
+        self.send_levels()
+    def flash_text(self, text):
+        self.itemconfig(self.modetext, text=text)
+        self.after_cancel(self.flashtextafter)
+        self.flashtextafter = self.after(2000, self.show_current_mode)
+    def next(self):
+        AbstractSimpleController.next(self)
+        self.flash_text(self.current_sub.name)
+        self.send_levels()
+    def prev(self):
+        AbstractSimpleController.prev(self)
+        self.flash_text(self.current_sub.name)
+        self.send_levels()
+
 if __name__ == "__main__":
-    if 0:
-        x = range(20)
-        for z in circcycle(x):
-            print z
+    root = Tk.Tk()
+
+    # these are hints to Fvwm2 if you add this to your .fvwm2rc:
+    #   Style "*NOTITLE*"   NoTitle
+    #   Style "*NOBORDER*"  BorderWidth 0, NoHandles
+    #   Style "*ONTOP*"     StaysOnTop Sticky
+    root.title("NOTITLE NOBORDER ONTOP")
+
+    # for some reason, this doesn't make it fill the screen
+    root.wm_geometry('%sx%s' % (root.winfo_screenwidth(), 
+                                root.winfo_screenheight()))
+
+    gyro = TkGyro(root, [str(i) for i in range(1, 11)])
+    gyro.pack(fill='both', expand=1)
+    gyro.focus_get()
+    root.bind('<Key-q>', lambda evt: root.destroy())
+    Tk.mainloop()
