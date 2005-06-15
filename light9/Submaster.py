@@ -124,10 +124,19 @@ def sub_maxes(*subs):
                      dict_max(*[sub.levels for sub in nonzero_subs]),
                      temporary=1)
 
-def combine_subdict(subdict):
-    """A subdict is { Submaster objects : values }"""
+def combine_subdict(subdict, name=None, permanent=False):
+    """A subdict is { Submaster objects : levels }.  We combine all
+    submasters first by multiplying the submasters by their corresponding
+    levels and then max()ing them together.  Returns a new Submaster
+    object.  You can give it a better name than the computed one that it
+    will get or make it permanent if you'd like it to be saved to disk.
+    Serves 8."""
     scaledsubs = [sub * level for sub, level in subdict.items()]
     maxes = sub_maxes(*scaledsubs)
+    if name:
+        maxes.name = name
+    if permanent:
+        maxes.temporary = False
 
     return maxes
 
