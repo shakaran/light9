@@ -6,7 +6,7 @@ import sys, time
 from twisted.internet import reactor,tksupport
 from twisted.web import xmlrpc, server
 from Tix import *
-import math, atexit, pickle
+import pickle
 
 import run_local
 from light9.Fadable import Fadable
@@ -53,11 +53,11 @@ class SubmasterTk(Frame):
         levellabel.pack(side=TOP)
         self.scale.pack(side=BOTTOM, expand=1, fill=BOTH)
 
-class KeyboardComposer(Frame):
-    def __init__(self, root, submasters, current_sub_levels=None, dmxdummy=0):
+class KeyboardComposer(Frame, SubClient):
+    def __init__(self, root, submasters, current_sub_levels=None):
         Frame.__init__(self, root, bg='black')
+        SubClient.__init__(self)
         self.submasters = submasters
-        self.dmxdummy = dmxdummy
 
         self.current_sub_levels = {}
         if current_sub_levels:
@@ -226,17 +226,6 @@ class KeyboardComposer(Frame):
             self.send_levels()
             self.after(10, self.send_frequent_updates)
 
-    def get_dmx_list(self):
-        maxes = self.get_levels_as_sub()
-        return maxes.get_dmx_list()
-    def send_levels(self):
-        if not self.dmxdummy:
-            levels = self.get_dmx_list()
-            dmxclient.outputlevels(levels)
-        # print "sending levels", levels
-    def send_levels_loop(self):
-        self.send_levels()
-        self.after(1000, self.send_levels_loop)
     def refresh(self):
         self.save()
         self.submasters = Submasters()
@@ -267,7 +256,7 @@ if __name__ == "__main__":
 
     root = Tk()
     tl = toplevelat("Keyboard Composer", existingtoplevel=root)
-    kc = KeyboardComposer(tl, s, dmxdummy=0)
+    kc = KeyboardComposer(tl, s)
     kc.pack(fill=BOTH, expand=1)
 
     ls = LevelServer(kc.name_to_subtk)

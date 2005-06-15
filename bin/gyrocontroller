@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # vi: syntax=python
 
-from __future__ import division
 import run_local
 from light9.Submaster import combine_subdict
-from light9 import dmxclient, showconfig
+from light9.subclient import SubClient
 
 class circcycle:
     """Like itertools.cycle, but with a prev() method too.  You lose
@@ -27,7 +26,7 @@ class circcycle:
         self._change_index(-1)
         return ret
 
-class AbstractSimpleController:
+class AbstractSimpleController(SubClient):
     """Simple controller with minimal input and output:
     
     Input is 4 directions and 3 buttons.
@@ -38,6 +37,7 @@ class AbstractSimpleController:
     B3: toggle keep/solo mode
     Double-B3: clear kept levels"""
     def __init__(self, subnames):
+        SubClient.__init__(self)
         self.subnames = subnames
         self.refresh()
     def refresh(self):
@@ -60,20 +60,15 @@ class AbstractSimpleController:
             self.kept_levels[self.current_sub] = self.current_level
 
         self.current_sub = self.submasters.get_sub_by_name(self.all_subs.prev())
+
     def get_levels_as_sub(self):
         if self.keep_solo_mode == 'keep':
             # send all levels in self.kept_levels
-            levels = combine_subdict(self.kept_levels)
+            levelsub = combine_subdict(self.kept_levels)
         else:
-            levels = {self.current_sub : self.current_level}
+            levelsub = self.current_sub * self.current_level
 
-        return levels
-    def get_dmx_list(self):
-        maxes = self.get_levels_as_sub()
-        return maxes.get_dmx_list()
-    def send_levels(self):
-        levels = self.get_dmx_list()
-        dmxclient.outputlevels(levels)
+        return levelsub
 
 if __name__ == "__main__":
     if 0:
