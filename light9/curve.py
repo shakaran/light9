@@ -13,7 +13,7 @@ class Curve:
     """curve does not know its name. see Curveset"""
     points = None # x-sorted list of (x,y)
     def __init__(self):
-        self.points = [(0,0),(10,0)]
+        self.points = []
 
     def load(self,filename):
         self.points[:]=[]
@@ -361,8 +361,13 @@ class Curveset:
     def add_curve(self,name,curve):
         self.curves[name] = curve
         dispatcher.send("add_curve",sender=self,name=name)
+
     def globalsdict(self):
         return self.curves.copy()
+    
+    def get_time_range(self):
+        return -4, dispatcher.send("get max time")[0][1]+15
+
     def new_curve(self,name):
         if name=="":
             print "no name given"
@@ -370,7 +375,10 @@ class Curveset:
         while name in self.curves:
            name=name+"-1"
 
-        self.add_curve(name,Curve())
+        c = Curve()
+        s,e = self.get_time_range()
+        c.points.extend([(s,0), (e,0)])
+        self.add_curve(name,c)
 
 
 class Curvesetview(tk.Frame):
@@ -390,6 +398,7 @@ class Curvesetview(tk.Frame):
         
         
         dispatcher.connect(self.add_curve,"add_curve",sender=self.curveset)
+        
     def add_curve(self,name):
         f = tk.Frame(self,relief='raised',bd=1)
         f.pack(side='top',fill='both',exp=1)
