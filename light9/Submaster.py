@@ -124,6 +124,13 @@ def sub_maxes(*subs):
                      dict_max(*[sub.levels for sub in nonzero_subs]),
                      temporary=1)
 
+def combine_subdict(subdict):
+    """A subdict is { Submaster objects : values }"""
+    scaledsubs = [sub * level for sub, level in subdict.items()]
+    maxes = sub_maxes(*scaledsubs)
+
+    return maxes
+
 class Submasters:
     "Collection o' Submaster objects"
     def __init__(self):

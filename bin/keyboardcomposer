@@ -204,6 +204,7 @@ class KeyboardComposer(Frame):
         return dict([(name, slidervar.get()) 
             for name, slidervar in self.slider_vars.items()])
     def get_levels_as_sub(self):
+        # TODO this should be adapted to use Submaster.combine_subdict
         scaledsubs = [self.submasters.get_sub_by_name(sub) * level \
             for sub, level in self.get_levels().items()]
 
