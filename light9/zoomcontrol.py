@@ -1,6 +1,7 @@
 from __future__ import division
 import Tkinter as tk
 from dispatch import dispatcher
+from light9 import cursors 
 
 class Zoomcontrol(object,tk.Canvas):
 
@@ -162,3 +163,92 @@ class Zoomcontrol(object,tk.Canvas):
                                  text=txt,tags=('tics',),font='6x13')
                 lastx = x
 
+
+class RegionZoom:
+    """rigs c-a-b1 to drag out an area to zoom to.
+
+    this is used with Curveview
+    """
+    def __init__(self, canvas, world_from_screen, screen_from_world):
+        self.canvas, self.world_from_screen = canvas, world_from_screen
+        self.screen_from_world = screen_from_world
+
+        for evtype, method in [("ButtonPress-1",self.press),
+                               ("Motion",self.motion),
+                               ("ButtonRelease-1",self.release)]:
+            canvas.bind("<Control-Alt-%s>" % evtype, method)
+            if evtype != "ButtonPress-1":
+                canvas.bind("<%s>" % evtype, method)
+        canvas.bind("<Leave>", self.finish)
+        self.start_t = self.old_cursor = None
+        self.state = None
+
+    def press(self,ev):
+        if self.state is not None:
+            self.finish()
+        self.state = "buttonpress"
+            
+        self.start_t = self.end_t = self.world_from_screen(ev.x,0)[0]
+        self.start_x = ev.x
+        can = self.canvas
+
+        for pos in ('start_t','end_t','hi','lo'):
+            can.create_line(0,0,50,50, width=3, fill='black',
+                            tags=("regionzoom",pos))
+        # if updatelines isn't called here, subsequent updatelines
+        # will fail for reasons i don't understand
+        self.updatelines()
+
+        cursors.push(can, "@/home/drewp/projects/light9/cursor1.xbm")
+        
+    def updatelines(self):
+
+        # better would be a gray25 rectangle over the region
+        
+        can = self.canvas
+        pos_x = {}
+        height = can.winfo_height()
+        for pos in ('start_t', 'end_t'):
+            pos_x[pos] = x = self.screen_from_world((getattr(self,pos),0))[0]
+            cid = can.find_withtag("regionzoom && %s" % pos)
+            can.coords(cid, x, 0, x, height)
+            
+        for tag,frac in [('hi',.1),('lo',.9)]:
+            cid = can.find_withtag("regionzoom && %s" % tag)
+            can.coords(cid, pos_x['start_t'], frac * height,
+                       pos_x['end_t'], frac * height)
+
+    def motion(self,ev):
+        if self.state != "buttonpress":
+            return
+
+        self.end_t = self.world_from_screen(ev.x,0)[0]
+        self.updatelines()
+
+    def release(self,ev):
+        if self.state != "buttonpress":
+            return
+        
+        if abs(self.start_x - ev.x) < 10:
+            # clicked
+            factor = 1/1.5
+            if ev.state & 1:
+                factor = 1.5 # c-s-a-b1 zooms out
+            dispatcher.send("zoom about mouse",
+                            t=self.start_t,
+                            factor=factor)
+
+            self.finish()
+            return
+            
+        dispatcher.send("zoom to range",
+                        start=min(self.start_t, self.end_t),
+                        end=max(self.start_t, self.end_t))
+        self.finish()
+        
+    def finish(self, *ev):
+        if self.state is not None:
+            self.state = None
+            self.canvas.delete("regionzoom")
+            self.start_t = None
+            cursors.pop(self.canvas)
