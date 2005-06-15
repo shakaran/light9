@@ -174,4 +174,5 @@ if __name__ == "__main__":
     gyro.pack(fill='both', expand=1)
     gyro.focus_get()
     root.bind('<Key-q>', lambda evt: root.destroy())
+    root.maxsize(root.winfo_screenwidth(), root.winfo_screenheight())
     Tk.mainloop()
