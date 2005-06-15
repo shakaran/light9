@@ -202,7 +202,7 @@ class Curveview(tk.Canvas):
         
         self.delete('curve')
 
-        if self.winfo_height() < 30:
+        if self.winfo_height() < 40:
             self._draw_gradient()
         else:
             self._draw_markers(visible_x)
@@ -218,7 +218,7 @@ class Curveview(tk.Canvas):
         for x in range(0,self.winfo_width(),gradient_res):
             wx = self.world_from_screen(x,0)[0]
             mag = self.curve.eval(wx)
-            self.create_line(x,0, x,70,
+            self.create_line(x,0, x,40,
                              fill=gradient(mag,
                                            low=(20,10,50),
                                            high=(255,187,255)),
@@ -402,7 +402,21 @@ class Curvesetview(tk.Frame):
     def add_curve(self,name):
         f = tk.Frame(self,relief='raised',bd=1)
         f.pack(side='top',fill='both',exp=1)
-        tk.Label(f,text="curve %r"%name,width=15).pack(side='left')
+
+
+        leftside = tk.Frame(f)
+        leftside.pack(side='left')
+
+        collapsed = tk.IntVar()
+        tk.Label(leftside,text="curve %r" % name,font="6x10",
+                 width=15).pack(side='top')
+        def cmd():
+            if collapsed.get():
+                f.pack(exp=0)
+            else:
+                f.pack(exp=1)
+        tk.Checkbutton(leftside, text="collapsed", font="6x10", variable=collapsed, command=cmd).pack(side='top')
+
         cv = Curveview(f,self.curveset.curves[name])
-        cv.pack(side='right',fill='both',exp=1)
+        cv.pack(side='left',fill='both',exp=1)
         self.curves[name] = cv
