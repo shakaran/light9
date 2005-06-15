@@ -187,8 +187,8 @@ class Player:
                 self.mpd.play()
         self.mpd.status().addCallback(finish)
 
-    def pause(self): self.mpd.pause()
-    def is_playing(self): return self.state.get() == "play"
+    def pause(self):
+        self.mpd.pause()
 
 
 def buildsonglist(root,songfiles,player):
@@ -231,64 +231,59 @@ def buildsonglist(root,songfiles,player):
 
 class TimeScale(tk.Scale):
     def __init__(self,master,player):
-        self.player = player
         tk.Scale.__init__(self, master, orient="horiz",
                           from_=-4,to_=100,
                           sliderlen=20,width=20,
                           res=0.001,
                           showvalue=0,
-                          variable=player.current_time,
                           troughcolor='black',
                           bg='lightblue3',
                           )
 
-        # dragging the scl changes the player time (which updates the scl)
-
-        # due to mpd having to seemingly play a whole block at every new
-        # seek point, we may want a mode that pauses playback while the
-        # mouse is down (or is moving too fast; or we've sent a seek too
-        # recently)
+        self.player = player
 
         self.dragging = False
-        self.just_started_dragging = False
-        self.player_state = None
+        self.button_down = False
+        self.drag_start_player_state = None
 
-        self.config(command=self.seeker_cb)
-        self.bind("<Motion>", self.set_mouse_state)
-        self.bind("<B1-Motion>", self.set_mouse_state)
         self.bind("<ButtonPress-1>", self.b1down)
+        self.config(command=self.scale_changed)
         self.bind("<ButtonRelease-1>", self.b1up)
 
-    def set_mouse_state(self,evt):
-        pass#self.dragging = True
+        self.player.current_time.trace('w', self.current_time_changed)
+
+    def current_time_changed(self, *args):
+        """attach player.current_time to scale (one-way)"""
+        if not self.dragging:
+            self.set(self.player.current_time.get())
 
     def b1down(self,evt):
-        self.just_started_dragging = True
+        self.button_down = True
+        self.dragging = False
+
+    def scale_changed(self, time):
+        if not self.button_down:
+            return
+        
+        if not self.dragging:
+            self.dragging = True
+            self.drag_start_player_state = self.player.state.get()
+            if self.drag_start_player_state == "play":
+                # due to mpd having to seemingly play a whole block at
+                # every new seek point, it is better to pause playback
+                # while the mouse is down
+                self.player.pause()
+
+        # ok to seek around when paused. this keeps the displayed time 
+        # up to date, which is how the user knows where he is
+        self.player.seek_to(float(time))
 
     def b1up(self,evt):
+        self.button_down = False
         self.dragging = False
-        self.player.seek_to(float(self.newtime))
-        if self.player_state == "play":
+            
+        if self.drag_start_player_state == "play":
             self.player.play()
-        self.config(variable=player.current_time)
-
-    def seeker_cb(self, time):
-        if self.just_started_dragging:
-            self.just_started_dragging = False
-            self.player_state = self.player.state.get()
-            if self.player_state == "play":
-                player.pause()
-            self.config(variable=tk.DoubleVar())
-
-        self.newtime = time
-
-        if self.player_state != "play":
-            # ok to seek around when paused. this keeps the displayed time 
-            # up to date, which is how the user knows where he is
-            self.player.seek_to(float(self.newtime))
-
-
-        
 
 class Seeker(tk.Frame):
     """includes scale AND labels below it"""
