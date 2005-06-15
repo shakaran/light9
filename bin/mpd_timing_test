@@ -1,0 +1,21 @@
+#!/usr/bin/python
+
+"""
+records times coming out of ascoltami
+
+for example:
+
+ % mpd_timing_test > timing
+ # play some music in ascoltami, then ctrl-c
+ % gnuplot
+ > plot "timing" with lines
+
+"""
+
+import xmlrpclib, time
+
+s = xmlrpclib.ServerProxy("http://localhost:8040")
+start = time.time()
+while 1:
+    print time.time()-start,s.gettime()
+    time.sleep(.01)
