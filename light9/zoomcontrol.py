@@ -21,8 +21,9 @@ class Zoomcontrol(object,tk.Canvas):
         def fget(self): return self._start
         def fset(self,v):
             v = max(self.mintime,v)
-            if v < self._end:
-                self._start = v
+            # don't protect for start<end since zooming sometimes sets
+            # start temporarily after end
+            self._start = v
         return locals()
     start = property(**start())
 
@@ -30,8 +31,7 @@ class Zoomcontrol(object,tk.Canvas):
         def fget(self): return self._end
         def fset(self,v):
             v = min(self.maxtime,v)
-            if v > self._start:
-                self._end = v
+            self._end = v
         return locals()
     end = property(**end())
         
@@ -91,12 +91,10 @@ class Zoomcontrol(object,tk.Canvas):
 
     def see_time(self,t):
         vis_seconds = self.end - self.start
-        margin = vis_seconds * .9 # left side is nicest
-        if t < self.start:
-            self.offset -= (self.start - t) + margin
-        # t doesn't have to be ALL the way off-screen
-        if t > (self.end - vis_seconds * .3): 
-            self.offset += (t - self.end) + margin
+        margin = vis_seconds * .1
+        if t < self.start or t > (self.end - vis_seconds * .3):
+            self.offset = t - margin
+
         self.redrawzoom()
             
     def input_time(self,val):
