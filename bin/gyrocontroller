@@ -69,6 +69,7 @@ class AbstractSimpleController(SubClient):
         self.current_sub = self.submasters.get_sub_by_name(self.all_subs.prev())
     def toggle_keep_mode(self):
         if self.keep_solo_mode == 'keep':
+            self.kept_levels[self.current_sub] = self.current_level
             self.keep_solo_mode = 'solo'
         else:
             self.keep_solo_mode = 'keep'
