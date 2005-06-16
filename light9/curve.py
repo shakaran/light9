@@ -81,6 +81,8 @@ class Curveview(tk.Canvas):
         self.bind("<Key-Escape>",lambda ev:
                   dispatcher.send("see time",
                                   t=self.current_time()))
+
+        # this binds on c-a-b1, etc
         RegionZoom(self, self.world_from_screen, self.screen_from_world)
 
     def current_time(self):
@@ -90,6 +92,7 @@ class Curveview(tk.Canvas):
         start,end = self.zoom
         ht = self.winfo_height()
         return (p[0]-start)/(end-start)*self.winfo_width(), (ht-5)-p[1]*(ht-10)
+
     def world_from_screen(self,x,y):
         start,end = self.zoom
         ht = self.winfo_height()

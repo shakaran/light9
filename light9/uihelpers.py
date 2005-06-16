@@ -33,13 +33,9 @@ def toplevel_savegeometry(tl,name):
             f=open(".light9-window-geometry-%s" % name.replace(' ','_'),'w')
             f.write(tl.geometry())
         # else the window never got mapped
-    except:
+    except Exception, e:
         # it's ok if there's no saved geometry
         pass
-
-    # this would get called repeatedly for each child of the window (i
-    # dont know why) so we unbind after the first Destroy event
-    tl.unbind("<Destroy>",tl._toplevelat_funcid)
 
 def toplevelat(name, existingtoplevel=None):
     tl = existingtoplevel or Toplevel()
@@ -55,7 +51,7 @@ def toplevelat(name, existingtoplevel=None):
     if name in windowlocations:
         tl.geometry(windowlocations[name])
 
-    tl._toplevelat_funcid=tl.bind("<Destroy>",lambda ev,tl=tl,name=name: toplevel_savegeometry(tl,name))
+    tl._toplevelat_funcid = tl.bind("<Configure>",lambda ev,tl=tl,name=name: toplevel_savegeometry(tl,name))
 
     return tl
 

@@ -257,6 +257,7 @@ if __name__ == "__main__":
 
     root = Tk()
     tl = toplevelat("Keyboard Composer", existingtoplevel=root)
+
     kc = KeyboardComposer(tl, s)
     kc.pack(fill=BOTH, expand=1)
 
@@ -266,5 +267,7 @@ if __name__ == "__main__":
     root.bind("<Destroy>",reactor.stop)
     root.protocol('WM_DELETE_WINDOW', reactor.stop)
     reactor.addSystemEventTrigger('after','shutdown',kc.save)
+
+    
     tksupport.install(root,ms=10)
     reactor.run()
