@@ -11,6 +11,7 @@ import pickle
 import run_local
 from light9.Fadable import Fadable
 from light9.Submaster import Submasters, sub_maxes
+from light9.subclient import SubClient
 from light9 import dmxclient, showconfig
 from light9.uihelpers import toplevelat
 
