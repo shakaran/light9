@@ -1,4 +1,5 @@
 from light9 import dmxclient
+from light9.Submaster import Submaster
 
 # later, this stuff will talk to a SubServer
 class SubClient:
@@ -10,6 +11,9 @@ class SubClient:
     def get_dmx_list(self):
         maxes = self.get_levels_as_sub()
         return maxes.get_dmx_list()
+    def send_sub(self, sub):
+        levels = sub.get_dmx_list()
+        dmxclient.outputlevels(levels)
     def send_levels(self):
         levels = self.get_dmx_list()
         dmxclient.outputlevels(levels)
@@ -18,3 +22,5 @@ class SubClient:
         (or at least that we have an 'after' method)"""
         self.send_levels()
         self.after(delay, self.send_levels_loop, delay)
+    def send_zeroes(self):
+        self.send_sub(Submaster('empty', {}, temporary=1))
