@@ -63,7 +63,9 @@ class Submaster:
     def max(self, *othersubs):
         return sub_maxes(self, *othersubs)
     def __repr__(self):
-        levels = ' '.join(["%s:%.2f" % item for item in self.levels.items()])
+        items = self.levels.items()
+        items.sort()
+        levels = ' '.join(["%s:%.2f" % item for item in items])
         return "<'%s': [%s]>" % (self.name, levels)
     def get_dmx_list(self):
         leveldict = self.get_levels() # gets levels of sub contents
@@ -109,6 +111,10 @@ class Submaster:
                                              amount))
 
         return xfaded_sub
+    def __cmp__(self, other):
+        return cmp(repr(self), repr(other))
+    def __hash__(self):
+        return hash(repr(self))
                                             
 def linear_fade(start, end, amount):
     """Fades between two floats by an amount.  amount is a float between
