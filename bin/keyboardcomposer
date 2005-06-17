@@ -15,7 +15,6 @@ from light9.subclient import SubClient
 from light9 import dmxclient, showconfig, networking
 from light9.uihelpers import toplevelat
 
-
 nudge_keys = {
     'up' : list('qwertyuiop'),
     'down' : list('asdfghjkl')
@@ -87,6 +86,9 @@ class KeyboardComposer(Frame, SubClient):
 
         self.buttonframe = Frame(self, bg='black')
         self.buttonframe.pack(side=BOTTOM)
+        self.alltozerobutton = Button(self.buttonframe, text="All to Zero", 
+            command=self.alltozero, bg='black', fg='white')
+        self.alltozerobutton.pack(side='left')
         self.refreshbutton = Button(self.buttonframe, text="Refresh", 
             command=self.refresh, bg='black', fg='white')
         self.refreshbutton.pack(side=LEFT)
@@ -238,6 +240,11 @@ class KeyboardComposer(Frame, SubClient):
         self.buttonframe.destroy()
         self.draw_ui()
 
+    def alltozero(self):
+        for name, subtk in self.name_to_subtk.items():
+            if subtk.scale.scale_var.get() != 0:
+                subtk.scale.fade(value=0.0, length=0)
+
 class LevelServer(xmlrpc.XMLRPC):
     def __init__(self,name_to_subtk):
         self.name_to_subtk = name_to_subtk
@@ -250,7 +257,6 @@ class LevelServer(xmlrpc.XMLRPC):
         except Exception,e:
             ret=str(e)
         return ret
-
 
 if __name__ == "__main__":
     s = Submasters()
