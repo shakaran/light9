@@ -48,8 +48,8 @@ class Fadable:
 
         if mouse_bindings:
             # right mouse button toggles muting
-            # self.bind('<3>', lambda evt: self.toggle_mute())
-            # "NOT ANY MORE!" - homer
+            self.bind('<3>', lambda evt: self.toggle_mute())
+            # not "NOT ANY MORE!" - homer (i.e. it works again)
 
             # mouse wheel
             self.bind('<4>', lambda evt: self.increase())
@@ -61,7 +61,7 @@ class Fadable:
             self.bind('<Control-4>', lambda evt: self.increase(length=1))
             self.bind('<Control-5>', lambda evt: self.decrease(length=1))
 
-        self.last_level = 0 # used for muting
+        self.last_level = None # used for muting
     def fade(self, value, length=0.5, step_time=10):
         """Fade to value in length seconds with steps every step_time
         milliseconds"""
@@ -124,14 +124,12 @@ class Fadable:
             self.fade_var.set(newlevel)
     def toggle_mute(self):
         """Toggles whether the volume is being muted."""
-        curlevel = self.fade_var.get()
-        if curlevel:
+        if self.last_level is None:
+            self.last_level = self.fade_var.get()
             newlevel = 0
-            self.last_level = curlevel
-            self['bg'] = 'red' # TODO: let them choose these colors
         else:
             newlevel = self.last_level
-            self['bg'] = 'lightGray'
+            self.last_level = None
 
         self.fade_var.set(newlevel)
 
