@@ -58,12 +58,12 @@ class Curveview(tk.Canvas):
                            relief='sunken',bd=1,
                            closeenough=5,takefocus=1, **kw)
         self.selected_points=[] # idx of points being dragged
-        self.update()
+        self.update_curve()
         # self.bind("<Enter>",self.focus)
         dispatcher.connect(self.input_time,"input time")
-        dispatcher.connect(self.update,"zoom changed")
-        dispatcher.connect(self.update,"points changed",sender=self.curve)
-        self.bind("<Configure>",self.update)
+        dispatcher.connect(self.update_curve,"zoom changed")
+        dispatcher.connect(self.update_curve,"points changed",sender=self.curve)
+        self.bind("<Configure>",self.update_curve)
         for x in range(1, 6):
             def add_kb_marker_point(evt, x=x):
                 print "add_kb_marker_point", evt
@@ -104,7 +104,7 @@ class Curveview(tk.Canvas):
         self.delete('timecursor')
         self.create_line(*pts,**dict(width=2,fill='red',tags=('timecursor',)))
         self._time = t
-    def update(self,*args):
+    def update_curve(self,*args):
 
         self.zoom = dispatcher.send("zoom area")[0][1]
         cp = self.curve.points
@@ -160,9 +160,10 @@ class Curveview(tk.Canvas):
         
     def _draw_one_marker(self,t,label):
         x = self.screen_from_world((t,0))[0]
-        self.create_line(x,self.winfo_height(),x,self.winfo_height()-20,
+        ht = self.winfo_height()
+        self.create_line(x,ht,x,ht-20,
                          tags=('curve',))
-        self.create_text(x,self.winfo_height()-20,text=label,anchor='s',
+        self.create_text(x,ht-20,text=label,anchor='s',
                          tags=('curve',))
 
 
@@ -224,7 +225,7 @@ class Curveview(tk.Canvas):
     def add_point(self, p):
         self.unselect()
         self.curve.insert_pt(p)
-        self.update()
+        self.update_curve()
 
     def highlight_selected_dots(self):
         for i,d in self.dots.items():
@@ -250,7 +251,7 @@ class Curveview(tk.Canvas):
             moved=1
             cp[idx] = (x,y)
         if moved:
-            self.update()
+            self.update_curve()
     def unselect(self):
         self.selected_points=[]
         self.highlight_selected_dots()

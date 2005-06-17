@@ -300,9 +300,10 @@ def updateerr(e):
 def update2(t):
     global recent_t,later
     dispatcher.send("update status",
-                    val="ok: receiving times from music player")
+                    val="ok: receiving time from music player")
     if later and not later.cancelled and not later.called: later.cancel()
-    later = reactor.callLater(.01,update)
+    
+    later = reactor.callLater(.05,update)
 
     recent_t = recent_t[-50:]+[t]
     period = (recent_t[-1]-recent_t[0])/len(recent_t)
@@ -317,9 +318,9 @@ update()
 root.bind("<Control-Key-q>",lambda ev: reactor.stop)
 root.bind("<Destroy>",lambda ev: reactor.stop)
 root.protocol('WM_DELETE_WINDOW', reactor.stop)
-tksupport.install(root,ms=10)
+tksupport.install(root,ms=20)
 if 0:
-    sys.path.append("/home/drewp/projects/editor/pour")
+    sys.path.append("/home/drewp/projects/cuisine/pour")
     from utils import runstats
     runstats("reactor.run()")
 else:
