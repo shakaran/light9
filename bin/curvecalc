@@ -124,10 +124,16 @@ class Subexprview(tk.Frame):
 
 class Subterm:
     """one Submaster and its Subexpr"""
-    def __init__(self,submaster,subexpr):
-        make_attributes_from_args('submaster','subexpr')
-    def scaled(self,t):
-        return self.submaster * self.subexpr.eval(t)
+    def __init__(self, submaster, subexpr):
+        make_attributes_from_args('submaster', 'subexpr')
+    def scaled(self, t):
+        subexpr_eval = self.subexpr.eval(t)
+        if isinstance(subexpr_eval, Submaster.Submaster):
+            # if the expression returns a submaster, just return it
+            return subexpr_eval
+        else:
+            # otherwise, return our submaster multiplied by the value returned
+            return self.submaster * subexpr_eval
 
 class Subtermview(tk.Frame):
     def __init__(self,master,st,**kw):
