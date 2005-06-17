@@ -14,7 +14,6 @@ features and limitations:
 
 todo:
 
-presong and postsong silence
 
 """
 
@@ -49,6 +48,19 @@ class XMLRPCServe(xmlrpc.XMLRPC):
     def xmlrpc_stop(self):
         self.player.state.set('stop')
         return 'ok'
+    def xmlrpc_seek_to(self,t):
+        self.player.seek_to(t)
+        return 'ok'
+    def xmlrpc_seekplay_or_pause(self,t):
+        """either seek to t and play; or pause. this is the
+        curvecalc click-play interface"""
+        if self.player.state.get() == "play":
+            self.player.pause()
+            return 'paused'
+        else:
+            self.player.seek_to(t)
+            self.player.play()
+            return 'playing'
     def xmlrpc_gettime(self):
         """returns seconds from start of song"""
         return float(self.player.smoothCurrentTime())
