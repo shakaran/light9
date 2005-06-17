@@ -208,6 +208,7 @@ class SubtermSetView(tk.Frame):
             self.cur_row += 1
 
 def add_one_subterm(subname, curveset, subterms, root, ssv, expr=''):
+    expr = expr or '%s(t)' % subname
     term = Subterm(Submaster.Submaster(subname), Subexpr(curveset,expr))
     subterms.append(term)
 
