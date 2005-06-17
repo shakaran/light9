@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
-from __future__ import division,nested_scopes
+from __future__ import division, nested_scopes
 import sys, time
 
-from twisted.internet import reactor,tksupport
+from twisted.internet import reactor, tksupport
 from twisted.web import xmlrpc, server
 from Tix import *
 import pickle
@@ -205,7 +205,6 @@ class KeyboardComposer(Frame, SubClient):
         return dict([(name, slidervar.get()) 
             for name, slidervar in self.slider_vars.items()])
     def get_levels_as_sub(self):
-        # TODO this should be adapted to use Submaster.combine_subdict
         scaledsubs = [self.submasters.get_sub_by_name(sub) * level \
             for sub, level in self.get_levels().items()]
 
@@ -264,10 +263,8 @@ if __name__ == "__main__":
     ls = LevelServer(kc.name_to_subtk)
     reactor.listenTCP(8050, server.Site(ls))
 
-    root.bind("<Destroy>",reactor.stop)
     root.protocol('WM_DELETE_WINDOW', reactor.stop)
-    reactor.addSystemEventTrigger('after','shutdown',kc.save)
-
+    reactor.addSystemEventTrigger('after', 'shutdown', kc.save)
     
     tksupport.install(root,ms=10)
     reactor.run()
