@@ -2,6 +2,7 @@ from __future__ import division
 import os
 from light9.TLUtility import dict_scale, dict_max
 from light9 import Patch, showconfig
+import dispatch.dispatcher as dispatcher
 
 class Submaster:
     "Contain a dictionary of levels, but you didn't need to know that"
@@ -12,11 +13,13 @@ class Submaster:
             self.levels = leveldict
         else:
             self.levels = {}
-            self.reload()
-    def reload(self):
+            self.reload(quiet=True)
+        dispatcher.connect(self.reload, 'reload all subs')
+    def reload(self, quiet=False):
         if self.temporary:
             return
         try:
+            oldlevels = self.levels.copy()
             self.levels.clear()
             subfile = file(showconfig.subFile(self.name))
             for line in subfile.readlines():
@@ -30,6 +33,9 @@ class Submaster:
                 except ValueError:
                     print "(%s) Error with this line: %s" % (self.name, 
                         line[:-1])
+
+                if (not quiet) and (oldlevels != self.levels):
+                    print "sub %s changed" % self.name
         except IOError:
             print "Can't read file for sub: %s" % self.name
     def save(self):

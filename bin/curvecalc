@@ -218,13 +218,17 @@ def add_one_subterm(subname, curveset, subterms, root, ssv, expr=''):
 
     return term
 
-def subterm_adder(master, curveset, subterms, root, ssv):
+def sub_commands_tk(master, curveset, subterms, root, ssv):
     f=tk.Frame(master,relief='raised',bd=1)
     newname = tk.StringVar()
 
     def add_cmd():
         add_one_subterm(newname.get(), curveset, subterms, root, ssv, '')
 
+    def reload_subs():
+        dispatcher.send('reload all subs')
+
+    tk.Button(f, text="reload subs", command=reload_subs).pack(side='left')
     tk.Button(f,text="new subterm named:", command=add_cmd).pack(side='left')
     tk.Entry(f,textvariable=newname).pack(side='left',fill='x',exp=1)
     return f
@@ -256,7 +260,7 @@ csv.pack(side='top',fill='both',exp=1)
 ssv = SubtermSetView(root)
 ssv.pack(side='top', fill='x')
 
-root.title("Curemaster 2000MX - %s" % song)
+root.title("Curvemaster 3000MX - %s" % song)
 
 musicfilename = showconfig.songFilename(song)
 maxtime = wavelength(musicfilename)
@@ -265,7 +269,8 @@ dispatcher.connect(lambda: maxtime, "get max time",weak=0)
 curveset.load(basename=os.path.join(showconfig.curvesDir(),song))
 
 subterms = []
-subterm_adder(root, curveset, subterms, root, ssv).pack(side='top',fill='x')
+sub_commands_tk(root, curveset, subterms, root, ssv).pack(side='top',fill='x')
+
 for line in file(showconfig.subtermsForSong(song)):
     try:
         subname,expr = line.strip().split(" ",1)
@@ -285,7 +290,6 @@ def savekey(*args):
     savesubterms(showconfig.subtermsForSong(song),subterms)
     curveset.save(basename=os.path.join(showconfig.curvesDir(),song))
     print "saved"
-
     
 root.bind("<Control-Key-s>",savekey)
 
