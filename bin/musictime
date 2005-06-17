@@ -1,9 +1,13 @@
+#!/usr/bin/env python
+import run_local
+import light9.networking
+
 import Tkinter as tk
 import xmlrpclib, socket, time
 
 class MusicTime:
-    def __init__(self, server, port):
-        self.player = xmlrpclib.Server("http://%s:%d" % (server, port))
+    def __init__(self, url):
+        self.player = xmlrpclib.Server(url)
     def get_music_time(self):
         playtime = None
         while not playtime:
@@ -15,9 +19,9 @@ class MusicTime:
         return playtime
 
 class MusicTimeTk(tk.Frame, MusicTime):
-    def __init__(self, master, server, port):
+    def __init__(self, master, url):
         tk.Frame.__init__(self)
-        MusicTime.__init__(self, server, port)
+        MusicTime.__init__(self, url)
         self.timevar = tk.DoubleVar()
         self.timelabel = tk.Label(self, textvariable=self.timevar, bd=2,
             relief='raised', width=10, padx=2, pady=2, anchor='w')
@@ -36,13 +40,12 @@ class MusicTimeTk(tk.Frame, MusicTime):
 if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser()
-    parser.add_option("-s", "--server", default='dash')
-    parser.add_option("-p", "--port", default=8040, type='int')
+    parser.add_option("-u", "--url", default=light9.networking.musicUrl())
     options, args = parser.parse_args()
     
     root = tk.Tk()
     root.title("Time")
-    MusicTimeTk(root, options.server, options.port).pack(expand=1, fill='both')
+    MusicTimeTk(root, options.url).pack(expand=1, fill='both')
     try:
         tk.mainloop()
     except KeyboardInterrupt:
