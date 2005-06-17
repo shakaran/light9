@@ -2,7 +2,7 @@
 # vi: syntax=python
 
 import run_local
-from light9.Submaster import Submasters, combine_subdict
+from light9.Submaster import Submasters, Submaster, combine_subdict
 from light9.subclient import SubClient
 
 import Tix as Tk
@@ -40,33 +40,40 @@ class AbstractSimpleController(SubClient):
     Output is an integer and a color and maybe more.
     
     Left + B1/right + B1: prev/next sub
-    Y-axis + B2: set current level
-    B3: toggle keep/solo mode
-    Double-B3: clear kept levels"""
+    Y-axis + B3: set current level
+    B2: toggle keep/solo mode
+    Triple-B2: clear kept levels"""
     def __init__(self, subnames):
         SubClient.__init__(self)
         self.subnames = subnames
         self.refresh()
+    def get_sub(self, name):
+        try:
+            val = int(name)
+            s = Submaster("Ch%d" % val, {val : 1.0}, temporary=True)
+            return s
+        except ValueError:
+            return self.submasters.get_sub_by_name(name)
     def refresh(self):
         # reload subs from disk
         self.submasters = Submasters()
         self.all_subs = circcycle(self.subnames)
-        self.current_sub = self.submasters.get_sub_by_name(self.all_subs.next())
+        self.current_sub = self.get_sub(self.all_subs.next())
         self.current_level = 1.0
         self.kept_levels = {} # subname : level [0..1]
-        self.keep_solo_mode = 'keep' # either 'keep' or 'solo'
+        self.keep_solo_mode = 'solo' # either 'keep' or 'solo'
     def clear_kept_levels(self):
         self.kept_levels.clear()
     def next(self):
         if self.keep_solo_mode == 'keep':
             self.kept_levels[self.current_sub] = self.current_level
 
-        self.current_sub = self.submasters.get_sub_by_name(self.all_subs.next())
+        self.current_sub = self.get_sub(self.all_subs.next())
     def prev(self):
         if self.keep_solo_mode == 'keep':
             self.kept_levels[self.current_sub] = self.current_level
 
-        self.current_sub = self.submasters.get_sub_by_name(self.all_subs.prev())
+        self.current_sub = self.get_sub(self.all_subs.prev())
     def toggle_keep_mode(self):
         if self.keep_solo_mode == 'keep':
             self.kept_levels[self.current_sub] = self.current_level
@@ -77,6 +84,7 @@ class AbstractSimpleController(SubClient):
     def get_levels_as_sub(self):
         if self.keep_solo_mode == 'keep':
             # send all levels in self.kept_levels
+            self.kept_levels[self.current_sub] = self.current_level
             levelsub = combine_subdict(self.kept_levels)
         else:
             levelsub = self.current_sub * self.current_level
@@ -94,6 +102,8 @@ class TkGyro(Tk.Canvas, AbstractSimpleController):
             tags='left', fill='black')
         self.right = self.create_rectangle((width / 2, 0, width, height),
             tags='right', fill='black')
+        self.levelbar = self.create_rectangle(0, 0, width, 5, tags='level',
+            fill='yellow', state='disabled', outline='')
 
         # the text is disabled so that it doesn't receive events
         self.modetext = self.create_text((width / 2, height / 2), 
@@ -104,14 +114,15 @@ class TkGyro(Tk.Canvas, AbstractSimpleController):
         def setfill(item, color):
             self.itemconfig(item, fill=color)
         def setlevel(evt):
-            if evt.state & 512:
+            if evt.state & 0x400 or evt.num == 3:
                 y = (height - evt.y) / float(height)
                 self.flash_text('<%d>' % (y * 100))
                 self.current_level = y
+                self.coords(self.levelbar, 0, evt.y, width, evt.y + 5)
                 self.send_levels()
 
-        data = ((self.left, 'left', '#000099', self.prev), 
-                (self.right, 'right', '#990000', self.next))
+        data = ((self.left, 'left', 'blue', self.prev), 
+                (self.right, 'right', 'red', self.next))
         for item, tag, color, method in data:
             self.tag_bind(tag, '<Enter>', 
                 lambda evt, item=item, color=color: setfill(item, color))
@@ -126,10 +137,11 @@ class TkGyro(Tk.Canvas, AbstractSimpleController):
 
         # B2+drag sets current level, double-B2 resets kept levels
         self.tag_bind('all', '<Motion>', setlevel, '+')
-        self.tag_bind('all', '<Double-Button-2>', 
+        self.tag_bind('all', '<ButtonPress-3>', setlevel, '+')
+        self.tag_bind('all', '<Triple-Button-2>', 
             lambda evt: self.clear_kept_levels())
         # B3 toggles between keep and solo mode
-        self.tag_bind('all', '<Button-3>', lambda evt: self.toggle_keep_mode())
+        self.tag_bind('all', '<Button-2>', lambda evt: self.toggle_keep_mode())
 
         self.send_levels_loop()
     def toggle_keep_mode(self):
@@ -178,6 +190,9 @@ if __name__ == "__main__":
 
     gyro = TkGyro(root, subnames)
     gyro.pack(fill='both', expand=1)
-    root.bind('<Key-q>', lambda evt: root.destroy())
+    def quit(event):
+        gyro.send_zeroes()
+        root.destroy()
+    root.bind('<Key-q>', quit)
     root.maxsize(root.winfo_screenwidth(), root.winfo_screenheight())
     Tk.mainloop()
