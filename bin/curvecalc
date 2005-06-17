@@ -131,6 +131,11 @@ class Subterm:
         make_attributes_from_args('submaster', 'subexpr')
     def scaled(self, t):
         subexpr_eval = self.subexpr.eval(t)
+        # this stops an error that didn't used to happen. i think when
+        # the expr is empty, subexpr_eval becomes None, so this zero
+        # is ok
+        if subexpr_eval is None:
+            subexpr_eval = 0
         if isinstance(subexpr_eval, Submaster.Submaster):
             # if the expression returns a submaster, just return it
             return subexpr_eval
