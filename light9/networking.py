@@ -18,3 +18,9 @@ def musicPort():
 def mpdServer():
     """servername, port"""
     return 'dash',6600
+
+def kcPort():
+    return 8050
+
+def kcServer():
+    return 'dash'

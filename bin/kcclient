@@ -3,6 +3,8 @@
 """send KeyboardComposer a fade request, for use from the shell"""
 
 import sys,xmlrpclib
+import run_local
+from light9 import networking
 
 subname = sys.argv[1]
 level = float(sys.argv[2])
@@ -10,7 +12,9 @@ fadesecs = 0
 if len(sys.argv)>3:
     fadesecs = float(sys.argv[3])
 
-levelserver = xmlrpclib.ServerProxy("http://localhost:8050")
+levelserver = xmlrpclib.ServerProxy("http://%s:%s" %
+                                    (networking.kcServer(),
+                                     networking.kcPort()))
 
 levelserver.fadesub(subname,level,fadesecs)
 

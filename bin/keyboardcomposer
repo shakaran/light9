@@ -12,8 +12,9 @@ import run_local
 from light9.Fadable import Fadable
 from light9.Submaster import Submasters, sub_maxes
 from light9.subclient import SubClient
-from light9 import dmxclient, showconfig
+from light9 import dmxclient, showconfig, networking
 from light9.uihelpers import toplevelat
+
 
 nudge_keys = {
     'up' : list('qwertyuiop'),
@@ -59,7 +60,7 @@ class KeyboardComposer(Frame, SubClient):
         Frame.__init__(self, root, bg='black')
         SubClient.__init__(self)
         self.submasters = submasters
-
+        self.name_to_subtk = {}
         self.current_sub_levels = {}
         if current_sub_levels:
             self.current_sub_levels = current_sub_levels
@@ -76,7 +77,7 @@ class KeyboardComposer(Frame, SubClient):
         self.rows = [] # this holds Tk Frames for each row
         self.slider_vars = {} # this holds subname:sub Tk vars
         self.slider_table = {} # this holds coords:sub Tk vars
-        self.name_to_subtk = {} # subname : SubmasterTk instance
+        self.name_to_subtk.clear() # subname : SubmasterTk instance
         self.current_row = 0
         
         self.make_key_hints()
@@ -261,7 +262,7 @@ if __name__ == "__main__":
     kc.pack(fill=BOTH, expand=1)
 
     ls = LevelServer(kc.name_to_subtk)
-    reactor.listenTCP(8050, server.Site(ls))
+    reactor.listenTCP(networking.kcPort(), server.Site(ls))
 
     root.protocol('WM_DELETE_WINDOW', reactor.stop)
     reactor.addSystemEventTrigger('after', 'shutdown', kc.save)
