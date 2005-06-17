@@ -267,8 +267,13 @@ if __name__ == "__main__":
     kc = KeyboardComposer(tl, s)
     kc.pack(fill=BOTH, expand=1)
 
-    ls = LevelServer(kc.name_to_subtk)
-    reactor.listenTCP(networking.kcPort(), server.Site(ls))
+    import twisted.internet
+    try:
+        ls = LevelServer(kc.name_to_subtk)
+        reactor.listenTCP(networking.kcPort(), server.Site(ls))
+    except twisted.internet.error.CannotListenError, e:
+        print "Can't (and won't!) start level server:"
+        print e
 
     root.protocol('WM_DELETE_WINDOW', reactor.stop)
     reactor.addSystemEventTrigger('after', 'shutdown', kc.save)
