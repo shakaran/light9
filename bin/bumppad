@@ -16,18 +16,18 @@ class pad(tk.Frame):
         tk.Frame.__init__(self,master)
         self.levs={}
         for xy,key,subname in [
-            ((1,1),'KP_Up','upstage'),
-            ((1,3),"KP_Down",'narrow-c'),
-            ((0,2),'KP_Left','left1'),
-            ((2,2),'KP_Right','right1'),
+            ((1,1),'KP_Up','centered'),
+            ((1,3),"KP_Down",'third-c'),
+            ((0,2),'KP_Left','scoop-l'),
+            ((2,2),'KP_Right','scoop-r'),
             ((1,0),'KP_Divide','cyc'),
-            ((0,3),"KP_End",'edge-l'),
-            ((2,3),'KP_Next','edge-r'),
+            ((0,3),"KP_End",'third-l'),
+            ((2,3),'KP_Next','third-r'),
             ((0,4),'KP_Insert',"zip_red"),
             ((2,4),'KP_Delete',"zip_orange"),
-            ((3,1),'KP_Add','zip_green'),
+            ((3,1),'KP_Add','strobedim'),
             ((3,3),'KP_Enter','zip_blue'),
-            ((1,2),'KP_Begin','downfront'),                            
+            ((1,2),'KP_Begin','scoop-c'),                            
                         ]:
             
             sub = Submaster(subname)
