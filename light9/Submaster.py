@@ -173,6 +173,8 @@ class Submasters:
                 notsongs.append(s)
         combined = notsongs + songs
         return combined
+    def get_all_sub_names(self):
+        return [s.name for s in self.get_all_subs()]
     def get_sub_by_name(self, name):
         "Makes a new sub if there isn't one."
         return self.submasters.get(name, Submaster(name))

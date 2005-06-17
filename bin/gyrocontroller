@@ -4,6 +4,7 @@
 import run_local
 from light9.Submaster import Submasters, Submaster, combine_subdict
 from light9.subclient import SubClient
+import light9.Patch as Patch
 
 import Tix as Tk
 
@@ -48,12 +49,25 @@ class AbstractSimpleController(SubClient):
         self.subnames = subnames
         self.refresh()
     def get_sub(self, name):
+        if name in self.submasters.get_all_sub_names():
+            return self.submasters.get_sub_by_name(name)
+
         try:
             val = int(name)
-            s = Submaster("Ch%d" % val, {val : 1.0}, temporary=True)
+            s = Submaster("#%d" % val, {val : 1.0}, temporary=True)
             return s
         except ValueError:
-            return self.submasters.get_sub_by_name(name)
+            pass
+
+        try:
+            subnum = Patch.get_dmx_channel(name)
+            s = Submaster("'%s'" % name, {subnum : 1.0}, temporary=True)
+            return s
+        except ValueError:
+            pass
+
+        # make an error sub
+        return Submaster('%s!?' % name)
     def refresh(self):
         # reload subs from disk
         self.submasters = Submasters()
