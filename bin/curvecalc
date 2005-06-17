@@ -237,7 +237,7 @@ def sub_commands_tk(master, curveset, subterms, root, ssv):
 
     tk.Button(f, text="reload subs (C-r)", 
         command=reload_subs).pack(side='left')
-    tk.Button(f,text="new subterm named:", command=add_cmd).pack(side='left')
+    tk.Label(f, text="new subterm named:").pack(side='left')
     entry = tk.Entry(f, textvariable=newname)
     entry.pack(side='left', fill='x', exp=1)
     entry.bind("<Key-Return>", lambda evt: add_cmd())

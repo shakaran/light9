@@ -315,14 +315,17 @@ class Curvesetview(tk.Frame):
         
         f = tk.Frame(self,relief='raised',bd=1)
         f.pack(side='top',fill='x')
-        b = tk.Button(f, text="new curve named:",
-                      command=lambda:
-                      self.curveset.new_curve(self.newcurvename.get()))
-        b.pack(side='left')
+        tk.Label(f, text="new curve named:").pack(side='left')
         
         self.newcurvename = tk.StringVar()
-        tk.Entry(f,textvariable=self.newcurvename).pack(side='left',
-                                                        fill='x',exp=1)        
+
+        def new_curve(event):
+            self.curveset.new_curve(self.newcurvename.get())
+            self.newcurvename.set('')
+        
+        entry = tk.Entry(f, textvariable=self.newcurvename)
+        entry.pack(side='left', fill='x',exp=1)        
+        entry.bind("<Key-Return>", new_curve)
         
         dispatcher.connect(self.add_curve,"add_curve",sender=self.curveset)
         
