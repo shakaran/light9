@@ -225,11 +225,13 @@ def sub_commands_tk(master, curveset, subterms, root, ssv):
 
     def add_cmd():
         add_one_subterm(newname.get(), curveset, subterms, root, ssv, '')
+        newname.set('')
 
     def reload_subs():
         dispatcher.send('reload all subs')
 
-    tk.Button(f, text="reload subs", command=reload_subs).pack(side='left')
+    tk.Button(f, text="reload subs (C-r)", 
+        command=reload_subs).pack(side='left')
     tk.Button(f,text="new subterm named:", command=add_cmd).pack(side='left')
     tk.Entry(f,textvariable=newname).pack(side='left',fill='x',exp=1)
     return f
@@ -293,6 +295,7 @@ def savekey(*args):
     print "saved"
     
 root.bind("<Control-Key-s>",savekey)
+root.bind("<Control-Key-r>", lambda evt: dispatcher.send('reload all subs'))
 
 create_status_lines(root)
 for helpline in ["Bindings: C-s save subterms; B1 drag point; C-B1 curve add point; 1..5 add point at time; Esc see current time; S-Esc see curtime to end; Mousewheel zoom; C-p play/pause music at mouse",

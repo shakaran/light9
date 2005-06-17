@@ -75,9 +75,10 @@ class Zoomcontrol(object,tk.Canvas):
         dispatcher.connect(lambda maxtime: (setattr(self,'maxtime',maxtime+15),
                                             self.redrawzoom()),
                            "max time",weak=0)
-        dispatcher.connect(self.zoom_about_mouse,"zoom about mouse")
-        dispatcher.connect(self.see_time,"see time")
-        dispatcher.connect(self.zoom_to_range,"zoom to range")
+        dispatcher.connect(self.zoom_about_mouse, "zoom about mouse")
+        dispatcher.connect(self.see_time, "see time")
+        dispatcher.connect(self.see_time_until_end, "see time until end")
+        dispatcher.connect(self.zoom_to_range, "zoom to range")
         self.created=1
     def zoom_to_range(self,start,end):
         self.start = start
@@ -89,11 +90,17 @@ class Zoomcontrol(object,tk.Canvas):
         self.end = t + factor*(self.end-t)
         self.redrawzoom()
 
-    def see_time(self,t):
+    def see_time(self, t):
         vis_seconds = self.end - self.start
         margin = vis_seconds * .1
         if t < self.start or t > (self.end - vis_seconds * .3):
             self.offset = t - margin
+
+        self.redrawzoom()
+
+    def see_time_until_end(self, t):
+        self.start = t - 2
+        self.end = self.maxtime
 
         self.redrawzoom()
             
