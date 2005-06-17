@@ -81,6 +81,9 @@ class Curveview(tk.Canvas):
         self.bind("<Key-Escape>",lambda ev:
                   dispatcher.send("see time",
                                   t=self.current_time()))
+        self.bind("<Control-p>", lambda ev:
+                  dispatcher.send("music seek",
+                                  t=self.world_from_screen(ev.x,0)[0]))
 
         # this binds on c-a-b1, etc
         RegionZoom(self, self.world_from_screen, self.screen_from_world)
