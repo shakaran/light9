@@ -25,6 +25,11 @@ class Music:
     def __init__(self):
         self.player=None # xmlrpc Proxy to player
         self.recenttime=0
+
+        dispatcher.connect(self.seekplay_or_pause,"music seek")
+
+    def seekplay_or_pause(self,t):
+        self.music.seekplay_or_pause(t)
         
     def current_time(self):
         """return deferred which gets called with the current time"""
@@ -155,10 +160,41 @@ class Subtermview(tk.Frame):
 class Output:
     lastsendtime=0
     lastsendlevs=None
-    def __init__(self,subterms):
-        make_attributes_from_args('subterms')
-    def send_dmx(self,t):
+    def __init__(self,subterms,music):
+        make_attributes_from_args('subterms','music')
 
+        self.recent_t=[]
+        self.later = None
+
+        self.update()
+        
+    def update(self):
+        d = music.current_time()
+        d.addCallback(self.update2)
+        d.addErrback(self.updateerr)
+        
+    def updateerr(self,e):
+
+        print e.getTraceback()
+        dispatcher.send("update status",val=e.getErrorMessage())
+        if self.later and not self.later.cancelled and not self.later.called:
+            self.later.cancel()
+        self.later = reactor.callLater(1,self.update)
+        
+    def update2(self,t):
+        dispatcher.send("update status",
+                        val="ok: receiving time from music player")
+        if self.later and not self.later.cancelled and not self.later.called:
+            self.later.cancel()
+
+        self.later = reactor.callLater(.05, self.update)
+
+        self.recent_t = self.recent_t[-50:]+[t]
+        period = (self.recent_t[-1] - self.recent_t[0]) / len(self.recent_t)
+        dispatcher.send("update period", val=period)
+        self.send_dmx(t)
+        
+    def send_dmx(self,t):
         scaledsubs=[]
         for st in self.subterms:
             scl = st.scaled(t)
@@ -212,8 +248,10 @@ class SubtermSetView(tk.Frame):
         if self.cur_col == 0:
             self.cur_row += 1
 
-def add_one_subterm(subname, curveset, subterms, root, ssv, expr=''):
-    expr = expr or '%s(t)' % subname
+def add_one_subterm(subname, curveset, subterms, root, ssv, expr=None):
+    if expr is None:
+        expr = '%s(t)' % subname
+
     term = Subterm(Submaster.Submaster(subname), Subexpr(curveset,expr))
     subterms.append(term)
 
@@ -243,7 +281,20 @@ def sub_commands_tk(master, curveset, subterms, root, ssv):
     entry.bind("<Key-Return>", lambda evt: add_cmd())
 
     return f
-    
+
+def add_subterms_from_file(filename, curveset, subterms, root, ssv):
+    for line in file(filename):
+        try:
+            subname,expr = line.strip().split(" ",1)
+        except ValueError:
+            subname = line.strip()
+            expr = ""
+
+        term = add_one_subterm(subname, curveset, subterms, root, ssv, expr)
+
+        # stv=Subtermview(root,term)
+        # stv.pack(side='top',fill='x')
+
 #######################################################################
 root=tk.Tk()
 root.tk_setPalette("gray50")
@@ -259,7 +310,6 @@ except IndexError:
     raise SystemExit("song name is required, e.g. '05-mix'")
 
 music=Music()
-dispatcher.connect(lambda t: music.seekplay_or_pause(t),"music seek")
 
 zc = Zoomcontrol(root)
 zc.pack(side='top',fill='x')
@@ -282,19 +332,10 @@ curveset.load(basename=os.path.join(showconfig.curvesDir(),song))
 subterms = []
 sub_commands_tk(root, curveset, subterms, root, ssv).pack(side='top',fill='x')
 
-for line in file(showconfig.subtermsForSong(song)):
-    try:
-        subname,expr = line.strip().split(" ",1)
-    except ValueError:
-        subname = line.strip()
-        expr = ""
+add_subterms_from_file(showconfig.subtermsForSong(song),
+                       curveset, subterms, root, ssv)
 
-    term = add_one_subterm(subname, curveset, subterms, root, ssv, expr)
-    
-    # stv=Subtermview(root,term)
-    # stv.pack(side='top',fill='x')
-
-out = Output(subterms)
+out = Output(subterms, music)
 
 def savekey(*args):
     print "saving",song
@@ -310,32 +351,6 @@ for helpline in ["Bindings: C-s save subterms; B1 drag point; C-B1 curve add poi
                  "Available in functions: nsin/ncos period=amp=1; within(a,b) bef(x) aft(x) compare to time; smoove(x) cubic smoothstep; curvename(t) eval curve"]:
     tk.Label(root,text=helpline, font="Helvetica -12 italic",
              anchor='w').pack(side='top',fill='x')
-
-recent_t=[]
-later = None
-def update():
-    global later
-    d = music.current_time()
-    d.addCallback(update2)
-    d.addErrback(updateerr)
-def updateerr(e):
-    global later
-    dispatcher.send("update status",val=e.getErrorMessage())
-    if later and not later.cancelled and not later.called: later.cancel()
-    later = reactor.callLater(1,update)
-def update2(t):
-    global recent_t,later
-    dispatcher.send("update status",
-                    val="ok: receiving time from music player")
-    if later and not later.cancelled and not later.called: later.cancel()
-    
-    later = reactor.callLater(.05,update)
-
-    recent_t = recent_t[-50:]+[t]
-    period = (recent_t[-1]-recent_t[0])/len(recent_t)
-    dispatcher.send("update period",val=period)
-    out.send_dmx(t)
-update()
 
 #def logprint(msg):
 #    print "log",msg

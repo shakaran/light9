@@ -46,7 +46,7 @@ class SubmasterTk(Frame):
         self.slider_var = DoubleVar()
         self.slider_var.set(current_level)
         self.scale = SubScale(self, variable=self.slider_var, width=20)
-        namelabel = Label(self, text=name, font="Arial 11", bg='black',
+        namelabel = Label(self, text=name, font="Arial 9", bg='black',
             fg='white')
         namelabel.pack(side=TOP)
         levellabel = Label(self, textvariable=self.slider_var, font="Arial 11",
@@ -279,4 +279,9 @@ if __name__ == "__main__":
     reactor.addSystemEventTrigger('after', 'shutdown', kc.save)
     
     tksupport.install(root,ms=10)
-    reactor.run()
+    if 0:
+        sys.path.append("/home/drewp/projects/cuisine/pour")
+        from utils import runstats
+        runstats("reactor.run()")
+    else:
+        reactor.run()
