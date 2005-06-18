@@ -187,6 +187,48 @@ class Submasters:
         return self.submasters.get(name, Submaster(name))
     __getitem__ = get_sub_by_name
 
+def fullsub(*chans):
+    """Make a submaster with chans at full."""
+    return Submaster('%r' % chans,
+        dict([(c, 1.0) for c in chans]), temporary=True)
+
+# a global instance of Submasters, created on demand
+_submasters = None
+
+def get_global_submasters():
+    """Get (and make on demand) the global instance of Submasters"""
+    global _submasters
+    if _submasters is None:
+        _submasters = Submasters()
+    return _submasters
+
+def get_sub_by_name(name, submasters=None):
+    """name is a channel or sub nama, submasters is a Submasters object.
+    If you leave submasters empty, it will use the global instance of
+    Submasters."""
+    if not submasters:
+        submasters = get_global_submasters()
+
+    if name in submasters.get_all_sub_names():
+        return submasters.get_sub_by_name(name)
+
+    try:
+        val = int(name)
+        s = Submaster("#%d" % val, {val : 1.0}, temporary=True)
+        return s
+    except ValueError:
+        pass
+
+    try:
+        subnum = Patch.get_dmx_channel(name)
+        s = Submaster("'%s'" % name, {subnum : 1.0}, temporary=True)
+        return s
+    except ValueError:
+        pass
+
+    # make an error sub
+    return Submaster('%s' % name)
+
 if __name__ == "__main__":
     Patch.reload_data()
     s = Submasters()
