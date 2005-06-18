@@ -15,11 +15,18 @@ from twisted.web.xmlrpc import Proxy
 
 import run_local
 from light9 import Submaster, dmxclient, networking, showconfig
-from light9.TLUtility import make_attributes_from_args
+from light9.TLUtility import make_attributes_from_args, dict_subset
 from light9.zoomcontrol import Zoomcontrol
 from light9.curve import Curve, Curveview, Curveset, Curvesetview
 from light9.wavelength import wavelength
 from light9.uihelpers import toplevelat
+
+import light9.Effects
+fx_dict = light9.Effects.__dict__
+all_fx = fx_dict['__all__']
+expr_helpers = dict_subset(fx_dict, all_fx)
+del fx_dict
+del all_fx
 
 class Music:
     def __init__(self):
@@ -64,6 +71,9 @@ class Subexpr:
             return 0
         glo = self.curveset.globalsdict()
         glo['t'] = t
+
+        # add in functions from Effects
+        glo.update(expr_helpers)
 
         glo['nsin'] = lambda x: (math.sin(x * (2 * math.pi)) + 1) / 2
         glo['ncos'] = lambda x: (math.cos(x * (2 * math.pi)) + 1) / 2
