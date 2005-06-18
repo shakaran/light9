@@ -209,7 +209,7 @@ class KeyboardComposer(Frame, SubClient):
             for name, slidervar in self.slider_vars.items()])
     def get_levels_as_sub(self):
         scaledsubs = [self.submasters.get_sub_by_name(sub) * level \
-            for sub, level in self.get_levels().items()]
+            for sub, level in self.get_levels().items() if level > 0.0]
 
         maxes = sub_maxes(*scaledsubs)
         return maxes

@@ -14,7 +14,8 @@ class Submaster:
         else:
             self.levels = {}
             self.reload(quiet=True)
-        dispatcher.connect(self.reload, 'reload all subs')
+        if not self.temporary:
+            dispatcher.connect(self.reload, 'reload all subs')
     def reload(self, quiet=False):
         if self.temporary:
             return
