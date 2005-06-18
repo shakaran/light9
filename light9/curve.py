@@ -338,8 +338,12 @@ class Curvesetview(tk.Frame):
         leftside.pack(side='left')
 
         collapsed = tk.IntVar()
-        tk.Label(leftside,text="curve %r" % name,font="6x10",
+        txt = "curve %r" % name
+        if len(name) > 7:
+            txt = repr(name)
+        tk.Label(leftside,text=txt,font="6x10",
                  width=15).pack(side='top')
+            
         def cmd():
             if collapsed.get():
                 f.pack(exp=0)
