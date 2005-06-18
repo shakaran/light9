@@ -71,6 +71,11 @@ def angle_between(base, p0, p1):
     dot = max(-1,min(1,dot))
     return math.degrees(math.acos(dot))
 
+def slope(p1,p2):
+    if p2[0] == p1[0]:
+        return 0
+    return (p2[1] - p1[1]) / (p2[0] - p1[0])
+
 class Sketch:
     """a sketch motion on a curveview, with temporary points while you
     draw, and simplification when you release"""
@@ -117,10 +122,6 @@ class Sketch:
             
         self.curveview.update_curve()
 
-    def slope(self,p1,p2):
-        if p2[0] == p1[0]:
-            return 0
-        return (p2[1] - p1[1]) / (p2[0] - p1[0])
 
 class Curveview(tk.Canvas):
     def __init__(self,master,curve,**kw):
@@ -302,11 +303,26 @@ class Curveview(tk.Canvas):
                       lambda ev,i=i: self.dotmotion(ev,i))
             self.bind("<ButtonRelease-1>",
                       lambda ev,i=i: self.dotrelease(ev,i))
+            #self.tag_bind('handle%d' % i, "<Key-d>",
+            #              lambda ev, i=i: self.remove_point_idx(i))
+                      
             self.dots[i]=dot
+
+        def delpoint(ev):
+            # had a hard time tag_binding to the points, so i trap at
+            # the widget level (which might be nice anyway when there
+            # are multiple pts selected)
+            tags = self.gettags(self.find_closest(ev.x, ev.y))
+            try:
+                handletags = [t for t in tags if t.startswith('handle')]
+                i = int(handletags[0][6:])
+            except IndexError:
+                return
+            self.remove_point_idx(i)
+        self.bind("<Key-Delete>", delpoint)
 
         self.highlight_selected_dots()
         
-
     def newpointatmouse(self, ev):
         p = self.world_from_screen(ev.x,ev.y)
         x, y = p
@@ -318,6 +334,10 @@ class Curveview(tk.Canvas):
     def add_point(self, p):
         self.unselect()
         self.curve.insert_pt(p)
+        self.update_curve()
+        
+    def remove_point_idx(self, i):
+        self.curve.points.pop(i)
         self.update_curve()
 
     def highlight_selected_dots(self):
