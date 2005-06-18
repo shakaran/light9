@@ -170,7 +170,7 @@ class Zoomcontrol(object,tk.Canvas):
 
 
 class RegionZoom:
-    """rigs c-a-b1 to drag out an area to zoom to.
+    """rigs c-a-b1 to drag out an area to zoom to. also catches other types of drag events, like b1 drag for selecting points
 
     this is used with Curveview
     """
@@ -181,16 +181,26 @@ class RegionZoom:
         for evtype, method in [("ButtonPress-1",self.press),
                                ("Motion",self.motion),
                                ("ButtonRelease-1",self.release)]:
-            canvas.bind("<Control-Alt-%s>" % evtype, method)
-            if evtype != "ButtonPress-1":
-                canvas.bind("<%s>" % evtype, method)
+            #canvas.bind("<Control-Alt-%s>" % evtype, method, add=True)
+            if 1 or evtype != "ButtonPress-1":
+                canvas.bind("<%s>" % evtype, method,add=True)
         canvas.bind("<Leave>", self.finish)
         self.start_t = self.old_cursor = None
-        self.state = None
+        self.state = self.mods = None
 
     def press(self,ev):
         if self.state is not None:
             self.finish()
+
+        if ev.state == 12:
+            self.mods = "c-a"
+        elif ev.state == 13:
+            self.mods = "c-s-a"
+        elif ev.state == 0:
+            return # no 
+            self.mods = "none"
+        else:
+            return
         self.state = "buttonpress"
             
         self.start_t = self.end_t = self.world_from_screen(ev.x,0)[0]
@@ -236,19 +246,22 @@ class RegionZoom:
         
         if abs(self.start_x - ev.x) < 10:
             # clicked
-            factor = 1/1.5
-            if ev.state & 1:
-                factor = 1.5 # c-s-a-b1 zooms out
-            dispatcher.send("zoom about mouse",
-                            t=self.start_t,
-                            factor=factor)
+            if self.mods in ("c-a", "c-s-a"):
+                factor = 1/1.5
+                if self.mods == "c-s-a":
+                    factor = 1.5 # c-s-a-b1 zooms out
+                dispatcher.send("zoom about mouse",
+                                t=self.start_t,
+                                factor=factor)
 
             self.finish()
             return
-            
-        dispatcher.send("zoom to range",
-                        start=min(self.start_t, self.end_t),
-                        end=max(self.start_t, self.end_t))
+
+        start,end = min(self.start_t, self.end_t),max(self.start_t, self.end_t)
+        if self.mods == "c-a":
+            dispatcher.send("zoom to range", start=start, end=end)
+        elif self.mods == "none":
+            dispatcher.send("select between", start=start, end=end)
         self.finish()
         
     def finish(self, *ev):

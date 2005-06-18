@@ -50,11 +50,11 @@ class Curve:
         i = bisect(self.points,(new_pt[0],None))
         self.points.insert(i,new_pt)
 
-    def indices_between(self, x1, x2):
-        leftidx = max(0, bisect_left(self.points, (x1,None)) - 1)
-        rightidx = min(len(self.points) - 1,
-                       bisect_left(self.points, (x2,None)) + 1)
-        return range(leftidx, rightidx+1)
+    def indices_between(self, x1, x2, beyond=0):
+        leftidx = max(0, bisect(self.points, (x1,None)) - beyond)
+        rightidx = min(len(self.points),
+                       bisect(self.points, (x2,None)) + beyond)
+        return range(leftidx, rightidx)
         
     def points_between(self, x1, x2):
         return [self.points[i] for i in self.indices_between(x1,x2)]
@@ -136,6 +136,7 @@ class Curveview(tk.Canvas):
         dispatcher.connect(self.input_time,"input time")
         dispatcher.connect(self.update_curve,"zoom changed")
         dispatcher.connect(self.update_curve,"points changed",sender=self.curve)
+        dispatcher.connect(self.select_between,"select between")
         self.bind("<Configure>",self.update_curve)
         for x in range(1, 6):
             def add_kb_marker_point(evt, x=x):
@@ -161,13 +162,55 @@ class Curveview(tk.Canvas):
                   dispatcher.send("music seek",
                                   t=self.world_from_screen(ev.x,0)[0]))
 
+        self.bind("<Motion>",
+                  self.dotmotion, add=True)
+        self.bind("<ButtonRelease-1>",
+                  self.dotrelease, add=True)
+
+
         # this binds on c-a-b1, etc
-        RegionZoom(self, self.world_from_screen, self.screen_from_world)
+        self.regionzoom = RegionZoom(self, self.world_from_screen,
+                                     self.screen_from_world)
 
         self.sketch = None # an in-progress sketch
         self.bind("<Shift-ButtonPress-1>", self.sketch_press)
         self.bind("<Shift-B1-Motion>", self.sketch_motion)
         self.bind("<Shift-ButtonRelease-1>", self.sketch_release)
+
+
+        # hold alt-shift to select, since i had a hard time detecting
+        # other combos right
+        self.selecting = False
+        self.bind("<Alt-Key>", self.select_press)
+        self.bind("<Motion>", self.select_motion, add=True)
+        self.bind("<Alt-KeyRelease>", self.select_release)
+
+        self.bind("<ButtonPress-1>", self.check_deselect, add=True)
+
+    def check_deselect(self,ev):
+        try:
+            self.find_index_near(ev.x, ev.y)
+        except ValueError:
+            self.selected_points[:] = []
+            self.highlight_selected_dots()
+
+    def select_press(self,ev):
+        if not self.selecting:
+            self.selecting = True
+            self.select_start = self.world_from_screen(ev.x,0)[0]
+            cursors.push(self,"gumby")
+        
+    def select_motion(self,ev):
+        if not self.selecting:
+            return
+        
+    def select_release(self,ev):
+        if not self.selecting:
+            return
+        cursors.pop(self)
+        self.selecting = False
+        s,e = (self.select_start, self.world_from_screen(ev.x,0)[0])
+        self.select_between(min(s,e), max(s,e))
 
     def sketch_press(self,ev):
         self.sketch = Sketch(self,ev)
@@ -209,8 +252,9 @@ class Curveview(tk.Canvas):
         visible_x = (self.world_from_screen(0,0)[0],
                      self.world_from_screen(self.winfo_width(),0)[0])
 
-        visible_points = self.curve.points_between(*visible_x)
-        visible_idxs = self.curve.indices_between(*visible_x)
+        visible_idxs = self.curve.indices_between(visible_x[0], visible_x[1],
+                                                  beyond=1)
+        visible_points = [cp[i] for i in visible_idxs]
         
         self.delete('curve')
 
@@ -280,7 +324,7 @@ class Curveview(tk.Canvas):
         #            print ev.state
         #        self.bind("<KeyPress>",curs)
         #        self.bind("<KeyRelease-Control_L>",lambda ev: curs(0))
-        self.tag_bind(line,"<Control-ButtonPress-1>",self.newpointatmouse)
+        self.tag_bind(line,"<Control-ButtonPress-1>",self.new_point_at_mouse)
 
 
     def _draw_handle_points(self,visible_idxs,visible_points):
@@ -299,10 +343,6 @@ class Curveview(tk.Canvas):
                                        tags=('curve','point', 'handle%d' % i))
             self.tag_bind('handle%d' % i,"<ButtonPress-1>",
                           lambda ev,i=i: self.dotpress(ev,i))
-            self.bind("<Motion>",
-                      lambda ev,i=i: self.dotmotion(ev,i))
-            self.bind("<ButtonRelease-1>",
-                      lambda ev,i=i: self.dotrelease(ev,i))
             #self.tag_bind('handle%d' % i, "<Key-d>",
             #              lambda ev, i=i: self.remove_point_idx(i))
                       
@@ -312,18 +352,21 @@ class Curveview(tk.Canvas):
             # had a hard time tag_binding to the points, so i trap at
             # the widget level (which might be nice anyway when there
             # are multiple pts selected)
-            tags = self.gettags(self.find_closest(ev.x, ev.y))
-            try:
-                handletags = [t for t in tags if t.startswith('handle')]
-                i = int(handletags[0][6:])
-            except IndexError:
-                return
-            self.remove_point_idx(i)
+            if self.selected_points:
+                self.remove_point_idx(*self.selected_points)
         self.bind("<Key-Delete>", delpoint)
 
         self.highlight_selected_dots()
+
+    def find_index_near(self,x,y):
+        tags = self.gettags(self.find_closest(x, y))
+        try:
+            handletags = [t for t in tags if t.startswith('handle')]
+            return int(handletags[0][6:])
+        except IndexError:
+            raise ValueError("no point found")
         
-    def newpointatmouse(self, ev):
+    def new_point_at_mouse(self, ev):
         p = self.world_from_screen(ev.x,ev.y)
         x, y = p
         y = max(0, y)
@@ -336,8 +379,29 @@ class Curveview(tk.Canvas):
         self.curve.insert_pt(p)
         self.update_curve()
         
-    def remove_point_idx(self, i):
-        self.curve.points.pop(i)
+    def remove_point_idx(self, *idxs):
+        idxs = list(idxs)
+        while idxs:
+            i = idxs.pop()
+
+            self.curve.points.pop(i)
+            newsel = []
+            newidxs = []
+            for si in range(len(self.selected_points)):
+                sp = self.selected_points[si]
+                if sp == i:
+                    continue
+                if sp > i:
+                    sp -= 1
+                newsel.append(sp)
+            for ii in range(len(idxs)):
+                if ii > i:
+                    ii -= 1
+                newidxs.append(idxs[ii])
+
+            self.selected_points[:] = newsel
+            idxs[:] = newidxs
+            
         self.update_curve()
 
     def highlight_selected_dots(self):
@@ -348,29 +412,47 @@ class Curveview(tk.Canvas):
                 self.itemconfigure(d,fill='blue')
         
     def dotpress(self,ev,dotidx):
-        self.selected_points=[dotidx]
+        if dotidx not in self.selected_points:
+            self.selected_points=[dotidx]
+        self.highlight_selected_dots()
+        self.last_mouse_world = self.world_from_screen(ev.x, ev.y)
+
+    def select_between(self,start,end):
+        self.selected_points = self.curve.indices_between(start,end)
         self.highlight_selected_dots()
 
-    def dotmotion(self,ev,dotidx):
+    def dotmotion(self,ev):
+        if not ev.state & 256:
+            return # not lmb-down
         cp = self.curve.points
         moved=0
+
+        cur = self.world_from_screen(ev.x, ev.y)
+        delta = (cur[0] - self.last_mouse_world[0],
+                 cur[1] - self.last_mouse_world[1])
+        self.last_mouse_world = cur
+        
         for idx in self.selected_points:
-            x,y = self.world_from_screen(ev.x,ev.y)
-            y = max(0,min(1,y))
-            if idx>0 and x<=cp[idx-1][0]:
+
+            newp = [cp[idx][0] + delta[0], cp[idx][1] + delta[1]]
+            
+            newp[1] = max(0,min(1,newp[1]))
+            
+            if idx>0 and newp[0] <= cp[idx-1][0]:
                 continue
-            if idx<len(cp)-1 and x>=cp[idx+1][0]:
+            if idx<len(cp)-1 and newp[0] >= cp[idx+1][0]:
                 continue
             moved=1
-            cp[idx] = (x,y)
+            cp[idx] = tuple(newp)
         if moved:
             self.update_curve()
+
     def unselect(self):
         self.selected_points=[]
         self.highlight_selected_dots()
         
-    def dotrelease(self,ev,dotidx):
-        self.unselect()
+    def dotrelease(self,ev):
+        pass #self.unselect()
         
 class Curveset:
     curves = None # curvename : curve
