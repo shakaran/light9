@@ -2,12 +2,15 @@ import random
 import light9.Submaster as Submaster
 from chase import chase as chase_logic
 
-__all__ = ['chase']
-
 thirds = 'third-l', 'third-c', 'third-r'
 thirds_bounce = 'third-l', 'third-c', 'third-r', 'third-c'
-flutter = ['scoop-l', 'scoop-c', 'scoop-r', 'down-c', 'down-l', 'down-r'] * 5
-random.shuffle(flutter)
+backs = ['back%d' % d for d in range(1, 11)]
+rand_flutter = ['scoop-l', 'scoop-c', 'scoop-r', 'down-c', 'down-l', 'down-r', 'cyc', 'zip_blue', 'zip_red', 'zip_green', 'zip_orange'] + backs
+rand_flutter *= 10
+random.shuffle(rand_flutter)
+
+# don't forget to update this!
+__all__ = ['chase', 'thirds', 'thirds_bounce', 'rand_flutter', 'backs']
 
 def chase(t, ontime=0.5, offset=0.2, onval=1.0, 
           offval=0.0, names=None, combiner=max):
