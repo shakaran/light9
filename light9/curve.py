@@ -44,11 +44,83 @@ class Curve:
         frac = (t-p1[0])/(p2[0]-p1[0])
         y = p1[1]+(p2[1]-p1[1])*frac
         return y
+    __call__=eval
 
     def insert_pt(self,new_pt):
         i = bisect(self.points,(new_pt[0],None))
         self.points.insert(i,new_pt)
-    __call__=eval
+
+    def indices_between(self, x1, x2):
+        leftidx = max(0, bisect_left(self.points, (x1,None)) - 1)
+        rightidx = min(len(self.points) - 1,
+                       bisect_left(self.points, (x2,None)) + 1)
+        return range(leftidx, rightidx+1)
+        
+    def points_between(self, x1, x2):
+        return [self.points[i] for i in self.indices_between(x1,x2)]
+
+def vlen(v):
+    return math.sqrt(v[0]*v[0] + v[1]*v[1])
+
+def angle_between(base, p0, p1):
+    p0 = p0[0] - base[0], p0[1] - base[1]
+    p1 = p1[0] - base[0], p1[1] - base[1]
+    p0 = [x/vlen(p0) for x in p0]
+    p1 = [x/vlen(p1) for x in p1]
+    dot = p0[0]*p1[0]+p0[1]*p1[1]
+    dot = max(-1,min(1,dot))
+    return math.degrees(math.acos(dot))
+
+class Sketch:
+    """a sketch motion on a curveview, with temporary points while you
+    draw, and simplification when you release"""
+    
+    def __init__(self,curveview,ev):
+        self.curveview = curveview
+        self.pts = []
+        self.last_x = None
+
+    def motion(self,ev):
+        p = self.curveview.world_from_screen(ev.x, ev.y)
+        p = p[0], max(0,min(1,p[1]))
+        if self.last_x is not None and abs(ev.x - self.last_x) < 4:
+            return
+        self.last_x = ev.x
+        self.pts.append(p)
+        self.curveview.add_point(p)
+
+    def release(self,ev):
+        pts = self.pts
+        pts.sort()
+
+        dx = .01
+        to_remove = []
+        for i in range(1,len(pts)-1):
+            x = pts[i][0]
+
+            p_left = (x - dx, self.curveview.curve(x - dx))
+            p_right = (x + dx, self.curveview.curve(x + dx))
+
+            if angle_between(pts[i], p_left, p_right) > 160:
+                to_remove.append(i)
+
+        for i in to_remove:
+            self.curveview.curve.points.remove(pts[i])
+
+        # the simplified curve may now be too far away from some of
+        # the points, so we'll put them back. this has an unfortunate
+        # bias toward reinserting the earlier points
+        for i in to_remove:
+            p = pts[i]
+            if abs(self.curveview.curve(p[0]) - p[1]) > .1:
+                self.curveview.add_point(p)
+            
+        self.curveview.update_curve()
+
+    def slope(self,p1,p2):
+        if p2[0] == p1[0]:
+            return 0
+        return (p2[1] - p1[1]) / (p2[0] - p1[0])
 
 class Curveview(tk.Canvas):
     def __init__(self,master,curve,**kw):
@@ -91,6 +163,23 @@ class Curveview(tk.Canvas):
         # this binds on c-a-b1, etc
         RegionZoom(self, self.world_from_screen, self.screen_from_world)
 
+        self.sketch = None # an in-progress sketch
+        self.bind("<Shift-ButtonPress-1>", self.sketch_press)
+        self.bind("<Shift-B1-Motion>", self.sketch_motion)
+        self.bind("<Shift-ButtonRelease-1>", self.sketch_release)
+
+    def sketch_press(self,ev):
+        self.sketch = Sketch(self,ev)
+
+    def sketch_motion(self,ev):
+        if self.sketch:
+            self.sketch.motion(ev)
+
+    def sketch_release(self,ev):
+        if self.sketch:
+            self.sketch.release(ev)
+            self.sketch = None
+
     def current_time(self):
         return self._time
 
@@ -110,6 +199,7 @@ class Curveview(tk.Canvas):
         self.delete('timecursor')
         self.create_line(*pts,**dict(width=2,fill='red',tags=('timecursor',)))
         self._time = t
+        
     def update_curve(self,*args):
 
         self.zoom = dispatcher.send("zoom area")[0][1]
@@ -118,11 +208,8 @@ class Curveview(tk.Canvas):
         visible_x = (self.world_from_screen(0,0)[0],
                      self.world_from_screen(self.winfo_width(),0)[0])
 
-        visleftidx = max(0,bisect_left(cp,(visible_x[0],None))-1)
-        visrightidx = min(len(cp)-1,bisect_left(cp,(visible_x[1],None))+1)
-                             
-        visible_points = cp[visleftidx:visrightidx+1]
-        visible_idxs = range(visleftidx,visrightidx+1)
+        visible_points = self.curve.points_between(*visible_x)
+        visible_idxs = self.curve.indices_between(*visible_x)
         
         self.delete('curve')
 
@@ -208,7 +295,7 @@ class Curveview(tk.Canvas):
                 dot2 = self.create_oval(p[0]-rad,p[1]-rad,
                                              p[0]+rad,p[1]+rad,
                                              outline='darkgreen',
-                                             tags=('curve','point', 'handle%d' % i))
+                                       tags=('curve','point', 'handle%d' % i))
             self.tag_bind('handle%d' % i,"<ButtonPress-1>",
                           lambda ev,i=i: self.dotpress(ev,i))
             self.bind("<Motion>",
