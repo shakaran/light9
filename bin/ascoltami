@@ -111,43 +111,44 @@ class Player:
         self.mpd.status().addCallback(self.pollStatus2)
         
     def pollStatus2(self, stat):
+        try:
+            if self.state.get() != stat.state:
+                self.state.set(stat.state)
 
-        if self.state.get() != stat.state:
-            self.state.set(stat.state)
 
+            if hasattr(stat, 'time_elapsed'):
+                elapsed = stat.time_elapsed
+                songnum = stat.song
+                total = stat.time_total
+                if self.mpd_is_lying and elapsed < 3:
+                    self.mpd_is_lying = False
 
-        if hasattr(stat, 'time_elapsed'):
-            elapsed = stat.time_elapsed
-            songnum = stat.song
-            total = stat.time_total
-            if self.mpd_is_lying and elapsed < 3:
-                self.mpd_is_lying = False
+                # mpd lies about elapsed, song, and total during the last
+                # .5sec of each song. so we coast through that part
+                if elapsed > total - .75 or self.mpd_is_lying:
+                    if not self.mpd_is_lying:
+                        self.mpd_is_lying = True
+                        self.true_song_total = songnum, total
+                        self.marked_time = time.time()
+                        self.marked_val = elapsed
+                    elapsed = self.marked_val + (time.time() - self.marked_time)
+                    songnum, total = self.true_song_total
 
-            # mpd lies about elapsed, song, and total during the last
-            # .5sec of each song. so we coast through that part
-            if elapsed > total - .75 or self.mpd_is_lying:
-                if not self.mpd_is_lying:
-                    self.mpd_is_lying = True
-                    self.true_song_total = songnum, total
-                    self.marked_time = time.time()
-                    self.marked_val = elapsed
-                elapsed = self.marked_val + (time.time() - self.marked_time)
-                songnum, total = self.true_song_total
-            
-            if songnum == 1:
-                t = elapsed
-            elif songnum == 0:
-                t = elapsed - total
-            elif songnum == 2:
-                t = self.total_time.get() + elapsed
+                t = -1
+                if songnum == 1:
+                    t = elapsed
+                elif songnum == 0:
+                    t = elapsed - total
+                elif songnum == 2:
+                    t = self.total_time.get() + elapsed
 
-            self.current_time.set(t)
-            
-            self.last_poll_time = time.time()
+                self.current_time.set(t)
 
-        self.check_autopause()
+                self.last_poll_time = time.time()
 
-        reactor.callLater(.05, self.pollStatus)
+            self.check_autopause()
+        finally:
+            reactor.callLater(.05, self.pollStatus)
 
     def set_total_time(self, song_path):
         # currently only good for .wav
