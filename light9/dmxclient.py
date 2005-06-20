@@ -6,13 +6,13 @@ client id is formed from sys.argv[0] and the PID.  """
 
 import xmlrpclib, os, sys, socket, time
 from light9 import networking
-_dmx=None
+_dmx = None
 
 procname = os.path.basename(sys.argv[0])
 procname = procname.replace('.py', '')
 _id = "%s-%s-%s" % (procname, socket.gethostname(), os.getpid())
 
-def outputlevels(levellist,twisted=0,clientid=_id):
+def outputlevels(levellist, twisted=0, clientid=_id):
     """present a list of dmx channel levels, each scaled from
     0..1. list can be any length- it will apply to the first len() dmx
     channels.
