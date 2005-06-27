@@ -1,0 +1,5 @@
+bigstage 
+song10 song(t)
+song10intro intro(t)
+wide wide(t)+ctr(t)*.3
+centered ctr(t)

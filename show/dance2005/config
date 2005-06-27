@@ -1,0 +1,4 @@
+[music]
+preSong = silence-4sec.wav
+postSong = silence-15sec.wav
+
