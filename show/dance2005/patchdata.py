@@ -7,54 +7,50 @@ patch = {
     'blue1':23,    'blue2':27,    'blue3':31,    'blue4':35,
     'red1' :24,    'red2' :28,    'red3' :32,    'red4' :36,
 
+    ('edge-l',) : 52,
+    ('edge-r',) : 64,
 
-    ('back9','b11',) : 54,
-    ('back6','b12',) : 53,
-    ('back4','b13',) : 52,
-    ('back1','b14',) : 51,
-    ('back3','b15',) : 50,
-    ('back7','b16',) : 49,
-    
-    ('b21broke',) : 55,
-    ('lowerstage-l','b22',) : 56,
-    ('patio-l','b23',) : 57,
-    ('patio-r','b24',) : 58,
-    ('lowerstage-r','b25',) : 59,
-    ('shar','b26',) : 60,
-    
-    ('back2','b31',) : 61,
-    ('back8','b32',) : 62,
-    ('b33broke',) : 63,
-    ('back10','b34',) : 64,
-    ('b35broke',) : 65,
-    ('back5','b36',) : 66,
+    ('red-c',) : 53,
+
+    ('stairs-c',) : 55,
+    ('sharlyn-c',) : 60,
+
+    ('floor1',) : 59,
+    ('floor2',) : 57,
+    ('floor3',) : 56,
+    ('floor4',) : 62,
+
+    ('deep1',) : 51,
+    ('deep2',) : 54,
+    ('deep3-red',) : 65,
+    ('deep4',) : 63,
+    ('deep5',) : 50,
+    ('deep6',) : 49,
+    ('deep7-warm',) : 66,
 
     'post-l':45,
     'post-r':46,
 
-    'down-sides':16,
-    'down-c':18,
+    'down-front-sides':16,
+    'down-front-c':18,
     'down-l':13,
     'down-r':14,
-#    'down-back1':39,
-    'up-l':40,
+    'down-back1':39,
+    'down-back2':40,
 
-    'front1-2':2,
+    'front1':2,
     'front2':3,
     'front3':4,
     'front4':5,
-    'god' : 6,
-    'front5' : 7,    
-    'front6':9,
-    'front7':10,
+    'front5':9,
+    'front6':11,
+    'front7':8,
     'front8':12,
 
-    'blacklight': 15,
-    'stroberate':19,
-    'strobedim':20,
 
     'cyc' : 44,
 
+    'blacklight':61,
     'house':68,
 
 }

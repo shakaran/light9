@@ -1,5 +1,2 @@
-scene scene(t)
-song01 song(t)
-wide wide(t)
-patios patios(t)
-cyc bow(t)
+scene 
+song01 song(t)*.5

@@ -1,10 +1,1 @@
-bigstage 
-blacklight blacklight(t)>0
-zip_orange (colors(t)*smooth_music(t+.1)*2) + (burstsred(t) * within(0.5, 1.5) * 0.5)
-zip_red (colors(t)*smooth_music(t-.2)*3) + burstsred(t)
-wide song(t)
-zip_blue burstsblue(t) + (within(94, 100) * smooth_music(t + 0.1) * 4)
-zip_green burstsblue(t)
-scoop-l ((within(49, 64) * nsin(t / 2.0)) > 0.4) + (within(112, 113) * (music(t) < .18))
-scoop-r ((within(49, 64) * nsin((t / 2.0) + 0.5)) > 0.4) + (within(112, 113) * (music(t) >= .18))
-cyc within(110, 111) * burstsblue(t)
+cyc flashes(t)*music(t)

@@ -1,5 +1,1 @@
-sharwarmup 
-dim2 
-song04 song(t)
-zip_orange song(t)*nsin(t/3)*.5
-zip_red song(t)*nsin((t+.5)/2)
+dim2 c(t)

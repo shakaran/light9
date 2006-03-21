@@ -1,4 +1,4 @@
 [music]
-preSong = silence-4sec.wav
-postSong = silence-15sec.wav
+preSong = silence-4sec.ogg
+postSong = silence-15sec.ogg
 
