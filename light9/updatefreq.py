@@ -1,5 +1,6 @@
 """calculates your updates-per-second"""
 
+from __future__ import division
 import time
 
 class Updatefreq:
@@ -27,7 +28,7 @@ class Updatefreq:
         try:
             hz=len(self.times)/(self.times[-1]-self.times[0])
         except ZeroDivisionError:
-            return 0
+            return 0.0
         return hz
     def __str__(self):
         return "%.2fHz"%float(self)
