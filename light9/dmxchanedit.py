@@ -73,14 +73,18 @@ class Onelevel(tk.Frame):
             self.changelevel(0.0)
         def b3down(ev):
             self.changelevel(1.0)
+        def b2down(ev): # same thing for now
+            self.changelevel(1.0)
 
         # make the buttons work in the child windows
         for w in self.winfo_children():
             for e,func in (('<ButtonPress-1>',b1down),
                            ('<B1-Motion>',b1motion),
                            ('<ButtonRelease-1>',b1up),
+                           ('<ButtonPress-2>', b2down),
                            ('<ButtonRelease-3>', b3up),
                            ('<ButtonPress-3>', b3down)):
+
                 w.bind(e,func)
 #                w.bind(e,lambda ev,e=e: eventtoparent(ev,e))
         
