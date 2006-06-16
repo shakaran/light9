@@ -140,7 +140,6 @@ class Curveview(tk.Canvas):
         self.bind("<Configure>",self.update_curve)
         for x in range(1, 6):
             def add_kb_marker_point(evt, x=x):
-                print "add_kb_marker_point", evt
                 self.add_point((self.current_time(), (x - 1) / 4.0))
 
             self.bind("<Key-%s>" % x, add_kb_marker_point)
@@ -428,8 +427,11 @@ class Curveview(tk.Canvas):
         moved=0
 
         cur = self.world_from_screen(ev.x, ev.y)
-        delta = (cur[0] - self.last_mouse_world[0],
-                 cur[1] - self.last_mouse_world[1])
+        if self.last_mouse_world:
+            delta = (cur[0] - self.last_mouse_world[0],
+                     cur[1] - self.last_mouse_world[1])
+        else:
+            delta = 0,0
         self.last_mouse_world = cur
         
         for idx in self.selected_points:
@@ -452,7 +454,7 @@ class Curveview(tk.Canvas):
         self.highlight_selected_dots()
         
     def dotrelease(self,ev):
-        pass #self.unselect()
+        self.last_mouse_world = None
         
 class Curveset:
     curves = None # curvename : curve
