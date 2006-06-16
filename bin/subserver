@@ -10,6 +10,8 @@ class SubServe:
     def output(self,levels):
         """pass a dict of {sub : level} mappings"""
 
+def editsub
+
 
 class SubClient:
     """each client can receive these messages"""
