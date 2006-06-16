@@ -5,7 +5,7 @@ go: _parport.so _serport.so
 	result="your modules and links are now up to date"
 
 _parport.so: parport_wrap.c
-	gcc -shared ${INC} parport_wrap.c parport.c -o _parport.so 
+	gcc -shared -g ${INC} parport_wrap.c parport.c -o _parport.so 
 
 parport_wrap.c: parport.c parport.i
 	swig -python parport.i
