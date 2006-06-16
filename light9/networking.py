@@ -4,20 +4,20 @@ from ConfigParser import SafeConfigParser
 def dmxServerUrl():
     #host = os.getenv('DMXHOST', 'localhost')
     #url = "http://%s:8030" % host
-    return "http://localhost:%s" % dmxServerPort()
+    return "http://spot:%s" % dmxServerPort()
 
 def dmxServerPort():
     return 8030
     
 def musicUrl():
-    return "http://localhost:%s" % musicPort()
+    return "http://score:%s" % musicPort()
 
 def musicPort():
     return 8040
 
 def mpdServer():
     """servername, port"""
-    return 'dash',6600
+    return 'score',6600
 
 def kcPort():
     return 8050

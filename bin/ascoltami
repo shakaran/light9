@@ -22,6 +22,9 @@ from __future__ import division,nested_scopes
 from optparse import OptionParser
 import os,math,time
 import Tkinter as tk
+#import logging
+#log = logging.getLogger()
+#log.setLevel(logging.DEBUG)
 
 from twisted.internet import reactor,tksupport
 from twisted.internet.error import CannotListenError
@@ -165,11 +168,10 @@ class Player:
     
         self.autopausedthissong = False
         self.mpd.clear()
-        self.mpd.add(showconfig.songInMpd(MUS['preSong']))
-        self.mpd.add(showconfig.songInMpd(song))
-        self.mpd.add(showconfig.songInMpd(MUS['postSong']))
-        self.filename_var.set(graph.value(song, L9['showPath']))
-        self.song_uri = song
+        self.mpd.add(showconfig.songInMpd(self.pre_post_names[0]))
+        self.mpd.add(showconfig.songInMpd(song_path))
+        self.mpd.add(showconfig.songInMpd(self.pre_post_names[1]))
+        self.filename_var.set(song_path)
 
         self.set_total_time(song)
         self.mpd.seek(seconds=0, song=0)
