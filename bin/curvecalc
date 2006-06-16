@@ -12,6 +12,10 @@ from dispatch import dispatcher
 from twisted.internet import reactor,tksupport
 import twisted
 from twisted.web.xmlrpc import Proxy
+import logging
+log = logging.getLogger()
+logging.basicConfig(format="%(asctime)s %(levelname)-5s %(name)s %(filename)s:%(lineno)d: %(message)s")
+log.setLevel(logging.DEBUG)
 
 import run_local
 from light9 import Submaster, dmxclient, networking, showconfig
@@ -321,6 +325,7 @@ try:
 except IndexError:
     raise SystemExit("song name is required, e.g. '05-mix'")
 
+log.debug("music")
 music=Music()
 
 zc = Zoomcontrol(root)
@@ -347,6 +352,7 @@ sub_commands_tk(root, curveset, subterms, root, ssv).pack(side='top',fill='x')
 add_subterms_from_file(showconfig.subtermsForSong(song),
                        curveset, subterms, root, ssv)
 
+log.debug("output")
 out = Output(subterms, music)
 
 def savekey(*args):
@@ -373,6 +379,7 @@ root.bind("<Control-Key-q>",lambda ev: reactor.stop)
 root.bind("<Destroy>",lambda ev: reactor.stop)
 root.protocol('WM_DELETE_WINDOW', reactor.stop)
 tksupport.install(root,ms=20)
+log.debug("run")
 if 0:
     sys.path.append("/home/drewp/projects/cuisine/pour")
     from utils import runstats
