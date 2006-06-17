@@ -1,7 +1,9 @@
-song09 song(t)
+song09 song(t) - (blinks(t) * .5)
 song(t) 
-scoop-l blinks(t) * smooth_music(t)
-scoop-r blinks(t) * (smooth_music(t))
+scoop-l blinks(t) * smooth_music(t+.1)**.6
+scoop-r blinks(t) * smooth_music(t+.1)**.6
 finish finish(t)
 blacklight black(t)>0
-cyc blinks(t) * (smooth_music(t)>.6) * .8
+cyc blinks(t) * max(0, (smooth_music(t+.1)-(.4+.1*within(108,115)))*2)**.2 * aft(7.75) 
+zip_orange blinks(t) * smooth_music(t+.1)**.6
+deepblues blue(t)

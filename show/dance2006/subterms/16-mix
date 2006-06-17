@@ -1,2 +1,15 @@
 hottest hot(t)
 finish finish(t)
+strobedim strobedim(t)
+stroberate .97
+song16-blue blue(t)
+scoop-wide scoop(t)
+shar shar(t)
+scoop-l left(t)
+scoop-r right(t)
+lo-fill can(t)
+ch1 chase(t,names=back_colors, ontime=.6, offset=0) * ch1(t)
+blacklight black(t) > 0
+ch2 chase(t, names=zips, ontime=.3, offset=0) * ch2(t)
+zip_green greem(t)
+cyc back(t) * max(bef(208), smooth_music(t+.15)**.5)
