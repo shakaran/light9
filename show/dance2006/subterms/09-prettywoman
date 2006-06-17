@@ -1,0 +1,7 @@
+song09 song(t)
+song(t) 
+scoop-l blinks(t) * smooth_music(t)
+scoop-r blinks(t) * (smooth_music(t))
+finish finish(t)
+blacklight black(t)>0
+cyc blinks(t) * (smooth_music(t)>.6) * .8

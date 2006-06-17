@@ -1,0 +1,8 @@
+song01 song(t)
+finish finish(t)
+song17 song(t)
+patios sides(t)
+lowerstage lower(t)
+stroberate .8
+strobedim 0
+cyc finish(t)

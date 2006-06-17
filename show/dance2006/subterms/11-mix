@@ -1,0 +1,12 @@
+song11 open(t)
+up-fill fill(t)
+zip_green colorblink(t) * (.1 < music(t) < .3) + left(t)
+zip_red colorblink(t) * (.2 < music(t) < .6)
+zip_blue colorblink(t) * (.5 < music(t) < 1) + right(t)
+shar centercircle(t)
+finish finish(t)
+stroberate .98
+strobedim strobe(t)
+scoop-l left(t)
+scoop-r right(t)
+blacklight black(t) > 0
