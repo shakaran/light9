@@ -1,0 +1,2 @@
+#!/bin/zsh
+for x (`ls $LIGHT9_SHOW/subterms`) { bin/curvecalc $x }
