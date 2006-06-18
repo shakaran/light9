@@ -1,5 +1,7 @@
+import os
 from ConfigParser import SafeConfigParser
 # my intent was to pull these from a file in the LIGHT9_SHOW/ directory
+
 
 def dmxServerUrl():
     #host = os.getenv('DMXHOST', 'localhost')
@@ -17,7 +19,7 @@ def musicPort():
 
 def mpdServer():
     """servername, port"""
-    return 'dash',6600
+    return os.getenv('LIGHT9_MPD_SERVER', 'dash'),6600
 
 def kcPort():
     return 8050
