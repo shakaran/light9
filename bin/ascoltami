@@ -32,7 +32,6 @@ from twisted.web import xmlrpc, server
 
 import run_local
 from light9 import networking, showconfig, wavelength
-from light9.namespaces import L9, MUS
 
 from pympd import Mpd
 
@@ -77,7 +76,10 @@ class XMLRPCServe(xmlrpc.XMLRPC):
         return self.player.song_uri.encode('utf8') or "No song"
 
 class Player:
-    """semprini-style access to mpd. in here is where we add the padding"""
+    """semprini-style access to mpd. in here is where we add the
+    padding"""
+
+    song_pad_time = 10
     
     def __init__(self, app, playlist, media=None):
 
@@ -95,10 +97,10 @@ class Player:
         self.pre_post_names = showconfig.prePostSong()
 
         self.last_poll_time = None
+        self.last_autopause_time = None
 
         self.pollStatus()
 
-        self.autopausedthissong = False # a song only autopauses once
         self.mpd_is_lying = False # mpd reports bad times in certain intervals
 
     def smoothCurrentTime(self):
@@ -121,13 +123,9 @@ class Player:
             if self.state.get() != stat.state:
                 self.state.set(stat.state)
 
+        if self.state.get() != stat.state:
+            self.state.set(stat.state)
 
-            if hasattr(stat, 'time_elapsed'):
-                elapsed = stat.time_elapsed
-                songnum = stat.song
-                total = stat.time_total
-                if self.mpd_is_lying and elapsed < 3:
-                    self.mpd_is_lying = False
 
                 # mpd lies about elapsed, song, and total during the last
                 # .5sec of each song. so we coast through that part
@@ -166,7 +164,6 @@ class Player:
             self.mpd.play()
             return
     
-        self.autopausedthissong = False
         self.mpd.clear()
         self.mpd.add(showconfig.songInMpd(MUS['preSong']))
         self.mpd.add(showconfig.songInMpd(song))
@@ -175,15 +172,15 @@ class Player:
         self.song_uri = song
 
         self.set_total_time(song)
-        self.mpd.seek(seconds=0, song=0)
+        self.seek_to(-4)
 
     def check_autopause(self):
-        pause_time = self.total_time.get() + 10
-        if (not self.autopausedthissong and
-            self.state.get() == "play" and
-            self.current_time.get() > pause_time):
-            self.autopausedthissong = True
+        pause_time = self.total_time.get() + self.song_pad_time
+        t = self.current_time.get()
+        if (self.state.get() == "play" and
+            self.last_autopause_time < pause_time < t):
             self.mpd.pause()
+        self.last_autopause_time = t
 
     def stop(self):
         self.mpd.seek(seconds=0, song=0)
@@ -198,6 +195,8 @@ class Player:
             self.mpd.seek(seconds=time - self.total_time.get(), song=2)
         else:
             self.mpd.seek(seconds=time, song=1)
+        self.last_autopause_time = time
+
 
     def play_pause_toggle(self):
         def finish(status):
@@ -210,14 +209,19 @@ class Player:
     def pause(self):
         self.mpd.pause()
 
+    def skip_to_post(self):
+        self.seek_to(self.total_time.get() + self.song_pad_time)
+        self.play()
+        
+
 
 def buildsonglist(root, graph, songs, player):
     songlist=tk.Frame(root,bd=2,relief='raised',bg='black')
 
     maxsfwidth=max([len(graph.label(song)) for song in songs])
 
-    for i,song in enumerate(songs):
-        b=tk.Button(songlist,text=graph.label(song),width=maxsfwidth,
+    for i,sf in enumerate(songfiles):
+        b=tk.Button(songlist,text=sf[prefixlen:],width=maxsfwidth,
                     anchor='w',pady=0,bd=0,relief='flat',
                     font="arial 14 bold")
         b.bind("<Configure>",lambda ev,b=b:
@@ -327,8 +331,6 @@ class Seeker(tk.Frame):
                          relief='sunken',bd=1,font='arial 12 bold',
                          padx=2,pady=2,
                          bg='#800000',fg='white')
-            if txt == 'Song':
-                l.config(anchor='e')
             l.pack(side='left',expand=1, fill='x')
 
             var.trace_variable('w',
@@ -356,25 +358,32 @@ class ControlButtons(tk.Frame):
         tk.Frame.__init__(self,master,bg='black')
         
         self.statebuttons = {} # lowercased name : Button
-        for txt,cmd,key in [
-            ('Stop', player.stop, "<Control-s>"),
-            ('Pause', player.play_pause_toggle, "<Control-p>"),
-            ('Skip Intro',lambda: player.seek_to(0), "<Control-i>"),
+        for tag, txt,cmd,key in [
+            ('stop',
+             'Stop\nC-s', player.stop, "<Control-s>"),
+            ('pause',
+             'Pause\nC-p', player.play_pause_toggle, "<Control-p>"),
+            ('skip intro',
+             'Skip Intro\nC-i',lambda: player.seek_to(0),
+             "<Control-i>"),
+            ('skip to post',
+             'Skip to Post\nC-t', player.skip_to_post, "<Control-t>"),
             ]:
-            b = tk.Button(self, text=txt, command=cmd, font='arial 16 bold',
+            b = tk.Button(self, text=txt, command=cmd,
+                          font='arial 16 bold',
                           height=3,**appstyle)
             b.pack(side='left', fill='x', expand=1)
             # keyboard bindings
             root.bind(key, lambda evt, cmd=cmd: cmd())
-            self.statebuttons[txt.lower()] = b
+            self.statebuttons[tag] = b
 
     def update_state_buttons(self,*args):
         state = player.state.get()
 
         if state in ('stop', 'pause'):
-            self.statebuttons['pause']['text'] = 'Play'
+            self.statebuttons['pause']['text'] = 'Play\nC-p'
         else:
-            self.statebuttons['pause']['text'] = 'Pause'
+            self.statebuttons['pause']['text'] = 'Pause\nC-p' 
 
         colors = {'stop' : 'red',
                   'play' : 'blue',
@@ -407,6 +416,7 @@ else:
 root=tk.Tk()
 root.wm_title("ascoltami")
 #root.wm_geometry("+1270+440")
+toplevelat("ascoltami", root)
 root.config(bg="black")
 player=Player(None,None)
 
