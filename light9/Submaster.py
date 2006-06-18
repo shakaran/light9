@@ -2,7 +2,10 @@ from __future__ import division
 import os
 from light9.TLUtility import dict_scale, dict_max
 from light9 import Patch, showconfig
-import dispatch.dispatcher as dispatcher
+try:
+    import dispatch.dispatcher as dispatcher
+except ImportError:
+    from louie import dispatcher
 
 class Submaster:
     "Contain a dictionary of levels, but you didn't need to know that"
