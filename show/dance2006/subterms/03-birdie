@@ -1,4 +1,4 @@
 song03 song(t)
 finish finish(t)
-blacklight black(t)
+blacklight black(t) > 0
 shar shar(t)
