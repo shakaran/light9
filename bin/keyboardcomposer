@@ -1,11 +1,13 @@
 #!/usr/bin/python
 
 from __future__ import division, nested_scopes
-import sys, time
+import os, sys, time, subprocess
+from optparse import OptionParser
 
 from twisted.internet import reactor, tksupport
 from twisted.web import xmlrpc, server
 from Tix import *
+import Tix as tk
 import pickle
 
 import run_local
@@ -13,7 +15,7 @@ from light9.Fadable import Fadable
 from light9.Submaster import Submasters, sub_maxes
 from light9.subclient import SubClient
 from light9 import dmxclient, showconfig, networking
-from light9.uihelpers import toplevelat
+from light9.uihelpers import toplevelat, bindkeys
 
 nudge_keys = {
     'up' : list('qwertyuiop'),
@@ -43,6 +45,7 @@ class SubScale(Scale, Fadable):
 class SubmasterTk(Frame):
     def __init__(self, master, name, current_level):
         Frame.__init__(self, master, bd=1, relief='raised', bg='black')
+        self.name = name
         self.slider_var = DoubleVar()
         self.slider_var.set(current_level)
         self.scale = SubScale(self, variable=self.slider_var, width=20)
@@ -53,6 +56,10 @@ class SubmasterTk(Frame):
             bg='black', fg='white')
         levellabel.pack(side=TOP)
         self.scale.pack(side=BOTTOM, expand=1, fill=BOTH)
+        bindkeys(self, "<Control-Key-l>", self.launch_subcomposer)
+
+    def launch_subcomposer(self, *args):
+        subprocess.Popen(["bin/subcomposer", self.name])
 
 class KeyboardComposer(Frame, SubClient):
     def __init__(self, root, submasters, current_sub_levels=None):
@@ -61,7 +68,7 @@ class KeyboardComposer(Frame, SubClient):
         self.submasters = submasters
         self.name_to_subtk = {}
         self.current_sub_levels = {}
-        if current_sub_levels:
+        if current_sub_levels is not None:
             self.current_sub_levels = current_sub_levels
         else:
             try:
@@ -259,13 +266,25 @@ class LevelServer(xmlrpc.XMLRPC):
         return ret
 
 if __name__ == "__main__":
+    parser = OptionParser()
+    parser.add_option('--nonpersistent', action="store_true",
+                      help="don't load or save levels")
+    opts, args = parser.parse_args()
+    
     s = Submasters()
 
     root = Tk()
     tl = toplevelat("Keyboard Composer", existingtoplevel=root)
 
-    kc = KeyboardComposer(tl, s)
+    startLevels = None
+    if opts.nonpersistent:
+        startLevels = {}
+    kc = KeyboardComposer(tl, s, startLevels)
     kc.pack(fill=BOTH, expand=1)
+
+    for helpline in ["Bindings: B3 mute; C-l edit levels in subcomposer"]:
+        tk.Label(root,text=helpline, font="Helvetica -12 italic",
+                 anchor='w').pack(side='top',fill='x')
 
     import twisted.internet
     try:
@@ -276,7 +295,8 @@ if __name__ == "__main__":
         print e
 
     root.protocol('WM_DELETE_WINDOW', reactor.stop)
-    reactor.addSystemEventTrigger('after', 'shutdown', kc.save)
+    if not opts.nonpersistent:
+        reactor.addSystemEventTrigger('after', 'shutdown', kc.save)
     
     tksupport.install(root,ms=10)
     if 0:
