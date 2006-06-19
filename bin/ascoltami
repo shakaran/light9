@@ -37,6 +37,14 @@ from pympd import Mpd
 
 appstyle={'fg':'white','bg':'black'}
 
+def shortSongPath(song, all):
+    prefixlen = len(os.path.commonprefix(all))
+    # include to the last os.sep- dont crop path elements in the middle
+    prefixlen = all[0].rfind(os.sep)+1 
+
+    return os.path.splitext(song[prefixlen:])[0]
+    
+
 class XMLRPCServe(xmlrpc.XMLRPC):
     def __init__(self,player):
         xmlrpc.XMLRPC.__init__(self)
@@ -81,7 +89,7 @@ class Player:
 
     song_pad_time = 10
     
-    def __init__(self, app, playlist, media=None):
+    def __init__(self):
 
         self.mpd = Mpd()
         reactor.connectTCP(*(networking.mpdServer()+(self.mpd,)))
@@ -197,6 +205,9 @@ class Player:
             self.mpd.seek(seconds=time, song=1)
         self.last_autopause_time = time
 
+    def in_post(self):
+        return (self.current_time.get() > self.total_time.get() +
+                self.song_pad_time)
 
     def play_pause_toggle(self):
         def finish(status):
@@ -212,13 +223,54 @@ class Player:
     def skip_to_post(self):
         self.seek_to(self.total_time.get() + self.song_pad_time)
         self.play()
+
+
+class GoButton:
+    def __init__(self, player, statusLabel, songPaths):
+        self.player = player
+        self.statusLabel = statusLabel
+        self.songPaths = songPaths
+
+        self.player.current_time.trace("w", self.updateStatus)
+
+    def _nextAction(self):
+        state = self.player.state.get() 
+        if state == 'stop':
+            currentPath = self.player.filename_var.get()
+            try:
+                i = self.songPaths.index(currentPath) + 1
+            except ValueError:
+                i = 0
+            nextPath = self.songPaths[i]
+            return ("next song %s" % shortSongPath(nextPath,
+                                                   self.songPaths),
+                    lambda: self.player.play(nextPath))
+
+        if state == 'pause':
+            return "play", self.player.play
+
+        if state == 'play':
+            if self.player.in_post():
+                return "<nothing>", lambda: None
+            return "skip to post", self.player.skip_to_post
+        
+    def action(self):
+        desc, func = self._nextAction()
+        func()
+        
+    def updateStatus(self, *args):
+        desc, func = self._nextAction()
+        self.statusLabel.config(text=desc)
         
 
 
-def buildsonglist(root, graph, songs, player):
+def buildsonglist(root,songfiles,player):
     songlist=tk.Frame(root,bd=2,relief='raised',bg='black')
 
-    maxsfwidth=max([len(graph.label(song)) for song in songs])
+    prefixlen=len(os.path.commonprefix(songfiles))
+    # include to the last os.sep- dont crop path elements in the middle
+    prefixlen=songfiles[0].rfind(os.sep)+1 
+    maxsfwidth=max([len(x[prefixlen:]) for x in songfiles])
 
     for i,sf in enumerate(songfiles):
         b=tk.Button(songlist,text=sf[prefixlen:],width=maxsfwidth,
@@ -242,7 +294,7 @@ def buildsonglist(root, graph, songs, player):
 
         def color_buttons(x, y, z, song=song, b=b):
             name = player.filename_var.get()
-            if name == graph.value(song, L9['showPath']):
+            if name == sf[prefixlen:]:
                 b['bg'] = 'grey50'
             else:
                 b['bg'] = 'black'
@@ -354,10 +406,11 @@ class Seeker(tk.Frame):
         player.current_time.trace("w",fixleft)
 
 class ControlButtons(tk.Frame):
-    def __init__(self,master):
+    def __init__(self, master, goButton, player, root):
         tk.Frame.__init__(self,master,bg='black')
-        
         self.statebuttons = {} # lowercased name : Button
+        self.goButton = goButton
+        self.player = player
         for tag, txt,cmd,key in [
             ('stop',
              'Stop\nC-s', player.stop, "<Control-s>"),
@@ -368,17 +421,18 @@ class ControlButtons(tk.Frame):
              "<Control-i>"),
             ('skip to post',
              'Skip to Post\nC-t', player.skip_to_post, "<Control-t>"),
+            ('go', 'Go\nspace', self.goButton.action, "<Key-space>"),
             ]:
             b = tk.Button(self, text=txt, command=cmd,
                           font='arial 16 bold',
                           height=3,**appstyle)
-            b.pack(side='left', fill='x', expand=1)
+            b.pack(side='left', fill='both', expand=True)
             # keyboard bindings
             root.bind(key, lambda evt, cmd=cmd: cmd())
             self.statebuttons[tag] = b
 
     def update_state_buttons(self,*args):
-        state = player.state.get()
+        state = self.player.state.get()
 
         if state in ('stop', 'pause'):
             self.statebuttons['pause']['text'] = 'Play\nC-p'
@@ -397,52 +451,62 @@ class ControlButtons(tk.Frame):
                 button['bg'] = colors.get(name, 'black')
             else:
                 button['bg'] = 'black'
+        self.goButton.updateStatus()
 
 ############################
-        
-parser=OptionParser()
 
-(options,songfiles)=parser.parse_args()
-
-graph = showconfig.getGraph()
 
 if len(songfiles)<1:
-    graph = showconfig.getGraph()
-    playList = graph.value(L9['show/dance2007'], L9['playList'])
-    songs = list(graph.items(playList))
-else:
-    raise NotImplementedError("don't know how to make rdf song nodes from cmdline song paths")
+    songfiles = [f for f in os.listdir(showconfig.musicDir())
+                 if f.endswith('wav')]
+    songfiles.sort()
 
-root=tk.Tk()
-root.wm_title("ascoltami")
-#root.wm_geometry("+1270+440")
-toplevelat("ascoltami", root)
-root.config(bg="black")
-player=Player(None,None)
+    (options, songfiles) = parser.parse_args()
 
-songlist = buildsonglist(root, graph, songs, player)
+songlist = buildsonglist(root,songfiles,player)
 songlist.pack(fill='both',exp=1)
 
-f2 = tk.Frame(bg='black')
-buts = ControlButtons(f2)
-buts.pack(side='top',fill='x')
+    root=tk.Tk()
+    root.wm_title("ascoltami")
+    toplevelat("ascoltami", root)
+    root.config(bg="black")
+    player=Player()
 
-player.state.trace_variable('w', buts.update_state_buttons)
-buts.update_state_buttons()
+    songlist = buildsonglist(root, songfiles, player)
 
-seeker = Seeker(f2,player)
-seeker.pack(fill='x',exp=1)
-f2.pack(side='bottom',fill='x')
+    seeker = Seeker(root, player)
+    
+    goRow = tk.Frame(root)
+    tk.Label(goRow, text="Go button action:",
+             font='arial 9', **appstyle).pack(side='left', fill='both')
+    goStatus = tk.Label(goRow, font='arial 12 bold', **appstyle)
+    goStatus.config(bg='#800000', fg='white')
+    goStatus.pack(side='left', expand=True, fill='x')
 
-tksupport.install(root,ms=10)
+    go = GoButton(player, goStatus, songfiles)
+    
+    buts = ControlButtons(root, go, player, root)
 
-try:
-    reactor.listenTCP(networking.musicPort(),server.Site(XMLRPCServe(player)))
-    print "started server on %s" % networking.musicPort()
-except CannotListenError:
-    print "no server started- %s is in use" % networking.musicPort()
+    songlist.pack(fill='both', expand=True)
+    buts.pack(side='top', fill='x')
+    seeker.pack(side='top', fill='x')
+    goRow.pack(side='top', fill='x')
 
-root.bind("<Destroy>",lambda ev: reactor.stop)
-root.protocol('WM_DELETE_WINDOW', reactor.stop)
+    player.state.trace_variable('w', buts.update_state_buttons)
+    buts.update_state_buttons()
 
-reactor.run()
+    tksupport.install(root,ms=10)
+
+    try:
+        reactor.listenTCP(networking.musicPort(),server.Site(XMLRPCServe(player)))
+        print "started server on %s" % networking.musicPort()
+    except CannotListenError:
+        print "no server started- %s is in use" % networking.musicPort()
+
+    root.bind("<Destroy>",lambda ev: reactor.stop)
+    root.protocol('WM_DELETE_WINDOW', reactor.stop)
+
+    reactor.run()
+    
+if __name__ == '__main__':
+    main()
