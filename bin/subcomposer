@@ -2,6 +2,7 @@
 
 from __future__ import division, nested_scopes
 import sys,os,time,atexit
+from optparse import OptionParser
 import Tkinter as tk
 try:
     from dispatch import dispatcher
@@ -27,10 +28,11 @@ class Subcomposer(tk.Frame):
         # the 0 element)
         self.levelbox.setlevels(self.levels)
 
-        self.savebox = Savebox(self, self.levels, cmd=self.savenewsub)
+        self.savebox = EntryCommand(self, cmd=self.savenewsub)
         self.savebox.pack(side='top')
 
-        self.loadbox = Savebox(self, self.levels, verb="Load", cmd=self.loadsub)
+        self.loadbox = EntryCommand(self, verb="Load",
+                               cmd=lambda x: self.loadsub(self.levels, x))
         self.loadbox.pack(side='top')
 
         def alltozero():
@@ -49,9 +51,13 @@ class Subcomposer(tk.Frame):
 
         self.lastsent=[] # copy of levels
 
+    def fill_both_boxes(self, subname):
+        for box in [self.savebox, self.loadbox]:
+            box.set(subname)
+
     def persistentlevels(self):
         """adjusts levels from subcomposer.savedlevels, if possible; and
-        arranges to save the levels in that file upon exit"""    
+        arranges to save the levels in that file upon exit"""
         self.load_levels()
         atexit.register(self.save_levels)
     def save_levels(self, *args):
@@ -75,10 +81,10 @@ class Subcomposer(tk.Frame):
         for i,lev in zip(range(len(self.levels)),self.levels):
             if lev!=0:
                 leveldict[Patch.get_channel_name(i+1)]=lev
-        
+
         s=Submaster.Submaster(subname,leveldict)
         s.save()
-    def loadsub(self, levels, subname):
+    def loadsub(self, subname):
         """puts a sub into the levels, replacing old level values"""
         s=Submaster.Submasters().get_sub_by_name(subname)
         self.levels[:]=[0]*68
@@ -99,39 +105,50 @@ class Subcomposer(tk.Frame):
         self.levels[:] = levels
         dispatcher.send("levelchanged")
 
-def Savebox(master, levels, verb="Save", cmd=None):
-    f=tk.Frame(master,bd=2,relief='raised')
-    tk.Label(f,text="Sub name:").pack(side='left')
-    e=tk.Entry(f)
-    e.pack(side='left',exp=1,fill='x')
-    def cb(*args):
-        subname=e.get()
-        cmd(levels,subname)
-        print "sub",verb,subname
-    e.bind("<Return>",cb)
-    tk.Button(f,text=verb,command=cb).pack(side='left')
-    return f
+class EntryCommand(tk.Frame):
+    def __init__(self, master, verb="Save", cmd=None):
+        tk.Frame.__init__(self, master, bd=2, relief='raised')
+        tk.Label(self, text="Sub name:").pack(side='left')
+        self.cmd = cmd
+        self.entry = tk.Entry(self)
+        self.entry.pack(side='left', expand=True, fill='x')
+        
+        self.entry.bind("<Return>", self.action)
+        tk.Button(self, text=verb, command=self.action).pack(side='left')
+
+    def action(self, *args):
+        subname = self.entry.get()
+        self.cmd(subname)
+        print "sub", verb, subname
+
+    def set(self, text):
+        self.entry.delete(0, 'end')
+        self.entry.insert(0, text)
+
 
 def open_sub_editing_window(subname, use_mainloop=1, dmxdummy=0):
     if use_mainloop:
         toplevel = tk.Tk()
     else:
         toplevel = tk.Toplevel()
-    if dmxdummy: 
+    if dmxdummy:
         dummy_str = ' (dummy)'
     else:
         dummy_str = ''
     toplevel.title("Subcomposer: %s%s" % (subname, dummy_str))
     sc = Subcomposer(toplevel, use_persistentlevels=0, dmxdummy=dmxdummy)
     sc.pack(fill='both', expand=1)
-    sc.loadsub(None, subname) # don't ask
+    sc.loadsub(subname)
     sc.considersendupdate(use_after_loop=10)
     if use_mainloop:
         tk.mainloop()
-    
+
 #############################
 
 if __name__ == "__main__":
+    parser = OptionParser(usage="%prog [subname]")
+    opts, args = parser.parse_args()
+
     root=tk.Tk()
     root.config(bg='black')
     root.wm_title("subcomposer")
@@ -140,17 +157,14 @@ if __name__ == "__main__":
     sc = Subcomposer(root, dmxdummy=0, numchannels=276)
     sc.pack()
 
-    tk.Label(root,text="Bindings: B1 adjust level; B3 instant bump",
+    tk.Label(root,text="Bindings: B1 adjust level; B2 set full; B3 instant bump",
              font="Helvetica -12 italic",anchor='w').pack(side='top',fill='x')
-    
+
+    if len(args) == 1:
+        sc.loadsub(args[0])
+        sc.fill_both_boxes(args[0])
 
     while 1:
-        if 0:
-            for i in range(20): # don't let Tk take all the time
-                tk._tkinter.dooneevent()
-            print "loop"
-        else:
-            root.update()
-        
+        root.update()
         sc.considersendupdate()
         time.sleep(.01)
