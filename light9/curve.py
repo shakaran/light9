@@ -2,7 +2,10 @@ from __future__ import division
 import sys,math,glob,random,os
 from bisect import bisect_left,bisect,bisect_right
 import Tkinter as tk
-from dispatch import dispatcher
+try:
+    from dispatch import dispatcher
+except ImportError:
+    import louie as dispatcher
 
 import run_local
 from light9 import Submaster, dmxclient, networking, cursors

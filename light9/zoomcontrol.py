@@ -1,6 +1,9 @@
 from __future__ import division
 import Tkinter as tk
-from dispatch import dispatcher
+try:
+    from dispatch import dispatcher
+except ImportError:
+    import louie as dispatcher
 from light9 import cursors 
 
 class Zoomcontrol(object,tk.Canvas):
