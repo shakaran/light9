@@ -27,7 +27,7 @@ class MusicTimeTk(tk.Frame, MusicTime):
             relief='raised', width=10, padx=2, pady=2, anchor='w')
         self.timelabel.pack(expand=1, fill='both')
         def print_time(evt, *args):
-            self.update_time()
+            self.timevar.set(self.get_music_time())
             print self.timevar.get(), evt.keysym
         self.timelabel.bind('<KeyPress>', print_time)
         self.timelabel.bind('<1>', print_time)
