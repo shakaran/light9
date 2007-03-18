@@ -1,5 +1,12 @@
 from os import path,getenv
-import ConfigParser
+from rdflib.Graph import Graph
+from rdflib import URIRef
+from namespaces import MUS, L9
+
+def getGraph():
+    graph = Graph()
+    graph.parse(path.join(root(), 'config.n3'), format='n3')
+    return graph
 
 def root():
     r = getenv("LIGHT9_SHOW")
@@ -17,10 +24,30 @@ def songInMpd(song):
     /my/music. song is a file in musicDir; this function returns a
     version starting with the mpd path, but minus the mpd root itself.
     the mpc ~/.mpdconf """
-    
-    if 'dance2005' in root():
-        return "projects/dance2005/%s" % song
-    raise NotImplementedError
+
+    assert isinstance(song, URIRef), "songInMpd now takes URIRefs"
+
+    mpdHome = None
+    for line in open(path.expanduser("~/.mpdconf")):
+        if line.startswith("music_directory"):
+            mpdHome = line.split()[1].strip('"')
+    if mpdHome is None:
+        raise ValueError("can't find music_directory in your ~/.mpdconf")
+    mpdHome = mpdHome.rstrip(path.sep) + path.sep
+
+    songFullPath = songOnDisk(song)
+    if not songFullPath.startswith(mpdHome):
+        raise ValueError("the song path %r is not under your MPD music_directory (%r)" % (songFullPath, mpdHome))
+        
+    mpdRelativePath = songFullPath[len(mpdHome):]
+    if path.join(mpdHome, mpdRelativePath) != songFullPath:
+        raise ValueError("%r + %r doesn't make the songpath %r" % (mpdHome, mpdRelativePath, songFullPath))
+    return mpdRelativePath.encode('ascii')
+
+def songOnDisk(song):
+    graph = getGraph()
+    songFullPath = path.join(root(), graph.value(song, L9['showPath']))
+    return songFullPath
 
 def curvesDir():
     return path.join(root(),"curves")
@@ -41,6 +68,7 @@ def patchData():
     return path.join(root(),"patchdata.py")
 
 def prePostSong():
-    p = ConfigParser.SafeConfigParser()
-    p.read([path.join(root(),'config')])
-    return p.get('music','preSong'), p.get('music','postSong')
+    graph = getGraph()
+    return [graph.value(MUS['preSong'], L9['showPath']),
+            graph.value(MUS['postSong'], L9['showPath'])]
+
