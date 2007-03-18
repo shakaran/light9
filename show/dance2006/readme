@@ -35,7 +35,10 @@ cut blacklight solo?
 
 
 cover black lights
-skip song post button
+OK skip song post button
+
+timeline canvas for asco
+
 
 
 
@@ -62,4 +65,9 @@ current time
 
 laptop sound had hum problems, and couldn't handle big sound. spot's
 MB sound was fine.
+
+fix the window-position bug where the desktop is saved, stopping me from
+debugging on another dtop
+
+
 
