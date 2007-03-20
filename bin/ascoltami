@@ -168,10 +168,11 @@ class Player:
     
         self.autopausedthissong = False
         self.mpd.clear()
-        self.mpd.add(showconfig.songInMpd(self.pre_post_names[0]))
-        self.mpd.add(showconfig.songInMpd(song_path))
-        self.mpd.add(showconfig.songInMpd(self.pre_post_names[1]))
-        self.filename_var.set(song_path)
+        self.mpd.add(showconfig.songInMpd(MUS['preSong']))
+        self.mpd.add(showconfig.songInMpd(song))
+        self.mpd.add(showconfig.songInMpd(MUS['postSong']))
+        self.filename_var.set(graph.value(song, L9['showPath']))
+        self.song_uri = song
 
         self.set_total_time(song)
         self.mpd.seek(seconds=0, song=0)
