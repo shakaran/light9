@@ -15,9 +15,6 @@ def root():
             "LIGHT9_SHOW env variable has not been set to the show root")
     return r
 
-def musicDir():
-    return path.join(root(),"music_local")
-
 def songInMpd(song):
 
     """mpd only works off its own musicroot, which for me is
@@ -66,9 +63,6 @@ def subFile(subname):
 
 def subsDir():
     return path.join(root(),'subs')
-
-def patchData():
-    return path.join(root(),"patchdata.py")
 
 def prePostSong():
     graph = getGraph()

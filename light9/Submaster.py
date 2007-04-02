@@ -1,5 +1,8 @@
 from __future__ import division
 import os
+from rdflib.Graph import Graph
+from rdflib import RDFS, Literal, BNode
+from light9.namespaces import L9, XSD
 from light9.TLUtility import dict_scale, dict_max
 from light9 import Patch, showconfig
 try:
@@ -25,21 +28,18 @@ class Submaster:
         try:
             oldlevels = self.levels.copy()
             self.levels.clear()
-            subfile = file(showconfig.subFile(self.name))
-            for line in subfile.readlines():
-                if not line.strip(): # if line is only whitespace
-                    continue # "did i say newspace?"
+            patchGraph = showconfig.getGraph()
+            graph = Graph()
+            graph.parse(showconfig.subFile(self.name), format="nt")
+            subUri = L9['sub/%s' % self.name]
+            for lev in graph.objects(subUri, L9['lightLevel']):
+                chan = graph.value(lev, L9['channel'])
+                val = graph.value(lev, L9['level'])
+                name = patchGraph.label(chan)
+                self.levels[name] = float(val)
 
-                try:
-                    name, val = line.split(':')
-                    name = name.strip()
-                    self.levels[name] = float(val)
-                except ValueError:
-                    print "(%s) Error with this line: %s" % (self.name, 
-                        line[:-1])
-
-                if (not quiet) and (oldlevels != self.levels):
-                    print "sub %s changed" % self.name
+            if (not quiet) and (oldlevels != self.levels):
+                print "sub %s changed" % self.name
         except IOError:
             print "Can't read file for sub: %s" % self.name
     def save(self):
@@ -47,12 +47,18 @@ class Submaster:
             print "not saving temporary sub named",self.name
             return
 
-        subfile = file(showconfig.subFile(self.name), 'w')
-        names = self.levels.keys()
-        names.sort()
-        for name in names:
-            val = self.levels[name]
-            subfile.write("%s : %s\n" % (name, val))
+        graph = Graph()
+        subUri = L9['sub/%s' % self.name]
+        graph.add((subUri, RDFS.label, Literal(self.name)))
+        for chan in self.levels.keys():
+            lev = BNode()
+            graph.add((subUri, L9['lightLevel'], lev))
+            graph.add((lev, L9['channel'], L9['dmx/%s' % chan]))
+            graph.add((lev, L9['level'],
+                       Literal(self.levels[chan], datatype=XSD['decimal'])))
+
+        graph.serialize(showconfig.subFile(self.name), format="nt")
+
     def set_level(self, channelname, level, save=1):
         self.levels[Patch.resolve_name(channelname)] = level
         if save:

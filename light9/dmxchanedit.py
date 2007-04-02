@@ -9,7 +9,10 @@ import Tkinter as tk
 import time
 from light9 import Patch
 from light9.uihelpers import make_frame, colorlabel, eventtoparent
-from dispatch import dispatcher
+try:
+     from dispatch import dispatcher
+except ImportError:
+     import louie as dispatcher
 
 # this font makes each label take 16ms to create, so startup is slow.
 # with default font, each labl takes about .5ms to create.
@@ -37,13 +40,15 @@ class Onelevel(tk.Frame):
         # channel number -- will turn yellow when being altered
         self.num_lab = tk.Label(self, text=str(channelnum),
                                 width=3, bg='grey40', 
-                                fg='white', font=stdfont,
+                                fg='white',
+                                font=stdfont,
                                 padx=0, pady=0, bd=0, height=1)
         self.num_lab.pack(side='left')
 
         # text description of channel
         self.desc_lab=tk.Label(self, text=Patch.get_channel_name(channelnum),
-                               width=14, font=stdfont,
+                               width=14,
+                               font=stdfont,
                                anchor='w',
                                padx=0, pady=0, bd=0, 
                  height=1, bg='black', fg='white')
@@ -123,12 +128,13 @@ class Levelbox(tk.Frame):
         stdfont = tkFont.Font(size=9)
         self.levels = [] # Onelevel objects
 
-        frames = (make_frame(self), make_frame(self))
+        rows = 48
+        frames = [make_frame(self) for x in range((num_channels // rows) + 1)]
 
         for channel in range(1, num_channels+1):
-
+            print "setup chan", channel
             # frame for this channel
-            f = Onelevel(frames[channel > (num_channels/2)],channel)
+            f = Onelevel(frames[channel // rows],channel)
 
             self.levels.append(f)
             f.pack(side='top')

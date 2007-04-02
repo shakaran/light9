@@ -3,7 +3,10 @@
 from __future__ import division, nested_scopes
 import sys,os,time,atexit
 import Tkinter as tk
-from dispatch import dispatcher
+try:
+    from dispatch import dispatcher
+except ImportError:
+    import louie as dispatcher
 
 import run_local
 from light9.dmxchanedit import Levelbox
@@ -16,9 +19,9 @@ class Subcomposer(tk.Frame):
         self.dmxdummy = dmxdummy
         self.numchannels = numchannels
 
-        self.levels = [0]*68 # levels should never get overwritten, just edited
+        self.levels = [0]*512 # levels should never get overwritten, just edited
 
-        self.levelbox = Levelbox(self)
+        self.levelbox = Levelbox(self, num_channels=numchannels)
         self.levelbox.pack(side='top')
         # the dmx levels we edit and output, range is 0..1 (dmx chan 1 is
         # the 0 element)
@@ -134,7 +137,7 @@ if __name__ == "__main__":
     root.wm_title("subcomposer")
     root.tk_setPalette("#004633")
 
-    sc = Subcomposer(root, dmxdummy=0)
+    sc = Subcomposer(root, dmxdummy=0, numchannels=276)
     sc.pack()
 
     tk.Label(root,text="Bindings: B1 adjust level; B3 instant bump",
