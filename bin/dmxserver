@@ -28,7 +28,8 @@ from twisted.web import xmlrpc, server
 import sys,time,os
 from optparse import OptionParser
 import run_local
-from light9.io import ParportDMX
+from light9.io import ParportDMX, UsbDMX
+
 from light9.updatefreq import Updatefreq
 from light9 import networking
 
@@ -51,7 +52,7 @@ class XMLRPCServe(xmlrpc.XMLRPC):
         self.calldelay=1/options.updates_per_sec 
 
         print "starting parport connection"
-        self.parportdmx=ParportDMX()
+        self.parportdmx=UsbDMX() #ParportDMX()
         if os.environ.get('DMXDUMMY',0):
             self.parportdmx.godummy()
         else:
@@ -113,7 +114,9 @@ class XMLRPCServe(xmlrpc.XMLRPC):
             self.laststatsprint=time.time()
             self.printstats()
 
-        if self.clientschanged or time.time()>self.lastupdate+1:
+        # used to be a fixed 1 in here, for the max delay between
+        # calls, instead of calldelay
+        if self.clientschanged or time.time() > self.lastupdate + self.calldelay:
             self.lastupdate=time.time()
             self.sendlevels_dmx()
 

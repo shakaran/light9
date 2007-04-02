@@ -1,4 +1,5 @@
-
+from __future__ import division
+import sys
 
 class BaseIO:
     def __init__(self):
@@ -52,6 +53,20 @@ class ParportDMX(BaseIO):
         self.parport.outstart()
         for p in range(1, self.dimmers + 2):
             self.parport.outbyte(levels[p-1]*255 / 100)
+
+class UsbDMX(BaseIO):
+    dimmers = 512
+    def __init__(self):
+        BaseIO.__init__(self)
+        sys.path.append("/home/drewp/dmx_usb_module")
+        from dmx import Dmx
+        self.out = Dmx()
+
+    def sendlevels(self, levels):
+        if self.dummy:
+            return
+        packet = ''.join([chr(int(lev * 255 / 100)) for lev in levels]) + "\x55"
+        self.out.write(packet)
 
 class SerialPots(BaseIO):
     """
