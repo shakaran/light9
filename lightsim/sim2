@@ -1,0 +1,123 @@
+#!/usr/bin/python2.4
+from __future__ import division
+import sys, time, math
+import Image, ImageFilter
+import Numeric as num
+from OpenGL import GL, GLUT, GLU
+from OpenGL.GL import *
+
+def openglSetup(width=512, height=256):
+    global cardList
+
+    glClearColor (0.0, 0.0, 0.0, 0.0)
+    glShadeModel (GL_SMOOTH)
+    glEnable(GL_COLOR_MATERIAL)
+
+    glLightfv(GL_LIGHT0, GL_AMBIENT, [0.0, 0.0, 0.0, 1.0])
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, [1.0, 1.0, 1.0, 1.0])
+    glLightfv(GL_LIGHT0, GL_POSITION, [0.0, 3.0, 3.0, 0.0])
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, [0.2, 0.2, 0.2, 1.0])
+    glLightModelfv(GL_LIGHT_MODEL_LOCAL_VIEWER, [0])
+
+    #glFrontFace(GL_CW)
+    glEnable(GL_LIGHTING)
+    glEnable(GL_LIGHT0)
+    #glEnable(GL_AUTO_NORMAL)
+    #glEnable(GL_NORMALIZE)
+    glEnable(GL_DEPTH_TEST) 
+
+
+    glViewport (0, 0, width, height)
+    glMatrixMode (GL_PROJECTION)
+    glLoadIdentity ()
+    glFrustum (-1.0, 1.0, -1.0, 1.0, 1.5, 20.0)
+    glMatrixMode (GL_MODELVIEW)
+
+    cardList = glGenLists(1)
+    glNewList(cardList, GL_COMPILE)
+    glColor3f(1,1,1)
+    glBegin(GL_QUADS)
+    glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, 0.0,  1.0)
+    glTexCoord2f(1.0, 1.0); glVertex3f( 1.0, 0.0,  1.0)
+    glTexCoord2f(1.0, 0.0); glVertex3f( 1.0, 1.0,  1.0)
+    glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, 1.0,  1.0)
+    glEnd()
+    glEndList()
+
+
+
+def imageCard(img):
+    """card facing +Z from -1<x<1 -1<y<1"""
+    textureData = img.convert(mode="RGBA").tostring()
+
+    glBindTexture(GL_TEXTURE_2D, 0)
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA,
+                  512, #multiImage.size()[0],
+                  256, #multiImage.size()[1],
+                  0,
+                  GL_RGBA, GL_UNSIGNED_BYTE, textureData)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+
+    glCallList(cardList)
+
+def setupDraw():
+    """per-frame setup"""
+    glClearColor(0.0, 0.0, 0.0, 0.0)
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    glLoadIdentity ()
+    GLU.gluLookAt (0.5, 0.5, 8.0,
+                   0.5, 0.5, 0.0,
+                   0.0, 1.0, 0.0)
+
+    glDisable(GL_TEXTURE_2D)
+
+correctFrameStart = None
+def drawFrame():
+    global correctFrameStart
+    t1 = time.time()
+    setupDraw()
+    
+    matching = False
+    glPushMatrix()
+    try:
+        glTranslatef(1, -.9, 3.2)
+        # flip to compensate for the camera facing the user
+        glScalef(-1, 1, 1)
+        
+        glDisable(GL_LIGHTING)
+        glEnable(GL_TEXTURE_2D)
+
+#        imageCard(Image.open("skyline/bg.png"))
+        imageCard(Image.open("skyline/cyc-lo-red.png"))
+
+##         if grab.lastFrame:
+##             imageCard(grab.lastFrame)
+##             glEnable(GL_LIGHTING)
+##             glDisable(GL_TEXTURE_2D)
+##             if grab.seenPose:
+##                 for colorName, pos in grab.seenPose.pos.items():
+##                     cube(color=(x / 255 for x in vision.colors[colorName]),
+##                          center=((1-pos[0]) * 2 - 1, pos[1] * 2 - 1, 1),
+##                          side=.1, wire=False)
+##                 matching = game.pose.compare(grab.seenPose)
+        glEnable(GL_LIGHTING)
+        glDisable(GL_TEXTURE_2D)
+    finally:
+        glPopMatrix()
+
+    
+    glFlush()
+    #print "draw", time.time() - t1
+
+GLUT.glutInit(sys.argv)
+window = GLUT.glutCreateWindow("sim2")
+openglSetup()
+GLUT.glutDisplayFunc(drawFrame)
+def menu(arg):
+    print "hi", arg
+GLUT.glutCreateMenu(menu)
+GLUT.glutAddMenuEntry("hi", 1)
+GLUT.glutAttachMenu(GLUT.GLUT_RIGHT_BUTTON)
+
+GLUT.glutMainLoop()
