@@ -1,9 +1,14 @@
 # see http://www.sgi.com/software/opengl/advanced97/notes/node57.html for accum notes
 
 import sys, time
-import numpy as num
+import numarray as num
+
+
+sys.path.append("/usr/lib/python2.4/site-packages/OpenGL/Tk/linux2-tk8.4")
 from OpenGL.GL import *
-from OpenGL.Tk import *
+import Togl
+import Tkinter as tk
+
 import Image
 
 def drawWithAlpha(imgString, w, h, alpha):
@@ -20,6 +25,14 @@ def drawWithAlpha(imgString, w, h, alpha):
     print "  draw", time.time() - t
   
 
+def drawWithAlpha(imgString, w, h, alpha):
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    
+    glClear(GL_COLOR_BUFFER_BIT)
+    #glBlendColor(1, 1, 1, mag) # needs ARB_imaging
+    glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, imgString)
+    
+
 class Surface:
   def Display(self, event=None):
     assert 'GL_ARB_imaging' in glGetString(GL_EXTENSIONS).split()
@@ -27,7 +40,6 @@ class Surface:
     glClearColor(0.0, 0.0, 0.0, 0)
     glClear( GL_COLOR_BUFFER_BIT |GL_ACCUM_BUFFER_BIT)
     glEnable(GL_BLEND)
-    #glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA)
     l=glGenLists(1)
     glNewList(l,GL_COMPILE)
@@ -38,8 +50,6 @@ class Surface:
     for x, img in enumerate(self.image):
       mag = self.scales[x].get()
       print "pic %i at %f" % (x,mag)
-#      glClear(GL_COLOR_BUFFER_BIT)
-      #glBlendColor(1, 1, 1, mag) # needs ARB_imaging
       drawWithAlpha(img, self.imageWidth, self.imageHeight, mag)
 
 
@@ -53,15 +63,15 @@ class Surface:
 ##       glAccum(GL_RETURN,1)
 
   def SetupWindow(self):
-    self.OglFrame = Frame()
+    self.OglFrame = tk.Frame()
     self.OglFrame.pack(side = 'top',fill='both',expand=1)
-    self.QuitButton = Button(self.OglFrame, {'text':'Quit'})
+    self.QuitButton = tk.Button(self.OglFrame, {'text':'Quit'})
     self.QuitButton.bind('<ButtonRelease-1>', sys.exit)
     self.QuitButton.pack({'side':'top'})
   
   
   def SetupOpenGL(self):
-    self.ogl = Opengl(master=self.OglFrame, width = 512, height = 270, double = 1, depth = 0)
+    self.ogl = Togl.Opengl(master=self.OglFrame, width = 512, height = 270, double = 1, depth = 0)
     self.ogl.pack(side = 'top', expand = 1, fill = 'both')
     self.ogl.set_centerpoint(0, 0, 0)
     self.ogl.redraw = self.Display
@@ -80,7 +90,7 @@ class Surface:
     self.image=[]
     for filename in ('skyline/bg.png', 'skyline/cyc-lo-red.png'):
       im = Image.open(filename)
-      im.thumbnail((200, 200))
+      #im.thumbnail((200, 200))
       self.imageWidth = im.size[0]
       self.imageHeight = im.size[1]
       self.image.append(im.convert("RGBA").tostring())#"raw", "RGB", 0, -1))
@@ -92,6 +102,9 @@ class Surface:
     #         glEnable(GL_DEPTH_TEST)
     #         glEnable(GL_NORMALIZE)
     glShadeModel(GL_FLAT)
+    print 'GL_ARB_imaging', 'GL_ARB_imaging' in glGetString(GL_EXTENSIONS)
+    import OpenGL
+    print OpenGL.__version__
   
     self.ogl.tkRedraw()
     self.ogl.mainloop()
