@@ -1,0 +1,54 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <http://light9.bigasterisk.com/> .
+@prefix mus: <http://light9.bigasterisk.com/music/> .
+@prefix show: <http://light9.bigasterisk.com/show/> .
+@prefix sh: <http://light9.bigasterisk.com/show/dance2007/> .
+
+:showPath rdfs:comment "unix path relative to the LIGHT9_SHOW directory" .
+
+mus:preSong rdfs:comment "song to play in MPD before starting the proper dance song. This gap is used to have time to fade up lights before the dance starts. It is always silence, and in the future the audio player might handle this timing without requiring an audio file." .
+
+mus:postSong rdfs:comment "song to play in MPD after finishing the proper dance song. The space is used for fading lights up or down after the song. It is always silence, and in the future the audio player might handle this timing without requiring an audio file." .
+
+mus:preSong :showPath "music/silence-4sec.wav" .
+mus:postSong :showPath "music/silence-15sec.wav" .
+
+show:dance2007 :playList (
+  sh:song1  sh:song2  sh:song3  sh:song4  sh:song5
+  sh:song6  sh:song7  sh:song8  sh:song9  sh:song10
+  sh:song11 sh:song12 sh:song13 sh:song14 sh:song15
+  sh:song16 sh:song17
+) .
+
+sh:song1  rdfs:label "1 stars and stripes";      :showPath "music/1.wav" .
+sh:song2  rdfs:label "2 st louis blues";         :showPath "music/2.wav" .
+sh:song3  rdfs:label "3 good morning baltimore"; :showPath "music/3.wav" .
+sh:song4  rdfs:label "4 las vegas tap";          :showPath "music/4.wav" .
+sh:song5  rdfs:label "5 hula";                   :showPath "music/5.wav" .
+sh:song6  rdfs:label "6 kansas / chicago";       :showPath "music/6mixintrobeats.wav" .
+sh:song7  rdfs:label "7 country remix";          :showPath "music/7mix.wav" .
+sh:song8  rdfs:label "8 robert e lee";           :showPath "music/8.wav" .
+sh:song9  rdfs:label "9 california girls";       :showPath "music/9.wav" .
+sh:song10 rdfs:label "10 42nd st";                :showPath "music/10.wav" .
+sh:song11 rdfs:label "11 new york";               :showPath "music/11mix.wav" .
+sh:song12 rdfs:label "12 indiana";                :showPath "music/12.wav" .
+sh:song13 rdfs:label "13 carolina";               :showPath "music/13.wav" .
+sh:song14 rdfs:label "14 oklahoma";               :showPath "music/14.wav" .
+sh:song15 rdfs:label "15 swing mix";              :showPath "music/15mix.wav" .
+sh:song16 rdfs:label "16 urban rap";              :showPath "music/16mix.wav" .
+sh:song17 rdfs:label "17 dancing in the streets"; :showPath "music/17.wav" .
+
+
+
+@prefix ch: <http://light9.bigasterisk.com/theater/skyline/channel/> .
+@prefix dmx: <http://light9.bigasterisk.com/dmx/> .
+:Channel rdfs:comment "one value that light9 can control. The channel might output via dmx on some address." .
+
+ch:frontLeft a :Channel; rdfs:label "frontLeft"; :output dmx:c1 .
+ch:frontRight a :Channel; rdfs:label "frontRight"; :output dmx:c2 . 
+
+dmx:c1 :dmxAddress 1 .
+dmx:c2 :dmxAddress 2 .
+
+ch:frontLeft :previewLayer [ :path "lightsim/skyline/cyc-lo-red.png" ] .
+ch:frontRight :previewLayer [ :path "lightsim/skyline/cyc-lo-grn.png" ] .
