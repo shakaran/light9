@@ -1,0 +1,82 @@
+#!/usr/bin/python
+
+from __future__ import division
+import run_local
+
+from rdflib import Literal, URIRef
+from twisted.internet import reactor, tksupport
+from twisted.internet.task import LoopingCall
+from twisted.web.xmlrpc import Proxy
+import xmlrpclib, sys, logging
+log = logging.getLogger()
+logging.basicConfig(format="%(asctime)s %(levelname)-5s %(name)s %(filename)s:%(lineno)d: %(message)s")
+log.setLevel(logging.DEBUG)
+import Tkinter as tk
+from light9 import networking, Patch, showconfig, dmxclient
+from light9.namespaces import L9
+
+
+try:
+    from OpenGL import Tk as Togl
+    from OpenGL.GL import *
+except ImportError:
+    sys.path.append("/usr/lib/python2.4/site-packages/OpenGL/Tk/linux2-tk8.4")
+    from OpenGL.GL import *
+    import Togl
+  
+from lightsim.openglsim import Surface
+
+
+
+
+def poll(graph, serv):
+    dmxLevels = serv.currentlevels(dmxclient._id)
+    level = {} # filename : level
+    for i, lev in enumerate(dmxLevels):
+        if lev == 0:
+            continue
+
+        try:
+            chan = Patch.get_channel_uri(Patch.get_channel_name(i + 1))
+        except KeyError:
+            continue
+
+        for lyr in graph.objects(chan, L9['previewLayer']):
+            for imgPath in graph.objects(lyr, L9['path']):
+                level[str(imgPath)] = lev
+
+    print level
+    ogl.newLevels(levels=level)
+
+
+root = tk.Frame()
+root.pack(expand=True, fill='both')
+QuitButton = tk.Button(root, {'text':'Quit'})
+QuitButton.bind('<ButtonRelease-1>', sys.exit)
+QuitButton.pack()
+
+filenames=['lightsim/skyline/bg.png',
+           'lightsim/skyline/cyc-lo-red.png',
+           'lightsim/skyline/cyc-lo-grn.png',
+           ]
+
+scales = {} # filename : scale
+for f in filenames:
+    scales[f] = tk.Scale(
+        root, label=f, from_=0, to=1, res=.05, orient='horiz',
+        command=lambda *args: ogl.newLevels(
+          levels=dict([(f, s.get()) for f,s in scales.items()])))
+    scales[f].pack()
+ogl = Surface(root, filenames)
+ogl.pack(side='top', expand=True, fill='both')
+
+graph = showconfig.getGraph()
+serv = Proxy(networking.dmxServerUrl())
+LoopingCall(poll, graph, serv).start(1)
+
+
+root.winfo_toplevel().bind("<Control-Key-q>",lambda ev: reactor.stop)
+root.winfo_toplevel().bind("<Destroy>",lambda ev: reactor.stop)
+root.winfo_toplevel().protocol('WM_DELETE_WINDOW', reactor.stop)
+tksupport.install(ogl, ms=20)
+reactor.run()

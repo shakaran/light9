@@ -175,6 +175,11 @@ class XMLRPCServe(xmlrpc.XMLRPC):
         self.clientfreq[cid].update()
         return "ok"
 
+    def xmlrpc_currentlevels(self):
+        """get a list of levels we're currently sending out. All
+        channels beyond the list you get back, they're at zero."""
+        return self.combinedlevels
+
 parser=OptionParser()
 parser.add_option("-f","--fast-updates",action='store_true',
                   help=('display all dmx output to stdout instead '
