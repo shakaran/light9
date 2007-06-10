@@ -12,7 +12,7 @@ def dmxServerPort():
     return 8030
     
 def musicUrl():
-    return "http://score:%s" % musicPort()
+    return "http://localhost:%s" % musicPort()
 
 def musicPort():
     return 8040

@@ -58,6 +58,8 @@ class UsbDMX(BaseIO):
     dimmers = 512
     def __init__(self):
         BaseIO.__init__(self)
+        if self.dummy:
+            return
         sys.path.append("/home/drewp/dmx_usb_module")
         from dmx import Dmx
         self.out = Dmx()

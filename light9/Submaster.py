@@ -12,7 +12,12 @@ except ImportError:
 
 class Submaster:
     "Contain a dictionary of levels, but you didn't need to know that"
-    def __init__(self, name, leveldict=None, temporary=0):
+    def __init__(self,
+                 name=None,
+                 graph=None, sub=None,
+                 leveldict=None, temporary=0):
+        if sub is not None:
+            name = graph.label(sub)
         self.name = name
         self.temporary = temporary
         if leveldict:
@@ -23,6 +28,8 @@ class Submaster:
         if not self.temporary:
             dispatcher.connect(self.reload, 'reload all subs')
     def reload(self, quiet=False):
+        print "no submaster reload"
+        return
         if self.temporary:
             return
         try:

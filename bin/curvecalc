@@ -15,6 +15,7 @@ except ImportError:
 from twisted.internet import reactor,tksupport
 import twisted
 from twisted.web.xmlrpc import Proxy
+from rdflib import Literal, URIRef
 import logging
 log = logging.getLogger()
 logging.basicConfig(format="%(asctime)s %(levelname)-5s %(name)s %(filename)s:%(lineno)d: %(message)s")
@@ -27,6 +28,7 @@ from light9.zoomcontrol import Zoomcontrol
 from light9.curve import Curve, Curveview, Curveset, Curvesetview
 from light9.wavelength import wavelength
 from light9.uihelpers import toplevelat
+from light9.namespaces import L9
 
 import light9.Effects
 fx_dict = light9.Effects.__dict__
@@ -272,11 +274,12 @@ class SubtermSetView(tk.Frame):
         if self.cur_col == 0:
             self.cur_row += 1
 
-def add_one_subterm(subname, curveset, subterms, root, ssv, expr=None):
+def add_one_subterm(graph, sub, curveset, subterms, root, ssv, expr=None):
+    subname = graph.label(sub)
     if expr is None:
         expr = '%s(t)' % subname
 
-    term = Subterm(Submaster.Submaster(subname), Subexpr(curveset,expr))
+    term = Subterm(Submaster.Submaster(sub), Subexpr(curveset,expr))
     subterms.append(term)
 
     stv=Subtermview(ssv,term)
@@ -306,18 +309,10 @@ def sub_commands_tk(master, curveset, subterms, root, ssv):
 
     return f
 
-def add_subterms_from_file(filename, curveset, subterms, root, ssv):
-    for line in file(filename):
-        try:
-            subname,expr = line.strip().split(" ",1)
-        except ValueError:
-            subname = line.strip()
-            expr = ""
-
-        term = add_one_subterm(subname, curveset, subterms, root, ssv, expr)
-
-        # stv=Subtermview(root,term)
-        # stv.pack(side='top',fill='x')
+def add_subterms_for_song(graph, song, curveset, subterms, root, ssv):
+    for st in graph.objects(song, L9['subterm']):
+        add_one_subterm(graph, graph.value(st, L9['sub']), curveset, subterms,
+                        root, ssv, graph.value(st, L9['expression']))
 
 #######################################################################
 root=tk.Tk()
@@ -329,7 +324,7 @@ parser = optparse.OptionParser()
 options,args = parser.parse_args()
 
 try:
-    song = args[0]
+    song = URIRef(args[0])
 except IndexError:
     raise SystemExit("song name is required, e.g. '05-mix'")
 
@@ -346,9 +341,10 @@ csv.pack(side='top',fill='both',exp=1)
 ssv = SubtermSetView(root)
 ssv.pack(side='top', fill='x')
 
-root.title("Curvemaster 3000MX - %s" % song)
+graph = showconfig.getGraph()
+root.title("Curvemaster 3000MX - %s" % graph.label(song))
 
-musicfilename = showconfig.songFilename(song)
+musicfilename = showconfig.songOnDisk(song)
 maxtime = wavelength(musicfilename)
 dispatcher.send("max time",maxtime=maxtime)
 dispatcher.connect(lambda: maxtime, "get max time",weak=0)
@@ -357,8 +353,7 @@ curveset.load(basename=os.path.join(showconfig.curvesDir(),song))
 subterms = []
 sub_commands_tk(root, curveset, subterms, root, ssv).pack(side='top',fill='x')
 
-add_subterms_from_file(showconfig.subtermsForSong(song),
-                       curveset, subterms, root, ssv)
+add_subterms_for_song(graph, song, curveset, subterms, root, ssv)
 
 log.debug("output")
 out = Output(subterms, music)

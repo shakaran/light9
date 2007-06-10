@@ -495,7 +495,7 @@ def main():
     goStatus.config(bg='#800000', fg='white', relief='ridge')
     goStatus.pack(side='left', expand=True, fill='x')
 
-    go = GoButton(player, goStatus, songfiles)
+    go = GoButton(player, goStatus, songs)
     
     buts = ControlButtons(root, go, player, root)
 
