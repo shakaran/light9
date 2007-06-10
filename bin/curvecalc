@@ -1,6 +1,11 @@
 #!/usr/bin/python
 
 """
+now launches like this:
+% bin/curvecalc http://light9.bigasterisk.com/show/dance2007/song1
+
+
+
 todo: curveview should preserve more objects, for speed maybe
 
 """
@@ -289,12 +294,12 @@ def add_one_subterm(graph, sub, curveset, subterms, root, ssv, expr=None):
 
     return term
 
-def sub_commands_tk(master, curveset, subterms, root, ssv):
+def sub_commands_tk(master, curveset, subterms, root, ssv, graph):
     f=tk.Frame(master,relief='raised',bd=1)
     newname = tk.StringVar()
 
     def add_cmd():
-        add_one_subterm(newname.get(), curveset, subterms, root, ssv, '')
+        add_one_subterm(graph, newname.get(), curveset, subterms, root, ssv, '')
         newname.set('')
 
     def reload_subs():
@@ -313,6 +318,9 @@ def add_subterms_for_song(graph, song, curveset, subterms, root, ssv):
     for st in graph.objects(song, L9['subterm']):
         add_one_subterm(graph, graph.value(st, L9['sub']), curveset, subterms,
                         root, ssv, graph.value(st, L9['expression']))
+
+def songFilename(uri):
+    return uri.split('/')[-1]
 
 #######################################################################
 root=tk.Tk()
@@ -348,10 +356,10 @@ musicfilename = showconfig.songOnDisk(song)
 maxtime = wavelength(musicfilename)
 dispatcher.send("max time",maxtime=maxtime)
 dispatcher.connect(lambda: maxtime, "get max time",weak=0)
-curveset.load(basename=os.path.join(showconfig.curvesDir(),song))
+curveset.load(basename=os.path.join(showconfig.curvesDir(), songFilename(song)))
 
 subterms = []
-sub_commands_tk(root, curveset, subterms, root, ssv).pack(side='top',fill='x')
+sub_commands_tk(root, curveset, subterms, root, ssv, graph).pack(side='top',fill='x')
 
 add_subterms_for_song(graph, song, curveset, subterms, root, ssv)
 
@@ -360,8 +368,8 @@ out = Output(subterms, music)
 
 def savekey(*args):
     print "saving",song
-    savesubterms(showconfig.subtermsForSong(song),subterms)
-    curveset.save(basename=os.path.join(showconfig.curvesDir(),song))
+    savesubterms(showconfig.subtermsForSong(songFilename(song)), subterms)
+    curveset.save(basename=os.path.join(showconfig.curvesDir(), songFilename(song)))
     print "saved"
     
 root.bind("<Control-Key-s>",savekey)

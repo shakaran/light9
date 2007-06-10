@@ -1,0 +1,5 @@
+on dash:
+
+dash(pts/35):/my/dl/modified/mpd% src/mpd --no-daemon --verbose
+
+

@@ -20,7 +20,7 @@ class Subcomposer(tk.Frame):
         self.dmxdummy = dmxdummy
         self.numchannels = numchannels
 
-        self.levels = [0]*512 # levels should never get overwritten, just edited
+        self.levels = [0]*numchannels # levels should never get overwritten, just edited
 
         self.levelbox = Levelbox(self, num_channels=numchannels)
         self.levelbox.pack(side='top')
@@ -31,8 +31,7 @@ class Subcomposer(tk.Frame):
         self.savebox = EntryCommand(self, cmd=self.savenewsub)
         self.savebox.pack(side='top')
 
-        self.loadbox = EntryCommand(self, verb="Load",
-                               cmd=lambda x: self.loadsub(self.levels, x))
+        self.loadbox = EntryCommand(self, verb="Load", cmd=self.loadsub)
         self.loadbox.pack(side='top')
 
         def alltozero():
@@ -76,18 +75,17 @@ class Subcomposer(tk.Frame):
                 return
             self.levels[channel-1]=max(0,min(1,float(newlevel)))
         self.levelbox.setlevels(self.levels)
-    def savenewsub(self, levels, subname):
+    def savenewsub(self, subname):
         leveldict={}
         for i,lev in zip(range(len(self.levels)),self.levels):
             if lev!=0:
                 leveldict[Patch.get_channel_name(i+1)]=lev
 
-        s=Submaster.Submaster(subname,leveldict)
+        s=Submaster.Submaster(subname,leveldict=leveldict)
         s.save()
     def loadsub(self, subname):
         """puts a sub into the levels, replacing old level values"""
         s=Submaster.Submasters().get_sub_by_name(subname)
-        self.levels[:]=[0]*68
         self.levels[:]=s.get_dmx_list()
         dispatcher.send("levelchanged")
     def sendupdate(self):
@@ -119,7 +117,7 @@ class EntryCommand(tk.Frame):
     def action(self, *args):
         subname = self.entry.get()
         self.cmd(subname)
-        print "sub", verb, subname
+        print "sub", self.cmd, subname
 
     def set(self, text):
         self.entry.delete(0, 'end')

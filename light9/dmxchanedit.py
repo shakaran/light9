@@ -30,7 +30,7 @@ class Onelevel(tk.Frame):
     """a name/level pair"""
     def __init__(self, parent, channelnum):
         """channelnum is 1..68, like the real dmx"""
-        tk.Frame.__init__(self,parent)
+        tk.Frame.__init__(self,parent, height=20)
 
         self.channelnum=channelnum
         self.currentlevel=0 # the level we're displaying, 0..1
@@ -56,10 +56,16 @@ class Onelevel(tk.Frame):
 
         # current level of channel, shows intensity with color
         self.level_lab = tk.Label(self, width=3, bg='lightBlue',
-                                  font=stdfont,
                                   anchor='e', 
                                   padx=1, pady=0, bd=0, height=1)
         self.level_lab.pack(side='left')
+        # setting the font in the label somehow makes tk run a low
+        # slower. Magically, startup is much faster if tk can layout
+        # the window with some standard font in the rows (so the row
+        # heights are all fixed and taller?), and then I replace the
+        # last font. Tk resizes the window faster than you can see,
+        # but startup is still fast. Very weird.
+        self.after(1, lambda: self.level_lab.config(font=stdfont))
 
         self.setlevel(0)
         self.setupmousebindings()
@@ -125,14 +131,13 @@ class Levelbox(tk.Frame):
     def __init__(self, parent, num_channels=68):
         tk.Frame.__init__(self,parent)
         global stdfont
-        stdfont = tkFont.Font(size=9)
+        stdfont = tkFont.Font(size=8)
         self.levels = [] # Onelevel objects
 
         rows = 48
         frames = [make_frame(self) for x in range((num_channels // rows) + 1)]
 
         for channel in range(1, num_channels+1):
-            print "setup chan", channel
             # frame for this channel
             f = Onelevel(frames[channel // rows],channel)
 

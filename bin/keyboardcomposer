@@ -108,7 +108,14 @@ class KeyboardComposer(Frame, SubClient):
         self.sub_name.pack(side=LEFT)
         self.stop_frequent_update_time = 0
 
-        self.sliders = Sliders(self.hw_slider_moved)
+        try:
+            self.sliders = Sliders(self.hw_slider_moved)
+        except IOError:
+            class _:
+                def valueOut(self, name, value):
+                    pass
+            self.sliders = _()
+            print "no hw sliders found"
 
     def make_key_hints(self):
         keyhintrow = Frame(self)

@@ -15,9 +15,35 @@ class Submaster:
     def __init__(self,
                  name=None,
                  graph=None, sub=None,
-                 leveldict=None, temporary=0):
+                 leveldict=None, temporary=False):
+        """sub is the URI for this submaster, graph is a graph where
+        we can learn about the sub. If graph is not provided, we look
+        in a file named name.
+
+        name is the filename where we can load a graph about this URI
+        (see showconfig.subFile)
+
+        passing name alone makes a new empty sub
+
+        temporary means the sub won't get saved or loaded
+
+
+        pass:
+          name, temporary=True  -  no rdf involved
+          sub, filename         -  read sub URI from graph at filename
+          
+          name - new sub
+          sub - n
+          name, sub - new 
+        
+        """
+        if name is sub is leveldict is None:
+            raise TypeError("more args are needed")
         if sub is not None:
             name = graph.label(sub)
+        if graph is not None:
+            # old code was passing leveldict as second positional arg
+            assert isinstance(graph, Graph)
         self.name = name
         self.temporary = temporary
         if leveldict:
@@ -27,9 +53,8 @@ class Submaster:
             self.reload(quiet=True)
         if not self.temporary:
             dispatcher.connect(self.reload, 'reload all subs')
+            
     def reload(self, quiet=False):
-        print "no submaster reload"
-        return
         if self.temporary:
             return
         try:
@@ -58,15 +83,20 @@ class Submaster:
         subUri = L9['sub/%s' % self.name]
         graph.add((subUri, RDFS.label, Literal(self.name)))
         for chan in self.levels.keys():
+            try:
+                chanUri = Patch.get_channel_uri(chan)
+            except KeyError:
+                print "saving dmx channels with no :Channel node is not supported yet. Give channel %s a URI for it to be saved. Omitting this channel from the sub." % chan
+                continue
             lev = BNode()
             graph.add((subUri, L9['lightLevel'], lev))
-            graph.add((lev, L9['channel'], L9['dmx/%s' % chan]))
+            graph.add((lev, L9['channel'], chanUri))
             graph.add((lev, L9['level'],
                        Literal(self.levels[chan], datatype=XSD['decimal'])))
 
         graph.serialize(showconfig.subFile(self.name), format="nt")
 
-    def set_level(self, channelname, level, save=1):
+    def set_level(self, channelname, level, save=True):
         self.levels[Patch.resolve_name(channelname)] = level
         if save:
             self.save()
@@ -81,7 +111,8 @@ class Submaster:
         return (not self.levels.values()) or not (max(self.levels.values()) > 0)
     def __mul__(self, scalar):
         return Submaster("%s*%s" % (self.name, scalar), 
-            dict_scale(self.levels, scalar), temporary=1)
+                         leveldict=dict_scale(self.levels, scalar),
+                         temporary=True)
     __rmul__ = __mul__
     def max(self, *othersubs):
         return sub_maxes(self, *othersubs)
@@ -93,7 +124,7 @@ class Submaster:
     def get_dmx_list(self):
         leveldict = self.get_levels() # gets levels of sub contents
 
-        levels = [0] * 68
+        levels = []
         for k, v in leveldict.items():
             if v == 0:
                 continue
@@ -102,6 +133,8 @@ class Submaster:
             except ValueError:
                 print "error trying to compute dmx levels for submaster %s" % self.name
                 raise
+            if dmxchan >= len(levels):
+                levels.extend([0] * (dmxchan - len(levels) + 1))
             levels[dmxchan] = max(v, levels[dmxchan])
 
         return levels
@@ -135,8 +168,10 @@ class Submaster:
 
         return xfaded_sub
     def __cmp__(self, other):
+        raise NotImplementedError
         return cmp(repr(self), repr(other))
     def __hash__(self):
+        raise NotImplementedError
         return hash(repr(self))
                                             
 def linear_fade(start, end, amount):
@@ -150,7 +185,7 @@ def sub_maxes(*subs):
     nonzero_subs = [s for s in subs if not s.no_nonzero()]
     name = "max(%s)" % ", ".join([repr(s) for s in nonzero_subs])
     return Submaster(name,
-                     dict_max(*[sub.levels for sub in nonzero_subs]),
+                     leveldict=dict_max(*[sub.levels for sub in nonzero_subs]),
                      temporary=1)
 
 def combine_subdict(subdict, name=None, permanent=False):
@@ -182,6 +217,7 @@ class Submasters:
                filename.startswith('CVS'):
                 continue
             self.submasters[filename] = Submaster(filename)
+        print "loaded subs", self.submasters
     def get_all_subs(self):
         "All Submaster objects"
         l = self.submasters.items()

@@ -130,6 +130,7 @@ class Curveview(tk.Canvas):
     def __init__(self,master,curve,**kw):
         self.curve=curve
         self._time = 0
+        self.last_mouse_world = None
         tk.Canvas.__init__(self,master,width=10,height=10,
                            relief='sunken',bd=1,
                            closeenough=5,takefocus=1, **kw)
