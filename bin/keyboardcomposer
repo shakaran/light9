@@ -16,6 +16,7 @@ from light9.Submaster import Submasters, sub_maxes
 from light9.subclient import SubClient
 from light9 import dmxclient, showconfig, networking
 from light9.uihelpers import toplevelat, bindkeys
+from bcf2000 import BCF2000
 
 nudge_keys = {
     'up' : list('qwertyuiop'),
@@ -106,6 +107,9 @@ class KeyboardComposer(Frame, SubClient):
         self.sub_name = Entry(self.buttonframe, bg='black', fg='white')
         self.sub_name.pack(side=LEFT)
         self.stop_frequent_update_time = 0
+
+        self.sliders = Sliders(self.hw_slider_moved)
+
     def make_key_hints(self):
         keyhintrow = Frame(self)
 
@@ -171,6 +175,11 @@ class KeyboardComposer(Frame, SubClient):
                 subtk.scale.fade(0)
             else:
                 subtk.scale.decrease()
+
+    def hw_slider_moved(self, col, value):
+        subtk = self.slider_table[(self.current_row, col)]
+        subtk.scale.set(value)
+                
     def draw_sliders(self):
         self.tk_focusFollowsMouse()
 
@@ -187,9 +196,12 @@ class KeyboardComposer(Frame, SubClient):
             col += 1
             col %= 10
 
-            def slider_changed(x, y, z, subtk=subtk):
+            def slider_changed(x, y, z, subtk=subtk, col=col, sub=sub):
                 subtk.scale.draw_indicator_colors()
                 self.send_levels()
+                v = 127 * self.get_levels()[sub.name]
+                self.sliders.valueOut("slider%s" % (col), v)
+                    
 
             subtk.slider_var.trace('w', slider_changed)
     def make_row(self):
@@ -264,6 +276,15 @@ class LevelServer(xmlrpc.XMLRPC):
         except Exception,e:
             ret=str(e)
         return ret
+
+class Sliders(BCF2000):
+    def __init__(self, cb):
+        BCF2000.__init__(self)
+        self.cb = cb
+    def valueIn(self, name, value):
+        print "in", name, value
+        if name.startswith("slider"):
+            self.cb(int(name[6:]) - 1, value / 127)
 
 if __name__ == "__main__":
     parser = OptionParser()
