@@ -78,13 +78,16 @@ class XMLRPCServe(xmlrpc.XMLRPC):
         reactor.callLater(1,self.purgeclients)
 
         now=time.time()
-        cids=self.clientlevels.keys()
+        cids = self.lastseen.keys()
         for cid in cids:
             lastseen=self.lastseen[cid]
-            if lastseen<now-purge_age:
+            if lastseen < now - purge_age:
                 print ("forgetting client %s (no activity for %s sec)" %
                        (cid,purge_age))
-                del self.clientlevels[cid]
+                try:
+                    del self.clientlevels[cid]
+                except KeyError:
+                    pass
                 del self.clientfreq[cid]
                 del self.lastseen[cid]
         
@@ -167,18 +170,33 @@ class XMLRPCServe(xmlrpc.XMLRPC):
         if levellist!=self.clientlevels.get(cid,None):
             self.clientlevels[cid]=levellist
             self.clientschanged=1
-            if cid not in self.lastseen:
-                print "hello new client %s" % cid
-                self.clientfreq[cid]=Updatefreq()
-                
-        self.lastseen[cid]=time.time()
-        self.clientfreq[cid].update()
+        self.trackClientFreq(cid)
         return "ok"
 
-    def xmlrpc_currentlevels(self):
+    def xmlrpc_currentlevels(self, cid):
         """get a list of levels we're currently sending out. All
         channels beyond the list you get back, they're at zero."""
-        return self.combinedlevels
+        # if this is still too slow, it might help to return a single
+        # pickled string
+        self.trackClientFreq(cid)
+        trunc = self.combinedlevels[:]
+        i = len(trunc) - 1
+        if i < 0:
+            return []
+        while trunc[i] == 0 and i >= 0:
+            i -= 1
+        if i < 0:
+            return []
+        trunc = trunc[:i+1]
+        return trunc
+    
+    def trackClientFreq(self, cid):
+        if cid not in self.lastseen:
+            print "hello new client %s" % cid
+            self.clientfreq[cid]=Updatefreq()
+        self.lastseen[cid]=time.time()
+        self.clientfreq[cid].update()
+        
 
 parser=OptionParser()
 parser.add_option("-f","--fast-updates",action='store_true',

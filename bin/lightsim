@@ -12,9 +12,9 @@ log = logging.getLogger()
 logging.basicConfig(format="%(asctime)s %(levelname)-5s %(name)s %(filename)s:%(lineno)d: %(message)s")
 log.setLevel(logging.DEBUG)
 import Tkinter as tk
-from light9 import networking, Patch, showconfig, dmxclient
+from light9 import networking, Patch, showconfig, dmxclient, updatefreq
 from light9.namespaces import L9
-
+from louie import dispatcher
 
 try:
     from OpenGL import Tk as Togl
@@ -26,57 +26,81 @@ except ImportError:
   
 from lightsim.openglsim import Surface
 
+def poll(graph, serv, pollFreq):
+    pollFreq.update()
+    dispatcher.send("status", key="pollFreq", value=str(pollFreq))
+    d = serv.callRemote("currentlevels", dmxclient._id)
+    def received(dmxLevels):
+        level = {} # filename : level
+        for i, lev in enumerate(dmxLevels):
+            if lev == 0:
+                continue
 
+            try:
+                chan = Patch.get_channel_uri(Patch.get_channel_name(i + 1))
+            except KeyError:
+                continue
 
+            for lyr in graph.objects(chan, L9['previewLayer']):
+                for imgPath in graph.objects(lyr, L9['path']):
+                    level[str(imgPath)] = lev
 
-def poll(graph, serv):
-    dmxLevels = serv.currentlevels(dmxclient._id)
-    level = {} # filename : level
-    for i, lev in enumerate(dmxLevels):
-        if lev == 0:
-            continue
+        ogl.newLevels(levels=level)
+    d.addCallback(received)
+    return d
 
-        try:
-            chan = Patch.get_channel_uri(Patch.get_channel_name(i + 1))
-        except KeyError:
-            continue
-
-        for lyr in graph.objects(chan, L9['previewLayer']):
-            for imgPath in graph.objects(lyr, L9['path']):
-                level[str(imgPath)] = lev
-
-    print level
-    ogl.newLevels(levels=level)
-
+class StatusKeys(tk.Frame):
+    # watch out- this might be an accidental redo of what curvecalc
+    # has. Or, maybe CC should use this obj
+    def __init__(self, master):
+        tk.Frame.__init__(self, master)
+        dispatcher.connect(self.status, "status")
+        self.row = {} # key name : (Frame, value Label)
+        
+    def status(self, key, value):
+        if key not in self.row:
+            f = tk.Frame(self)
+            f.pack(side='top')
+            tk.Label(f, text=key, font="arial 8").pack(side='left')
+            l = tk.Label(f, text=value, font="arial 8")
+            l.pack(side='left')
+            self.row[key] = (f, l)
+        else:
+            row, lab = self.row[key]
+            lab.config(text=value)
 
 root = tk.Frame()
 root.pack(expand=True, fill='both')
-QuitButton = tk.Button(root, {'text':'Quit'})
-QuitButton.bind('<ButtonRelease-1>', sys.exit)
-QuitButton.pack()
+pollFreq = updatefreq.Updatefreq(samples=5)
+graph = showconfig.getGraph()
+filenames = []
+for lyr in graph.objects(None, L9['previewLayer']):
+    for p in graph.objects(lyr, L9['path']):
+        filenames.append(str(p))
 
-filenames=['lightsim/skyline/bg.png',
-           'lightsim/skyline/cyc-lo-red.png',
-           'lightsim/skyline/cyc-lo-grn.png',
-           ]
-
-scales = {} # filename : scale
-for f in filenames:
-    scales[f] = tk.Scale(
-        root, label=f, from_=0, to=1, res=.05, orient='horiz',
-        command=lambda *args: ogl.newLevels(
-          levels=dict([(f, s.get()) for f,s in scales.items()])))
-    scales[f].pack()
-ogl = Surface(root, filenames)
+ogl = Surface(root, filenames, width=120, height=80, imgRescaleTo=128)
 ogl.pack(side='top', expand=True, fill='both')
 
-graph = showconfig.getGraph()
+sk = StatusKeys(root)
+sk.pack(side='top', fill='x')
+
+
+
 serv = Proxy(networking.dmxServerUrl())
-LoopingCall(poll, graph, serv).start(1)
+LoopingCall(poll, graph, serv, pollFreq).start(.1)
 
-
-root.winfo_toplevel().bind("<Control-Key-q>",lambda ev: reactor.stop)
-root.winfo_toplevel().bind("<Destroy>",lambda ev: reactor.stop)
-root.winfo_toplevel().protocol('WM_DELETE_WINDOW', reactor.stop)
+top = root.winfo_toplevel()
+top.wm_title(dmxclient._id)
+top.bind("<Control-Key-q>",lambda ev: reactor.stop)
+top.bind("<Destroy>",lambda ev: reactor.stop)
+top.protocol('WM_DELETE_WINDOW', reactor.stop)
 tksupport.install(ogl, ms=20)
-reactor.run()
+
+if 0:
+    import hotshot, hotshot.stats
+    p = hotshot.Profile("/tmp/pro")
+    p.runcall(reactor.run)
+    p.close()
+    hotshot.stats.load("/tmp/pro").sort_stats('time').print_stats()
+else:
+    reactor.run()
