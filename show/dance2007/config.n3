@@ -44,11 +44,15 @@ sh:song17 rdfs:label "17 dancing in the streets"; :showPath "music/17.wav" .
 @prefix dmx: <http://light9.bigasterisk.com/dmx/> .
 :Channel rdfs:comment "one value that light9 can control. The channel might output via dmx on some address." .
 
-ch:frontLeft a :Channel; rdfs:label "frontLeft"; :output dmx:c1 .
-ch:frontRight a :Channel; rdfs:label "frontRight"; :output dmx:c2 . 
+ch:frontLeft a :Channel; rdfs:label "frontLeft"; :output dmx:c1;
+  :previewLayer [ :path "lightsim/skyline/front-left.png" ] .
+ch:frontRight a :Channel; rdfs:label "frontRight"; :output dmx:c2;
+  :previewLayer [ :path "lightsim/skyline/front-right.png" ] . 
+
+ch:work a :Channel; rdfs:label "work"; :output dmx:c3;
+  :previewLayer [ :path "lightsim/skyline/bg.png" ] . 
 
 dmx:c1 :dmxAddress 1 .
 dmx:c2 :dmxAddress 2 .
+dmx:c3 :dmxAddress 3 .
 
-ch:frontLeft :previewLayer [ :path "lightsim/skyline/cyc-lo-red.png" ] .
-ch:frontRight :previewLayer [ :path "lightsim/skyline/cyc-lo-grn.png" ] .
