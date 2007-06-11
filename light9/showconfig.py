@@ -1,11 +1,28 @@
-from os import path,getenv
+import time
+from os import path, getenv
 from rdflib.Graph import Graph
 from rdflib import URIRef
 from namespaces import MUS, L9
 
+_config = (None, None, None) # graph, mtime, len
 def getGraph():
+    global _config
+    configPath = path.join(root(), 'config.n3')
+    
+    now = time.time()
+    diskMtime = path.getmtime(configPath)
+    if diskMtime <= _config[1]:
+        graph = _config[0]
+        # i'm scared of some program modifying the graph, and then i
+        # return that from a new getGraph call. Maybe I should be
+        # copying it right here, or doing something clever with
+        # contexts
+        assert len(graph) == _config[2]
+        return _config[0]
+
     graph = Graph()
-    graph.parse(path.join(root(), 'config.n3'), format='n3')
+    graph.parse(configPath, format='n3')
+    _config = (graph, diskMtime, len(graph))
     return graph
 
 def root():

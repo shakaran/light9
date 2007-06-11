@@ -12,7 +12,7 @@ log = logging.getLogger()
 logging.basicConfig(format="%(asctime)s %(levelname)-5s %(name)s %(filename)s:%(lineno)d: %(message)s")
 log.setLevel(logging.DEBUG)
 import Tkinter as tk
-from light9 import networking, Patch, showconfig, dmxclient, updatefreq
+from light9 import networking, Patch, showconfig, dmxclient, updatefreq, prof
 from light9.namespaces import L9
 from louie import dispatcher
 
@@ -96,11 +96,4 @@ top.bind("<Destroy>",lambda ev: reactor.stop)
 top.protocol('WM_DELETE_WINDOW', reactor.stop)
 tksupport.install(ogl, ms=20)
 
-if 0:
-    import hotshot, hotshot.stats
-    p = hotshot.Profile("/tmp/pro")
-    p.runcall(reactor.run)
-    p.close()
-    hotshot.stats.load("/tmp/pro").sort_stats('time').print_stats()
-else:
-    reactor.run()
+prof.run(reactor.run, profile=False)

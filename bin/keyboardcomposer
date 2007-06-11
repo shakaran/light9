@@ -14,7 +14,7 @@ import run_local
 from light9.Fadable import Fadable
 from light9.Submaster import Submasters, sub_maxes
 from light9.subclient import SubClient
-from light9 import dmxclient, showconfig, networking
+from light9 import dmxclient, showconfig, networking, prof
 from light9.uihelpers import toplevelat, bindkeys
 from bcf2000 import BCF2000
 
@@ -111,10 +111,10 @@ class KeyboardComposer(Frame, SubClient):
         try:
             self.sliders = Sliders(self.hw_slider_moved)
         except IOError:
-            class _:
+            class dummy:
                 def valueOut(self, name, value):
                     pass
-            self.sliders = _()
+            self.sliders = dummy()
             print "no hw sliders found"
 
     def make_key_hints(self):
@@ -294,6 +294,10 @@ class Sliders(BCF2000):
             self.cb(int(name[6:]) - 1, value / 127)
 
 if __name__ == "__main__":
+
+    #prof.watchPoint("/usr/lib/python2.4/site-packages/rdflib-2.3.3-py2.4-linux-i686.egg/rdflib/syntax/parsers/n3p/n3p.py", 67)
+
+
     parser = OptionParser()
     parser.add_option('--nonpersistent', action="store_true",
                       help="don't load or save levels")
@@ -327,9 +331,7 @@ if __name__ == "__main__":
         reactor.addSystemEventTrigger('after', 'shutdown', kc.save)
     
     tksupport.install(root,ms=10)
-    if 0:
-        sys.path.append("/home/drewp/projects/cuisine/pour")
-        from utils import runstats
-        runstats("reactor.run()")
-    else:
-        reactor.run()
+
+
+    
+    prof.run(reactor.run, profile=False)
