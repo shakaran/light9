@@ -20,14 +20,15 @@ except ImportError:
 from twisted.internet import reactor,tksupport
 import twisted
 from twisted.web.xmlrpc import Proxy
-from rdflib import Literal, URIRef
+from rdflib import Literal, URIRef, RDF
+from rdflib.Graph import Graph
 import logging
 log = logging.getLogger()
 logging.basicConfig(format="%(asctime)s %(levelname)-5s %(name)s %(filename)s:%(lineno)d: %(message)s")
 log.setLevel(logging.DEBUG)
 
 import run_local
-from light9 import Submaster, dmxclient, networking, showconfig
+from light9 import Submaster, dmxclient, networking, showconfig, prof
 from light9.TLUtility import make_attributes_from_args, dict_subset
 from light9.zoomcontrol import Zoomcontrol
 from light9.curve import Curve, Curveview, Curveset, Curvesetview
@@ -257,13 +258,6 @@ def create_status_lines(master):
                            l.config(text=sn+": "+tf(val)),
                            signame,weak=0)
 
-def savesubterms(filename,subterms):
-    s=""
-    for st in subterms:
-        s=s+"%s %s\n" % (st.submaster.name, st.subexpr.expr)
-    
-    file(filename,'w').write(s)
-
 class SubtermSetView(tk.Frame):
     def __init__(self, master, *args, **kw):
         tk.Frame.__init__(self, master, *args, **kw)
@@ -284,7 +278,7 @@ def add_one_subterm(graph, sub, curveset, subterms, root, ssv, expr=None):
     if expr is None:
         expr = '%s(t)' % subname
 
-    term = Subterm(Submaster.Submaster(sub), Subexpr(curveset,expr))
+    term = Subterm(Submaster.Submaster(graph=graph, sub=sub), Subexpr(curveset,expr))
     subterms.append(term)
 
     stv=Subtermview(ssv,term)
@@ -314,13 +308,32 @@ def sub_commands_tk(master, curveset, subterms, root, ssv, graph):
 
     return f
 
+def savesubterms(filename,subterms):
+    raise NotImplementedError
+    s=""
+    for st in subterms:
+        s=s+"%s %s\n" % (st.submaster.name, st.subexpr.expr)
+    
+    file(filename,'w').write(s)
+
+def createSubtermGraph(song, subterms):
+    """rdf graph describing the subterms, readable by add_subterms_for_song"""
+    graph = Graph()
+    for subterm in subterms:
+        uri = URIRef(song + "/subterm/" + subterm.submaster.name)
+        graph.add((song, L9['subterm'], uri))
+        graph.add((uri, RDF.type, L9['Subterm']))
+        graph.add((uri, L9['sub'], L9['sub/%s' % subterm.submaster.name]))
+        graph.add((uri, L9['expression'], Literal(subterm.subexpr.expr)))
+    return graph
+
 def add_subterms_for_song(graph, song, curveset, subterms, root, ssv):
     for st in graph.objects(song, L9['subterm']):
         add_one_subterm(graph, graph.value(st, L9['sub']), curveset, subterms,
                         root, ssv, graph.value(st, L9['expression']))
 
-def songFilename(uri):
-    return uri.split('/')[-1]
+def graphPathForSubterms(song):
+    return showconfig.subtermsForSong(showconfig.songFilenameFromURI(song)) + ".n3"
 
 #######################################################################
 root=tk.Tk()
@@ -356,20 +369,27 @@ musicfilename = showconfig.songOnDisk(song)
 maxtime = wavelength(musicfilename)
 dispatcher.send("max time",maxtime=maxtime)
 dispatcher.connect(lambda: maxtime, "get max time",weak=0)
-curveset.load(basename=os.path.join(showconfig.curvesDir(), songFilename(song)))
+curveset.load(basename=os.path.join(showconfig.curvesDir(), showconfig.songFilenameFromURI(song)))
 
 subterms = []
 sub_commands_tk(root, curveset, subterms, root, ssv, graph).pack(side='top',fill='x')
 
-add_subterms_for_song(graph, song, curveset, subterms, root, ssv)
+try:
+    g = Graph()
+    g.parse(graphPathForSubterms(song), format='n3')
+    add_subterms_for_song(g, song, curveset, subterms, root, ssv)
+except OSError, e:
+    print e
 
 log.debug("output")
 out = Output(subterms, music)
 
 def savekey(*args):
     print "saving",song
-    savesubterms(showconfig.subtermsForSong(songFilename(song)), subterms)
-    curveset.save(basename=os.path.join(showconfig.curvesDir(), songFilename(song)))
+    g = createSubtermGraph(song, subterms)
+    g.serialize(graphPathForSubterms(song), format="nt")
+
+    curveset.save(basename=os.path.join(showconfig.curvesDir(), showconfig.songFilenameFromURI(song)))
     print "saved"
     
 root.bind("<Control-Key-s>",savekey)
@@ -391,9 +411,5 @@ root.bind("<Destroy>",lambda ev: reactor.stop)
 root.protocol('WM_DELETE_WINDOW', reactor.stop)
 tksupport.install(root,ms=20)
 log.debug("run")
-if 0:
-    sys.path.append("/home/drewp/projects/cuisine/pour")
-    from utils import runstats
-    runstats("reactor.run()")
-else:
-    reactor.run()
+prof.run(reactor.run, profile=False)
+

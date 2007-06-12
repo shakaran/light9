@@ -66,11 +66,20 @@ def songOnDisk(song):
     songFullPath = path.join(root(), graph.value(song, L9['showPath']))
     return songFullPath
 
+def songFilenameFromURI(uri):
+    """
+    'http://light9.bigasterisk.com/show/dance2007/song8' -> 'song8'
+
+    everything that uses this should be deprecated for real URIs
+    everywhere"""
+    assert isinstance(uri, URIRef)
+    return uri.split('/')[-1]
+
 def curvesDir():
     return path.join(root(),"curves")
 
 def songFilename(song):
-    return path.join(musicDir(),"%s.wav" % song)
+    return path.join(root(), "music", "%s.wav" % song)
 
 def subtermsForSong(song):
     return path.join(root(),"subterms",song)

@@ -12,6 +12,21 @@ features and limitations:
     requesting what song is playing
     saying what song should play
 
+
+setup:
+
+get mpd root path correct
+
+run mpd that's been modified to give precise times:
+  dash(pts/21):/my/dl/modified/mpd% src/mpd --no-daemon
+
+tell it to scan
+  mpc update
+  (mpc listall   to check)
+  
+run ascoltami
+
+
 todo:
 
 
