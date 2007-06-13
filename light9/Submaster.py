@@ -236,7 +236,9 @@ class Submasters:
         return [s.name for s in self.get_all_subs()]
     def get_sub_by_name(self, name):
         "Makes a new sub if there isn't one."
-        return self.submasters.get(name, Submaster(name))
+        if name in self.submasters:
+            return self.submasters[name]
+        return Submaster(name)
     __getitem__ = get_sub_by_name
 
 def fullsub(*chans):

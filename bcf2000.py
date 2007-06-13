@@ -37,7 +37,7 @@ class BCF2000(object):
         self.lastValue = {} # control name : value
         self.packet = ""
         loop = LoopingCall(self.poll)
-        loop.start(.02)
+        loop.start(.01)
 
     def poll(self):
         try:
@@ -53,15 +53,6 @@ class BCF2000(object):
             p = self.packet
             self.packet = ""
             self.packetReceived(p)
-
-        return
-        
-        while 1:
-            packet = self.dev.read(3)
-            while len(packet) < 3:
-                if len(packet) == 0:
-                    self.reopen()
-                packet += self.dev.read(3 - len(packet))
 
     def packetReceived(self, packet):
         b0, which, value = [ord(b) for b in packet]

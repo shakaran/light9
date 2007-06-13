@@ -19,10 +19,9 @@ from light9.uihelpers import toplevelat, bindkeys
 from bcf2000 import BCF2000
 
 nudge_keys = {
-    'up' : list('qwertyuiop'),
-    'down' : list('asdfghjkl')
+    'up'   : list('qwertyui'),
+    'down' : list('asdfghjk')
 }
-nudge_keys['down'].append('semicolon')
 
 class SubScale(Scale, Fadable):
     def __init__(self, master, *args, **kw):
@@ -86,7 +85,8 @@ class KeyboardComposer(Frame, SubClient):
         self.slider_table = {} # this holds coords:sub Tk vars
         self.name_to_subtk.clear() # subname : SubmasterTk instance
         self.current_row = 0
-        
+
+        self.connect_to_hw()
         self.make_key_hints()
         self.draw_sliders()
         self.highlight_row(self.current_row)
@@ -108,6 +108,7 @@ class KeyboardComposer(Frame, SubClient):
         self.sub_name.pack(side=LEFT)
         self.stop_frequent_update_time = 0
 
+    def connect_to_hw(self):
         try:
             self.sliders = Sliders(self.hw_slider_moved)
         except IOError:
@@ -115,7 +116,7 @@ class KeyboardComposer(Frame, SubClient):
                 def valueOut(self, name, value):
                     pass
             self.sliders = dummy()
-            print "no hw sliders found"
+            print "no hw sliders found"       
 
     def make_key_hints(self):
         keyhintrow = Frame(self)
@@ -170,6 +171,16 @@ class KeyboardComposer(Frame, SubClient):
         self.highlight_row(self.current_row)
         row = self.rows[self.current_row]
         self.keyhints.pack_configure(before=row)
+
+        
+        for col in range(8):
+            try:
+                subtk = self.slider_table[(self.current_row, col)]
+            except KeyError:
+                pass # unfilled bottom row has holes
+            self.send_to_hw(subtk.name, col + 1)
+
+            
     def got_nudger(self, number, direction, full=0):
         subtk = self.slider_table[(self.current_row, number)]
         if direction == 'up':
@@ -184,7 +195,11 @@ class KeyboardComposer(Frame, SubClient):
                 subtk.scale.decrease()
 
     def hw_slider_moved(self, col, value):
-        subtk = self.slider_table[(self.current_row, col)]
+        value = int(value * 100) / 100
+        try:
+            subtk = self.slider_table[(self.current_row, col)]
+        except KeyError:
+            return # no slider assigned at that column
         subtk.scale.set(value)
                 
     def draw_sliders(self):
@@ -200,17 +215,31 @@ class KeyboardComposer(Frame, SubClient):
             subtk = self.draw_sub_slider(row, col, sub.name, current_level)
             self.slider_table[(rowcount, col)] = subtk
             self.name_to_subtk[sub.name] = subtk
-            col += 1
-            col %= 10
 
-            def slider_changed(x, y, z, subtk=subtk, col=col, sub=sub):
+            def slider_changed(x, y, z, subtk=subtk,
+                               col=col, sub=sub, rowcount=rowcount):
                 subtk.scale.draw_indicator_colors()
                 self.send_levels()
-                v = 127 * self.get_levels()[sub.name]
-                self.sliders.valueOut("slider%s" % (col), v)
-                    
+                if rowcount == self.current_row:
+                    self.send_to_hw(sub.name, col + 1)
 
             subtk.slider_var.trace('w', slider_changed)
+
+            # initial position
+            self.send_to_hw(sub.name, col + 1)
+            col = (col + 1) % 8
+
+    def send_to_hw(self, subName, hwNum):
+        v = round(127 * self.slider_vars[subName].get())
+        chan = "slider%s" % hwNum
+        
+        # workaround for some rounding issue, where we receive one
+        # value and then decide to send back a value that's one step
+        # lower
+        if abs(v - self.sliders.lastValue.get(chan, 0)) <= 1:
+            return
+        self.sliders.valueOut(chan, v)
+            
     def make_row(self):
         row = Frame(self, bd=2, bg='black')
         row.pack(expand=1, fill=BOTH)
@@ -219,7 +248,7 @@ class KeyboardComposer(Frame, SubClient):
         return row
     def draw_sub_slider(self, row, col, name, current_level):
         subtk = SubmasterTk(row, name, current_level)
-        subtk.place(relx=col * 0.1, rely=0, relwidth=0.1, relheight=1)
+        subtk.place(relx=col / 8, rely=0, relwidth=1 / 8, relheight=1)
         self.setup_key_nudgers(subtk.scale)
 
         self.slider_vars[name] = subtk.slider_var
@@ -289,15 +318,10 @@ class Sliders(BCF2000):
         BCF2000.__init__(self)
         self.cb = cb
     def valueIn(self, name, value):
-        print "in", name, value
         if name.startswith("slider"):
             self.cb(int(name[6:]) - 1, value / 127)
 
 if __name__ == "__main__":
-
-    #prof.watchPoint("/usr/lib/python2.4/site-packages/rdflib-2.3.3-py2.4-linux-i686.egg/rdflib/syntax/parsers/n3p/n3p.py", 67)
-
-
     parser = OptionParser()
     parser.add_option('--nonpersistent', action="store_true",
                       help="don't load or save levels")
@@ -333,5 +357,6 @@ if __name__ == "__main__":
     tksupport.install(root,ms=10)
 
 
+#    prof.watchPoint("/usr/lib/python2.4/site-packages/rdflib-2.3.3-py2.4-linux-i686.egg/rdflib/Graph.py", 615)
     
     prof.run(reactor.run, profile=False)
