@@ -45,24 +45,26 @@ class Submaster:
             # old code was passing leveldict as second positional arg
             assert isinstance(graph, Graph)
         self.name = name
+        self.uri = sub
         self.temporary = temporary
         if leveldict:
             self.levels = leveldict
         else:
             self.levels = {}
-            self.reload(quiet=True)
+            self.reload(quiet=True, graph=graph)
         if not self.temporary:
             dispatcher.connect(self.reload, 'reload all subs')
             
-    def reload(self, quiet=False):
+    def reload(self, quiet=False, graph=None):
         if self.temporary:
             return
         try:
             oldlevels = self.levels.copy()
             self.levels.clear()
             patchGraph = showconfig.getGraph()
-            graph = Graph()
-            graph.parse(showconfig.subFile(self.name), format="nt")
+            if graph is None:
+                graph = Graph()
+                graph.parse(showconfig.subFile(self.name), format="nt")
             subUri = L9['sub/%s' % self.name]
             for lev in graph.objects(subUri, L9['lightLevel']):
                 chan = graph.value(lev, L9['channel'])
@@ -72,8 +74,8 @@ class Submaster:
 
             if (not quiet) and (oldlevels != self.levels):
                 print "sub %s changed" % self.name
-        except IOError:
-            print "Can't read file for sub: %s" % self.name
+        except IOError, e:
+            print "Can't read file for sub: %r (%s)" % (self.name, e)
     def save(self):
         if self.temporary:
             print "not saving temporary sub named",self.name

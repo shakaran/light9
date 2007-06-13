@@ -176,10 +176,11 @@ class Subterm:
             return Submaster.Submaster('Error: %s' % str(e), temporary=True)
 
 class Subtermview(tk.Frame):
-    def __init__(self,master,st,**kw):
+    def __init__(self, master, graph, st, **kw):
         self.subterm = st
         tk.Frame.__init__(self,master,bd=1,relief='raised',**kw)
-        l = tk.Label(self,text="sub %r" % self.subterm.submaster.name)
+        l = tk.Label(self,
+                     text="sub %s" % graph.label(self.subterm.submaster.uri))
         l.pack(side='left')
         sev=Subexprview(self,self.subterm.subexpr)
         sev.pack(side='left',fill='both',exp=1)
@@ -273,15 +274,19 @@ class SubtermSetView(tk.Frame):
         if self.cur_col == 0:
             self.cur_row += 1
 
-def add_one_subterm(graph, sub, curveset, subterms, root, ssv, expr=None):
-    subname = graph.label(sub)
+def add_one_subterm(graph, subUri, curveset, subterms, root, ssv, expr=None):
+    subname = graph.label(subUri)
     if expr is None:
         expr = '%s(t)' % subname
 
-    term = Subterm(Submaster.Submaster(graph=graph, sub=sub), Subexpr(curveset,expr))
+    print "req to add %r" % subUri
+    for s in graph.triples((subUri, None, None)):
+        print s
+    term = Subterm(Submaster.Submaster(graph=graph, sub=subUri),
+                   Subexpr(curveset,expr))
     subterms.append(term)
 
-    stv=Subtermview(ssv,term)
+    stv=Subtermview(ssv, graph, term)
     # stv.pack(side='top',fill='x')
 
     ssv.add_subtermview(stv)
@@ -293,7 +298,8 @@ def sub_commands_tk(master, curveset, subterms, root, ssv, graph):
     newname = tk.StringVar()
 
     def add_cmd():
-        add_one_subterm(graph, newname.get(), curveset, subterms, root, ssv, '')
+        add_one_subterm(graph, L9['sub/%s' % newname.get()],
+                        curveset, subterms, root, ssv, '')
         newname.set('')
 
     def reload_subs():
@@ -335,6 +341,13 @@ def add_subterms_for_song(graph, song, curveset, subterms, root, ssv):
 def graphPathForSubterms(song):
     return showconfig.subtermsForSong(showconfig.songFilenameFromURI(song)) + ".n3"
 
+def read_all_subs(graph):
+    """read all sub files into this graph so when add_one_subterm tries
+    to add, the sub will be available"""
+    subsDir = showconfig.subsDir()
+    for filename in os.listdir(subsDir):
+        graph.parse(os.path.join(subsDir, filename), format="n3")
+
 #######################################################################
 root=tk.Tk()
 root.tk_setPalette("gray50")
@@ -362,22 +375,26 @@ csv.pack(side='top',fill='both',exp=1)
 ssv = SubtermSetView(root)
 ssv.pack(side='top', fill='x')
 
-graph = showconfig.getGraph()
+graphOrig = showconfig.getGraph()
+graph = Graph() # a copy, since we're going to add subs into it
+for s in graphOrig:
+    graph.add(s)
+read_all_subs(graph)
 root.title("Curvemaster 3000MX - %s" % graph.label(song))
 
 musicfilename = showconfig.songOnDisk(song)
 maxtime = wavelength(musicfilename)
 dispatcher.send("max time",maxtime=maxtime)
 dispatcher.connect(lambda: maxtime, "get max time",weak=0)
-curveset.load(basename=os.path.join(showconfig.curvesDir(), showconfig.songFilenameFromURI(song)))
+curveset.load(basename=os.path.join(showconfig.curvesDir(),
+                                    showconfig.songFilenameFromURI(song)))
 
 subterms = []
 sub_commands_tk(root, curveset, subterms, root, ssv, graph).pack(side='top',fill='x')
 
 try:
-    g = Graph()
-    g.parse(graphPathForSubterms(song), format='n3')
-    add_subterms_for_song(g, song, curveset, subterms, root, ssv)
+    graph.parse(graphPathForSubterms(song), format='n3')
+    add_subterms_for_song(graph, song, curveset, subterms, root, ssv)
 except OSError, e:
     print e
 
