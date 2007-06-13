@@ -1,0 +1,7 @@
+
+from dmx import Dmx
+
+d = Dmx()
+while 1:
+    d.write("\xff" * 100, times=1)
+
