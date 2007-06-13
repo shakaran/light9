@@ -58,17 +58,22 @@ class UsbDMX(BaseIO):
     dimmers = 512
     def __init__(self):
         BaseIO.__init__(self)
-        if self.dummy:
-            return
-        sys.path.append("/home/drewp/dmx_usb_module")
-        from dmx import Dmx
-        self.out = Dmx()
+        self.__name__ = "UsbDMX"
+        self.out = None
+
+    def _dmx(self):
+        if self.out is None:
+            sys.path.append("dmx_usb_module/build/lib.linux-i686-2.4")
+            from dmx import Dmx
+            self.out = Dmx()
+        return self.out
+        
 
     def sendlevels(self, levels):
         if self.dummy:
             return
         packet = ''.join([chr(int(lev * 255 / 100)) for lev in levels]) + "\x55"
-        self.out.write(packet)
+        self._dmx().write(packet)
 
 class SerialPots(BaseIO):
     """
