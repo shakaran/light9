@@ -88,7 +88,7 @@ ch:houseUp1 a :Channel; rdfs:label "houseUp1"; :output dmx:c139 .
 ch:houseUp2 a :Channel; rdfs:label "houseUp2"; :output dmx:c140 .
 ch:houseUp3 a :Channel; rdfs:label "houseUp3"; :output dmx:c141 .
 ch:houseUp4 a :Channel; rdfs:label "houseUp4"; :output dmx:c142 .
-ch:houseUp5 a :Channel; rdfs:label "houseUp5"; :output dmx:c142 .
+ch:houseUp5 a :Channel; rdfs:label "houseUp5"; :output dmx:c143 .
 ch:houseUp6 a :Channel; rdfs:label "houseUp6"; :output dmx:c144 .
 ch:houseBack1 a :Channel; rdfs:label "houseBack1"; :output dmx:c131 .
 ch:houseBack2 a :Channel; rdfs:label "houseBack2"; :output dmx:c132 .

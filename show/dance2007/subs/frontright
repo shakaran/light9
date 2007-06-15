@@ -1,0 +1,4 @@
+_:tolVosOY29 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:tolVosOY29 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/frontRight>.
+<http://light9.bigasterisk.com/sub/frontright> <http://light9.bigasterisk.com/lightLevel> _:tolVosOY29.
+<http://light9.bigasterisk.com/sub/frontright> <http://www.w3.org/2000/01/rdf-schema#label> "frontright".

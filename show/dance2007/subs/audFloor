@@ -1,0 +1,7 @@
+_:ZMuiFkyh28 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/audFloorL>.
+_:ZMuiFkyh28 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/audFloor> <http://www.w3.org/2000/01/rdf-schema#label> "audFloor".
+<http://light9.bigasterisk.com/sub/audFloor> <http://light9.bigasterisk.com/lightLevel> _:ZMuiFkyh28.
+<http://light9.bigasterisk.com/sub/audFloor> <http://light9.bigasterisk.com/lightLevel> _:ZMuiFkyh29.
+_:ZMuiFkyh29 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/audFloorR>.
+_:ZMuiFkyh29 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
