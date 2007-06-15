@@ -64,7 +64,7 @@ class Submaster:
             patchGraph = showconfig.getGraph()
             if graph is None:
                 graph = Graph()
-                graph.parse(showconfig.subFile(self.name), format="nt")
+                graph.parse(showconfig.subFile(self.name), format="n3")
             self.uri = L9['sub/%s' % self.name]
             for lev in graph.objects(self.uri, L9['lightLevel']):
                 chan = graph.value(lev, L9['channel'])
