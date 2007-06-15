@@ -586,7 +586,9 @@ class Curveset:
     def load(self,basename, skipMusic=False):
         """find all files that look like basename-curvename and add
         curves with their contents"""
-        for filename in glob.glob("%s-*"%basename):
+        def sorter(name):
+            return not name.endswith('music'), name
+        for filename in sorted(glob.glob("%s-*"%basename), key=sorter):
             curvename = filename[filename.rfind('-')+1:]
             if skipMusic and curvename in ['music', 'smooth_music']:
                 continue
