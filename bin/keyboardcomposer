@@ -74,11 +74,12 @@ class KeyboardComposer(Frame, SubClient):
         self.submasters = submasters
         self.name_to_subtk = {}
         self.current_sub_levels = {}
+        self.current_row = 0
         if current_sub_levels is not None:
             self.current_sub_levels = current_sub_levels
         else:
             try:
-                self.current_sub_levels = \
+                self.current_sub_levels, self.current_row = \
                     pickle.load(file('.keyboardcomposer.savedlevels'))
             except IOError:
                 pass
@@ -92,11 +93,10 @@ class KeyboardComposer(Frame, SubClient):
         self.slider_vars = {} # this holds subname:sub Tk vars
         self.slider_table = {} # this holds coords:sub Tk vars
         self.name_to_subtk.clear() # subname : SubmasterTk instance
-        self.current_row = 0
 
         self.make_key_hints()
         self.draw_sliders()
-        self.highlight_row(self.current_row)
+        self.change_row(self.current_row)
         self.rows[self.current_row].focus()
 
         self.buttonframe = Frame(self, bg='black')
@@ -160,14 +160,16 @@ class KeyboardComposer(Frame, SubClient):
         # Page up, C-p, and ' do up
         for key in '<Prior> <Next> <Control-n> <Control-p> ' \
                    '<Key-bracketright> <Key-apostrophe>'.split():
-            tkobject.bind(key, self.change_row)
+            tkobject.bind(key, self.change_row_cb)
 
-    def change_row(self, event):
+    def change_row_cb(self, event):
         diff = 1
         if event.keysym in ('Prior', 'p', 'bracketright'):
             diff = -1
+        self.change_row(self.current_row + diff)
+    def change_row(self, row):
         old_row = self.current_row
-        self.current_row += diff
+        self.current_row = row
         self.current_row = max(0, self.current_row)
         self.current_row = min(len(self.rows) - 1, self.current_row)
         self.unhighlight_row(old_row)
@@ -296,7 +298,7 @@ class KeyboardComposer(Frame, SubClient):
         sub.save()
 
     def save(self):
-        pickle.dump(self.get_levels(), 
+        pickle.dump((self.get_levels(), self.current_row),
                     file('.keyboardcomposer.savedlevels', 'w'))
     def send_frequent_updates(self):
         """called when we get a fade -- send events as quickly as possible"""
@@ -307,13 +309,15 @@ class KeyboardComposer(Frame, SubClient):
     def refresh(self):
         self.save()
         self.submasters = Submasters()
-        self.current_sub_levels = \
+        self.current_sub_levels, self.current_row = \
             pickle.load(file('.keyboardcomposer.savedlevels'))
         for r in self.rows:
             r.destroy()
         self.keyhints.destroy()
         self.buttonframe.destroy()
         self.draw_ui()
+        # possibly paranoia (but possibly not)
+        self.change_row(self.current_row)
 
     def alltozero(self):
         for name, subtk in self.name_to_subtk.items():
@@ -343,7 +347,12 @@ class Sliders(BCF2000):
             kc.hw_slider_moved(int(name[6:]) - 1, value / 127)
         elif name.startswith("button-lower"):
             col = int(name[12:]) - 1
-            tkslider = kc.slider_table[(kc.current_row, col)]
+            self.valueOut(name, 0)
+            try:
+                tkslider = kc.slider_table[(kc.current_row, col)]
+            except KeyError:
+                return
+
             slider_var = tkslider.slider_var
             if slider_var.get() == 1:
                 slider_var.set(0)
