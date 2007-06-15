@@ -70,6 +70,9 @@ class Submaster:
                 chan = graph.value(lev, L9['channel'])
                 val = graph.value(lev, L9['level'])
                 name = patchGraph.label(chan)
+                if not name:
+                    print "sub %r has channel %r with no name- leaving out that channel" % (self.name, chan)
+                    continue
                 self.levels[name] = float(val)
 
             if (not quiet) and (oldlevels != self.levels):
