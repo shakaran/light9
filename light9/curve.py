@@ -181,14 +181,20 @@ class Curveview(tk.Canvas):
         self.bind("<Shift-ButtonRelease-1>", self.sketch_release)
 
 
-        # hold alt-shift to select, since i had a hard time detecting
-        # other combos right
+        self.dragging_dots = False
         self.selecting = False
-        self.bind("<Alt-Key>", self.select_press)
+        self.bind("<ButtonPress-1>",#"<Alt-Key>",
+                  self.select_press)
         self.bind("<Motion>", self.select_motion, add=True)
-        self.bind("<Alt-KeyRelease>", self.select_release)
+        self.bind("<ButtonRelease-1>", #"<Alt-KeyRelease>",
+                  self.select_release)
 
         self.bind("<ButtonPress-1>", self.check_deselect, add=True)
+
+    def print_state(self, msg=""):
+        if 0:
+            print "%s: dragging_dots=%s selecting=%s" % (
+                msg, self.dragging_dots, self.selecting)
 
     def check_deselect(self,ev):
         try:
@@ -198,6 +204,9 @@ class Curveview(tk.Canvas):
             self.highlight_selected_dots()
 
     def select_press(self,ev):
+        self.print_state("select_press")
+        if self.dragging_dots:
+            return
         if not self.selecting:
             self.selecting = True
             self.select_start = self.world_from_screen(ev.x,0)[0]
@@ -206,14 +215,22 @@ class Curveview(tk.Canvas):
     def select_motion(self,ev):
         if not self.selecting:
             return
+        start = self.select_start
+        cur = self.world_from_screen(ev.x, 0)[0]
+        self.select_between(start, cur)
         
     def select_release(self,ev):
+        self.print_state("select_release")
+
+        # dotrelease never gets called, but I can clear that state here
+        self.dragging_dots = False
+        
         if not self.selecting:
             return
         cursors.pop(self)
         self.selecting = False
-        s,e = (self.select_start, self.world_from_screen(ev.x,0)[0])
-        self.select_between(min(s,e), max(s,e))
+        self.select_between(self.select_start,
+                            self.world_from_screen(ev.x,0)[0])
 
     def sketch_press(self,ev):
         self.sketch = Sketch(self,ev)
@@ -415,16 +432,22 @@ class Curveview(tk.Canvas):
                 self.itemconfigure(d,fill='blue')
         
     def dotpress(self,ev,dotidx):
+        self.print_state("dotpress")
         if dotidx not in self.selected_points:
             self.selected_points=[dotidx]
         self.highlight_selected_dots()
         self.last_mouse_world = self.world_from_screen(ev.x, ev.y)
+        self.dragging_dots = True
 
     def select_between(self,start,end):
+        if start > end:
+            start, end = end, start
         self.selected_points = self.curve.indices_between(start,end)
         self.highlight_selected_dots()
 
     def dotmotion(self,ev):
+        if not self.dragging_dots:
+            return
         if not ev.state & 256:
             return # not lmb-down
         cp = self.curve.points
@@ -458,6 +481,9 @@ class Curveview(tk.Canvas):
         self.highlight_selected_dots()
         
     def dotrelease(self,ev):
+        self.print_state("dotrelease")
+        if not self.dragging_dots:
+            return
         self.last_mouse_world = None
         
 class Curveset:

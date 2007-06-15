@@ -414,7 +414,7 @@ root.bind("<Control-Key-r>", lambda evt: dispatcher.send('reload all subs'))
 
 create_status_lines(root)
 for helpline in ["Bindings: C-s save subterms;  Esc see current time; S-Esc see curtime to end; Mousewheel zoom; C-p play/pause music at mouse",
-                 "Curve point bindings: B1 drag point; C-B1 curve add point; S-B1 sketch points; Del selected points; 1..5 add point at time; Alt-Shift-B1 drag select points",
+                 "Curve point bindings: B1 drag point; C-B1 curve add point; S-B1 sketch points; Del selected points; 1..5 add point at time; B1 drag select points",
                  "Available in functions: nsin/ncos period=amp=1; within(a,b) bef(x) aft(x) compare to time; smoove(x) cubic smoothstep; curvename(t) eval curve"]:
     tk.Label(root,text=helpline, font="Helvetica -12 italic",
              anchor='w').pack(side='top',fill='x')
