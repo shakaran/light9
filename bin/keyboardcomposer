@@ -23,6 +23,10 @@ nudge_keys = {
     'down' : list('asdfghjk')
 }
 
+class DummySliders:
+    def valueOut(self, name, value):
+        pass
+
 class SubScale(Scale, Fadable):
     def __init__(self, master, *args, **kw):
         self.scale_var = kw.get('variable') or DoubleVar()
@@ -114,10 +118,7 @@ class KeyboardComposer(Frame, SubClient):
         if hw_sliders:
             self.sliders = Sliders(self.hw_slider_moved)
         else:
-            class dummy:
-                def valueOut(self, name, value):
-                    pass
-            self.sliders = dummy()
+            self.sliders = DummySliders()
 
     def make_key_hints(self):
         keyhintrow = Frame(self)
@@ -231,6 +232,9 @@ class KeyboardComposer(Frame, SubClient):
             col = (col + 1) % 8
 
     def send_to_hw(self, subName, hwNum):
+        if isinstance(self.sliders, DummySliders):
+            return
+            
         v = round(127 * self.slider_vars[subName].get())
         chan = "slider%s" % hwNum
         

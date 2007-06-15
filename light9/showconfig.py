@@ -8,6 +8,8 @@ _config = (None, None, None) # graph, mtime, len
 def getGraph():
     global _config
     configPath = path.join(root(), 'config.n3')
+
+    # file patch.n3 mtime is not currently being checked
     
     now = time.time()
     diskMtime = path.getmtime(configPath)
@@ -22,6 +24,8 @@ def getGraph():
 
     graph = Graph()
     graph.parse(configPath, format='n3')
+    graph.parse(path.join(root(), "patch.n3"), format="n3")
+    
     _config = (graph, diskMtime, len(graph))
     return graph
 

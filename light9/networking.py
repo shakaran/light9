@@ -12,14 +12,14 @@ def dmxServerPort():
     return 8030
     
 def musicUrl():
-    return "http://localhost:%s" % musicPort()
+    return "http://score:%s" % musicPort()
 
 def musicPort():
     return 8040
 
 def mpdServer():
     """servername, port"""
-    return os.getenv('LIGHT9_MPD_SERVER', 'dash'),6600
+    return os.getenv('LIGHT9_MPD_SERVER', 'score'),6600
 
 def kcPort():
     return 8050
