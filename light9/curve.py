@@ -162,7 +162,7 @@ class Curveview(tk.Canvas):
         dispatcher.connect(self.select_between,"select between")
         if self.knobEnabled:
             dispatcher.connect(self.knob_in, "knob in")
-            dispatcher.connect(self.slider_in, "slider in")
+            dispatcher.connect(self.slider_in, "set key")
         self.bind("<Configure>",self.update_curve)
         for x in range(1, 6):
             def add_kb_marker_point(evt, x=x):
@@ -224,10 +224,14 @@ class Curveview(tk.Canvas):
             self.curve.points[idx] = (pos[0], value)
             self.update_curve()
 
-    def slider_in(self, curve, value):
-        """user pushed on a slider. make a new key"""
+    def slider_in(self, curve, value=None):
+        """user pushed on a slider. make a new key.  if value is None,
+        the value will be the same as the last."""
         if curve != self.curve:
             return
+
+        if value is None:
+            value = self.curve.eval(self.current_time())
 
         self.curve.insert_pt((self.current_time(), value))
         self.update_curve()
@@ -546,15 +550,18 @@ class Curveview(tk.Canvas):
         self.dragging_dots = False
 
 class Sliders(BCF2000):
-    def __init__(self, cb, knobCallback):
+    def __init__(self, cb, knobCallback, knobButtonCallback):
         BCF2000.__init__(self)
         self.cb = cb
         self.knobCallback = knobCallback
+        self.knobButtonCallback = knobButtonCallback
     def valueIn(self, name, value):
         if name.startswith("slider"):
             self.cb(int(name[6:]), value / 127)
         if name.startswith("knob"):
             self.knobCallback(int(name[4:]), value / 127)
+        if name.startswith("button-knob"):
+            self.knobButtonCallback(int(name[11:]))
 
         
 class Curveset:
@@ -566,7 +573,8 @@ class Curveset:
         self.sliderCurve = {} # slider number (1 based) : curve name
         self.sliderNum = {} # reverse
         if sliders:
-            self.sliders = Sliders(self.hw_slider_in, self.hw_knob_in)
+            self.sliders = Sliders(self.hw_slider_in, self.hw_knob_in, 
+                                   self.hw_knob_button)
             dispatcher.connect(self.curvesToSliders, "curves to sliders")
             dispatcher.connect(self.knobOut, "knob out")
             self.lastSliderTime = {} # num : time
@@ -642,7 +650,7 @@ class Curveset:
         # bigger than the ignore time above.
         self.sliderSuppressOutputUntil[num] = now + .2
         
-        dispatcher.send("slider in", curve=curve, value=value)
+        dispatcher.send("set key", curve=curve, value=value)
 
     def hw_knob_in(self, num, value):
         try:
@@ -650,6 +658,15 @@ class Curveset:
         except KeyError:
             return
         dispatcher.send("knob in", curve=curve, value=value)
+
+    def hw_knob_button(self, num):
+        try:
+            curve = self.curves[self.sliderCurve[num]]
+        except KeyError:
+            return
+
+        dispatcher.send("set key", curve=curve)
+        
 
     def curvesToSliders(self, t):
         now = time.time()
