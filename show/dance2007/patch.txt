@@ -1,0 +1,129 @@
+cycRed1   83
+cycRed2   80
+cycRed2   77
+cycRed4   74
+cycGreen1 82
+cycGreen2 79
+cycGreen3 76
+cycGreen4 73
+cycBlue1  81
+cycBlue2  78
+cycBlue3  75
+cycBlue4  69
+
+stripG1 94
+stripA2 97
+stripA1 99
+stripR1 100
+stripB1 101
+stripR2 102
+stripG2 103
+stripB2 104
+
+spotRight       4 
+spotLeft        8 
+
+#houseRight1     13 
+#houseUpCenter   15 
+#houseUpLeft     17 
+#houseEdgeRight  18 
+#houseLeft1      27 
+#houseLeft2      26 
+#houseLeft3      25 
+#houseRight1     29  
+#houseRight2     30 
+#houseRight3     31 
+
+bridgeL1        12 
+bridgeC1        14 
+bridgeR1        16 
+bridgeL2        19 
+bridgeC2        21 
+bridgeR2        23 
+
+downEdge5 2 
+down4 3
+down3 6
+down2 7
+downEdge1 10
+
+mid5 13
+mid3 15
+mid1 17
+downEdge5Big 18
+mid4Weak 20
+mid2 22
+mid4 24
+
+sideLeft 26
+leftPatio 29
+up1 28
+up3Blue 30
+upHigh3Blue 31
+mid3Blue 32
+
+pool4 35
+washRed 36
+washGreen 37
+scroller3 38
+scroller2 41
+pool3 42
+scroller3Color 230
+scroller2Color 231
+scroller1 46
+washBlue 57
+goboWindow 48
+strobeRight 53
+washRed3 54
+washGreen 55
+washBlueUp 56
+washUp 57
+washRed2 58
+washPink2 59
+washGreen2 60
+washBlue2 61
+washRed2 62
+washMagenta1 63
+washGreen1 64
+washBlue1 65
+strobeLeft 66
+lowStage3 105
+lowStage1 106
+lowStage2 107
+lowStage4 108
+workCyc 146
+
+
+sky1 114
+sky2 113
+
+houseUp1 139
+houseUp2 140
+houseUp3 141
+houseUp4 142
+houseUp5 143
+houseUp6 144
+
+
+houseBack1 131
+houseBack2 132
+houseBack3 133
+houseBack4 134
+houseBack5 135
+houseBack6 136
+houseBack7 137
+houseBack8 138
+
+houseFront1 119
+houseFront2 120
+houseFront3 121
+houseFront4 122
+houseFront5 123
+houseFront6 124
+houseFront7 125
+houseFront8 126
+houseFront9 127
+houseFront10 128
+houseFront11 129
+houseFront12 130
+

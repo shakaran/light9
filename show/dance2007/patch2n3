@@ -1,0 +1,12 @@
+OUT=patch.n3
+echo "@prefix ch: <http://light9.bigasterisk.com/theater/skyline/channel/> ." > $OUT
+echo "@prefix dmx: <http://light9.bigasterisk.com/dmx/> ." >> $OUT
+echo "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." >> $OUT
+echo "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ." >> $OUT
+echo "@prefix : <http://light9.bigasterisk.com/> ." >> $OUT
+echo "@prefix mus: <http://light9.bigasterisk.com/music/> ." >> $OUT
+echo "@prefix show: <http://light9.bigasterisk.com/show/> ." >> $OUT
+echo "@prefix sh: <http://light9.bigasterisk.com/show/dance2007/> ." >> $OUT
+
+perl -ne 'print if /\S/ && !/^#/' patch.txt | perl -lpe 'split; $_="ch:$_[0] a :Channel; rdfs:label \"$_[0]\"; :output dmx:c$_[1] .";'  >> $OUT
+
