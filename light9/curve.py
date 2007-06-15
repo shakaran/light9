@@ -1,5 +1,5 @@
 from __future__ import division
-import sys,math,glob,random,os
+import sys,math,glob,random,os, time
 from bisect import bisect_left,bisect,bisect_right
 import Tkinter as tk
 try:
@@ -12,6 +12,7 @@ from light9 import Submaster, dmxclient, networking, cursors
 from light9.TLUtility import make_attributes_from_args
 from light9.dmxchanedit import gradient
 from light9.zoomcontrol import RegionZoom
+from bcf2000 import BCF2000
 
 class Curve:
     """curve does not know its name. see Curveset"""
@@ -61,6 +62,20 @@ class Curve:
         
     def points_between(self, x1, x2):
         return [self.points[i] for i in self.indices_between(x1,x2)]
+
+    def point_before(self, x):
+        """(x,y) of the point left of x, or None"""
+        leftidx = self.index_before(x)
+        if leftidx is None:
+            return None
+        return self.points[leftidx]
+
+    def index_before(self, x):
+        leftidx = bisect(self.points, (x,None)) - 1
+        if leftidx < 0:
+            return None
+        return leftidx
+        
 
 def vlen(v):
     return math.sqrt(v[0]*v[0] + v[1]*v[1])
@@ -127,8 +142,11 @@ class Sketch:
 
 
 class Curveview(tk.Canvas):
-    def __init__(self,master,curve,**kw):
+    def __init__(self, master, curve, knobEnabled=False, **kw):
+        """knobEnabled=True highlights the previous key and ties it to a
+        hardware knob"""
         self.curve=curve
+        self.knobEnabled = knobEnabled
         self._time = 0
         self.last_mouse_world = None
         tk.Canvas.__init__(self,master,width=10,height=10,
@@ -139,8 +157,12 @@ class Curveview(tk.Canvas):
         # self.bind("<Enter>",self.focus)
         dispatcher.connect(self.input_time,"input time")
         dispatcher.connect(self.update_curve,"zoom changed")
-        dispatcher.connect(self.update_curve,"points changed",sender=self.curve)
+        dispatcher.connect(self.update_curve,"points changed",
+                           sender=self.curve)
         dispatcher.connect(self.select_between,"select between")
+        if self.knobEnabled:
+            dispatcher.connect(self.knob_in, "knob in")
+            dispatcher.connect(self.slider_in, "slider in")
         self.bind("<Configure>",self.update_curve)
         for x in range(1, 6):
             def add_kb_marker_point(evt, x=x):
@@ -190,6 +212,25 @@ class Curveview(tk.Canvas):
                   self.select_release)
 
         self.bind("<ButtonPress-1>", self.check_deselect, add=True)
+
+    def knob_in(self, curve, value):
+        """user turned a hardware knob, which edits the point to the
+        left of the current time"""
+        if curve != self.curve:
+            return
+        idx = self.curve.index_before(self.current_time())
+        if idx is not None:
+            pos = self.curve.points[idx]
+            self.curve.points[idx] = (pos[0], value)
+            self.update_curve()
+
+    def slider_in(self, curve, value):
+        """user pushed on a slider. make a new key"""
+        if curve != self.curve:
+            return
+
+        self.curve.insert_pt((self.current_time(), value))
+        self.update_curve()
 
     def print_state(self, msg=""):
         if 0:
@@ -257,12 +298,29 @@ class Curveview(tk.Canvas):
         ht = self.winfo_height()
         return x/self.winfo_width()*(end-start)+start, ((ht-5)-y)/(ht-10)
     
-    def input_time(self,val):
+    def input_time(self, val, forceUpdate=False):
+        # i tried various things to make this not update like crazy,
+        # but the timeline was always missing at startup, so i got
+        # scared that things were getting built in a funny order.        
+        #if self._time == val:
+        #    return
+        
         t=val
         pts = self.screen_from_world((val,0))+self.screen_from_world((val,1))
         self.delete('timecursor')
         self.create_line(*pts,**dict(width=2,fill='red',tags=('timecursor',)))
+        self.have_time_line = True
         self._time = t
+        if self.knobEnabled:
+            self.delete('knob')
+            prevKey = self.curve.point_before(t)
+            if prevKey is not None:
+                pos = self.screen_from_world(prevKey)
+                self.create_oval(pos[0] - 8, pos[1] - 8,
+                                 pos[0] + 8, pos[1] + 8,
+                                 outline='#800000',
+                                 tags=('knob',))
+                dispatcher.send("knob out", value=prevKey[1], curve=self.curve)
         
     def update_curve(self,*args):
 
@@ -485,16 +543,45 @@ class Curveview(tk.Canvas):
         if not self.dragging_dots:
             return
         self.last_mouse_world = None
+        self.dragging_dots = False
+
+class Sliders(BCF2000):
+    def __init__(self, cb, knobCallback):
+        BCF2000.__init__(self)
+        self.cb = cb
+        self.knobCallback = knobCallback
+    def valueIn(self, name, value):
+        if name.startswith("slider"):
+            self.cb(int(name[6:]), value / 127)
+        if name.startswith("knob"):
+            self.knobCallback(int(name[4:]), value / 127)
+
         
 class Curveset:
     curves = None # curvename : curve
-    def __init__(self):
-        self.curves = {}
-    def load(self,basename):
+    def __init__(self, sliders=False):
+        """sliders=True means support the hardware sliders"""
+        self.curves = {} # name : Curve
+        self.curveName = {} # reverse
+        self.sliderCurve = {} # slider number (1 based) : curve name
+        self.sliderNum = {} # reverse
+        if sliders:
+            self.sliders = Sliders(self.hw_slider_in, self.hw_knob_in)
+            dispatcher.connect(self.curvesToSliders, "curves to sliders")
+            dispatcher.connect(self.knobOut, "knob out")
+            self.lastSliderTime = {} # num : time
+            self.sliderSuppressOutputUntil = {} # num : time
+            self.sliderIgnoreInputUntil = {}
+        else:
+            self.sliders = None
+        
+    def load(self,basename, skipMusic=False):
         """find all files that look like basename-curvename and add
         curves with their contents"""
         for filename in glob.glob("%s-*"%basename):
             curvename = filename[filename.rfind('-')+1:]
+            if skipMusic and curvename in ['music', 'smooth_music']:
+                continue
             c=Curve()
             c.load(filename)
             curvename = curvename.replace('-','_')
@@ -504,9 +591,20 @@ class Curveset:
         like basename-curvename"""
         for name,cur in self.curves.items():
             cur.save("%s-%s" % (basename,name))
+            
     def add_curve(self,name,curve):
         self.curves[name] = curve
-        dispatcher.send("add_curve",sender=self,name=name)
+        self.curveName[curve] = name
+
+        if self.sliders and name not in ['smooth_music', 'music']:
+            num = len(self.sliderCurve) + 1
+            self.sliderCurve[num] = name
+            self.sliderNum[name] = num
+        else:
+            num = None
+            
+        dispatcher.send("add_curve", slider=num, knobEnabled=num is not None,
+                        sender=self,name=name)
 
     def globalsdict(self):
         return self.curves.copy()
@@ -526,10 +624,53 @@ class Curveset:
         c.points.extend([(s,0), (e,0)])
         self.add_curve(name,c)
 
+    def hw_slider_in(self, num, value):
+        try:
+            curve = self.curves[self.sliderCurve[num]]
+        except KeyError:
+            return
+
+        now = time.time()
+        if now < self.sliderIgnoreInputUntil.get(num):
+            return
+        # don't make points too fast. This is the minimum spacing
+        # between slider-generated points.
+        self.sliderIgnoreInputUntil[num] = now + .1
+        
+        # don't push back on the slider for a little while, since the
+        # user might be trying to slowly move it. This should be
+        # bigger than the ignore time above.
+        self.sliderSuppressOutputUntil[num] = now + .2
+        
+        dispatcher.send("slider in", curve=curve, value=value)
+
+    def hw_knob_in(self, num, value):
+        try:
+            curve = self.curves[self.sliderCurve[num]]
+        except KeyError:
+            return
+        dispatcher.send("knob in", curve=curve, value=value)
+
+    def curvesToSliders(self, t):
+        now = time.time()
+        for num, name in self.sliderCurve.items():
+            if now < self.sliderSuppressOutputUntil.get(num):
+                continue
+#            self.lastSliderTime[num] = now
+            
+            value = self.curves[name].eval(t)
+            self.sliders.valueOut("slider%s" % num, value * 127)
+
+    def knobOut(self, curve, value):
+        try:
+            num = self.sliderNum[self.curveName[curve]]
+        except KeyError:
+            return
+        self.sliders.valueOut("knob%s" % num, value * 127)
 
 class Curvesetview(tk.Frame):
     curves = None # curvename : Curveview
-    def __init__(self,master,curveset,**kw):
+    def __init__(self, master, curveset, **kw):
         self.curves = {}
         self.curveset = curveset
         tk.Frame.__init__(self,master,**kw)
@@ -550,7 +691,7 @@ class Curvesetview(tk.Frame):
         
         dispatcher.connect(self.add_curve,"add_curve",sender=self.curveset)
         
-    def add_curve(self,name):
+    def add_curve(self,name, slider=None, knobEnabled=False):
         f = tk.Frame(self,relief='raised',bd=1)
         f.pack(side='top',fill='both',exp=1)
 
@@ -559,20 +700,33 @@ class Curvesetview(tk.Frame):
         leftside.pack(side='left')
 
         collapsed = tk.IntVar()
-        txt = "curve %r" % name
+        txt = "curve '%s'" % name
         if len(name) > 7:
-            txt = repr(name)
+            txt = name
         tk.Label(leftside,text=txt,font="6x10",
                  width=15).pack(side='top')
-            
+
+        sliderLabel = None
         def cmd():
             if collapsed.get():
+                if sliderLabel:
+                    sliderLabel.pack_forget()
                 f.pack(exp=0)
             else:
+                if sliderLabel:
+                    sliderLabel.pack(side='top')
                 f.pack(exp=1)
         tk.Checkbutton(leftside, text="collapsed", font="6x10",
                        variable=collapsed, command=cmd).pack(side='top')
 
-        cv = Curveview(f,self.curveset.curves[name])
+        if slider is not None:
+            # slider should have a checkbutton, defaults to off for
+            # music tracks
+            sliderLabel = tk.Label(leftside, text="Slider %s" % slider,
+                                   fg='#800000', font='arial 12 bold')
+            sliderLabel.pack(side='top')
+
+        cv = Curveview(f, self.curveset.curves[name],
+                       knobEnabled=knobEnabled)
         cv.pack(side='left',fill='both',exp=1)
         self.curves[name] = cv

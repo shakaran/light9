@@ -62,7 +62,8 @@ class SubmasterTk(Frame):
         subprocess.Popen(["bin/subcomposer", self.name])
 
 class KeyboardComposer(Frame, SubClient):
-    def __init__(self, root, submasters, current_sub_levels=None):
+    def __init__(self, root, submasters, current_sub_levels=None,
+                 hw_sliders=False):
         Frame.__init__(self, root, bg='black')
         SubClient.__init__(self)
         self.submasters = submasters
@@ -77,8 +78,10 @@ class KeyboardComposer(Frame, SubClient):
             except IOError:
                 pass
 
+        self.connect_to_hw(hw_sliders)
         self.draw_ui()
         self.send_levels_loop()
+
     def draw_ui(self):
         self.rows = [] # this holds Tk Frames for each row
         self.slider_vars = {} # this holds subname:sub Tk vars
@@ -86,7 +89,6 @@ class KeyboardComposer(Frame, SubClient):
         self.name_to_subtk.clear() # subname : SubmasterTk instance
         self.current_row = 0
 
-        self.connect_to_hw()
         self.make_key_hints()
         self.draw_sliders()
         self.highlight_row(self.current_row)
@@ -108,15 +110,14 @@ class KeyboardComposer(Frame, SubClient):
         self.sub_name.pack(side=LEFT)
         self.stop_frequent_update_time = 0
 
-    def connect_to_hw(self):
-        try:
+    def connect_to_hw(self, hw_sliders):
+        if hw_sliders:
             self.sliders = Sliders(self.hw_slider_moved)
-        except IOError:
+        else:
             class dummy:
                 def valueOut(self, name, value):
                     pass
             self.sliders = dummy()
-            print "no hw sliders found"       
 
     def make_key_hints(self):
         keyhintrow = Frame(self)
@@ -325,6 +326,8 @@ if __name__ == "__main__":
     parser = OptionParser()
     parser.add_option('--nonpersistent', action="store_true",
                       help="don't load or save levels")
+    parser.add_option('--sliders', action='store_true',
+                      help="attach to hardware sliders")
     opts, args = parser.parse_args()
     
     s = Submasters()
@@ -335,7 +338,7 @@ if __name__ == "__main__":
     startLevels = None
     if opts.nonpersistent:
         startLevels = {}
-    kc = KeyboardComposer(tl, s, startLevels)
+    kc = KeyboardComposer(tl, s, startLevels, hw_sliders=opts.sliders)
     kc.pack(fill=BOTH, expand=1)
 
     for helpline in ["Bindings: B3 mute; C-l edit levels in subcomposer"]:
