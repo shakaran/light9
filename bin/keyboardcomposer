@@ -85,10 +85,10 @@ class KeyboardComposer(Frame, SubClient):
                 pass
 
         self.connect_to_hw(hw_sliders)
-        self.draw_ui()
+        self.draw_ui(hw_sliders)
         self.send_levels_loop()
 
-    def draw_ui(self):
+    def draw_ui(self, hw_sliders):
         self.rows = [] # this holds Tk Frames for each row
         self.slider_vars = {} # this holds subname:sub Tk vars
         self.slider_table = {} # this holds coords:sub Tk vars
@@ -111,10 +111,26 @@ class KeyboardComposer(Frame, SubClient):
             command=lambda: self.save_current_stage(self.sub_name.get()), 
             bg='black', fg='white')
         self.save_stage_button.pack(side=LEFT)
+        self.sliders_status_var = IntVar()
+        self.sliders_status_var.set(hw_sliders)
+        self.sliders_checkbutton = Checkbutton(self.buttonframe, 
+            text="Sliders", variable=self.sliders_status_var,
+            command=lambda: self.toggle_slider_connectedness(),
+            bg='black', fg='white')
+        self.sliders_checkbutton.pack(side=LEFT)
+
         self.sub_name = Entry(self.buttonframe, bg='black', fg='white')
         self.sub_name.pack(side=LEFT)
         self.stop_frequent_update_time = 0
 
+    def toggle_slider_connectedness(self):
+        state = self.sliders_status_var.get()
+        if state:
+            self.sliders.reopen()
+        else:
+            self.sliders.close()
+        self.change_row(self.current_row)
+        self.rows[self.current_row].focus()
     def connect_to_hw(self, hw_sliders):
         if hw_sliders:
             self.sliders = Sliders(self)

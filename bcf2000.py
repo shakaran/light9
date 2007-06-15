@@ -42,7 +42,7 @@ class BCF2000(object):
     def poll(self):
         try:
             bytes = self.dev.read(3)
-        except IOError, e:
+        except (IOError, AttributeError):
             return
         if len(bytes) == 0:
             print "midi stall, reopen slider device"
@@ -91,6 +91,9 @@ class BCF2000(object):
 
     def valueOut(self, name, value):
         """call this to send an event to the hardware"""
+        if self.dev is None:
+            return
+
         value = int(value)
         if self.lastValue.get(name) == value:
             return
@@ -101,7 +104,10 @@ class BCF2000(object):
             value = value * 127
         #print "bcf: write %s %s" % (name, value)
         self.dev.write(chr(0xb0) + chr(which[0]) + chr(int(value)))
-        
+
+    def close(self):
+        self.dev.close()
+        self.dev = None
 
 if __name__ == '__main__':
     b = BCF2000()
