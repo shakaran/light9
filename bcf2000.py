@@ -74,6 +74,7 @@ class BCF2000(object):
             except IOError:
                 pass
 
+        self.lastValue.clear()
         self.dev = open(self.devPath, "r+")
         twisted.internet.fdesc.setNonBlocking(self.dev)
                     
