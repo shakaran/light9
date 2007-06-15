@@ -16,6 +16,7 @@ from light9.Submaster import Submasters, sub_maxes
 from light9.subclient import SubClient
 from light9 import dmxclient, showconfig, networking, prof
 from light9.uihelpers import toplevelat, bindkeys
+from light9.namespaces import L9
 from bcf2000 import BCF2000
 
 nudge_keys = {
@@ -209,10 +210,15 @@ class KeyboardComposer(Frame, SubClient):
 
         rowcount = -1
         col = 0
+        last_group = None
+        graph = showconfig.getGraph()
         for sub in self.submasters.get_all_subs():
-            if col == 0: # make new row
+            group = graph.value(sub.uri, L9['group'])
+
+            if col == 0 or group != last_group: # make new row
                 row = self.make_row()
                 rowcount += 1
+                col = 0
             current_level = self.current_sub_levels.get(sub.name, 0)
             subtk = self.draw_sub_slider(row, col, sub.name, current_level)
             self.slider_table[(rowcount, col)] = subtk
@@ -230,6 +236,7 @@ class KeyboardComposer(Frame, SubClient):
             # initial position
             self.send_to_hw(sub.name, col + 1)
             col = (col + 1) % 8
+            last_group = group
 
     def send_to_hw(self, subName, hwNum):
         if isinstance(self.sliders, DummySliders):
