@@ -240,8 +240,9 @@ class KeyboardComposer(Frame, SubClient):
         
         # workaround for some rounding issue, where we receive one
         # value and then decide to send back a value that's one step
-        # lower
-        if abs(v - self.sliders.lastValue.get(chan, 0)) <= 1:
+        # lower.  -5 is a fallback for having no last value.  hopefully
+        # we won't really see it
+        if abs(v - self.sliders.lastValue.get(chan, -5)) <= 1:
             return
         self.sliders.valueOut(chan, v)
             
