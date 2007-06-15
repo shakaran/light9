@@ -345,6 +345,8 @@ class Sliders(BCF2000):
         kc = self.kc
         if name.startswith("slider"):
             kc.hw_slider_moved(int(name[6:]) - 1, value / 127)
+        elif name.startswith("button-upper"):
+            kc.change_row(kc.current_row)
         elif name.startswith("button-lower"):
             col = int(name[12:]) - 1
             self.valueOut(name, 0)
