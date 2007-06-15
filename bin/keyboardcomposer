@@ -129,8 +129,8 @@ class KeyboardComposer(Frame, SubClient):
         self.stop_frequent_update_time = 0
 
     def toggle_slider_connectedness(self):
-        state = self.sliders_status_var.get()
-        if state:
+        self.use_hw_sliders = not self.use_hw_sliders
+        if self.use_hw_sliders:
             self.sliders.reopen()
         else:
             self.sliders.close()
