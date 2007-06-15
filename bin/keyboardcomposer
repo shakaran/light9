@@ -212,7 +212,10 @@ class KeyboardComposer(Frame, SubClient):
         col = 0
         last_group = None
         graph = showconfig.getGraph()
-        for sub in self.submasters.get_all_subs():
+        withgroups = sorted((graph.value(sub.uri, L9['group']), sub)
+            for sub in self.submasters.get_all_subs())
+
+        for group, sub in withgroups:
             group = graph.value(sub.uri, L9['group'])
 
             if col == 0 or group != last_group: # make new row

@@ -173,7 +173,7 @@ class Submaster:
 
         return xfaded_sub
     def __cmp__(self, other):
-        raise NotImplementedError
+        """Compare by sub repr (name, hopefully)"""
         return cmp(repr(self), repr(other))
     def __hash__(self):
         raise NotImplementedError
