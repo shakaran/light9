@@ -65,8 +65,8 @@ class Submaster:
             if graph is None:
                 graph = Graph()
                 graph.parse(showconfig.subFile(self.name), format="nt")
-            subUri = L9['sub/%s' % self.name]
-            for lev in graph.objects(subUri, L9['lightLevel']):
+            self.uri = L9['sub/%s' % self.name]
+            for lev in graph.objects(self.uri, L9['lightLevel']):
                 chan = graph.value(lev, L9['channel'])
                 val = graph.value(lev, L9['level'])
                 name = patchGraph.label(chan)
@@ -233,6 +233,7 @@ class Submasters:
             else:
                 notsongs.append(s)
         combined = notsongs + songs
+
         return combined
     def get_all_sub_names(self):
         return [s.name for s in self.get_all_subs()]
