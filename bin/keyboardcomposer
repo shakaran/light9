@@ -363,13 +363,14 @@ class Sliders(BCF2000):
         elif name.startswith("button-corner"):
             button_num = int(name[13:]) - 1
             if button_num == 1:
-                diff = 1
-            elif button_num == 3:
                 diff = -1
+            elif button_num == 3:
+                diff = 1
             else:
                 return
 
             kc.change_row(kc.current_row + diff)
+            self.valueOut(name, 0)
 
 if __name__ == "__main__":
     parser = OptionParser()
