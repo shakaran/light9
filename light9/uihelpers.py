@@ -49,11 +49,18 @@ def toplevelat(name, existingtoplevel=None):
         pass
 
     if name in windowlocations:
-        tl.geometry(windowlocations[name])
+        tl.geometry(positionOnCurrentDesktop(windowlocations[name]))
 
     tl._toplevelat_funcid = tl.bind("<Configure>",lambda ev,tl=tl,name=name: toplevel_savegeometry(tl,name))
 
     return tl
+
+def positionOnCurrentDesktop(xform, screenWidth=1920, screenHeight=1440):
+    size, x, y = xform.split('+')
+    x = int(x) % 1920
+    y = int(y) % 1440
+    return "%s+%s+%s" % (size, x, y)
+    
 
 def toggle_slider(s):
     if s.get() == 0:
