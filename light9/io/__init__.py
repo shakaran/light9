@@ -72,7 +72,10 @@ class UsbDMX(BaseIO):
     def sendlevels(self, levels):
         if self.dummy:
             return
-        packet = ''.join([chr(int(lev * 255 / 100)) for lev in levels]) + "\x55"
+        # I was outputting on 76 and it was turning on the light at
+        # dmx75. So I added the 0 byte.
+        packet = '\x00' + ''.join([chr(int(lev * 255 / 100)) 
+                                  for lev in levels]) + "\x55"
         self._dmx().write(packet)
 
 class SerialPots(BaseIO):
