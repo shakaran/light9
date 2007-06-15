@@ -84,11 +84,12 @@ class KeyboardComposer(Frame, SubClient):
             except IOError:
                 pass
 
+        self.use_hw_sliders = hw_sliders
         self.connect_to_hw(hw_sliders)
-        self.draw_ui(hw_sliders)
+        self.draw_ui()
         self.send_levels_loop()
 
-    def draw_ui(self, hw_sliders):
+    def draw_ui(self):
         self.rows = [] # this holds Tk Frames for each row
         self.slider_vars = {} # this holds subname:sub Tk vars
         self.slider_table = {} # this holds coords:sub Tk vars
@@ -103,7 +104,7 @@ class KeyboardComposer(Frame, SubClient):
         self.buttonframe.pack(side=BOTTOM)
 
         self.sliders_status_var = IntVar()
-        self.sliders_status_var.set(hw_sliders)
+        self.sliders_status_var.set(self.use_hw_sliders)
         self.sliders_checkbutton = Checkbutton(self.buttonframe, 
             text="Sliders", variable=self.sliders_status_var,
             command=lambda: self.toggle_slider_connectedness(),
