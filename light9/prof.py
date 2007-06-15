@@ -1,4 +1,3 @@
-import hotshot, hotshot.stats
 import sys, traceback
 
 def run(main, profile=False):
@@ -6,6 +5,7 @@ def run(main, profile=False):
         main()
         return
     
+    import hotshot, hotshot.stats
     p = hotshot.Profile("/tmp/pro")
     p.runcall(main)
     p.close()
