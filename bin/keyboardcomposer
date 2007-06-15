@@ -175,7 +175,6 @@ class KeyboardComposer(Frame, SubClient):
         row = self.rows[self.current_row]
         self.keyhints.pack_configure(before=row)
 
-        
         for col in range(8):
             try:
                 subtk = self.slider_table[(self.current_row, col)]
@@ -186,7 +185,6 @@ class KeyboardComposer(Frame, SubClient):
                 self.sliders.valueOut("button-upper%d" % (col + 1), 0)
                 continue
             self.send_to_hw(subtk.name, col + 1)
-
             
     def got_nudger(self, number, direction, full=0):
         subtk = self.slider_table[(self.current_row, number)]
@@ -216,10 +214,12 @@ class KeyboardComposer(Frame, SubClient):
         col = 0
         last_group = None
         graph = showconfig.getGraph()
-        withgroups = sorted((graph.value(sub.uri, L9['group']), sub)
+        withgroups = sorted((graph.value(sub.uri, L9['group']), 
+                             graph.value(sub.uri, L9['order']), 
+                             sub)
             for sub in self.submasters.get_all_subs())
 
-        for group, sub in withgroups:
+        for group, order, sub in withgroups:
             group = graph.value(sub.uri, L9['group'])
 
             if col == 0 or group != last_group: # make new row
