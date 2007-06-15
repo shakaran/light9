@@ -246,7 +246,7 @@ class Submasters:
 def fullsub(*chans):
     """Make a submaster with chans at full."""
     return Submaster('%r' % chans,
-        dict([(c, 1.0) for c in chans]), temporary=True)
+        leveldict=dict([(c, 1.0) for c in chans]), temporary=True)
 
 # a global instance of Submasters, created on demand
 _submasters = None
@@ -270,14 +270,14 @@ def get_sub_by_name(name, submasters=None):
 
     try:
         val = int(name)
-        s = Submaster("#%d" % val, {val : 1.0}, temporary=True)
+        s = Submaster("#%d" % val, leveldict={val : 1.0}, temporary=True)
         return s
     except ValueError:
         pass
 
     try:
         subnum = Patch.get_dmx_channel(name)
-        s = Submaster("'%s'" % name, {subnum : 1.0}, temporary=True)
+        s = Submaster("'%s'" % name, leveldict={subnum : 1.0}, temporary=True)
         return s
     except ValueError:
         pass
