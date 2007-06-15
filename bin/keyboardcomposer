@@ -101,16 +101,7 @@ class KeyboardComposer(Frame, SubClient):
 
         self.buttonframe = Frame(self, bg='black')
         self.buttonframe.pack(side=BOTTOM)
-        self.alltozerobutton = Button(self.buttonframe, text="All to Zero", 
-            command=self.alltozero, bg='black', fg='white')
-        self.alltozerobutton.pack(side='left')
-        self.refreshbutton = Button(self.buttonframe, text="Refresh", 
-            command=self.refresh, bg='black', fg='white')
-        self.refreshbutton.pack(side=LEFT)
-        self.save_stage_button = Button(self.buttonframe, text="Save", 
-            command=lambda: self.save_current_stage(self.sub_name.get()), 
-            bg='black', fg='white')
-        self.save_stage_button.pack(side=LEFT)
+
         self.sliders_status_var = IntVar()
         self.sliders_status_var.set(hw_sliders)
         self.sliders_checkbutton = Checkbutton(self.buttonframe, 
@@ -119,8 +110,21 @@ class KeyboardComposer(Frame, SubClient):
             bg='black', fg='white')
         self.sliders_checkbutton.pack(side=LEFT)
 
+        self.alltozerobutton = Button(self.buttonframe, text="All to Zero", 
+            command=self.alltozero, bg='black', fg='white')
+        self.alltozerobutton.pack(side='left')
+
+        self.refreshbutton = Button(self.buttonframe, text="Refresh", 
+            command=self.refresh, bg='black', fg='white')
+        self.refreshbutton.pack(side=LEFT)
+
+        self.save_stage_button = Button(self.buttonframe, text="Save", 
+            command=lambda: self.save_current_stage(self.sub_name.get()), 
+            bg='black', fg='white')
+        self.save_stage_button.pack(side=LEFT)
         self.sub_name = Entry(self.buttonframe, bg='black', fg='white')
         self.sub_name.pack(side=LEFT)
+
         self.stop_frequent_update_time = 0
 
     def toggle_slider_connectedness(self):
