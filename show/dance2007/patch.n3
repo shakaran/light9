@@ -28,12 +28,6 @@ ch:stripG2 a :Channel; rdfs:label "stripG2"; :output dmx:c103 .
 ch:stripB2 a :Channel; rdfs:label "stripB2"; :output dmx:c104 .
 ch:spotRight a :Channel; rdfs:label "spotRight"; :output dmx:c4 .
 ch:spotLeft a :Channel; rdfs:label "spotLeft"; :output dmx:c8 .
-ch:bridgeL1 a :Channel; rdfs:label "bridgeL1"; :output dmx:c12 .
-ch:bridgeC1 a :Channel; rdfs:label "bridgeC1"; :output dmx:c14 .
-ch:bridgeR1 a :Channel; rdfs:label "bridgeR1"; :output dmx:c16 .
-ch:bridgeL2 a :Channel; rdfs:label "bridgeL2"; :output dmx:c19 .
-ch:bridgeC2 a :Channel; rdfs:label "bridgeC2"; :output dmx:c21 .
-ch:bridgeR2 a :Channel; rdfs:label "bridgeR2"; :output dmx:c23 .
 ch:downEdge5 a :Channel; rdfs:label "downEdge5"; :output dmx:c2 .
 ch:down4 a :Channel; rdfs:label "down4"; :output dmx:c3 .
 ch:down3 a :Channel; rdfs:label "down3"; :output dmx:c6 .
@@ -52,6 +46,7 @@ ch:up1 a :Channel; rdfs:label "up1"; :output dmx:c28 .
 ch:up3Blue a :Channel; rdfs:label "up3Blue"; :output dmx:c30 .
 ch:upHigh3Blue a :Channel; rdfs:label "upHigh3Blue"; :output dmx:c31 .
 ch:mid3Blue a :Channel; rdfs:label "mid3Blue"; :output dmx:c32 .
+ch:up1Pink a :Channel; rdfs:label "up1Pink"; :output dmx:c27 .
 ch:pool4 a :Channel; rdfs:label "pool4"; :output dmx:c35 .
 ch:washRed a :Channel; rdfs:label "washRed"; :output dmx:c36 .
 ch:washGreen a :Channel; rdfs:label "washGreen"; :output dmx:c37 .

@@ -34,12 +34,12 @@ spotLeft        8
 #houseRight2     30 
 #houseRight3     31 
 
-bridgeL1        12 
-bridgeC1        14 
-bridgeR1        16 
-bridgeL2        19 
-bridgeC2        21 
-bridgeR2        23 
+# bridgeL1        12 
+# bridgeC1        14 
+# bridgeR1        16 
+# bridgeL2        19 
+# bridgeC2        21 
+# bridgeR2        23 
 
 downEdge5 2 
 down4 3
@@ -61,6 +61,7 @@ up1 28
 up3Blue 30
 upHigh3Blue 31
 mid3Blue 32
+up1Pink 27
 
 pool4 35
 washRed 36
