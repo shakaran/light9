@@ -57,8 +57,8 @@ def toplevelat(name, existingtoplevel=None):
 
 def positionOnCurrentDesktop(xform, screenWidth=1920, screenHeight=1440):
     size, x, y = xform.split('+')
-    x = int(x) % 1920
-    y = int(y) % 1440
+    x = int(x) % screenWidth
+    y = int(y) % screenHeight
     return "%s+%s+%s" % (size, x, y)
     
 

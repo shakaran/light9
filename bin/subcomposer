@@ -86,7 +86,7 @@ class Subcomposer(tk.Frame):
     def loadsub(self, subname):
         """puts a sub into the levels, replacing old level values"""
         s=Submaster.Submasters().get_sub_by_name(subname)
-        self.levels[:]=s.get_dmx_list()
+        self.set_levels(s.get_dmx_list())
         dispatcher.send("levelchanged")
     def sendupdate(self):
         if not self.dmxdummy:
@@ -100,7 +100,8 @@ class Subcomposer(tk.Frame):
         if use_after_loop:
             self.after(use_after_loop, self.considersendupdate, use_after_loop)
     def set_levels(self, levels):
-        self.levels[:] = levels
+        oldLen = len(self.levels)
+        self.levels[:] = levels + [0] * (oldLen - len(levels))
         dispatcher.send("levelchanged")
 
 class EntryCommand(tk.Frame):
