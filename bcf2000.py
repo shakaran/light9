@@ -33,8 +33,8 @@ class BCF2000(object):
     def __init__(self, dev="/dev/snd/midiC1D0"):
         self.devPath = dev
         self.dev = None
-        self.reopen()
         self.lastValue = {} # control name : value
+        self.reopen()
         self.packet = ""
         loop = LoopingCall(self.poll)
         loop.start(.01)
