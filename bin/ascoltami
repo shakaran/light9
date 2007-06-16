@@ -259,7 +259,7 @@ class GoButton:
     def _nextAction(self):
         state = self.player.state.get() 
         if state == 'stop':
-            currentPath = self.player.filename_var.get()
+            currentPath = self.player.song_uri
             try:
                 i = self.songPaths.index(currentPath) + 1
             except ValueError:
