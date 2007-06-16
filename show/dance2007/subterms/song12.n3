@@ -1,0 +1,12 @@
+<http://light9.bigasterisk.com/show/dance2007/song12/subterm/allWhite> <http://light9.bigasterisk.com/expression> "allWhite(t)".
+<http://light9.bigasterisk.com/show/dance2007/song12/subterm/allWhite> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/allWhite>.
+<http://light9.bigasterisk.com/show/dance2007/song12/subterm/allWhite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song12/subterm/stripB> <http://light9.bigasterisk.com/expression> "allWhite(t)".
+<http://light9.bigasterisk.com/show/dance2007/song12/subterm/stripB> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/stripB>.
+<http://light9.bigasterisk.com/show/dance2007/song12/subterm/stripB> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song12/subterm/song12> <http://light9.bigasterisk.com/expression> "song12(t)".
+<http://light9.bigasterisk.com/show/dance2007/song12/subterm/song12> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song12>.
+<http://light9.bigasterisk.com/show/dance2007/song12/subterm/song12> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song12> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song12/subterm/allWhite>.
+<http://light9.bigasterisk.com/show/dance2007/song12> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song12/subterm/stripB>.
+<http://light9.bigasterisk.com/show/dance2007/song12> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song12/subterm/song12>.

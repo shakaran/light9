@@ -1,0 +1,16 @@
+<http://light9.bigasterisk.com/show/dance2007/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song11/subterm/>.
+<http://light9.bigasterisk.com/show/dance2007/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song11/subterm/allWhite>.
+<http://light9.bigasterisk.com/show/dance2007/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song11/subterm/song11>.
+<http://light9.bigasterisk.com/show/dance2007/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song11/subterm/song11sill>.
+<http://light9.bigasterisk.com/show/dance2007/song11/subterm/> <http://light9.bigasterisk.com/expression> "(t)".
+<http://light9.bigasterisk.com/show/dance2007/song11/subterm/> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/>.
+<http://light9.bigasterisk.com/show/dance2007/song11/subterm/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song11/subterm/allWhite> <http://light9.bigasterisk.com/expression> "allWhite(t)".
+<http://light9.bigasterisk.com/show/dance2007/song11/subterm/allWhite> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/allWhite>.
+<http://light9.bigasterisk.com/show/dance2007/song11/subterm/allWhite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song11/subterm/song11> <http://light9.bigasterisk.com/expression> "song11(t)".
+<http://light9.bigasterisk.com/show/dance2007/song11/subterm/song11> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song11>.
+<http://light9.bigasterisk.com/show/dance2007/song11/subterm/song11> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song11/subterm/song11sill> <http://light9.bigasterisk.com/expression> "song11sill(t)".
+<http://light9.bigasterisk.com/show/dance2007/song11/subterm/song11sill> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song11sill>.
+<http://light9.bigasterisk.com/show/dance2007/song11/subterm/song11sill> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.

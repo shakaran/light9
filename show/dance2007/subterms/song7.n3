@@ -1,0 +1,20 @@
+<http://light9.bigasterisk.com/show/dance2007/song7> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song7/subterm/song7alabama>.
+<http://light9.bigasterisk.com/show/dance2007/song7> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song7/subterm/stripA>.
+<http://light9.bigasterisk.com/show/dance2007/song7> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song7/subterm/allWhite>.
+<http://light9.bigasterisk.com/show/dance2007/song7> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song7/subterm/song7devil>.
+<http://light9.bigasterisk.com/show/dance2007/song7> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song7/subterm/song7-1>.
+<http://light9.bigasterisk.com/show/dance2007/song7/subterm/stripA> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/stripA>.
+<http://light9.bigasterisk.com/show/dance2007/song7/subterm/stripA> <http://light9.bigasterisk.com/expression> "white(t) * .6".
+<http://light9.bigasterisk.com/show/dance2007/song7/subterm/stripA> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song7/subterm/song7devil> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song7devil>.
+<http://light9.bigasterisk.com/show/dance2007/song7/subterm/song7devil> <http://light9.bigasterisk.com/expression> "devil(t)".
+<http://light9.bigasterisk.com/show/dance2007/song7/subterm/song7devil> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song7/subterm/song7alabama> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song7alabama>.
+<http://light9.bigasterisk.com/show/dance2007/song7/subterm/song7alabama> <http://light9.bigasterisk.com/expression> "alabama(t)".
+<http://light9.bigasterisk.com/show/dance2007/song7/subterm/song7alabama> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song7/subterm/allWhite> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/allWhite>.
+<http://light9.bigasterisk.com/show/dance2007/song7/subterm/allWhite> <http://light9.bigasterisk.com/expression> "white(t)".
+<http://light9.bigasterisk.com/show/dance2007/song7/subterm/allWhite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song7/subterm/song7-1> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song7-1>.
+<http://light9.bigasterisk.com/show/dance2007/song7/subterm/song7-1> <http://light9.bigasterisk.com/expression> "start(t)".
+<http://light9.bigasterisk.com/show/dance2007/song7/subterm/song7-1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.

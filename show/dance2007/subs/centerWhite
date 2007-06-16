@@ -1,0 +1,16 @@
+<http://light9.bigasterisk.com/sub/centerWhite> <http://light9.bigasterisk.com/lightLevel> _:KmxcrKtT43.
+<http://light9.bigasterisk.com/sub/centerWhite> <http://light9.bigasterisk.com/lightLevel> _:KmxcrKtT45.
+<http://light9.bigasterisk.com/sub/centerWhite> <http://light9.bigasterisk.com/lightLevel> _:KmxcrKtT44.
+<http://light9.bigasterisk.com/sub/centerWhite> <http://light9.bigasterisk.com/lightLevel> _:KmxcrKtT47.
+<http://light9.bigasterisk.com/sub/centerWhite> <http://light9.bigasterisk.com/lightLevel> _:KmxcrKtT46.
+<http://light9.bigasterisk.com/sub/centerWhite> <http://www.w3.org/2000/01/rdf-schema#label> "centerWhite".
+_:KmxcrKtT46 <http://light9.bigasterisk.com/level> "0.62"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:KmxcrKtT46 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/mid3>.
+_:KmxcrKtT47 <http://light9.bigasterisk.com/level> "0.195"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:KmxcrKtT47 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/mid4>.
+_:KmxcrKtT43 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:KmxcrKtT43 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/up3Blue>.
+_:KmxcrKtT45 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:KmxcrKtT45 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/mid3Blue>.
+_:KmxcrKtT44 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:KmxcrKtT44 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/down3>.

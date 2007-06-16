@@ -1,0 +1,13 @@
+_:JkMQWZRS3344 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/stripG2>.
+_:JkMQWZRS3344 <http://light9.bigasterisk.com/level> "0.72"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/song16sill> <http://www.w3.org/2000/01/rdf-schema#label> "song16sill".
+<http://light9.bigasterisk.com/sub/song16sill> <http://light9.bigasterisk.com/lightLevel> _:JkMQWZRS3344.
+<http://light9.bigasterisk.com/sub/song16sill> <http://light9.bigasterisk.com/lightLevel> _:JkMQWZRS3342.
+<http://light9.bigasterisk.com/sub/song16sill> <http://light9.bigasterisk.com/lightLevel> _:JkMQWZRS3343.
+<http://light9.bigasterisk.com/sub/song16sill> <http://light9.bigasterisk.com/lightLevel> _:JkMQWZRS3341.
+_:JkMQWZRS3342 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/stripB1>.
+_:JkMQWZRS3342 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:JkMQWZRS3343 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/stripG1>.
+_:JkMQWZRS3343 <http://light9.bigasterisk.com/level> "0.72"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:JkMQWZRS3341 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/stripB2>.
+_:JkMQWZRS3341 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.

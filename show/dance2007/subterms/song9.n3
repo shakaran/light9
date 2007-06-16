@@ -1,4 +1,12 @@
+<http://light9.bigasterisk.com/show/dance2007/song9> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song9/subterm/song9end>.
 <http://light9.bigasterisk.com/show/dance2007/song9> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song9/subterm/>.
-<http://light9.bigasterisk.com/show/dance2007/song9/subterm/> <http://light9.bigasterisk.com/expression> "".
-<http://light9.bigasterisk.com/show/dance2007/song9/subterm/> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/>.
+<http://light9.bigasterisk.com/show/dance2007/song9> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song9/subterm/song9>.
+<http://light9.bigasterisk.com/show/dance2007/song9/subterm/song9end> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song9/subterm/song9end> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song9end>.
+<http://light9.bigasterisk.com/show/dance2007/song9/subterm/song9end> <http://light9.bigasterisk.com/expression> "end(t)".
 <http://light9.bigasterisk.com/show/dance2007/song9/subterm/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song9/subterm/> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/>.
+<http://light9.bigasterisk.com/show/dance2007/song9/subterm/> <http://light9.bigasterisk.com/expression> "".
+<http://light9.bigasterisk.com/show/dance2007/song9/subterm/song9> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song9/subterm/song9> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song9>.
+<http://light9.bigasterisk.com/show/dance2007/song9/subterm/song9> <http://light9.bigasterisk.com/expression> "song(t)".

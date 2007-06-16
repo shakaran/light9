@@ -1,0 +1,16 @@
+<http://light9.bigasterisk.com/show/dance2007/song15/subterm/song15choo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song15/subterm/song15choo> <http://light9.bigasterisk.com/expression> "song15choo(t)".
+<http://light9.bigasterisk.com/show/dance2007/song15/subterm/song15choo> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song15choo>.
+<http://light9.bigasterisk.com/show/dance2007/song15> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song15/subterm/song15choo>.
+<http://light9.bigasterisk.com/show/dance2007/song15> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song15/subterm/song15intro>.
+<http://light9.bigasterisk.com/show/dance2007/song15> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song15/subterm/song15third>.
+<http://light9.bigasterisk.com/show/dance2007/song15> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song15/subterm/song15bow>.
+<http://light9.bigasterisk.com/show/dance2007/song15/subterm/song15third> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song15/subterm/song15third> <http://light9.bigasterisk.com/expression> "song15third(t)".
+<http://light9.bigasterisk.com/show/dance2007/song15/subterm/song15third> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song15third>.
+<http://light9.bigasterisk.com/show/dance2007/song15/subterm/song15intro> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song15/subterm/song15intro> <http://light9.bigasterisk.com/expression> "song15intro(t)".
+<http://light9.bigasterisk.com/show/dance2007/song15/subterm/song15intro> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song15intro>.
+<http://light9.bigasterisk.com/show/dance2007/song15/subterm/song15bow> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song15/subterm/song15bow> <http://light9.bigasterisk.com/expression> "song15bow(t)".
+<http://light9.bigasterisk.com/show/dance2007/song15/subterm/song15bow> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song15bow>.
