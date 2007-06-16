@@ -34,11 +34,15 @@ def get_channel_name(dmxnum):
 def get_channel_uri(name):
     return uri_map[name]
 
+def dmx_from_uri(uri):
+    return uri_patch[uri]
+
 def reload_data():
-    global patch, reverse_patch, uri_map
+    global patch, reverse_patch, uri_map, uri_patch
     patch = {}
     reverse_patch = {}
     uri_map = {}
+    uri_patch = {}
 
     graph = showconfig.getGraph()
 
@@ -54,6 +58,8 @@ def reload_data():
                 for addr in graph.objects(output, L9['dmxAddress']):
                     addrInt = int(addr)
                     patch[name] = addrInt
+                    uri_patch[chan] = addrInt
+
                     if which == 0:
                         reverse_patch[addrInt] = name
                         reverse_patch[addr] = name

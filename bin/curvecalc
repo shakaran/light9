@@ -10,7 +10,7 @@ todo: curveview should preserve more objects, for speed maybe
 
 """
 from __future__ import division
-import xmlrpclib,time,socket,sys,textwrap,math,glob,random,os,optparse
+import xmlrpclib,time,socket,sys,textwrap,math,glob,random,os,optparse,traceback
 from bisect import bisect_left,bisect,bisect_right
 import Tkinter as tk
 try:
@@ -28,20 +28,14 @@ logging.basicConfig(format="%(asctime)s %(levelname)-5s %(name)s %(filename)s:%(
 log.setLevel(logging.DEBUG)
 
 import run_local
-from light9 import Submaster, dmxclient, networking, showconfig, prof
+from light9 import Submaster, dmxclient, networking, showconfig, prof, Patch
 from light9.TLUtility import make_attributes_from_args, dict_subset
 from light9.zoomcontrol import Zoomcontrol
 from light9.curve import Curve, Curveview, Curveset, Curvesetview
 from light9.wavelength import wavelength
 from light9.uihelpers import toplevelat
 from light9.namespaces import L9
-
 import light9.Effects
-fx_dict = light9.Effects.__dict__
-all_fx = fx_dict['__all__']
-expr_helpers = dict_subset(fx_dict, all_fx)
-del fx_dict
-del all_fx
 
 class Music:
     def __init__(self):
@@ -72,23 +66,20 @@ class Music:
     
     def seekplay_or_pause(self,t):
         self.player.callRemote('seekplay_or_pause',t)
-        
-class Subexpr:
-    curveset = None
-    def __init__(self,curveset,expr=""):
-        self.curveset = curveset
-        self.lasteval = None
-        self.expr=expr
-        self._smooth_random_items = [random.random() for x in range(100)]
-    def eval(self,t):
-        if self.expr=="":
-            dispatcher.send("expr_error",sender=self,exc="no expr, using 0")
-            return 0
-        glo = self.curveset.globalsdict()
-        glo['t'] = t
 
+class Expr(object):
+    """singleton, provides functions for use in subterm expressions,
+    e.g. chases"""
+    def __init__(self):
+        self.effectGlobals = light9.Effects.configExprGlobals()
+    
+    def exprGlobals(self, startDict, t):
+        """globals dict for use by expressions"""
+
+        glo = startDict.copy()
+        
         # add in functions from Effects
-        glo.update(expr_helpers)
+        glo.update(self.effectGlobals)
 
         glo['nsin'] = lambda x: (math.sin(x * (2 * math.pi)) + 1) / 2
         glo['ncos'] = lambda x: (math.cos(x * (2 * math.pi)) + 1) / 2
@@ -96,6 +87,12 @@ class Subexpr:
         glo['bef'] = lambda x: t < x
         glo['aft'] = lambda x: x < t
         glo['smoove'] = lambda x: -2 * (x ** 3) + 3 * (x ** 2)
+
+        def chan(name):
+            return Submaster.Submaster(
+                leveldict={Patch.get_dmx_channel(name) : 1.0},
+                temporary=True)
+        glo['chan'] = chan
 
         def smooth_random(speed=1):
             """1 = new stuff each second, <1 is slower, fade-ier"""
@@ -116,6 +113,26 @@ class Subexpr:
         glo['noise'] = smooth_random
         glo['notch'] = notch_random
 
+        return glo
+
+exprglo = Expr()
+        
+class Subexpr:
+    curveset = None
+    def __init__(self,curveset,expr=""):
+        self.curveset = curveset
+        self.lasteval = None
+        self.expr=expr
+        self._smooth_random_items = [random.random() for x in range(100)]
+    def eval(self,t):
+        if self.expr=="":
+            dispatcher.send("expr_error",sender=self,exc="no expr, using 0")
+            return 0
+        glo = self.curveset.globalsdict()
+        glo['t'] = t
+
+        glo = exprglo.exprGlobals(glo, t)
+        
         try:
             self.lasteval = eval(self.expr,glo)
         except Exception,e:
@@ -280,9 +297,6 @@ def add_one_subterm(graph, subUri, curveset, subterms, root, ssv, expr=None):
     if expr is None:
         expr = '%s(t)' % subname
 
-    print "req to add %r" % subUri
-    for s in graph.triples((subUri, None, None)):
-        print s
     term = Subterm(Submaster.Submaster(graph=graph, sub=subUri),
                    Subexpr(curveset,expr))
     subterms.append(term)
@@ -423,7 +437,7 @@ root.bind("<Control-Key-r>", lambda evt: dispatcher.send('reload all subs'))
 create_status_lines(root)
 for helpline in ["Bindings: C-s save subterms;  Esc see current time; S-Esc see curtime to end; Mousewheel zoom; C-p play/pause music at mouse",
                  "Curve point bindings: B1 drag point; C-B1 curve add point; S-B1 sketch points; Del selected points; 1..5 add point at time; B1 drag select points",
-                 "Available in functions: nsin/ncos period=amp=1; within(a,b) bef(x) aft(x) compare to time; smoove(x) cubic smoothstep; curvename(t) eval curve"]:
+                 "Available in functions: nsin/ncos period=amp=1; within(a,b) bef(x) aft(x) compare to time; smoove(x) cubic smoothstep; chan(name); curvename(t) eval curve"]:
     tk.Label(root,text=helpline, font="Helvetica -12 italic",
              anchor='w').pack(side='top',fill='x')
 

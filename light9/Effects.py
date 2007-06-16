@@ -1,24 +1,40 @@
 import random
 import light9.Submaster as Submaster
 from chase import chase as chase_logic
-
-thirds = 'third-l', 'third-c', 'third-r'
-thirds_bounce = 'third-l', 'third-c', 'third-r', 'third-c'
-backs = ['back%d' % d for d in range(1, 11)]
-rand_flutter = ['scoop-l', 'scoop-c', 'scoop-r', 'down-c', 'down-l', 'down-r', 'cyc', 'zip_blue', 'zip_red', 'zip_green', 'zip_orange'] + backs
-rand_flutter *= 10
-random.shuffle(rand_flutter)
-
-# don't forget to update this!
-__all__ = ['chase', 'thirds', 'thirds_bounce', 'rand_flutter', 'backs']
+import showconfig
+from rdflib import RDF
+from light9 import Patch
+from light9.namespaces import L9
 
 def chase(t, ontime=0.5, offset=0.2, onval=1.0, 
           offval=0.0, names=None, combiner=max):
-    """names is list of sub or channel names"""
+    """names is list of URIs. returns a submaster that chases through
+    the inputs"""
     sub_vals = {}
     chase_vals = chase_logic(t, ontime, offset, onval, offval, names, combiner)
-    for name, value in chase_vals.items():
-        sub = Submaster.get_sub_by_name(name)
-        sub_vals[sub] = value
+    lev = {}
+    for uri, value in chase_vals.items():
+        try:
+            dmx = Patch.dmx_from_uri(uri)
+        except KeyError:
+            print ("chase includes %r, which doesn't resolve to a dmx chan" %
+                   uri)
+            continue
+        lev[dmx] = value
 
-    return Submaster.combine_subdict(sub_vals)
+    ret = Submaster.Submaster(leveldict=lev, temporary=True)
+    print ret
+    return ret
+
+def configExprGlobals():
+    graph = showconfig.getGraph()
+    ret = {}
+
+    for chaseUri in graph.subjects(RDF.type, L9['Chase']):
+        shortName = chaseUri.rsplit('/')[-1]
+        chans = graph.value(chaseUri, L9['channels'])
+        ret[shortName] = list(graph.items(chans))
+
+    ret['chase'] = chase
+    return ret
+
