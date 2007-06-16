@@ -211,7 +211,11 @@ class KeyboardComposer(Frame, SubClient):
             self.send_to_hw(subtk.name, col)
             
     def got_nudger(self, number, direction, full=0):
-        subtk = self.slider_table[(self.current_row, number)]
+        try:
+            subtk = self.slider_table[(self.current_row, number)]
+        except KeyError:
+            return
+
         if direction == 'up':
             if full:
                 subtk.scale.fade(1)
