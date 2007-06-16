@@ -1,0 +1,13 @@
+_:NgSElntQ34 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/washGreen3>.
+_:NgSElntQ34 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:NgSElntQ37 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/washGreenDown>.
+_:NgSElntQ37 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/washGreen> <http://light9.bigasterisk.com/lightLevel> _:NgSElntQ34.
+<http://light9.bigasterisk.com/sub/washGreen> <http://light9.bigasterisk.com/lightLevel> _:NgSElntQ37.
+<http://light9.bigasterisk.com/sub/washGreen> <http://light9.bigasterisk.com/lightLevel> _:NgSElntQ36.
+<http://light9.bigasterisk.com/sub/washGreen> <http://light9.bigasterisk.com/lightLevel> _:NgSElntQ35.
+<http://light9.bigasterisk.com/sub/washGreen> <http://www.w3.org/2000/01/rdf-schema#label> "washGreen".
+_:NgSElntQ36 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/washGreen2>.
+_:NgSElntQ36 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:NgSElntQ35 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/washGreen1>.
+_:NgSElntQ35 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.

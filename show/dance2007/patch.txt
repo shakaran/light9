@@ -1,6 +1,6 @@
 cycRed1   83
 cycRed2   80
-cycRed2   77
+cycRed3   77
 cycRed4   74
 cycGreen1 82
 cycGreen2 79
@@ -34,7 +34,7 @@ spotLeft        8
 #houseRight2     30 
 #houseRight3     31 
 
-# bridgeL1        12 
+# bridgeL1        12
 # bridgeC1        14 
 # bridgeR1        16 
 # bridgeL2        19 
@@ -63,30 +63,31 @@ upHigh3Blue 31
 mid3Blue 32
 up1Pink 27
 
-pool4 35
-washRed 36
-washGreen 37
-scroller3 38
-scroller2 41
-pool3 42
-scroller3Color 230
-scroller2Color 231
-scroller1 46
-washBlue 57
-goboWindow 48
-strobeRight 53
+washRedDown 36
+washGreenDown 37
+washBlue3 57
 washRed3 54
-washGreen 55
+washGreen3 55
 washBlueUp 56
 washUp 57
 washRed2 58
 washPink2 59
 washGreen2 60
 washBlue2 61
-washRed2 62
+washRed1 62
 washMagenta1 63
 washGreen1 64
 washBlue1 65
+
+pool4 35
+scroller3 38
+scroller2 41
+pool3 42
+scroller3Color 230
+scroller2Color 231
+scroller1 46
+goboWindow 48
+strobeRight 53
 strobeLeft 66
 lowStage3 105
 lowStage1 106

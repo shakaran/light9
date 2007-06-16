@@ -1,0 +1,4 @@
+<http://light9.bigasterisk.com/sub/workCyc> <http://www.w3.org/2000/01/rdf-schema#label> "workCyc".
+<http://light9.bigasterisk.com/sub/workCyc> <http://light9.bigasterisk.com/lightLevel> _:yYQZloYs68.
+_:yYQZloYs68 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/workCyc>.
+_:yYQZloYs68 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.

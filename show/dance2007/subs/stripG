@@ -1,0 +1,7 @@
+_:nJkKRgMO41 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:nJkKRgMO41 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/stripG2>.
+_:nJkKRgMO40 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:nJkKRgMO40 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/stripG1>.
+<http://light9.bigasterisk.com/sub/stripG> <http://www.w3.org/2000/01/rdf-schema#label> "stripG".
+<http://light9.bigasterisk.com/sub/stripG> <http://light9.bigasterisk.com/lightLevel> _:nJkKRgMO41.
+<http://light9.bigasterisk.com/sub/stripG> <http://light9.bigasterisk.com/lightLevel> _:nJkKRgMO40.

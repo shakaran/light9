@@ -1,0 +1,4 @@
+<http://light9.bigasterisk.com/sub/sideLeft> <http://light9.bigasterisk.com/lightLevel> _:iXQFltnK387.
+<http://light9.bigasterisk.com/sub/sideLeft> <http://www.w3.org/2000/01/rdf-schema#label> "sideLeft".
+_:iXQFltnK387 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:iXQFltnK387 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/sideLeft>.

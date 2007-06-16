@@ -1,0 +1,75 @@
+#Processed by Id: cwm.py,v 1.190 2006/08/09 23:20:42 syosi Exp 
+        #    using base file:///d1/home/drewp/projects/light9/show/dance2007/subs/
+        
+#  Notation3 generation by
+#       notation3.py,v 1.191 2006/08/01 01:14:04 syosi Exp
+
+#   Base was: file:///d1/home/drewp/projects/light9/show/dance2007/subs/
+     @prefix : <http://light9.bigasterisk.com/> .
+    @prefix cha: <http://light9.bigasterisk.com/theater/skyline/channel/> .
+    
+    <http://light9.bigasterisk.com/sub/cycWhite>  
+   :lightLevel  
+                 [
+             :channel cha:cycBlue1;
+             :level 0.25 ],
+                 [
+             :channel cha:stripB1;
+             :level 0.89 ],
+                 [
+             :channel cha:stripG1;
+             :level 1.0 ],
+                 [
+             :channel cha:cycGreen2;
+             :level 0.25 ],
+                 [
+             :channel cha:cycRed4;
+             :level 0.16 ],
+                 [
+             :channel cha:stripB2;
+             :level 0.89 ],
+                 [
+             :channel cha:cycRed2;
+             :level 0.16 ],
+                 [
+             :channel cha:stripA1;
+             :level 0.5 ],
+                 [
+             :channel cha:stripR1;
+             :level 0.45 ],
+                 [
+             :channel cha:cycRed1;
+             :level 0.16 ],
+                 [
+             :channel cha:stripG2;
+             :level 1.0 ],
+                 [
+             :channel cha:cycGreen4;
+             :level 0.25 ],
+                 [
+             :channel cha:cycBlue3;
+             :level 0.25 ],
+                 [
+             :channel cha:cycBlue4;
+             :level 0.25 ],
+                 [
+             :channel cha:stripA2;
+             :level 0.5 ],
+                 [
+             :channel cha:cycGreen1;
+             :level 0.25 ],
+                 [
+             :channel cha:cycRed3;
+             :level 0.16 ],
+                 [
+             :channel cha:cycBlue2;
+             :level 0.25 ],
+                 [
+             :channel cha:cycGreen3;
+             :level 0.25 ],
+                 [
+             :channel cha:stripR2;
+             :level 0.45 ];
+         <http://www.w3.org/2000/01/rdf-schema#label> "cycWhite" .
+    
+#ENDS

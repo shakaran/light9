@@ -1,0 +1,13 @@
+<http://light9.bigasterisk.com/sub/cycB> <http://light9.bigasterisk.com/lightLevel> _:nJkKRgMO55.
+<http://light9.bigasterisk.com/sub/cycB> <http://light9.bigasterisk.com/lightLevel> _:nJkKRgMO57.
+<http://light9.bigasterisk.com/sub/cycB> <http://light9.bigasterisk.com/lightLevel> _:nJkKRgMO56.
+<http://light9.bigasterisk.com/sub/cycB> <http://light9.bigasterisk.com/lightLevel> _:nJkKRgMO58.
+<http://light9.bigasterisk.com/sub/cycB> <http://www.w3.org/2000/01/rdf-schema#label> "cycB".
+_:nJkKRgMO55 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:nJkKRgMO55 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/cycBlue1>.
+_:nJkKRgMO58 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:nJkKRgMO58 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/cycBlue4>.
+_:nJkKRgMO56 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:nJkKRgMO56 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/cycBlue3>.
+_:nJkKRgMO57 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:nJkKRgMO57 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/cycBlue2>.

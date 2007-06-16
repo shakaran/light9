@@ -1,0 +1,10 @@
+<http://light9.bigasterisk.com/sub/edges> <http://www.w3.org/2000/01/rdf-schema#label> "edges".
+<http://light9.bigasterisk.com/sub/edges> <http://light9.bigasterisk.com/lightLevel> _:NgSElntQ94.
+<http://light9.bigasterisk.com/sub/edges> <http://light9.bigasterisk.com/lightLevel> _:NgSElntQ95.
+<http://light9.bigasterisk.com/sub/edges> <http://light9.bigasterisk.com/lightLevel> _:NgSElntQ93.
+_:NgSElntQ94 <http://light9.bigasterisk.com/level> "0.565"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:NgSElntQ94 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/downEdge5Big>.
+_:NgSElntQ95 <http://light9.bigasterisk.com/level> "0.62"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:NgSElntQ95 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/downEdge5>.
+_:NgSElntQ93 <http://light9.bigasterisk.com/level> "0.495"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:NgSElntQ93 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/downEdge1>.

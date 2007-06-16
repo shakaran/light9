@@ -5,6 +5,7 @@
 @prefix show: <http://light9.bigasterisk.com/show/> .
 @prefix sh: <http://light9.bigasterisk.com/show/dance2007/> .
 @prefix sub: <http://light9.bigasterisk.com/sub/> .
+@prefix group: <http://light9.bigasterisk.com/group/> .
 
 :showPath rdfs:comment "unix path relative to the LIGHT9_SHOW directory" .
 
@@ -38,15 +39,28 @@ sh:song8  rdfs:label "8 robert e lee";       :showPath "music/8.wav" .
 sh:song9  rdfs:label "9 hula";               :showPath "music/9-was-5.wav" .
 sh:song10 rdfs:label "10 42nd st";           :showPath "music/10.wav" .
 sh:song11 rdfs:label "11 new york";          :showPath "music/11mix.wav" .
-sh:song12 rdfs:label "12 indiana";           :showPath "music/12.wav" .
+sh:song12 rdfs:label "12 indiana";           :showPath "music/12-trim.wav" .
 sh:song13 rdfs:label "13 california girls";  :showPath "music/13-was-9.wav" .
 sh:song14 rdfs:label "14 oklahoma";          :showPath "music/14.wav" .
 sh:song15 rdfs:label "15 swing mix";         :showPath "music/15mix.wav" .
 sh:song16 rdfs:label "16 urban rap";         :showPath "music/16mix.wav" .
 sh:song17 rdfs:label "17 dancing in the streets"; :showPath "music/17.wav" .
 
-sub:allWhite :group "crap" .
-sub:houseFront :group "crap" .
+sub:allWhite :group group:showRunning .
+sub:houseFront :group group:showRunning .
+
+sub:cycR :group group:cyc; :order 0 .
+sub:cycG :group group:cyc; :order 1 .
+sub:cycB :group group:cyc; :order 2 .
+sub:stripR :group group:cyc; :order 3 .
+sub:stripG :group group:cyc; :order 4 .
+sub:stripB :group group:cyc; :order 5 .
+sub:stripA :group group:cyc; :order 6 .
+
+sub:washRed :group group:wash; :order 0 .
+sub:washGreen :group group:wash; :order 1 .
+sub:washBlue :group group:wash; :order 2 .
+sub:washExtra :group group:wash; :order 3 .
 
 
 @prefix ch: <http://light9.bigasterisk.com/theater/skyline/channel/> .

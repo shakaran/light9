@@ -1,0 +1,13 @@
+_:JuaoYHwW56 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/cycRed4>.
+_:JuaoYHwW56 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:JuaoYHwW57 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/cycRed3>.
+_:JuaoYHwW57 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:JuaoYHwW59 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/cycRed1>.
+_:JuaoYHwW59 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/cycR> <http://light9.bigasterisk.com/lightLevel> _:JuaoYHwW56.
+<http://light9.bigasterisk.com/sub/cycR> <http://light9.bigasterisk.com/lightLevel> _:JuaoYHwW57.
+<http://light9.bigasterisk.com/sub/cycR> <http://light9.bigasterisk.com/lightLevel> _:JuaoYHwW59.
+<http://light9.bigasterisk.com/sub/cycR> <http://light9.bigasterisk.com/lightLevel> _:JuaoYHwW58.
+<http://light9.bigasterisk.com/sub/cycR> <http://www.w3.org/2000/01/rdf-schema#label> "cycR".
+_:JuaoYHwW58 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/cycRed2>.
+_:JuaoYHwW58 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.

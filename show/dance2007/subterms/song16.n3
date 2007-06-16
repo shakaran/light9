@@ -1,0 +1,12 @@
+<http://light9.bigasterisk.com/show/dance2007/song16/subterm/sideLeft> <http://light9.bigasterisk.com/expression> "side(t)".
+<http://light9.bigasterisk.com/show/dance2007/song16/subterm/sideLeft> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/sideLeft>.
+<http://light9.bigasterisk.com/show/dance2007/song16/subterm/sideLeft> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song16> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song16/subterm/sideLeft>.
+<http://light9.bigasterisk.com/show/dance2007/song16> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song16/subterm/allWhite>.
+<http://light9.bigasterisk.com/show/dance2007/song16> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song16/subterm/allRed>.
+<http://light9.bigasterisk.com/show/dance2007/song16/subterm/allWhite> <http://light9.bigasterisk.com/expression> "white(t)".
+<http://light9.bigasterisk.com/show/dance2007/song16/subterm/allWhite> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/allWhite>.
+<http://light9.bigasterisk.com/show/dance2007/song16/subterm/allWhite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song16/subterm/allRed> <http://light9.bigasterisk.com/expression> "song(t)".
+<http://light9.bigasterisk.com/show/dance2007/song16/subterm/allRed> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/allRed>.
+<http://light9.bigasterisk.com/show/dance2007/song16/subterm/allRed> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.

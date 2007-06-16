@@ -1,0 +1,43 @@
+#Processed by Id: cwm.py,v 1.190 2006/08/09 23:20:42 syosi Exp 
+        #    using base file:///d1/home/drewp/projects/light9/show/dance2007/subs/
+        
+#  Notation3 generation by
+#       notation3.py,v 1.191 2006/08/01 01:14:04 syosi Exp
+
+#   Base was: file:///d1/home/drewp/projects/light9/show/dance2007/subs/
+     @prefix : <http://light9.bigasterisk.com/> .
+    @prefix cha: <http://light9.bigasterisk.com/theater/skyline/channel/> .
+    
+    <http://light9.bigasterisk.com/sub/allRed>     :lightLevel  [
+             :channel cha:stripB1;
+             :level 0.33 ],
+                 [
+             :channel cha:stripB2;
+             :level 0.33 ],
+                 [
+             :channel cha:stripA1;
+             :level 0.28 ],
+                 [
+             :channel cha:washRed1;
+             :level 1.0 ],
+                 [
+             :channel cha:washRedDown;
+             :level 1.0 ],
+                 [
+             :channel cha:washRed3;
+             :level 1.0 ],
+                 [
+             :channel cha:washRed2;
+             :level 1.0 ],
+                 [
+             :channel cha:stripR2;
+             :level 0.43 ],
+                 [
+             :channel cha:stripA2;
+             :level 0.28 ],
+                 [
+             :channel cha:stripR1;
+             :level 0.43 ];
+         <http://www.w3.org/2000/01/rdf-schema#label> "allRed" .
+    
+#ENDS

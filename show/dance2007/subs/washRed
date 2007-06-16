@@ -1,0 +1,13 @@
+_:iXQFltnK218 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:iXQFltnK218 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/washRed2>.
+_:iXQFltnK217 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:iXQFltnK217 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/washRedDown>.
+_:iXQFltnK220 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:iXQFltnK220 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/washRed1>.
+_:iXQFltnK219 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:iXQFltnK219 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/washRed3>.
+<http://light9.bigasterisk.com/sub/washRed> <http://www.w3.org/2000/01/rdf-schema#label> "washRed".
+<http://light9.bigasterisk.com/sub/washRed> <http://light9.bigasterisk.com/lightLevel> _:iXQFltnK218.
+<http://light9.bigasterisk.com/sub/washRed> <http://light9.bigasterisk.com/lightLevel> _:iXQFltnK217.
+<http://light9.bigasterisk.com/sub/washRed> <http://light9.bigasterisk.com/lightLevel> _:iXQFltnK220.
+<http://light9.bigasterisk.com/sub/washRed> <http://light9.bigasterisk.com/lightLevel> _:iXQFltnK219.

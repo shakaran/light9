@@ -1,0 +1,8 @@
+<http://light9.bigasterisk.com/show/dance2007/song1/subterm/song1> <http://light9.bigasterisk.com/expression> "song(t)".
+<http://light9.bigasterisk.com/show/dance2007/song1/subterm/song1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song1/subterm/song1> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song1>.
+<http://light9.bigasterisk.com/show/dance2007/song1> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song1/subterm/song1>.
+<http://light9.bigasterisk.com/show/dance2007/song1> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song1/subterm/audFloor>.
+<http://light9.bigasterisk.com/show/dance2007/song1/subterm/audFloor> <http://light9.bigasterisk.com/expression> "audFloor(t)".
+<http://light9.bigasterisk.com/show/dance2007/song1/subterm/audFloor> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song1/subterm/audFloor> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/audFloor>.
