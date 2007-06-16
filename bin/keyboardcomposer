@@ -198,10 +198,9 @@ class KeyboardComposer(Frame, SubClient):
         row = self.rows[self.current_row]
         self.keyhints.pack_configure(before=row)
 
-        for col in range(8):
+        for col in range(1, 9):
             try:
-                subtk = self.slider_table[(self.current_row, col)]
-                col += 1
+                subtk = self.slider_table[(self.current_row, col - 1)]
                 self.sliders.valueOut("button-upper%d" % col, 127)
             except KeyError:
                 # unfilled bottom row has holes (plus rows with incomplete
