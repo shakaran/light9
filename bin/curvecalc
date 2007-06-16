@@ -300,7 +300,7 @@ def sub_commands_tk(master, curveset, subterms, root, ssv, graph):
 
     def add_cmd():
         add_one_subterm(graph, L9['sub/%s' % newname.get()],
-                        curveset, subterms, root, ssv, '')
+                        curveset, subterms, root, ssv, None)
         newname.set('')
 
     def reload_subs():
