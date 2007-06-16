@@ -298,9 +298,11 @@ def sub_commands_tk(master, curveset, subterms, root, ssv, graph):
     f=tk.Frame(master,relief='raised',bd=1)
     newname = tk.StringVar()
 
-    def add_cmd():
+    def add_cmd(evt):
         add_one_subterm(graph, L9['sub/%s' % newname.get()],
                         curveset, subterms, root, ssv, None)
+        if evt.state & 4: # control key modifier
+            curveset.new_curve(newname.get())
         newname.set('')
 
     def reload_subs():
@@ -308,10 +310,10 @@ def sub_commands_tk(master, curveset, subterms, root, ssv, graph):
 
     tk.Button(f, text="reload subs (C-r)", 
         command=reload_subs).pack(side='left')
-    tk.Label(f, text="new subterm named:").pack(side='left')
+    tk.Label(f, text="new subterm named (C-Enter for curve too):").pack(side='left')
     entry = tk.Entry(f, textvariable=newname)
     entry.pack(side='left', fill='x', exp=1)
-    entry.bind("<Key-Return>", lambda evt: add_cmd())
+    entry.bind("<Key-Return>", add_cmd)
 
     return f
 
