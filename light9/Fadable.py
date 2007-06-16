@@ -126,7 +126,12 @@ class Fadable:
         """Toggles whether the volume is being muted."""
         if self.last_level is None:
             self.last_level = self.fade_var.get()
-            newlevel = 0
+            if self.last_level == 0: # we don't want last_level to be zero,
+                                     # since it will make us toggle between 0
+                                     # and 0
+                newlevel = 1
+            else:
+                newlevel = 0
         else:
             newlevel = self.last_level
             self.last_level = None
