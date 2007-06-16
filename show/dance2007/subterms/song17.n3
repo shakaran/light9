@@ -1,0 +1,20 @@
+<http://light9.bigasterisk.com/show/dance2007/song17> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song17/subterm/>.
+<http://light9.bigasterisk.com/show/dance2007/song17> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song17/subterm/audFloor>.
+<http://light9.bigasterisk.com/show/dance2007/song17> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song17/subterm/washes>.
+<http://light9.bigasterisk.com/show/dance2007/song17> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song17/subterm/song17>.
+<http://light9.bigasterisk.com/show/dance2007/song17> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song17/subterm/stripB>.
+<http://light9.bigasterisk.com/show/dance2007/song17/subterm/> <http://light9.bigasterisk.com/expression> "(t)".
+<http://light9.bigasterisk.com/show/dance2007/song17/subterm/> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/>.
+<http://light9.bigasterisk.com/show/dance2007/song17/subterm/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song17/subterm/stripB> <http://light9.bigasterisk.com/expression> "audFloor(t) * 2".
+<http://light9.bigasterisk.com/show/dance2007/song17/subterm/stripB> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/stripB>.
+<http://light9.bigasterisk.com/show/dance2007/song17/subterm/stripB> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song17/subterm/washes> <http://light9.bigasterisk.com/expression> "audFloor(t) * 2".
+<http://light9.bigasterisk.com/show/dance2007/song17/subterm/washes> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/washes>.
+<http://light9.bigasterisk.com/show/dance2007/song17/subterm/washes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song17/subterm/song17> <http://light9.bigasterisk.com/expression> "song17(t)".
+<http://light9.bigasterisk.com/show/dance2007/song17/subterm/song17> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song17>.
+<http://light9.bigasterisk.com/show/dance2007/song17/subterm/song17> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song17/subterm/audFloor> <http://light9.bigasterisk.com/expression> "audFloor(t)".
+<http://light9.bigasterisk.com/show/dance2007/song17/subterm/audFloor> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/audFloor>.
+<http://light9.bigasterisk.com/show/dance2007/song17/subterm/audFloor> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.

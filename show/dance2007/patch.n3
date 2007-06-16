@@ -49,6 +49,7 @@ ch:mid3Blue a :Channel; rdfs:label "mid3Blue"; :output dmx:c32 .
 ch:up1Pink a :Channel; rdfs:label "up1Pink"; :output dmx:c27 .
 ch:washRedDown a :Channel; rdfs:label "washRedDown"; :output dmx:c36 .
 ch:washGreenDown a :Channel; rdfs:label "washGreenDown"; :output dmx:c37 .
+ch:washBlueDown a :Channel; rdfs:label "washBlueDown"; :output dmx:c47 .
 ch:washBlue3 a :Channel; rdfs:label "washBlue3"; :output dmx:c57 .
 ch:washRed3 a :Channel; rdfs:label "washRed3"; :output dmx:c54 .
 ch:washGreen3 a :Channel; rdfs:label "washGreen3"; :output dmx:c55 .
@@ -62,10 +63,13 @@ ch:washRed1 a :Channel; rdfs:label "washRed1"; :output dmx:c62 .
 ch:washMagenta1 a :Channel; rdfs:label "washMagenta1"; :output dmx:c63 .
 ch:washGreen1 a :Channel; rdfs:label "washGreen1"; :output dmx:c64 .
 ch:washBlue1 a :Channel; rdfs:label "washBlue1"; :output dmx:c65 .
+ch:blacklight1 a :Channel; rdfs:label "blacklight1"; :output dmx:c111 .
+ch:blacklight2 a :Channel; rdfs:label "blacklight2"; :output dmx:c112 .
 ch:pool4 a :Channel; rdfs:label "pool4"; :output dmx:c35 .
 ch:scroller3 a :Channel; rdfs:label "scroller3"; :output dmx:c38 .
 ch:scroller2 a :Channel; rdfs:label "scroller2"; :output dmx:c41 .
 ch:pool3 a :Channel; rdfs:label "pool3"; :output dmx:c42 .
+ch:pool1 a :Channel; rdfs:label "pool1"; :output dmx:c45 .
 ch:scroller3Color a :Channel; rdfs:label "scroller3Color"; :output dmx:c230 .
 ch:scroller2Color a :Channel; rdfs:label "scroller2Color"; :output dmx:c231 .
 ch:scroller1 a :Channel; rdfs:label "scroller1"; :output dmx:c46 .

@@ -1,11 +1,14 @@
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix : <http://light9.bigasterisk.com/> .
-@prefix mus: <http://light9.bigasterisk.com/music/> .
-@prefix show: <http://light9.bigasterisk.com/show/> .
-@prefix sh: <http://light9.bigasterisk.com/show/dance2007/> .
-@prefix sub: <http://light9.bigasterisk.com/sub/> .
+@prefix ch: <http://light9.bigasterisk.com/theater/skyline/channel/> .
+@prefix chase: <http://light9.bigasterisk.com/chase/> .
+@prefix dmx: <http://light9.bigasterisk.com/dmx/> .
 @prefix group: <http://light9.bigasterisk.com/group/> .
+@prefix mus: <http://light9.bigasterisk.com/music/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://light9.bigasterisk.com/show/dance2007/> .
+@prefix show: <http://light9.bigasterisk.com/show/> .
+@prefix sub: <http://light9.bigasterisk.com/sub/> .
 
 :showPath rdfs:comment "unix path relative to the LIGHT9_SHOW directory" .
 
@@ -62,9 +65,9 @@ sub:washGreen :group group:wash; :order 1 .
 sub:washBlue :group group:wash; :order 2 .
 sub:washExtra :group group:wash; :order 3 .
 
+chase:wash :channels ( ch:washRed1 ch:washRed2 ch:washRed3 ) .
 
-@prefix ch: <http://light9.bigasterisk.com/theater/skyline/channel/> .
-@prefix dmx: <http://light9.bigasterisk.com/dmx/> .
+
 :Channel rdfs:comment "one value that light9 can control. The channel might output via dmx on some address." .
 
 ch:frontLeft a :Channel; rdfs:label "frontLeft"; :output dmx:c201;

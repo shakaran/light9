@@ -1,12 +1,19 @@
-<http://light9.bigasterisk.com/show/dance2007/song13/subterm/song13> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song13>.
-<http://light9.bigasterisk.com/show/dance2007/song13/subterm/song13> <http://light9.bigasterisk.com/expression> "song13(t)".
-<http://light9.bigasterisk.com/show/dance2007/song13/subterm/song13> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
-<http://light9.bigasterisk.com/show/dance2007/song13> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song13/subterm/song13>.
-<http://light9.bigasterisk.com/show/dance2007/song13> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song13/subterm/allWhite>.
-<http://light9.bigasterisk.com/show/dance2007/song13> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song13/subterm/cycB>.
 <http://light9.bigasterisk.com/show/dance2007/song13/subterm/cycB> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/cycB>.
-<http://light9.bigasterisk.com/show/dance2007/song13/subterm/cycB> <http://light9.bigasterisk.com/expression> "cycB(t)".
 <http://light9.bigasterisk.com/show/dance2007/song13/subterm/cycB> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song13/subterm/cycB> <http://light9.bigasterisk.com/expression> "cycB(t) * 0".
 <http://light9.bigasterisk.com/show/dance2007/song13/subterm/allWhite> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/allWhite>.
-<http://light9.bigasterisk.com/show/dance2007/song13/subterm/allWhite> <http://light9.bigasterisk.com/expression> "allWhite(t)".
 <http://light9.bigasterisk.com/show/dance2007/song13/subterm/allWhite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song13/subterm/allWhite> <http://light9.bigasterisk.com/expression> "allWhite(t)".
+<http://light9.bigasterisk.com/show/dance2007/song13/subterm/song13> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song13>.
+<http://light9.bigasterisk.com/show/dance2007/song13/subterm/song13> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song13/subterm/song13> <http://light9.bigasterisk.com/expression> "song13(t)".
+<http://light9.bigasterisk.com/show/dance2007/song13> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song13/subterm/cycB>.
+<http://light9.bigasterisk.com/show/dance2007/song13> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song13/subterm/allWhite>.
+<http://light9.bigasterisk.com/show/dance2007/song13> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song13/subterm/song13>.
+<http://light9.bigasterisk.com/show/dance2007/song13> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2007/song13/subterm/>.
+<http://light9.bigasterisk.com/show/dance2007/song13/subterm/> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/>.
+<http://light9.bigasterisk.com/show/dance2007/song13/subterm/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2007/song13/subterm/> <http://light9.bigasterisk.com/expression> "chan('cycBlue3') * aft(13.5) * cycB(t)".
+<http://light9.bigasterisk.com/show/dance2007/song13/subterm/> <http://light9.bigasterisk.com/expression> "chan('cycBlue2') * aft(9.2)  * cycB(t)".
+<http://light9.bigasterisk.com/show/dance2007/song13/subterm/> <http://light9.bigasterisk.com/expression> "chan('cycBlue4') * aft(17.5) * cycB(t)".
+<http://light9.bigasterisk.com/show/dance2007/song13/subterm/> <http://light9.bigasterisk.com/expression> "chan('cycBlue1') * cycB(t)".

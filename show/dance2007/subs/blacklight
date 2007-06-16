@@ -1,0 +1,7 @@
+<http://light9.bigasterisk.com/sub/blacklight> <http://light9.bigasterisk.com/lightLevel> _:JKmnKFQd32.
+<http://light9.bigasterisk.com/sub/blacklight> <http://light9.bigasterisk.com/lightLevel> _:JKmnKFQd31.
+<http://light9.bigasterisk.com/sub/blacklight> <http://www.w3.org/2000/01/rdf-schema#label> "blacklight".
+_:JKmnKFQd32 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/blacklight1>.
+_:JKmnKFQd32 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:JKmnKFQd31 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/skyline/channel/blacklight2>.
+_:JKmnKFQd31 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.

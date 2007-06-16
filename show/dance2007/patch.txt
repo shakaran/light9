@@ -65,6 +65,7 @@ up1Pink 27
 
 washRedDown 36
 washGreenDown 37
+washBlueDown 47
 washBlue3 57
 washRed3 54
 washGreen3 55
@@ -79,10 +80,14 @@ washMagenta1 63
 washGreen1 64
 washBlue1 65
 
+blacklight1 111
+blacklight2 112
+
 pool4 35
 scroller3 38
 scroller2 41
 pool3 42
+pool1 45
 scroller3Color 230
 scroller2Color 231
 scroller1 46
