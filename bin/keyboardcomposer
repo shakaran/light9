@@ -68,7 +68,7 @@ class SubmasterTk(Frame):
 
 class KeyboardComposer(Frame, SubClient):
     def __init__(self, root, submasters, current_sub_levels=None,
-                 hw_sliders=False):
+                 hw_sliders=True):
         Frame.__init__(self, root, bg='black')
         SubClient.__init__(self)
         self.submasters = submasters
@@ -398,7 +398,7 @@ if __name__ == "__main__":
     parser = OptionParser()
     parser.add_option('--nonpersistent', action="store_true",
                       help="don't load or save levels")
-    parser.add_option('--sliders', action='store_true',
+    parser.add_option('--no-sliders', action='store_true',
                       help="attach to hardware sliders")
     opts, args = parser.parse_args()
     
@@ -410,7 +410,7 @@ if __name__ == "__main__":
     startLevels = None
     if opts.nonpersistent:
         startLevels = {}
-    kc = KeyboardComposer(tl, s, startLevels, hw_sliders=opts.sliders)
+    kc = KeyboardComposer(tl, s, startLevels, hw_sliders=not opts.no_sliders)
     kc.pack(fill=BOTH, expand=1)
 
     for helpline in ["Bindings: B3 mute; C-l edit levels in subcomposer"]:
