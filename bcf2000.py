@@ -29,8 +29,10 @@ class BCF2000(object):
                89 : "button-corner1", 90 : "button-corner2",
                91 : "button-corner3", 92 : "button-corner4",
                }
-               
-    def __init__(self, dev="/dev/snd/midiC1D0"):
+
+    def __init__(self, dev="/dev/snd/midiC0D0"):
+        """device was usually /dev/snd/midiC1D0 but then it showed up
+        once as C0D0. It should be autodetected"""
         self.devPath = dev
         self.dev = None
         self.lastValue = {} # control name : value

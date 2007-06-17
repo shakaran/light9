@@ -1,3 +1,4 @@
+from __future__ import division
 import random
 import light9.Submaster as Submaster
 from chase import chase as chase_logic
@@ -23,7 +24,6 @@ def chase(t, ontime=0.5, offset=0.2, onval=1.0,
         lev[dmx] = value
 
     ret = Submaster.Submaster(leveldict=lev, temporary=True)
-    print ret
     return ret
 
 def configExprGlobals():
@@ -37,4 +37,3 @@ def configExprGlobals():
 
     ret['chase'] = chase
     return ret
-
