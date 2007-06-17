@@ -153,7 +153,10 @@ if __name__ == "__main__":
     root.wm_title("subcomposer")
     root.tk_setPalette("#004633")
 
-    sc = Subcomposer(root, dmxdummy=0, numchannels=276)
+    sc = Subcomposer(root, dmxdummy=0,
+                     numchannels=276 # use this to see all the skyline dims
+                     #numchannels=118
+                     )
     sc.pack()
 
     tk.Label(root,text="Bindings: B1 adjust level; B2 set full; B3 instant bump",
