@@ -51,6 +51,7 @@ class Music:
     def current_time(self):
         """return deferred which gets called with the current time"""
         if self.player is None:
+            print "connect to player"
             self.player = Proxy(networking.musicUrl())
 #            d = self.player.callRemote("songlength")
 #            d.addCallback(lambda l: dispatcher.send("max time",maxtime=l))
