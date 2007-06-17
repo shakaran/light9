@@ -196,11 +196,21 @@ class Player:
         self.mpd.add(showconfig.songInMpd(MUS['preSong']))
         self.mpd.add(showconfig.songInMpd(song))
         self.mpd.add(showconfig.songInMpd(MUS['postSong']))
+
+        self.fillCache(song)
+        
         self.filename_var.set(graph.value(song, L9['showPath']))
         self.song_uri = song
 
         self.set_total_time(song)
         self.seek_to(-4)
+
+    def fillCache(self, song):
+        """read the song's entire wav file into memory just before
+        playing, so that mpd should never hit the disk during
+        playback. On score in 2007, we had some mpd stutters that were
+        always timed with a disk read."""
+        open(showconfig.songOnDisk(song)).read()
 
     def check_autopause(self):
         pause_time = self.total_time.get() + self.song_pad_time
