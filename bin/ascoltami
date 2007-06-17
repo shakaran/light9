@@ -210,7 +210,9 @@ class Player:
         playing, so that mpd should never hit the disk during
         playback. On score in 2007, we had some mpd stutters that were
         always timed with a disk read."""
-        open(showconfig.songOnDisk(song)).read()
+        p = showconfig.songOnDisk(song)
+        print "reading %s to prime the cache" % p
+        open(p).read()
 
     def check_autopause(self):
         pause_time = self.total_time.get() + self.song_pad_time
