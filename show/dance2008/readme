@@ -1,0 +1,29 @@
+preshow:
+
+test sliders on plus
+
+copy past PHS lighting config to dance2008
+
+make up/bow/down curves for all songs
+
+make music curves
+
+test camera on plus for taking stage pics; do a program to turn on
+each channel and sub and get a picture. mix the order and do it fast,
+so the camera doesn't get to readjust between them? 
+
+setup patched mpd on plus and score
+
+test mouse on plus
+
+ext monitor on plus. score too?
+
+buy LCDs
+
+test lightsim running at the same time as curvecalc
+
+test dmx output on 64-bit plus
+
+fix showcofnig.py to search .mpdconf then /etc/mpd
+
+normalize levels

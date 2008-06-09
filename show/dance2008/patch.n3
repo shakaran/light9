@@ -1,0 +1,18 @@
+@prefix ch: <http://light9.bigasterisk.com/theater/skyline/channel/> .
+@prefix dmx: <http://light9.bigasterisk.com/dmx/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix : <http://light9.bigasterisk.com/> .
+@prefix mus: <http://light9.bigasterisk.com/music/> .
+@prefix show: <http://light9.bigasterisk.com/show/> .
+@prefix sh: <http://light9.bigasterisk.com/show/dance2008/> .
+
+# test data
+ch:cycRed1 a :Channel; rdfs:label "cycRed1"; :output dmx:c83 .
+ch:cycRed2 a :Channel; rdfs:label "cycRed2"; :output dmx:c80 .
+ch:cycRed3 a :Channel; rdfs:label "cycRed3"; :output dmx:c77 .
+ch:cycRed4 a :Channel; rdfs:label "cycRed4"; :output dmx:c74 .
+ch:cycGreen1 a :Channel; rdfs:label "cycGreen1"; :output dmx:c82 .
+ch:cycGreen2 a :Channel; rdfs:label "cycGreen2"; :output dmx:c79 .
+ch:cycGreen3 a :Channel; rdfs:label "cycGreen3"; :output dmx:c76 .
+ch:cycGreen4 a :Channel; rdfs:label "cycGreen4"; :output dmx:c73 .
