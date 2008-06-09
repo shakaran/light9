@@ -36,10 +36,11 @@ from __future__ import division,nested_scopes
 
 from optparse import OptionParser
 import os,math,time
+from rdflib import URIRef
 import Tkinter as tk
-#import logging
-#log = logging.getLogger()
-#log.setLevel(logging.DEBUG)
+import logging
+log = logging.getLogger()
+log.setLevel(logging.DEBUG)
 
 from twisted.internet import reactor,tksupport
 from twisted.internet.error import CannotListenError
@@ -109,7 +110,9 @@ class Player:
     def __init__(self):
 
         self.mpd = Mpd()
-        reactor.connectTCP(*(networking.mpdServer()+(self.mpd,)))
+        args = (networking.mpdServer()+(self.mpd,))
+        log.info("connecting to %r", args)
+        reactor.connectTCP(*args)
 
         self.state = tk.StringVar()
         self.state.set("stop") # 'stop' 'pause' 'play'
@@ -261,10 +264,10 @@ class Player:
 
 
 class GoButton:
-    def __init__(self, player, statusLabel, songPaths):
+    def __init__(self, player, statusLabel, songURIs):
         self.player = player
         self.statusLabel = statusLabel
-        self.songPaths = songPaths
+        self.songURIs = songURIs
 
         self.player.current_time.trace("w", self.updateStatus)
 
@@ -273,12 +276,11 @@ class GoButton:
         if state == 'stop':
             currentPath = self.player.song_uri
             try:
-                i = self.songPaths.index(currentPath) + 1
+                i = self.songURIs.index(currentPath) + 1
             except ValueError:
                 i = 0
-            nextPath = self.songPaths[i]
-            return ("next song %s" % shortSongPath(nextPath,
-                                                   self.songPaths),
+            nextPath = self.songURIs[i]
+            return ("next song %s" % shortSongPath(nextPath, self.songURIs),
                     lambda: self.player.play(nextPath))
 
         if state == 'pause':
@@ -493,12 +495,14 @@ class ControlButtons(tk.Frame):
 def main():
     global graph
     parser = OptionParser()
+    parser.add_option('--show',
+        help='show URI, like http://light9.bigasterisk.com/show/dance2008')
     graph = showconfig.getGraph()
     (options, songfiles) = parser.parse_args()
 
     if len(songfiles)<1:
         graph = showconfig.getGraph()
-        playList = graph.value(L9['show/dance2007'], L9['playList'])
+        playList = graph.value(URIRef(options.show), L9['playList'])
         songs = list(graph.items(playList))
     else:
         raise NotImplementedError("don't know how to make rdf song nodes from cmdline song paths")

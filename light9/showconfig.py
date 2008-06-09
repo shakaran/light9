@@ -54,10 +54,11 @@ def findMpdHome():
     raise ValueError("can't find music_directory in any mpd config file")
 
 
-
 def songInMpd(song):
+    """
+    get the mpd path (with correct encoding) from the song URI
 
-    """mpd only works off its own musicroot, which for me is
+    mpd only works off its own musicroot, which for me is
     /my/music. song is a file in musicDir; this function returns a
     version starting with the mpd path, but minus the mpd root itself.
     the mpc ~/.mpdconf
@@ -67,20 +68,15 @@ def songInMpd(song):
 
     assert isinstance(song, URIRef), "songInMpd now takes URIRefs"
 
-    mpdHome = findMpdHome()
-    
-    songFullPath = songOnDisk(song)
-    if not songFullPath.startswith(mpdHome):
-        raise ValueError("the song path %r is not under your MPD music_directory (%r)" % (songFullPath, mpdHome))
-        
-    mpdRelativePath = songFullPath[len(mpdHome):]
-    if path.join(mpdHome, mpdRelativePath) != songFullPath:
-        raise ValueError("%r + %r doesn't make the songpath %r" % (mpdHome, mpdRelativePath, songFullPath))
-    return mpdRelativePath.encode('ascii')
+    mpdPath = getGraph().value(song, L9['showPath'])
+    if mpdPath is None:
+        raise ValueError("no mpd path found for subject=%r" % song)
+    return mpdPath.encode('ascii')
 
 def songOnDisk(song):
+    """given a song URI, where's the on-disk file that mpd would read?"""
     graph = getGraph()
-    songFullPath = path.join(root(), graph.value(song, L9['showPath']))
+    songFullPath = path.join(findMpdHome(), graph.value(song, L9['showPath']))
     return songFullPath
 
 def songFilenameFromURI(uri):
