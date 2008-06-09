@@ -10,8 +10,8 @@
 @prefix show: <http://light9.bigasterisk.com/show/> .
 @prefix sub: <http://light9.bigasterisk.com/sub/> .
 
-mus:preSong :showPath "music/silence-4sec.wav" .
-mus:postSong :showPath "music/silence-15sec.wav" .
+mus:preSong :showPath "dance2007/silence-4sec.wav" .
+mus:postSong :showPath "dance2007/silence-15sec.wav" .
 
 show:dance2008 :playList (
   sh:song1  sh:song2  sh:song3  sh:song4  sh:song5
@@ -22,6 +22,6 @@ show:dance2008 :playList (
 
 :Song is rdf:teype of sh:song1,  sh:song2 .
 
-sh:song1  rdfs:label "1 opening night";      :showPath "music/01-opening.wav" .
-sh:song2  rdfs:label "2 st louis blues";         :showPath "music/norm/2.wav" .
+sh:song1  rdfs:label "1 opening night"; :showPath "dance2008/01-opening.wav" .
+sh:song2  rdfs:label "2 morning"; :showPath "dance2008/02-morning-mh.wav" .
 

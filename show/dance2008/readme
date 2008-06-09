@@ -24,6 +24,32 @@ test lightsim running at the same time as curvecalc
 
 test dmx output on 64-bit plus
 
-fix showcofnig.py to search .mpdconf then /etc/mpd
+OK fix showcofnig.py to search .mpdconf then /etc/mpd
 
 normalize levels
+
+apparently in 2007 we played music on the laptop 'score', and it was a
+little bit messed up. Preloading into memory may have helped.
+
+rename :showPath to something about mpd
+
+right amount of connection logging on asco
+
+port togl to pyglet, perhaps?
+rename :showPath to something about mpd
+
+
+
+rename :showPath to something about mpd
+
+
+
+issues to note during the show:
+
+ who ran dmx:
+ who ran music:
+ who ran curvecalc:
+
+ music stutters?
+
+ light flickers?
