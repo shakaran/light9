@@ -36,6 +36,25 @@ def root():
             "LIGHT9_SHOW env variable has not been set to the show root")
     return r
 
+def findMpdHome():
+    """top of the music directory for the mpd on this system,
+    including trailing slash"""
+    
+    mpdHome = None
+    for mpdConfFilename in ["~/.mpdconf", "/etc/mpd.conf"]:
+        try:
+            mpdConfFile = open(path.expanduser(mpdConfFilename))
+        except IOError:
+            continue
+        for line in mpdConfFile:
+            if line.startswith("music_directory"):
+                mpdHome = line.split()[1].strip('"')
+                return mpdHome.rstrip(path.sep) + path.sep  
+
+    raise ValueError("can't find music_directory in any mpd config file")
+
+
+
 def songInMpd(song):
 
     """mpd only works off its own musicroot, which for me is
@@ -48,14 +67,8 @@ def songInMpd(song):
 
     assert isinstance(song, URIRef), "songInMpd now takes URIRefs"
 
-    mpdHome = None
-    for line in open(path.expanduser("~/.mpdconf")):
-        if line.startswith("music_directory"):
-            mpdHome = line.split()[1].strip('"')
-    if mpdHome is None:
-        raise ValueError("can't find music_directory in your ~/.mpdconf")
-    mpdHome = mpdHome.rstrip(path.sep) + path.sep
-
+    mpdHome = findMpdHome()
+    
     songFullPath = songOnDisk(song)
     if not songFullPath.startswith(mpdHome):
         raise ValueError("the song path %r is not under your MPD music_directory (%r)" % (songFullPath, mpdHome))
