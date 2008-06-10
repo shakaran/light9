@@ -55,11 +55,11 @@ class ParportDMX(BaseIO):
             self.parport.outbyte(levels[p-1]*255 / 100)
 
 class UsbDMX(BaseIO):
-    dimmers = 512
-    def __init__(self):
+    def __init__(self, dimmers=72):
         BaseIO.__init__(self)
         self.__name__ = "UsbDMX"
         self.out = None
+        self.dimmers = dimmers
 
     def _dmx(self):
         if self.out is None:

@@ -134,7 +134,7 @@ class Levelbox(tk.Frame):
         stdfont = tkFont.Font(size=8)
         self.levels = [] # Onelevel objects
 
-        rows = 48
+        rows = 35
         frames = [make_frame(self) for x in range((num_channels // rows) + 1)]
 
         for channel in range(1, num_channels+1):
