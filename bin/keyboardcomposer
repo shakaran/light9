@@ -403,7 +403,7 @@ if __name__ == "__main__":
     parser.add_option('--nonpersistent', action="store_true",
                       help="don't load or save levels")
     parser.add_option('--no-sliders', action='store_true',
-                      help="attach to hardware sliders")
+                      help="don't attach to hardware sliders")
     opts, args = parser.parse_args()
     
     s = Submasters()
