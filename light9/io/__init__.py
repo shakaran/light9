@@ -63,7 +63,7 @@ class UsbDMX(BaseIO):
 
     def _dmx(self):
         if self.out is None:
-            sys.path.append("dmx_usb_module/build/lib.linux-i686-2.4")
+            sys.path.append("dmx_usb_module")
             from dmx import Dmx
             self.out = Dmx()
         return self.out
