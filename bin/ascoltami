@@ -35,7 +35,7 @@ todo:
 from __future__ import division,nested_scopes
 
 from optparse import OptionParser
-import os,math,time
+import sys, os,math,time
 from rdflib import URIRef
 import Tkinter as tk
 import logging
@@ -51,6 +51,7 @@ from light9 import networking, showconfig, wavelength
 from light9.namespaces import L9, MUS
 from light9.uihelpers import toplevelat
 
+sys.path.append("/home/drewp/projects/pympd_0")
 from pympd import Mpd
 
 appstyle={'fg':'white','bg':'black'}
@@ -502,6 +503,8 @@ def main():
 
     if len(songfiles)<1:
         graph = showconfig.getGraph()
+        if not options.show:
+            raise ValueError("missing --show http://...")
         playList = graph.value(URIRef(options.show), L9['playList'])
         songs = list(graph.items(playList))
     else:
