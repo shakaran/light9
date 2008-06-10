@@ -13,7 +13,7 @@ cdef extern from "Python.h":
 
 cdef class Dmx:
     cdef int fd
-    def __new__(self, port="/dev/dmx0"):
+    def __cinit__(self, port="/dev/dmx0"):
         self.fd = open(port, O_WRONLY)
         if self.fd < 0:
             raise OSError("open failed")
@@ -22,7 +22,7 @@ cdef class Dmx:
         cdef char *cbuf
         cbuf = PyString_AsString(buf)
         if cbuf == NULL:
-            raise
+            raise ValueError("string buffer conversion failed")
         res = write(self.fd, cbuf, 513)
         if res < 0:
             raise OSError("write failed")
