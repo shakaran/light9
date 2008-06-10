@@ -6,20 +6,11 @@ not actually match what dmxserver is outputting.
 """
 from __future__ import nested_scopes,division
 import Tkinter as tk
-import time
 from light9 import Patch
 from light9.uihelpers import make_frame, colorlabel, eventtoparent
-try:
-     from dispatch import dispatcher
-except ImportError:
-     import louie as dispatcher
+import louie as dispatcher
 
-# this font makes each label take 16ms to create, so startup is slow.
-# with default font, each labl takes about .5ms to create.
-stdfont = ('Arial', 12)
-import tkFont
-# see replacement stdfont below
-
+stdfont = ('Arial', 9)
 
 def gradient(lev, low=(80,80,180), high=(255,55,50)):
      out = [int(l+lev*(h-l)) for h,l in zip(high,low)]
@@ -130,8 +121,6 @@ class Onelevel(tk.Frame):
 class Levelbox(tk.Frame):
     def __init__(self, parent, num_channels=68):
         tk.Frame.__init__(self,parent)
-        global stdfont
-        stdfont = tkFont.Font(size=8)
         self.levels = [] # Onelevel objects
 
         rows = 35
