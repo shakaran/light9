@@ -40,7 +40,7 @@ from rdflib import URIRef
 import Tkinter as tk
 import logging
 log = logging.getLogger()
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
 from twisted.internet import reactor,tksupport
 from twisted.internet.error import CannotListenError
