@@ -4,6 +4,7 @@ from __future__ import division, nested_scopes
 import sys, wave
 
 def wavelength(filename):
+    filename = filename.replace('.ogg', '.wav')
     wavefile = wave.open(filename, 'rb')
 
     framerate = wavefile.getframerate() # frames / second

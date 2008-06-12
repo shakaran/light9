@@ -14,7 +14,7 @@ for example:
 
 import xmlrpclib, time
 
-s = xmlrpclib.ServerProxy("http://star:8040")
+s = xmlrpclib.ServerProxy("http://localhost:8040")
 start = time.time()
 while 1:
     print time.time()-start,s.gettime()

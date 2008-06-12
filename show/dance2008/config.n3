@@ -10,8 +10,8 @@
 @prefix show: <http://light9.bigasterisk.com/show/> .
 @prefix sub: <http://light9.bigasterisk.com/sub/> .
 
-mus:preSong :showPath "dance2007/silence-4sec.wav" .
-mus:postSong :showPath "dance2007/silence-15sec.wav" .
+mus:preSong :showPath "dance2008/silence-4sec.ogg" .
+mus:postSong :showPath "dance2008/silence-15sec.ogg" .
 
 show:dance2008 :playList (
   sh:song1  sh:song2  sh:song3  sh:song4  sh:song5
@@ -25,20 +25,20 @@ show:dance2008 :playList (
    sh:song11, sh:song12, sh:song13, sh:song14, sh:song15, sh:song16,
    sh:song17 .
 
-sh:song1 rdfs:label "1 opening night"; :showPath "dance2008/01-opening.wav" .
-sh:song2 rdfs:label "2 morning-mh"; :showPath "dance2008/02-morning-mh.wav" .
-sh:song3 rdfs:label "3 hair"; :showPath "dance2008/03-hair.wav" .
-sh:song4 rdfs:label "4 street2"; :showPath "dance2008/04-street2.wav" .
-sh:song5 rdfs:label "5 jersey"; :showPath "dance2008/05-jersey.wav" .
-sh:song6 rdfs:label "6 broadway-mh"; :showPath "dance2008/06-broadway-mh.wav" .
-sh:song7 rdfs:label "7 chorus"; :showPath "dance2008/07-chorus.wav" .
-sh:song8 rdfs:label "8 lullaby"; :showPath "dance2008/08-lullaby.wav" .
-sh:song9 rdfs:label "9 face"; :showPath "dance2008/09-face.wav" .
-sh:song10 rdfs:label "10 dontmean-tape"; :showPath "dance2008/10-dontmean-tape.wav" .
-sh:song11 rdfs:label "11 high"; :showPath "dance2008/11-high.wav" .
-sh:song12 rdfs:label "12 gotta-mh"; :showPath "dance2008/12-gotta-mh.wav" .
-sh:song13 rdfs:label "13 dream"; :showPath "dance2008/13-dream.wav" .
-sh:song14 rdfs:label "14 blonde"; :showPath "dance2008/14-blonde.wav" .
-sh:song15 rdfs:label "15 charleston2"; :showPath "dance2008/15-charleston2.wav" .
-sh:song16 rdfs:label "16 rich2"; :showPath "dance2008/16-rich2.wav" .
-sh:song17 rdfs:label "17 business-mh"; :showPath "dance2008/17-business-mh.wav" .
+sh:song1 rdfs:label "1 opening night"; :showPath "dance2008/01-opening.ogg" .
+sh:song2 rdfs:label "2 morning-mh"; :showPath "dance2008/02-morning-mh.ogg" .
+sh:song3 rdfs:label "3 hair"; :showPath "dance2008/03-hair.ogg" .
+sh:song4 rdfs:label "4 street2"; :showPath "dance2008/04-street2.ogg" .
+sh:song5 rdfs:label "5 jersey"; :showPath "dance2008/05-jersey.ogg" .
+sh:song6 rdfs:label "6 broadway-mh"; :showPath "dance2008/06-broadway-mh.ogg" .
+sh:song7 rdfs:label "7 chorus"; :showPath "dance2008/07-chorus.ogg" .
+sh:song8 rdfs:label "8 lullaby"; :showPath "dance2008/08-lullaby.ogg" .
+sh:song9 rdfs:label "9 face"; :showPath "dance2008/09-face.ogg" .
+sh:song10 rdfs:label "10 dontmean-tape"; :showPath "dance2008/10-dontmean-tape.ogg" .
+sh:song11 rdfs:label "11 high"; :showPath "dance2008/11-high.ogg" .
+sh:song12 rdfs:label "12 gotta-mh"; :showPath "dance2008/12-gotta-mh.ogg" .
+sh:song13 rdfs:label "13 dream"; :showPath "dance2008/13-dream.ogg" .
+sh:song14 rdfs:label "14 blonde"; :showPath "dance2008/14-blonde.ogg" .
+sh:song15 rdfs:label "15 charleston2"; :showPath "dance2008/15-charleston2.ogg" .
+sh:song16 rdfs:label "16 rich2"; :showPath "dance2008/16-rich2.ogg" .
+sh:song17 rdfs:label "17 business-mh"; :showPath "dance2008/17-business-mh.ogg" .
