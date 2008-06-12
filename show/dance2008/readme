@@ -6,15 +6,15 @@ copy past PHS lighting config to dance2008
 
 make up/bow/down curves for all songs
 
-make music curves
+OK make music curves
 
 test camera on plus for taking stage pics; do a program to turn on
 each channel and sub and get a picture. mix the order and do it fast,
 so the camera doesn't get to readjust between them? 
 
-setup patched mpd on plus and score
+OK setup patched mpd on plus and score
 
-test mouse on plus
+OK test mouse on plus
 
 ext monitor on plus. score too?
 
@@ -31,21 +31,21 @@ normalize levels
 apparently in 2007 we played music on the laptop 'score', and it was a
 little bit messed up. Preloading into memory may have helped.
 
-rename :showPath to something about mpd
-
-right amount of connection logging on asco
-
 port togl to pyglet, perhaps?
 
 map some buttons to the worklights, etc. Maybe midi board buttons? keypad? wii?
 
-rename :showPath to something about mpd
+ramdisk for the preload
 
+test local net
+
+curvecalc slider instructions please
 
 
 packing list:
   power strips
   computers, bcf, dmx
+  net hub and cables
   dmx cables
   external mouses, keyboards
   wrench, tape
@@ -64,3 +64,15 @@ issues to note during the show:
  music stutters?
 
  light flickers?
+
+
+next time:
+
+  does avahi make the host-finding stuff easy? probably not worth
+  much, but at least the host settings should be in config.n3
+
+  rename :showPath to something about mpd
+
+  right amount of connection logging on asco. it doesn't error clearly
+  when it's looking for mpd on the wrong host
+

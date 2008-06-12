@@ -6,7 +6,7 @@ from ConfigParser import SafeConfigParser
 def dmxServerUrl():
     #host = os.getenv('DMXHOST', 'localhost')
     #url = "http://%s:8030" % host
-    return "http://localhost:%s" % dmxServerPort()
+    return "http://plus:%s" % dmxServerPort()
 
 def dmxServerPort():
     return 8030
@@ -25,4 +25,4 @@ def kcPort():
     return 8050
 
 def kcServer():
-    return 'dash'
+    return 'plus'
