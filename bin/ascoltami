@@ -52,6 +52,7 @@ from light9.namespaces import L9, MUS
 from light9.uihelpers import toplevelat
 
 sys.path.append("/home/drewp/projects/pympd_0")
+sys.path.append("/my/proj/pympd_0")
 from pympd import Mpd
 
 appstyle={'fg':'white','bg':'black'}
