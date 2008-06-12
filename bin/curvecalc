@@ -397,6 +397,7 @@ toplevelat("curvecalc",root)
 root.tk_focusFollowsMouse()
 
 parser = optparse.OptionParser()
+parser.set_usage("%prog [opts] songURI")
 parser.add_option("--sliders", action='store_true',
                   help='use hardware sliders')
 parser.add_option("--skip-music", action='store_true',
@@ -406,7 +407,7 @@ opts, args = parser.parse_args()
 try:
     song = URIRef(args[0])
 except IndexError:
-    raise SystemExit("song name is required, e.g. '05-mix'")
+    raise SystemExit("song URI is required, e.g. 'http://light9.bigasterisk.com/show/dance2008/song3'")
 
 log.debug("music")
 music=Music()
