@@ -6,7 +6,7 @@ from light9.wavepoints import simp
 
 def createCurve(inpath, outpath, t):
     print "reading %s, writing %s" % (inpath, outpath)
-    points = simp(inpath, seconds_per_average=t)
+    points = simp(inpath.replace('.ogg', '.wav'), seconds_per_average=t)
 
     f = file(outpath, 'w')
     for time_val in points:
