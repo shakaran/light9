@@ -1,0 +1,19 @@
+#!/usr/bin/python
+
+"""for completion, print the available song uris on stdout
+
+in .zshrc:
+
+function _songs { local expl;  _description files expl 'songs';  compadd "$expl[@]" - `${LIGHT9_SHOW}/../../bin/listsongs` }
+compdef _songs curvecalc
+"""
+
+import run_local
+from light9 import showconfig
+from light9.namespaces import L9
+from rdflib import RDF
+graph = showconfig.getGraph()
+
+for song in graph.subjects(RDF.type, L9['Song']):
+    print song
+    
