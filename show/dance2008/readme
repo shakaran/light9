@@ -26,7 +26,7 @@ test dmx output on 64-bit plus
 
 OK fix showcofnig.py to search .mpdconf then /etc/mpd
 
-normalize levels
+OK normalize levels
 
 apparently in 2007 we played music on the laptop 'score', and it was a
 little bit messed up. Preloading into memory may have helped.
@@ -37,7 +37,7 @@ map some buttons to the worklights, etc. Maybe midi board buttons? keypad? wii?
 
 ramdisk for the preload
 
-test local net
+OK test local net
 
 curvecalc slider instructions please
 
@@ -63,7 +63,8 @@ packing list:
   gels and swatches
 
   
-
+music on score:
+  ~/dl/mpd% src/mpd --no-daemon --verbose
 
 
 
@@ -91,3 +92,5 @@ next time:
   how to make initial subterms:
      light9% for x ({2..17}) { perl -lpe 's/song1/song'$x'/g' show/dance2008/subterms/song1.n3 > show/dance2008/subterms/song$x.n3 }
 
+  how to normalize audio:
+     plus(pts/0):~/projects/light9/show/dance2008/music/norm% normalize-audio -v --mix *.wav
