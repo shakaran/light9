@@ -1,10 +1,10 @@
-#Processed by Id: cwm.py,v 1.190 2006/08/09 23:20:42 syosi Exp 
-        #    using base file:///my/proj/light9/show/dance2008/patch-source.n3
+#Processed by Id: cwm.py,v 1.197 2007/12/13 15:38:39 syosi Exp 
+        #    using base file:///home/drewp/projects/light9/show/dance2008/patch-source.n3
         
 #  Notation3 generation by
-#       notation3.py,v 1.191 2006/08/01 01:14:04 syosi Exp
+#       notation3.py,v 1.200 2007/12/11 21:18:08 syosi Exp
 
-#   Base was: file:///my/proj/light9/show/dance2008/patch-source.n3
+#   Base was: file:///home/drewp/projects/light9/show/dance2008/patch-source.n3
      @prefix : <http://light9.bigasterisk.com/> .
     @prefix ch: <http://light9.bigasterisk.com/theater/piedmont/channel/> .
     @prefix dmx: <http://light9.bigasterisk.com/dmx/> .
@@ -82,10 +82,6 @@
          :output dmx:c66;
          rdfs:label "b36" .
     
-    ch:blacklight     a :Channel;
-         :output dmx:c15;
-         rdfs:label "blacklight" .
-    
     ch:blue1     a :Channel;
          :output dmx:c23;
          rdfs:label "blue1" .
@@ -106,21 +102,41 @@
          :output dmx:c44;
          rdfs:label "cyc" .
     
-    ch:down-c     a :Channel;
-         :output dmx:c18;
-         rdfs:label "down-c" .
-    
-    ch:down-cr     a :Channel;
-         :output dmx:c16;
-         rdfs:label "down-cr" .
+    ch:cyc-mid     a :Channel;
+         :output dmx:c42;
+         rdfs:label "cyc-mid" .
     
     ch:down-l     a :Channel;
          :output dmx:c13;
          rdfs:label "down-l" .
     
     ch:down-r     a :Channel;
-         :output dmx:c14;
+         :output dmx:c16;
          rdfs:label "down-r" .
+    
+    ch:fr14     a :Channel;
+         :output dmx:c14;
+         rdfs:label "fr14" .
+    
+    ch:fr15     a :Channel;
+         :output dmx:c15;
+         rdfs:label "fr15" .
+    
+    ch:fr17     a :Channel;
+         :output dmx:c17;
+         rdfs:label "fr17" .
+    
+    ch:fr18     a :Channel;
+         :output dmx:c18;
+         rdfs:label "fr18" .
+    
+    ch:fr19     a :Channel;
+         :output dmx:c19;
+         rdfs:label "fr19" .
+    
+    ch:fr20     a :Channel;
+         :output dmx:c20;
+         rdfs:label "fr20" .
     
     ch:front1     a :Channel;
          :output dmx:c1;
@@ -157,10 +173,6 @@
     ch:front6     a :Channel;
          :output dmx:c6;
          rdfs:label "front6" .
-    
-    ch:front7     a :Channel;
-         :output dmx:c7;
-         rdfs:label "front7" .
     
     ch:front8     a :Channel;
          :output dmx:c8;
@@ -230,16 +242,12 @@
          :output dmx:c36;
          rdfs:label "red4" .
     
-    ch:strobedim     a :Channel;
-         :output dmx:c20;
-         rdfs:label "strobedim" .
-    
-    ch:stroberate     a :Channel;
-         :output dmx:c19;
-         rdfs:label "stroberate" .
-    
-    ch:up-l     a :Channel;
+    ch:s40     a :Channel;
          :output dmx:c40;
-         rdfs:label "up-l" .
+         rdfs:label "s40" .
+    
+    ch:sharlyn     a :Channel;
+         :output dmx:c7;
+         rdfs:label "sharlyn" .
     
 #ENDS

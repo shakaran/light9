@@ -94,3 +94,10 @@ next time:
 
   how to normalize audio:
      plus(pts/0):~/projects/light9/show/dance2008/music/norm% normalize-audio -v --mix *.wav
+
+  keys on curvecalc that jump to the "create new X" boxes
+
+  share all data from all tools, no more refreshes or restarts
+
+  bug where empty sub doesn't save from SC
+

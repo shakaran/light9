@@ -43,6 +43,21 @@ sh:song15 rdfs:label "15 charleston2"; :showPath "dance2008/15-charleston2.ogg" 
 sh:song16 rdfs:label "16 rich2"; :showPath "dance2008/16-rich2.ogg" .
 sh:song17 rdfs:label "17 business-mh"; :showPath "dance2008/17-business-mh.ogg" .
 
+sub:red :group group:strip; :order 0 .
+sub:orange :group group:strip; :order 1 .
+sub:green :group group:strip; :order 2 .
+sub:blue :group group:strip; :order 3.
+
+group:live is :group of 
+sub:front,
+sub:patios,
+sub:sharlyn,
+sub:scoop,
+sub:cyc,
+sub:house
+.
+
+
 
 dmx:c1 :dmxAddress 1 .
 dmx:c2 :dmxAddress 2 .

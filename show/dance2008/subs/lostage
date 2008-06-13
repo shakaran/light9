@@ -1,0 +1,7 @@
+_:WatRWlPq396 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WatRWlPq396 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b23>.
+<http://light9.bigasterisk.com/sub/lostage> <http://www.w3.org/2000/01/rdf-schema#label> "lostage".
+<http://light9.bigasterisk.com/sub/lostage> <http://light9.bigasterisk.com/lightLevel> _:WatRWlPq396.
+<http://light9.bigasterisk.com/sub/lostage> <http://light9.bigasterisk.com/lightLevel> _:WatRWlPq395.
+_:WatRWlPq395 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WatRWlPq395 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b24>.

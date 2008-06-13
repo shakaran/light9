@@ -1,0 +1,7 @@
+_:WatRWlPq26 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/cyc-mid>.
+_:WatRWlPq26 <http://light9.bigasterisk.com/level> "0.67"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/cyc> <http://light9.bigasterisk.com/lightLevel> _:WatRWlPq26.
+<http://light9.bigasterisk.com/sub/cyc> <http://light9.bigasterisk.com/lightLevel> _:WatRWlPq25.
+<http://light9.bigasterisk.com/sub/cyc> <http://www.w3.org/2000/01/rdf-schema#label> "cyc".
+_:WatRWlPq25 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/cyc>.
+_:WatRWlPq25 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
