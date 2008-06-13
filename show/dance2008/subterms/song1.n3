@@ -1,0 +1,9 @@
+@prefix : <http://light9.bigasterisk.com/> .
+@prefix subte: <http://light9.bigasterisk.com/show/dance2008/song1/subterm/> .
+    
+<http://light9.bigasterisk.com/show/dance2008/song1>     :subterm subte:song1 .
+   
+    subte:song1     a :Subterm;
+         :expression "song1(t)";
+         :sub <http://light9.bigasterisk.com/sub/song1> .
+

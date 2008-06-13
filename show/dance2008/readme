@@ -42,6 +42,13 @@ test local net
 curvecalc slider instructions please
 
 
+thurs:
+  OK patches
+  OK subs for each song
+  OK fade curves per song
+  OK worklight switch - use sliders and KC
+
+
 packing list:
   power strips
   computers, bcf, dmx
@@ -50,6 +57,7 @@ packing list:
   external mouses, keyboards
   wrench, tape
   blank CDs
+  label tape
   
 
 
@@ -57,9 +65,9 @@ packing list:
 
 issues to note during the show:
 
- who ran dmx:
- who ran music:
- who ran curvecalc:
+ what ran dmx:
+ what ran music:
+ what ran curvecalc:
 
  music stutters?
 
@@ -75,4 +83,7 @@ next time:
 
   right amount of connection logging on asco. it doesn't error clearly
   when it's looking for mpd on the wrong host
+
+  how to make initial subterms:
+     light9% for x ({2..17}) { perl -lpe 's/song1/song'$x'/g' show/dance2008/subterms/song1.n3 > show/dance2008/subterms/song$x.n3 }
 
