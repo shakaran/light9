@@ -45,6 +45,7 @@
 [ :name "post-r"; :output dmx:c46 ] .
 
 [ :name "s40"; :output dmx:c40 ] .
+[ :name "sign"; :output dmx:c41 ] .
 [ :name "front1"; :output dmx:c1 ] .
 [ :name "front2"; :output dmx:c2 ] .
 [ :name "front3"; :output dmx:c3 ] .
@@ -59,8 +60,8 @@
 [ :name "front12"; :output dmx:c12 ] .
 
 [ :name "down-l"; :output dmx:c13 ] .
-[ :name "fr14"; :output dmx:c14 ] .
-[ :name "fr15"; :output dmx:c15 ] .
+[ :name "blacklight"; :output dmx:c14 ] .
+[ :name "strobe"; :output dmx:c15 ] .
 [ :name "down-r"; :output dmx:c16 ] .
 [ :name "fr17"; :output dmx:c17 ] .
 [ :name "fr18"; :output dmx:c18 ] .

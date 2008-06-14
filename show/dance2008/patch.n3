@@ -82,6 +82,10 @@
          :output dmx:c66;
          rdfs:label "b36" .
     
+    ch:blacklight     a :Channel;
+         :output dmx:c14;
+         rdfs:label "blacklight" .
+    
     ch:blue1     a :Channel;
          :output dmx:c23;
          rdfs:label "blue1" .
@@ -113,14 +117,6 @@
     ch:down-r     a :Channel;
          :output dmx:c16;
          rdfs:label "down-r" .
-    
-    ch:fr14     a :Channel;
-         :output dmx:c14;
-         rdfs:label "fr14" .
-    
-    ch:fr15     a :Channel;
-         :output dmx:c15;
-         rdfs:label "fr15" .
     
     ch:fr17     a :Channel;
          :output dmx:c17;
@@ -198,9 +194,25 @@
          :output dmx:c34;
          rdfs:label "gree4" .
     
-    ch:house     a :Channel;
+    ch:house-side     a :Channel;
          :output dmx:c68;
-         rdfs:label "house" .
+         rdfs:label "house-side" .
+    
+    ch:house1     a :Channel;
+         :output dmx:c69;
+         rdfs:label "house1" .
+    
+    ch:house2     a :Channel;
+         :output dmx:c72;
+         rdfs:label "house2" .
+    
+    ch:house3     a :Channel;
+         :output dmx:c71;
+         rdfs:label "house3" .
+    
+    ch:house4     a :Channel;
+         :output dmx:c70;
+         rdfs:label "house4" .
     
     ch:oran1     a :Channel;
          :output dmx:c21;
@@ -249,5 +261,13 @@
     ch:sharlyn     a :Channel;
          :output dmx:c7;
          rdfs:label "sharlyn" .
+    
+    ch:sign     a :Channel;
+         :output dmx:c41;
+         rdfs:label "sign" .
+    
+    ch:strobe     a :Channel;
+         :output dmx:c15;
+         rdfs:label "strobe" .
     
 #ENDS
