@@ -70,6 +70,9 @@
 [ :name "cyc-mid"; :output dmx:c42 ] .
 [ :name "cyc"; :output dmx:c44 ] .
 
-[ :name "house"; :output dmx:c68 ] .
-
+[ :name "house-side"; :output dmx:c68 ] .
+[ :name "house1"; :output dmx:c69 ] .
+[ :name "house4"; :output dmx:c70 ] .
+[ :name "house3"; :output dmx:c71 ] .
+[ :name "house2"; :output dmx:c72 ] .
 

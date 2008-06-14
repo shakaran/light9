@@ -14,7 +14,7 @@ from light9.dmxchanedit import Levelbox
 from light9 import dmxclient, Patch, Submaster
 
 class Subcomposer(tk.Frame):
-    def __init__(self, master, levelboxopts=None, dmxdummy=0, numchannels=68,
+    def __init__(self, master, levelboxopts=None, dmxdummy=0, numchannels=72,
         use_persistentlevels=0):
         tk.Frame.__init__(self, master, bg='black')
         self.dmxdummy = dmxdummy

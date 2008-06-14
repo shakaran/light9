@@ -123,7 +123,7 @@ class Levelbox(tk.Frame):
         tk.Frame.__init__(self,parent)
         self.levels = [] # Onelevel objects
 
-        rows = 35
+        rows = 37
         frames = [make_frame(self) for x in range((num_channels // rows) + 1)]
 
         for channel in range(1, num_channels+1):
