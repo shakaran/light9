@@ -70,11 +70,11 @@ music on score:
 
 issues to note during the show:
 
- what ran dmx:
- what ran music:
- what ran curvecalc:
+ what ran dmx: plus
+ what ran music: score
+ what ran curvecalc: plus
 
- music stutters?
+ music stutters? 
 
  light flickers?
 
@@ -121,3 +121,16 @@ next time:
 
   subcomposer should save its geometry
 
+  how to reset the dmx channels on a dimmer pack: [dmx] [erase] [clear]
+
+  make a program to test chases
+
+  curvecalc should always start up zoomed-out
+
+need curve delete button. show on each curve whether it's in use
+anywhere. let me hide a music curve if i'm low on space.
+
+ascoltami should learn to adjust volumes
+
+unnamed subterm is serious. i think only the last one created gets
+saved, or something

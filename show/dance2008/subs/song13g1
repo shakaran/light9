@@ -1,0 +1,4 @@
+<http://light9.bigasterisk.com/sub/song13g1> <http://www.w3.org/2000/01/rdf-schema#label> "song13g1".
+<http://light9.bigasterisk.com/sub/song13g1> <http://light9.bigasterisk.com/lightLevel> _:wXdfflUK3732.
+_:wXdfflUK3732 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b22>.
+_:wXdfflUK3732 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.

@@ -1,4 +1,7 @@
+_:wXdfflUK3729 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b33>.
+_:wXdfflUK3729 <http://light9.bigasterisk.com/level> "0.605"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:wXdfflUK3728 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b16>.
+_:wXdfflUK3728 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
 <http://light9.bigasterisk.com/sub/downright> <http://www.w3.org/2000/01/rdf-schema#label> "downright".
-<http://light9.bigasterisk.com/sub/downright> <http://light9.bigasterisk.com/lightLevel> _:WatRWlPq7451.
-_:WatRWlPq7451 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b16>.
-_:WatRWlPq7451 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/downright> <http://light9.bigasterisk.com/lightLevel> _:wXdfflUK3729.
+<http://light9.bigasterisk.com/sub/downright> <http://light9.bigasterisk.com/lightLevel> _:wXdfflUK3728.

@@ -1,4 +1,12 @@
-<http://light9.bigasterisk.com/show/dance2008/song10/subterm/song10> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song10>.
+<http://light9.bigasterisk.com/show/dance2008/song10> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2008/song10/subterm/song10>.
+<http://light9.bigasterisk.com/show/dance2008/song10> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2008/song10/subterm/song3black>.
+<http://light9.bigasterisk.com/show/dance2008/song10> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2008/song10/subterm/blacklight>.
+<http://light9.bigasterisk.com/show/dance2008/song10/subterm/song3black> <http://light9.bigasterisk.com/expression> "blacklight(t)".
+<http://light9.bigasterisk.com/show/dance2008/song10/subterm/song3black> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2008/song10/subterm/song3black> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song3black>.
 <http://light9.bigasterisk.com/show/dance2008/song10/subterm/song10> <http://light9.bigasterisk.com/expression> "song10(t)".
 <http://light9.bigasterisk.com/show/dance2008/song10/subterm/song10> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
-<http://light9.bigasterisk.com/show/dance2008/song10> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2008/song10/subterm/song10>.
+<http://light9.bigasterisk.com/show/dance2008/song10/subterm/song10> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song10>.
+<http://light9.bigasterisk.com/show/dance2008/song10/subterm/blacklight> <http://light9.bigasterisk.com/expression> "".
+<http://light9.bigasterisk.com/show/dance2008/song10/subterm/blacklight> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2008/song10/subterm/blacklight> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/blacklight>.

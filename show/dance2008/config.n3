@@ -32,10 +32,10 @@ sh:song4 rdfs:label "4 street2"; :showPath "dance2008/04-street2.ogg" .
 sh:song5 rdfs:label "5 jersey"; :showPath "dance2008/05-jersey.ogg" .
 sh:song6 rdfs:label "6 broadway-mh"; :showPath "dance2008/06-broadway-mh.ogg" .
 sh:song7 rdfs:label "7 chorus"; :showPath "dance2008/07-chorus.ogg" .
-sh:song8 rdfs:label "8 lullaby"; :showPath "dance2008/08-lullaby.ogg" .
+sh:song8 rdfs:label "8 lullaby depop"; :showPath "dance2008/08-lullaby-depop.ogg" .
 sh:song9 rdfs:label "9 face"; :showPath "dance2008/09-face.ogg" .
 sh:song10 rdfs:label "10 dontmean-tape"; :showPath "dance2008/10-dontmean-tape.ogg" .
-sh:song11 rdfs:label "11 high"; :showPath "dance2008/11-high.ogg" .
+sh:song11 rdfs:label "11 high ext"; :showPath "dance2008/11-high-ext.ogg" .
 sh:song12 rdfs:label "12 gotta-mh"; :showPath "dance2008/12-gotta-mh.ogg" .
 sh:song13 rdfs:label "13 dream"; :showPath "dance2008/13-dream.ogg" .
 sh:song14 rdfs:label "14 blonde"; :showPath "dance2008/14-blonde.ogg" .
@@ -64,8 +64,16 @@ sub:song1, sub:song2, sub:song3, sub:song4,
    sub:song17 .
 
 chase:up a :Chase; :channels ( ch:b13 ch:b21 ch:b22 ch:b35 ) .
+
 chase:corners a :Chase; :channels (ch:b14 ch:b16 ch:cyc ch:b21 ch:b13) .
+
 chase:colors a :Chase; :channels (ch:oran1 ch:gree1 ch:blue1 ch:red1 ch:oran2 ch:gree2 ch:blue2 ch:red2 ch:oran3 ch:gree3 ch:blue3 ch:red3 ch:oran4 ch:gree4 ch:blue4 ch:red4) .
+
+chase:rb a :Chase; :channels ( ch:b12 ch:b36 ch:b14 ch:b34 ch:b16
+ch:b32 ch:b22 ch:b26 ) .
+
+
+
 
 dmx:c1 :dmxAddress 1 .
 dmx:c2 :dmxAddress 2 .
