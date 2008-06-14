@@ -1,0 +1,4 @@
+<http://light9.bigasterisk.com/sub/blacklight> <http://www.w3.org/2000/01/rdf-schema#label> "blacklight".
+<http://light9.bigasterisk.com/sub/blacklight> <http://light9.bigasterisk.com/lightLevel> _:WatRWlPq9809.
+_:WatRWlPq9809 <http://light9.bigasterisk.com/level> "0.22"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WatRWlPq9809 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/fr14>.

@@ -64,7 +64,7 @@ sub:song1, sub:song2, sub:song3, sub:song4,
    sub:song17 .
 
 chase:up a :Chase; :channels ( ch:b13 ch:b21 ch:b22 ch:b35 ) .
-chase:corners a :Chase; :channels (ch:b14 ch:b16 ch:cyc ch:cyc-mid ch:b21 ch:b13) .
+chase:corners a :Chase; :channels (ch:b14 ch:b16 ch:cyc ch:b21 ch:b13) .
 chase:colors a :Chase; :channels (ch:oran1 ch:gree1 ch:blue1 ch:red1 ch:oran2 ch:gree2 ch:blue2 ch:red2 ch:oran3 ch:gree3 ch:blue3 ch:red3 ch:oran4 ch:gree4 ch:blue4 ch:red4) .
 
 dmx:c1 :dmxAddress 1 .
