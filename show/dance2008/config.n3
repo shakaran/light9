@@ -1,5 +1,5 @@
 @prefix : <http://light9.bigasterisk.com/> .
-@prefix ch: <http://light9.bigasterisk.com/theater/skyline/channel/> .
+@prefix ch: <http://light9.bigasterisk.com/theater/piedmont/channel/> .
 @prefix chase: <http://light9.bigasterisk.com/chase/> .
 @prefix dmx: <http://light9.bigasterisk.com/dmx/> .
 @prefix group: <http://light9.bigasterisk.com/group/> .
@@ -63,7 +63,9 @@ sub:song1, sub:song2, sub:song3, sub:song4,
    sub:song11, sub:song12, sub:song13, sub:song14, sub:song15, sub:song16,
    sub:song17 .
 
-
+chase:up a :Chase; :channels ( ch:b13 ch:b21 ch:b22 ch:b35 ) .
+chase:corners a :Chase; :channels (ch:b14 ch:b16 ch:cyc ch:cyc-mid ch:b21 ch:b13) .
+chase:colors a :Chase; :channels (ch:oran1 ch:gree1 ch:blue1 ch:red1 ch:oran2 ch:gree2 ch:blue2 ch:red2 ch:oran3 ch:gree3 ch:blue3 ch:red3 ch:oran4 ch:gree4 ch:blue4 ch:red4) .
 
 dmx:c1 :dmxAddress 1 .
 dmx:c2 :dmxAddress 2 .
