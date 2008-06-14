@@ -57,6 +57,12 @@ sub:cyc,
 sub:house
 .
 
+group:song is :group of
+sub:song1, sub:song2, sub:song3, sub:song4,
+   sub:song5, sub:song6, sub:song7, sub:song8, sub:song9, sub:song10,
+   sub:song11, sub:song12, sub:song13, sub:song14, sub:song15, sub:song16,
+   sub:song17 .
+
 
 
 dmx:c1 :dmxAddress 1 .

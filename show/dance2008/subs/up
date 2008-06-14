@@ -1,0 +1,16 @@
+_:WatRWlPq7466 <http://light9.bigasterisk.com/level> "0.075"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WatRWlPq7466 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b33>.
+_:WatRWlPq7468 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WatRWlPq7468 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b21>.
+<http://light9.bigasterisk.com/sub/up> <http://light9.bigasterisk.com/lightLevel> _:WatRWlPq7466.
+<http://light9.bigasterisk.com/sub/up> <http://light9.bigasterisk.com/lightLevel> _:WatRWlPq7468.
+<http://light9.bigasterisk.com/sub/up> <http://light9.bigasterisk.com/lightLevel> _:WatRWlPq7467.
+<http://light9.bigasterisk.com/sub/up> <http://light9.bigasterisk.com/lightLevel> _:WatRWlPq7465.
+<http://light9.bigasterisk.com/sub/up> <http://light9.bigasterisk.com/lightLevel> _:WatRWlPq7469.
+<http://light9.bigasterisk.com/sub/up> <http://www.w3.org/2000/01/rdf-schema#label> "up".
+_:WatRWlPq7465 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WatRWlPq7465 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b35>.
+_:WatRWlPq7469 <http://light9.bigasterisk.com/level> "0.62"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WatRWlPq7469 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b22>.
+_:WatRWlPq7467 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WatRWlPq7467 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b13>.

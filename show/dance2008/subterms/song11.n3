@@ -1,4 +1,8 @@
-<http://light9.bigasterisk.com/show/dance2008/song11/subterm/song11> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
-<http://light9.bigasterisk.com/show/dance2008/song11/subterm/song11> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song11>.
-<http://light9.bigasterisk.com/show/dance2008/song11/subterm/song11> <http://light9.bigasterisk.com/expression> "song11(t)".
+<http://light9.bigasterisk.com/show/dance2008/song11/subterm/cyc> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/cyc>.
+<http://light9.bigasterisk.com/show/dance2008/song11/subterm/cyc> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2008/song11/subterm/cyc> <http://light9.bigasterisk.com/expression> "smooth_music(t)*cyc(t)".
+<http://light9.bigasterisk.com/show/dance2008/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2008/song11/subterm/cyc>.
 <http://light9.bigasterisk.com/show/dance2008/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2008/song11/subterm/song11>.
+<http://light9.bigasterisk.com/show/dance2008/song11/subterm/song11> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song11>.
+<http://light9.bigasterisk.com/show/dance2008/song11/subterm/song11> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2008/song11/subterm/song11> <http://light9.bigasterisk.com/expression> "song11(t)".

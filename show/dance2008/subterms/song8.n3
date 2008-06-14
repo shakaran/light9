@@ -1,4 +1,4 @@
-<http://light9.bigasterisk.com/show/dance2008/song8> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2008/song8/subterm/song8>.
+<http://light9.bigasterisk.com/show/dance2008/song8/subterm/song8> <http://light9.bigasterisk.com/expression> "song8(t)".
 <http://light9.bigasterisk.com/show/dance2008/song8/subterm/song8> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song8>.
 <http://light9.bigasterisk.com/show/dance2008/song8/subterm/song8> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
-<http://light9.bigasterisk.com/show/dance2008/song8/subterm/song8> <http://light9.bigasterisk.com/expression> "song8(t)".
+<http://light9.bigasterisk.com/show/dance2008/song8> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2008/song8/subterm/song8>.

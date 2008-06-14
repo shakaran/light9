@@ -1,4 +1,16 @@
+<http://light9.bigasterisk.com/show/dance2008/song3> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2008/song3/subterm/cyc>.
 <http://light9.bigasterisk.com/show/dance2008/song3> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2008/song3/subterm/song3>.
+<http://light9.bigasterisk.com/show/dance2008/song3> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2008/song3/subterm/superstar>.
+<http://light9.bigasterisk.com/show/dance2008/song3> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2008/song3/subterm/front>.
+<http://light9.bigasterisk.com/show/dance2008/song3/subterm/cyc> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/cyc>.
+<http://light9.bigasterisk.com/show/dance2008/song3/subterm/cyc> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2008/song3/subterm/cyc> <http://light9.bigasterisk.com/expression> "cyc(t)".
 <http://light9.bigasterisk.com/show/dance2008/song3/subterm/song3> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song3>.
 <http://light9.bigasterisk.com/show/dance2008/song3/subterm/song3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
 <http://light9.bigasterisk.com/show/dance2008/song3/subterm/song3> <http://light9.bigasterisk.com/expression> "song3(t)".
+<http://light9.bigasterisk.com/show/dance2008/song3/subterm/superstar> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/superstar>.
+<http://light9.bigasterisk.com/show/dance2008/song3/subterm/superstar> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2008/song3/subterm/superstar> <http://light9.bigasterisk.com/expression> "superstar(t)".
+<http://light9.bigasterisk.com/show/dance2008/song3/subterm/front> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/front>.
+<http://light9.bigasterisk.com/show/dance2008/song3/subterm/front> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2008/song3/subterm/front> <http://light9.bigasterisk.com/expression> "front(t)".

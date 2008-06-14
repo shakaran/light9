@@ -1,4 +1,12 @@
-<http://light9.bigasterisk.com/show/dance2008/song16> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2008/song16/subterm/song16>.
-<http://light9.bigasterisk.com/show/dance2008/song16/subterm/song16> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song16>.
 <http://light9.bigasterisk.com/show/dance2008/song16/subterm/song16> <http://light9.bigasterisk.com/expression> "song16(t)".
+<http://light9.bigasterisk.com/show/dance2008/song16/subterm/song16> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song16>.
 <http://light9.bigasterisk.com/show/dance2008/song16/subterm/song16> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2008/song16/subterm/cyc> <http://light9.bigasterisk.com/expression> "cyc(t)*smooth_music(t+.09)".
+<http://light9.bigasterisk.com/show/dance2008/song16/subterm/cyc> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/cyc>.
+<http://light9.bigasterisk.com/show/dance2008/song16/subterm/cyc> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2008/song16/subterm/orange> <http://light9.bigasterisk.com/expression> "music(t+.1)*aft(213)".
+<http://light9.bigasterisk.com/show/dance2008/song16/subterm/orange> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/orange>.
+<http://light9.bigasterisk.com/show/dance2008/song16/subterm/orange> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2008/song16> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2008/song16/subterm/song16>.
+<http://light9.bigasterisk.com/show/dance2008/song16> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2008/song16/subterm/orange>.
+<http://light9.bigasterisk.com/show/dance2008/song16> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2008/song16/subterm/cyc>.

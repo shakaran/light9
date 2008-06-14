@@ -1,0 +1,10 @@
+_:WatRWlPq7446 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WatRWlPq7446 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b34>.
+_:WatRWlPq7448 <http://light9.bigasterisk.com/level> "0.08"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WatRWlPq7448 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b23>.
+_:WatRWlPq7447 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WatRWlPq7447 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b26>.
+<http://light9.bigasterisk.com/sub/midleft> <http://light9.bigasterisk.com/lightLevel> _:WatRWlPq7446.
+<http://light9.bigasterisk.com/sub/midleft> <http://light9.bigasterisk.com/lightLevel> _:WatRWlPq7448.
+<http://light9.bigasterisk.com/sub/midleft> <http://light9.bigasterisk.com/lightLevel> _:WatRWlPq7447.
+<http://light9.bigasterisk.com/sub/midleft> <http://www.w3.org/2000/01/rdf-schema#label> "midleft".
