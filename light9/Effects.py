@@ -34,6 +34,7 @@ def configExprGlobals():
         shortName = chaseUri.rsplit('/')[-1]
         chans = graph.value(chaseUri, L9['channels'])
         ret[shortName] = list(graph.items(chans))
+        print "%r is a chase" % shortName
 
     ret['chase'] = chase
     return ret
