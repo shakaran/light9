@@ -54,11 +54,11 @@ class SubmasterTk(Frame):
         self.slider_var = DoubleVar()
         self.slider_var.set(current_level)
         self.scale = SubScale(self, variable=self.slider_var, width=20)
-        namelabel = Label(self, text=name, font="Arial 9", bg='black',
-            fg='white')
+        namelabel = Label(self, text=name, font="Arial 7", bg='black',
+            fg='white', pady=0)
         namelabel.pack(side=TOP)
-        levellabel = Label(self, textvariable=self.slider_var, font="Arial 11",
-            bg='black', fg='white')
+        levellabel = Label(self, textvariable=self.slider_var, font="Arial 7",
+            bg='black', fg='white', pady=0)
         levellabel.pack(side=TOP)
         self.scale.pack(side=BOTTOM, expand=1, fill=BOTH)
         bindkeys(self, "<Control-Key-l>", self.launch_subcomposer)

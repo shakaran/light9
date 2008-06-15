@@ -62,13 +62,24 @@ class Fadable:
             self.bind('<Control-5>', lambda evt: self.decrease(length=1))
 
         self.last_level = None # used for muting
+
+    def set_var_rounded(self, value):
+        """use this instead of just self.fade_var.set(value) so we can
+        control the precision"""
+        # this was just to make the display not look so weird, but it
+        # could actually affect the speed of really slow fades. If
+        # that's a problem, do a real trace_write hook for the
+        # variable's display instead of using Label(textvariable=var)
+        # and format it there.
+        self.fade_var.set(round(value, 7))
+        
     def fade(self, value, length=0.5, step_time=10):
         """Fade to value in length seconds with steps every step_time
         milliseconds"""
         if length == 0: # 0 seconds fades happen right away and prevents
                         # and prevents us from entering the fade loop,
                         # which would cause a divide by zero
-            self.fade_var.set(value)
+            self.set_var_rounded(value)
             self.fading = 0 # we stop all fades
         else: # the general case
             self.fade_start_time = time.time()
@@ -90,7 +101,7 @@ class Fadable:
         complete = min(1.0, complete)
         diff = self.fade_end_level - self.fade_start_level
         newlevel = (complete * diff) + self.fade_start_level
-        self.fade_var.set(newlevel)
+        self.set_var_rounded(newlevel)
         if complete < 1:
             self.after(self.fade_step_time, self.do_fade)
         else:
@@ -121,7 +132,7 @@ class Fadable:
         if self.use_fades:
             self.fade(newlevel, length=length)
         else:
-            self.fade_var.set(newlevel)
+            self.set_var_rounded(newlevel)
     def toggle_mute(self):
         """Toggles whether the volume is being muted."""
         if self.last_level is None:
@@ -136,7 +147,7 @@ class Fadable:
             newlevel = self.last_level
             self.last_level = None
 
-        self.fade_var.set(newlevel)
+        self.set_var_rounded(newlevel)
 
 if __name__ == "__main__":
     class SubScale(Scale, Fadable):
