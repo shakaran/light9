@@ -78,7 +78,9 @@ issues to note during the show:
 
  light flickers?
 
-better sound cables
+ better sound cables
+
+ keys
 
 
 next time:
@@ -103,7 +105,9 @@ next time:
 
   bug where empty sub doesn't save from SC
 
-  in KC, exclude house lights from being saved in any subs
+  in KC, exclude house lights from being saved in any subs. But
+  really, there should be another program for aux stuff like house
+  lights.
 
   bring 500W bulbs, wire strippers
 
@@ -117,27 +121,32 @@ next time:
   in the current row, numbered as hardware sliders. This would be put
   on the screen where it's always visible, when KC is hidden
 
-  subterms on nonexistent subs are getting lost, but i need those for chase and effects
+  subterms on nonexistent subs are getting lost, but i need those for
+  chase and effects
 
-  subcomposer should save its geometry
+OK  subcomposer should save its geometry
 
   how to reset the dmx channels on a dimmer pack: [dmx] [erase] [clear]
 
   make a program to test chases
 
-  curvecalc should always start up zoomed-out
+OK  curvecalc should always start up zoomed-out
 
-need curve delete button. show on each curve whether it's in use
-anywhere. let me hide a music curve if i'm low on space.
+  need curve delete button. show on each curve whether it's in use
+  anywhere. let me hide a music curve if i'm low on space.
 
-ascoltami should learn to adjust volumes
+  ascoltami should learn to adjust volumes
 
-unnamed subterm is serious. i think only the last one created gets
-saved, or something
+  unnamed subterm is serious. i think only the last one created gets
+  saved, or something
 
-KC smaller font on labels should allow bigger sliders
+  KC smaller font on labels should allow bigger sliders
 
-curvecalc_all_subterms needs redo
+  curvecalc_all_subterms needs redo
 
-touched dmx cable; ~/dmxcrash in dmesg; process went to 'D' status; rebooted
+  touched dmx cable; ~/dmxcrash in dmesg; process went to 'D' status; rebooted
 
+  a nice startup would be: take a cd, boot up our OS image, make a new
+  show from the cd tracks, UI for naming the channel numbers. 
+
+  bring gaffer's tape
