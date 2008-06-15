@@ -12,6 +12,7 @@ except ImportError:
 import run_local
 from light9.dmxchanedit import Levelbox
 from light9 import dmxclient, Patch, Submaster
+from light9.uihelpers import toplevelat
 
 class Subcomposer(tk.Frame):
     def __init__(self, master, levelboxopts=None, dmxdummy=0, numchannels=72,
@@ -150,8 +151,8 @@ if __name__ == "__main__":
 
     root=tk.Tk()
     root.config(bg='black')
-    root.wm_title("subcomposer")
     root.tk_setPalette("#004633")
+    toplevelat("subcomposer", root)
 
     sc = Subcomposer(root, dmxdummy=0,
                      #numchannels=276 # use this to see all the skyline dims
