@@ -147,12 +147,15 @@ def open_sub_editing_window(subname, use_mainloop=1, dmxdummy=0):
 
 if __name__ == "__main__":
     parser = OptionParser(usage="%prog [subname]")
+    parser.add_option('--no-geometry', action='store_true',
+                      help="don't save/restore window geometry")
     opts, args = parser.parse_args()
 
     root=tk.Tk()
     root.config(bg='black')
     root.tk_setPalette("#004633")
-    toplevelat("subcomposer", root)
+    if not opts.no_geometry:
+        toplevelat("subcomposer", root)
 
     sc = Subcomposer(root, dmxdummy=0,
                      #numchannels=276 # use this to see all the skyline dims
@@ -164,6 +167,7 @@ if __name__ == "__main__":
              font="Helvetica -12 italic",anchor='w').pack(side='top',fill='x')
 
     if len(args) == 1:
+        root.config(bg='green') # trying to make these look distinctive
         sc.loadsub(args[0])
         sc.fill_both_boxes(args[0])
 

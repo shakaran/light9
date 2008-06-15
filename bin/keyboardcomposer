@@ -64,7 +64,7 @@ class SubmasterTk(Frame):
         bindkeys(self, "<Control-Key-l>", self.launch_subcomposer)
 
     def launch_subcomposer(self, *args):
-        subprocess.Popen(["bin/subcomposer", self.name])
+        subprocess.Popen(["bin/subcomposer", "--no-geometry", self.name])
 
 class KeyboardComposer(Frame, SubClient):
     def __init__(self, root, submasters, current_sub_levels=None,
