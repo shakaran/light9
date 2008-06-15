@@ -183,6 +183,7 @@ class Curveview(tk.Canvas):
         self.bind("<Shift-Escape>", lambda ev:
                   dispatcher.send("see time until end",
                                   t=self.current_time()))
+        self.bind("<Control-Escape>", lambda ev: dispatcher.send("show all"))
         self.bind("<Control-p>", lambda ev:
                   dispatcher.send("music seek",
                                   t=self.world_from_screen(ev.x,0)[0]))

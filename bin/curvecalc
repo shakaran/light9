@@ -433,6 +433,7 @@ musicfilename = showconfig.songOnDisk(song)
 maxtime = wavelength(musicfilename)
 dispatcher.send("max time",maxtime=maxtime)
 dispatcher.connect(lambda: maxtime, "get max time",weak=0)
+dispatcher.send("show all")
 curveset.load(basename=os.path.join(showconfig.curvesDir(),
                                     showconfig.songFilenameFromURI(song)),
               skipMusic=opts.skip_music)
@@ -461,7 +462,7 @@ root.bind("<Control-Key-s>",savekey)
 root.bind("<Control-Key-r>", lambda evt: dispatcher.send('reload all subs'))
 
 create_status_lines(root)
-for helpline in ["Bindings: C-s save subterms;  Esc see current time; S-Esc see curtime to end; Mousewheel zoom; C-p play/pause music at mouse",
+for helpline in ["Bindings: C-s save subterms;  Esc see current time; S-Esc see curtime to end; C-Esc show all; Mousewheel zoom; C-p play/pause music at mouse",
                  "Curve point bindings: B1 drag point; C-B1 curve add point; S-B1 sketch points; Del selected points; 1..5 add point at time; B1 drag select points",
                  "Available in functions: nsin/ncos period=amp=1; within(a,b) bef(x) aft(x) compare to time; smoove(x) cubic smoothstep; chan(name); curvename(t) eval curve"]:
     tk.Label(root,text=helpline, font="Helvetica -12 italic",
