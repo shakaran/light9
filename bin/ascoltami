@@ -278,10 +278,10 @@ class GoButton:
         if state == 'stop':
             currentPath = self.player.song_uri
             try:
-                i = self.songURIs.index(currentPath) + 1
-            except ValueError:
-                i = 0
-            nextPath = self.songURIs[i]
+                nextPath = self.songURIs[self.songURIs.index(currentPath) + 1]
+            except (ValueError, IndexError):
+                nextPath = self.songURIs[0]
+                
             return ("next song %s" % shortSongPath(nextPath, self.songURIs),
                     lambda: self.player.play(nextPath))
 
