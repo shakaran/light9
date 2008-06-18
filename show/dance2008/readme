@@ -150,3 +150,7 @@ OK  KC smaller font on labels should allow bigger sliders
   show from the cd tracks, UI for naming the channel numbers. 
 
   bring gaffer's tape
+
+  asco gui should be a lot more clear about go button behavior and
+  next-song name
+
