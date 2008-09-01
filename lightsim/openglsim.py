@@ -7,14 +7,9 @@ import numarray as num
 import Tkinter as tk
 import Image
 from louie import dispatcher
-try:
-    from OpenGL import Tk as Togl
-    from OpenGL.GL import *
-except ImportError:
-    sys.path.append("/usr/lib/python2.4/site-packages/OpenGL/Tk/linux2-tk8.4")
-    from OpenGL.GL import *
-    import Togl
-  
+
+from PyQt4 import QtCore, QtOpenGL
+from OpenGL.GL import *
 
 def xxxdrawWithAlpha(imgString, w, h, alpha):
     # this one should be faster because GL does the alpha adjust, but
@@ -26,22 +21,21 @@ def xxxdrawWithAlpha(imgString, w, h, alpha):
     #glBlendColor(1, 1, 1, mag) # needs ARB_imaging
     glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, imgString)
 
-class Surface(Togl.Opengl):
+class Surface(QtOpenGL.QGLWidget):
     """widget that adds multiple image files together with adjustable scales"""
-    def __init__(self, master, filenames, width=512, height=270,
+    def __init__(self, parent, filenames, width=512, height=270,
                  imgRescaleTo=None):
         """
         imgRescaleTo can be a length of pixels to reduce all the input
         images into. Try 64 for a low res drawing.
         """
-        Togl.Opengl.__init__(self, master=master, width=width,
-                             height=height, double=True, depth=0)
-        self.width, self.height = width, height
+        QtOpenGL.QGLWidget.__init__(self, parent)
 
         self.levels = {} # filename : brightness
   
         self.image = {} # filename : imgstr
         for filename in filenames:
+            print "open", filename
             im = Image.open(filename)
             if imgRescaleTo:
                 im.thumbnail((imgRescaleTo, imgRescaleTo))
@@ -50,20 +44,22 @@ class Surface(Togl.Opengl):
             self.imageHeight = im.size[1]
             self.image[filename] = im.convert("RGBA").tostring()
   
-        self.set_centerpoint(0, 0, 0)
-  
+        #self.set_centerpoint(0, 0, 0)
+
+    def initializeGL(self): 
         glDisable(GL_CULL_FACE)
         glShadeModel(GL_FLAT)
         print 'GL_ARB_imaging', 'GL_ARB_imaging' in glGetString(GL_EXTENSIONS)
         import OpenGL
         print OpenGL.__version__
+       
+#    def minimumSizeHint(self):
+#        return QtCore.QSize(512, 512)
 
-        self.bind("<Configure>", self.configure)
+#    def sizeHint(self):
+#        return QtCore.QSize(512, 512)
 
-    def configure(self, ev):
-        self.width, self.height = ev.width, ev.height
-  
-    def redraw(self, event=None):
+    def paintGL(self):
         """you set self.levels to dict and call tkRedraw"""
         assert 'GL_ARB_imaging' in glGetString(GL_EXTENSIONS).split()
         start = time.time()
@@ -80,7 +76,6 @@ class Surface(Togl.Opengl):
         # drawing to glAccum might be good
         layerTimes = []
         for filename, mag in self.levels.items():
-            #print "pic %s at %f" % (filename, mag)
             t = time.time()
             self.drawWithAlpha(self.image[filename],
                                self.imageWidth, self.imageHeight, mag)
@@ -109,8 +104,8 @@ class Surface(Togl.Opengl):
         # this right now.
         #glBlendFunc(GL_CONSTANT_COLOR, GL_ONE)
         #glBlendColor(.8, .5, .5, .5)
-        
-        glPixelZoom(self.width / w, self.height / h)
+
+        glPixelZoom(self.width() / w, self.height() / h)
         glDrawPixels(w, h,
                      GL_RGBA, GL_UNSIGNED_BYTE, ar.tostring())
         #print "  draw", time.time() - t
@@ -118,8 +113,23 @@ class Surface(Togl.Opengl):
     def newLevels(self, event=None, levels=None):
         if levels != self.levels:
             self.levels = levels
-            self.tkRedraw()
-  
+            self.updateGL()
+
+
+##     def mousePressEvent(self, event):
+##         self.lastPos = QtCore.QPoint(event.pos())
+
+##     def mouseMoveEvent(self, event):
+##         dx = event.x() - self.lastPos.x()
+##         dy = event.y() - self.lastPos.y()
+##         rot = (.25*dy, .25*dx, 0)
+##         if event.buttons() & QtCore.Qt.LeftButton:
+##             self.emit(QtCore.SIGNAL("rotationChanged"), rot)
+##         elif event.buttons() & QtCore.Qt.MidButton:
+##             self.emit(QtCore.SIGNAL("camDistChanged"), .01*dy)            
+
+##         self.lastPos = QtCore.QPoint(event.pos())
+
 def main():
     root = tk.Frame()
     root.pack(expand=True, fill='both')
