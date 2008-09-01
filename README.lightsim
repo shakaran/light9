@@ -1,0 +1,39 @@
+How to see the original lightsim:
+
+    cd lightsim
+    python lightsim.py
+
+    Play with sliders.
+
+
+How to see the new lightsim:
+
+    Start 3 shells, and in each one set this:
+      export LIGHT9_SHOW=/path/to/light9/show/dance2008
+
+    You may need a 'chmod 755 bin/*' if this is a new darcs checkout.
+    
+    Shell 1:
+      bin/dmxserver --dummy
+
+    Shell 2:
+      bin/keyboardcomposer --no-sliders
+
+    Shell 3:
+      bin/lightsim
+      (it spews tons of Qt stderr, unfortunately)
+
+    In the keyboardcomposer GUI, bring up any combination of these subs:
+      house
+      midleft
+      midright
+      red
+      orange
+      green
+
+    As you adjust subs, lightsim should rerender its combination of
+    channel photos. I didn't have any properly-photographed lights, so
+    all you get are some lousy hand-painted lights on a single photo.
+
+
+    

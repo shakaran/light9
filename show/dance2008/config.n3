@@ -73,6 +73,14 @@ chase:rb a :Chase; :channels ( ch:b12 ch:b36 ch:b14 ch:b34 ch:b16
 ch:b32 ch:b22 ch:b26 ) .
 
 
+ch:b26 :previewLayer [ :path "lightsim/skyline/front-left.png" ] .
+ch:front11 :previewLayer [ :path "lightsim/skyline/front-right.png" ] . 
+ch:house1 :previewLayer [ :path "lightsim/skyline/bg.png" ] . 
+ch:gree1 :previewLayer [ :path "lightsim/skyline/cyc-lo-grn.png" ] . 
+ch:oran1 :previewLayer [ :path "lightsim/skyline/cyc-lo-or.png" ] . 
+ch:red1 :previewLayer [ :path "lightsim/skyline/cyc-lo-red.png" ] . 
+ch:blue1 :previewLayer [ :path "lightsim/skyline/cyc-lo-blu.png" ]; rdfs:comment "(image is blank)". 
+
 
 
 dmx:c1 :dmxAddress 1 .
