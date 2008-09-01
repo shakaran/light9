@@ -1,8 +1,8 @@
 # lightsim.py by Drew Perttula, 6/28/2002
+from __future__ import division
 
 version="1.01"
 
-from __future__ import division
 import Image, ImageTk, ImageChops,ImageEnhance
 from Tkinter import Tk,Label,Scale,DoubleVar,Frame
 import time, glob
