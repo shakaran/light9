@@ -8,7 +8,8 @@ import Tkinter as tk
 import Image
 from louie import dispatcher
 
-from PyQt4 import QtCore, QtOpenGL
+from PyQt4.QtCore import QSize
+from PyQt4.QtOpenGL import QGLWidget
 from OpenGL.GL import *
 
 def xxxdrawWithAlpha(imgString, w, h, alpha):
@@ -21,15 +22,14 @@ def xxxdrawWithAlpha(imgString, w, h, alpha):
     #glBlendColor(1, 1, 1, mag) # needs ARB_imaging
     glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, imgString)
 
-class Surface(QtOpenGL.QGLWidget):
+class Surface(QGLWidget):
     """widget that adds multiple image files together with adjustable scales"""
-    def __init__(self, parent, filenames, width=512, height=270,
-                 imgRescaleTo=None):
+    def __init__(self, parent, filenames, imgRescaleTo=None):
         """
         imgRescaleTo can be a length of pixels to reduce all the input
         images into. Try 64 for a low res drawing.
         """
-        QtOpenGL.QGLWidget.__init__(self, parent)
+        QGLWidget.__init__(self, parent)
 
         self.levels = {} # filename : brightness
   
@@ -37,6 +37,7 @@ class Surface(QtOpenGL.QGLWidget):
         for filename in filenames:
             print "open", filename
             im = Image.open(filename)
+            self.origImageSize = im.size[0], im.size[1]
             if imgRescaleTo:
                 im.thumbnail((imgRescaleTo, imgRescaleTo))
             im = im.transpose(Image.FLIP_TOP_BOTTOM)
@@ -44,8 +45,6 @@ class Surface(QtOpenGL.QGLWidget):
             self.imageHeight = im.size[1]
             self.image[filename] = im.convert("RGBA").tostring()
   
-        #self.set_centerpoint(0, 0, 0)
-
     def initializeGL(self): 
         glDisable(GL_CULL_FACE)
         glShadeModel(GL_FLAT)
@@ -53,11 +52,8 @@ class Surface(QtOpenGL.QGLWidget):
         import OpenGL
         print OpenGL.__version__
        
-#    def minimumSizeHint(self):
-#        return QtCore.QSize(512, 512)
-
-#    def sizeHint(self):
-#        return QtCore.QSize(512, 512)
+    def sizeHint(self):
+        return QSize(*self.origImageSize)
 
     def paintGL(self):
         """you set self.levels to dict and call tkRedraw"""
@@ -75,20 +71,23 @@ class Surface(QtOpenGL.QGLWidget):
 
         # drawing to glAccum might be good
         layerTimes = []
+        layers = 0
         for filename, mag in self.levels.items():
             t = time.time()
-            self.drawWithAlpha(self.image[filename],
-                               self.imageWidth, self.imageHeight, mag)
+            layers += self.drawWithAlpha(self.image[filename],
+                                         self.imageWidth, self.imageHeight, mag)
             layerTimes.append(time.time() - t)
+
+        dispatcher.send("status", key="visibleLayers", value=str(layers))
 
         dispatcher.send("status", key="redraw",
                         value="%.1fms" % ((time.time() - start) * 1000))
         
 
     def drawWithAlpha(self, imgString, w, h, alpha):
-        """without opengl extensions"""
+        """without opengl extensions. Returns number of layers drawn"""
         if alpha == 0:
-            return
+            return 0
         t = time.time()
         ar = num.reshape(num.fromstring(imgString, dtype='uint8'),
                          (w * h, 4))
@@ -109,6 +108,7 @@ class Surface(QtOpenGL.QGLWidget):
         glDrawPixels(w, h,
                      GL_RGBA, GL_UNSIGNED_BYTE, ar.tostring())
         #print "  draw", time.time() - t
+        return 1
 
     def newLevels(self, event=None, levels=None):
         if levels != self.levels:
