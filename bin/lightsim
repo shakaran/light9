@@ -39,6 +39,7 @@ def poll(graph, serv, pollFreq, oglSurface):
         if dmxLevels == _lastLevels:
             return
         _lastLevels = dmxLevels
+
         level = {} # filename : level
         for i, lev in enumerate(dmxLevels):
             if lev == 0:

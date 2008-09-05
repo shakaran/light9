@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>light9 in 2008</title>
+<!-- metadata -->
+<meta name="generator" content="S5" />
+<meta name="version" content="S5 1.1" />
+<meta name="presdate" content="20050728" />
+<meta name="author" content="Eric A. Meyer" />
+<meta name="company" content="Complex Spiral Consulting" />
+<!-- configuration parameters -->
+<meta name="defaultView" content="slideshow" />
+<meta name="controlVis" content="hidden" />
+<!-- style sheet links -->
+<link rel="stylesheet" href="ui/default/slides.css" type="text/css" media="projection" id="slideProj" />
+<link rel="stylesheet" href="ui/default/outline.css" type="text/css" media="screen" id="outlineStyle" />
+<link rel="stylesheet" href="ui/default/print.css" type="text/css" media="print" id="slidePrint" />
+<link rel="stylesheet" href="ui/default/opera.css" type="text/css" media="projection" id="operaFix" />
+<!-- S5 JS -->
+<script src="ui/default/slides.js" type="text/javascript"></script>
+<style type="text/css">
+pre {
+ white-space: pre;
+}
+</style>
+</head>
+<body>
+
+<div class="layout">
+<div id="controls"><!-- DO NOT EDIT --></div>
+<div id="currentSlide"><!-- DO NOT EDIT --></div>
+<div id="header"></div>
+<div id="footer">
+<h1></h1>
+<h2>light9 in 2008</h2>
+</div>
+
+</div>
+
+
+<div class="presentation">
+
+<div class="slide">
+<h1>light9 in 2008</h1>
+<h2></h2>
+<h3>Drew Perttula</h3>
+<h4>http://bigasterisk.com/</h4>
+</div>
+
+
+<div class="slide">
+  <h1>Existing system</h1>
+From my June 2005 presentation:
+
+<pre>
+               (play cmds)
+    ascoltami --------------> mpd ----------> audio out
+        | (timing)
+        v
+    curvecalc    subcomposer    keyboardcomposer
+        |            |                 |
+        +---         |             ----+
+            \-----   |    --------/
+                  \--+---/
+                     | (light levels)
+                     v
+                 dmxserver
+                    | (dmx levels)
+          ......... v ....................
+          .      entec open dmx          .
+          .         | (dmx)              . external hardware
+          .         v                    .
+          .      dmx dimmer              .
+          .         | (juice)            .
+          .         v                    .
+          .      light                   .
+          ................................
+</pre>
+
+</div>
+
+<div class="slide">
+  <h1>External libraries</h1>
+  <ul>
+    <li>Twisted - event loop and networking, xmlrpc</li>
+    <li>tk, tix</li>
+    <li>pympd - my twisted interface to mpd</li>
+    <li>louie - signals</li>
+    <li>mpd - music player daemon</li>
+    <li>rdflib</li>
+    <li>darcs</li>
+  </ul>
+</div>
+
+<div class="slide">
+  <h1>What's new: real sliders</h1>
+  <img src="bcf2000-desk1.jpg"/>
+  <ul>
+    <li>$200 board with 8 motorized faders (plus knobs, lights, and buttons)</li>
+    <li>Talks midi or usb-midi</li>
+    <li>Python/linux driver is easy: </li>
+    <pre>self.dev = open("/dev/snd/midiC1D0")
+ b0, which, value = [ord(b) for b in self.dev.read(3)]
+ self.dev.write(chr(0xb0) + chr(which[0]) + chr(int(value)))</pre>
+  </ul>
+</div>
+
+<div class="slide">
+  <h1>What's new: RDF for most data storage</h1>
+<ul>
+  <li>Old system: ad-hoc text files. Never do this.</li>
+  <li>Now: most files are RDF data (saved as .n3 or ntriples)</li>
+
+  complex data structures (objects with types and attributes, attrs, lists, sets, references between files)
+  use DSLs to abbreviate boring parts
+  
+</div>
+
+
+<div class="slide">
+  <h1>What's new: lightsim</h1>
+  <ul>
+    <li>We could really use a good way to preview scenes</li>
+    <li>Lighting follows the superposition principle</li>
+    <li>Original version from 2002: Tk, PIL</li>
+    <li>Current version: qt, OpenGL</li>
+  </ul>
+</div>
+
+<div class="slide">
+<h1>Related projects</h1>
+<li>vistrails</li>
+<li>kamaelia</li>
+</div>
+
+
+
+
+http://www.opendmx.net/index.php/Open_DMX_USB
+
+
+
+
+
+</div>
+
+</body>
+</html>
