@@ -25,6 +25,13 @@
 pre {
  white-space: pre;
 }
+pre.file {
+  border: 1px solid #aaa;
+  border-bottom: 0;
+  font-size: 80%;
+  background: #eef;
+  padding: .3em;
+}
 </style>
 </head>
 <body>
@@ -55,9 +62,10 @@ pre {
   <h1>Existing system</h1>
 From my June 2005 presentation:
 
-<pre>
-               (play cmds)
-    ascoltami --------------> mpd ----------> audio out
+<pre style="font-size: 60%">
+
+              (play cmds)
+    ascoltami -----------> mpd ------> audio out
         | (timing)
         v
     curvecalc    subcomposer    keyboardcomposer
@@ -71,8 +79,8 @@ From my June 2005 presentation:
                     | (dmx levels)
           ......... v ....................
           .      entec open dmx          .
-          .         | (dmx)              . external hardware
-          .         v                    .
+external  .         | (dmx)              .
+hardware  .         v                    .
           .      dmx dimmer              .
           .         | (juice)            .
           .         v                    .
@@ -97,53 +105,210 @@ From my June 2005 presentation:
 
 <div class="slide">
   <h1>What's new: real sliders</h1>
-  <img src="bcf2000-desk1.jpg"/>
+  <img src="bcf2000-desk1.jpg" style="float:right; border: 2px solid #005;" width="40%"/>
   <ul>
     <li>$200 board with 8 motorized faders (plus knobs, lights, and buttons)</li>
-    <li>Talks midi or usb-midi</li>
-    <li>Python/linux driver is easy: </li>
-    <pre>self.dev = open("/dev/snd/midiC1D0")
- b0, which, value = [ord(b) for b in self.dev.read(3)]
- self.dev.write(chr(0xb0) + chr(which[0]) + chr(int(value)))</pre>
+    <li>Talks midi over usb</li>
+    <li>Python/linux driver is easy:
+    <pre>
+self.dev = open("/dev/snd/midiC1D0")
+b0, which, value = [ord(b) for b in 
+                    self.dev.read(3)]
+self.dev.write(chr(0xb0) + 
+               chr(which[0]) + 
+               chr(int(value)))</pre></li>
   </ul>
 </div>
 
 <div class="slide">
-  <h1>What's new: RDF for most data storage</h1>
-<ul>
-  <li>Old system: ad-hoc text files. Never do this.</li>
-  <li>Now: most files are RDF data (saved as .n3 or ntriples)</li>
+  <h1>What's new: RDF for data storage</h1>
+  <ul>
+    <li>Old system: ad-hoc text files.</li>
+    <li>Never do this again.</li>
+  </ul>
+</div>
 
-  complex data structures (objects with types and attributes, attrs, lists, sets, references between files)
-  use DSLs to abbreviate boring parts
-  
+<div class="slide">
+  <h1>Old file formats</h1>
+<pre class="file">
+[music]
+preSong = silence-4sec.wav
+postSong = silence-15sec.wav
+</pre>
+
+<pre class="file">
+down-l : 0.32005
+down-r : 0.3071
+down-sides : 0.37
+lo-c-cross : 0.24
+</pre>
+
+<pre class="file">
+scoop-r right(t)
+lo-fill can(t)
+ch1 chase(t,names=back_colors, ontime=.6, offset=0) * ch1(t)
+</pre>
+
+<pre class="file">
+patch = {
+    ('fill-xl','b31',) : 61,
+    ('broke',  'back8','b32',) : 62,
+    ('blue-xl','b33broke',) : 63,
+</pre>
+</div>
+
+<div class="slide">
+  <h1>Storage goals</h1>
+  <ul>
+    <li>Stop inventing and extending syntaxes</li>
+    <li>Stop reloading the files all the time. Get incremental 
+    updates or query data as it's needed.</li>
+    <li>Fancier data structures</li>
+    <li>Arbitrary layout of files on disk</li>
+    <li>Keep using my most flexible editor (emacs)</li>
+  </ul>
+</div>
+
+<div class="slide">
+  <h1>New system: RDF</h1>
+  <ul>
+    <li>Most files are RDF data (saved as .n3 or ntriples)</li>
+    <li>Syntax(es) are already done, and all values are unambiguously labeled</li>
+    <li>Complex data types and relationships are almost as easy as basic ones</li>
+    <li>Extensible and upgradable, of course</li>
+    <li>Used DSLs and logic programming to abbreviate boring parts</li>
+  </ul>
+</div>
+
+<div class="slide">
+  <h1>New data, shown as n3</h1>
+<pre class="file" style="font-size: 80%">
+@prefix : &lt;http://light9.bigasterisk.com/&gt; .
+@prefix sub: &lt;http://light9.bigasterisk.com/sub/&gt; .
+@prefix t: &lt;http://light9.bigasterisk.com/show/dance2008/&#x2936;
+           song10/subterm/&gt; .
+
+&lt;http://light9.bigasterisk.com/show/dance2008/song10&gt;
+     :subterm   t:blacklight,
+                t:song10,
+                t:song3black .
+t:song10 a :Subterm;
+         :expression "song10(t)";
+         :sub sub:song10 .
+t:blacklight a :Subterm;
+             :expression "blacklight(t)&gt;0";
+             :sub sub:blacklight .
+       </pre>
 </div>
 
 
 <div class="slide">
-  <h1>What's new: lightsim</h1>
+  <h1>The same data, in xml</h1>
+  <pre style="font-size: 45%; line-height: 1.3em;">
+&lt;rdf:RDF xmlns="http://light9.bigasterisk.com/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"&gt;
+
+    &lt;rdf:Description rdf:about="http://light9.bigasterisk.com/show/dance2008/song10"&gt;
+        &lt;subterm rdf:resource="http://light9.bigasterisk.com/show/dance2008/song10/subterm/blacklight"/&gt;
+        &lt;subterm rdf:resource="http://light9.bigasterisk.com/show/dance2008/song10/subterm/song10"/&gt;
+        &lt;subterm rdf:resource="http://light9.bigasterisk.com/show/dance2008/song10/subterm/song3black"/&gt;
+    &lt;/rdf:Description&gt;
+
+    &lt;Subterm rdf:about="http://light9.bigasterisk.com/show/dance2008/song10/subterm/blacklight"&gt;
+        &lt;expression&gt;blacklight(t)&amp;gt;0&lt;/expression&gt;
+        &lt;sub rdf:resource="http://light9.bigasterisk.com/sub/blacklight"/&gt;
+    &lt;/Subterm&gt;
+
+    &lt;Subterm rdf:about="http://light9.bigasterisk.com/show/dance2008/song10/subterm/song10"&gt;
+        &lt;expression&gt;song10(t)&lt;/expression&gt;
+        &lt;sub rdf:resource="http://light9.bigasterisk.com/sub/song10"/&gt;
+    &lt;/Subterm&gt;
+&lt;/rdf:RDF&gt;
+</pre>
+</div>
+
+<div class="slide">
+  <h1>A simple line-based format</h1>
+  <pre style="font-size: 45%;">
+&lt;http://light9.bigasterisk.com/show/dance2008/song10&gt; &lt;http://light9.bigasterisk.com/subterm&gt;&#x2936;
+  &lt;http://light9.bigasterisk.com/show/dance2008/song10/subterm/blacklight&gt; .
+
+&lt;http://light9.bigasterisk.com/show/dance2008/song10&gt; &lt;http://light9.bigasterisk.com/subterm&gt;&#x2936;
+  &lt;http://light9.bigasterisk.com/show/dance2008/song10/subterm/song10&gt; .
+
+&lt;http://light9.bigasterisk.com/show/dance2008/song10&gt; &lt;http://light9.bigasterisk.com/subterm&gt;&#x2936;
+  &lt;http://light9.bigasterisk.com/show/dance2008/song10/subterm/song3black&gt; .
+
+&lt;http://light9.bigasterisk.com/show/dance2008/song10/subterm/blacklight&gt;&#x2936;
+  &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://light9.bigasterisk.com/Subterm&gt; .
+
+&lt;http://light9.bigasterisk.com/show/dance2008/song10/subterm/blacklight&gt;&#x2936;
+  &lt;http://light9.bigasterisk.com/expression&gt; "blacklight(t)>0" .
+
+&lt;http://light9.bigasterisk.com/show/dance2008/song10/subterm/blacklight&gt;&#x2936;
+  &lt;http://light9.bigasterisk.com/sub&gt; &lt;http://light9.bigasterisk.com/sub/blacklight&gt; .
+
+&lt;http://light9.bigasterisk.com/show/dance2008/song10/subterm/song10&gt;&#x2936;
+  &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://light9.bigasterisk.com/Subterm&gt; .
+
+&lt;http://light9.bigasterisk.com/show/dance2008/song10/subterm/song10&gt;&#x2936;
+  &lt;http://light9.bigasterisk.com/expression&gt; "song10(t)" .
+
+&lt;http://light9.bigasterisk.com/show/dance2008/song10/subterm/song10&gt;&#x2936;
+  &lt;http://light9.bigasterisk.com/sub&gt; &lt;http://light9.bigasterisk.com/sub/song10&gt; .
+</pre>
+
+</div>
+
+<div class="slide">
+  <h1>Again, with less wrapping</h1>
+  <pre style="font-size: 40%;">
+&lt;http://l9.com/show/dance2008/song10&gt; &lt;http://l9.com/subterm&gt; &lt;http://l9.com/show/dance2008/song10/subterm/blacklight&gt; .
+&lt;http://l9.com/show/dance2008/song10&gt; &lt;http://l9.com/subterm&gt; &lt;http://l9.com/show/dance2008/song10/subterm/song10&gt; .
+&lt;http://l9.com/show/dance2008/song10&gt; &lt;http://l9.com/subterm&gt; &lt;http://l9.com/show/dance2008/song10/subterm/song3black&gt; .
+&lt;http://l9.com/show/dance2008/song10/subterm/blacklight&gt; &lt;http://l9.com/expression&gt; "blacklight(t)>0" .
+&lt;http://l9.com/show/dance2008/song10/subterm/blacklight&gt; &lt;http://l9.com/sub&gt; &lt;http://l9.com/sub/blacklight&gt; .
+&lt;http://l9.com/show/dance2008/song10/subterm/blacklight&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://l9.com/Subterm&gt; .
+&lt;http://l9.com/show/dance2008/song10/subterm/song10&gt; &lt;http://l9.com/expression&gt; "song10(t)" .
+&lt;http://l9.com/show/dance2008/song10/subterm/song10&gt; &lt;http://l9.com/sub&gt; &lt;http://l9.com/sub/song10&gt; .
+&lt;http://l9.com/show/dance2008/song10/subterm/song10&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://l9.com/Subterm&gt; .
+</pre>
+</div>
+
+<div class="slide">
+  <h1>Again, rendered with graphviz</h1>
+  <img src="rdfgraph.png" />
+</div>
+
+<div class="slide">
+  <h1>What's next: lightsim</h1>
   <ul>
     <li>We could really use a good way to preview scenes</li>
-    <li>Lighting follows the superposition principle</li>
+    <li>Hard to use text labels for all the different lighting scenes</li>
+    <li>Can't work on lighting cues without looking at the stage</li>
+  </ul>
+</div>
+<div class="slide">
+  <h1>lightsim enablers</h1>
+  <ul>
+    <li>Light obeys superposition: <br/>F(ax+by) = aF(x) + bF(y)</li>
+    <li>All my lights are computer-controlled</li>
+  </ul>
+</div>
+<div class="slide">
+  <h1>lightsim demos</h1>
+  <ul>
     <li>Original version from 2002: Tk, PIL</li>
     <li>Current version: qt, OpenGL</li>
   </ul>
 </div>
 
 <div class="slide">
-<h1>Related projects</h1>
-<li>vistrails</li>
-<li>kamaelia</li>
+  <h1>More</h1>
+  <li>Links related to this project:<br/>
+http://delicious.com/drewpca/light9</li>
+<!--<script type="text/javascript" src="http://feeds.delicious.com/v2/js/drewpca/light9?title=Related%20Delicious%20Bookmarks&icon=s&count=5&bullet=%E2%80%A2&sort=date"></script>-->
 </div>
-
-
-
-
-http://www.opendmx.net/index.php/Open_DMX_USB
-
-
-
-
 
 </div>
 
