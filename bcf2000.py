@@ -103,7 +103,7 @@ class BCF2000(object):
         self.lastValue[name] = value
         which = [k for k,v in self.control.items() if v == name]
         assert len(which) == 1, "unknown control name %r" % name
-        if isinstance(value, bool):
+        if name.startswith('button-'):
             value = value * 127
         #print "bcf: write %s %s" % (name, value)
         self.dev.write(chr(0xb0) + chr(which[0]) + chr(int(value)))
