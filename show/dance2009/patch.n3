@@ -1,14 +1,18 @@
-#Processed by Id: cwm.py,v 1.197 2007-12-13 15:38:39 syosi Exp 
-        #    using base file:///my/proj/light9/show/dance2009/patch-source.n3
+#Processed by Id: cwm.py,v 1.197 2007/12/13 15:38:39 syosi Exp 
+        #    using base file:///home/drewp/projects/light9/show/dance2009/patch-source.n3
         
 #  Notation3 generation by
-#       notation3.py,v 1.200 2007-12-11 21:18:08 syosi Exp
+#       notation3.py,v 1.200 2007/12/11 21:18:08 syosi Exp
 
-#   Base was: file:///my/proj/light9/show/dance2009/patch-source.n3
+#   Base was: file:///home/drewp/projects/light9/show/dance2009/patch-source.n3
      @prefix : <http://light9.bigasterisk.com/> .
     @prefix ch: <http://light9.bigasterisk.com/theater/piedmont/channel/> .
     @prefix dmx: <http://light9.bigasterisk.com/dmx/> .
     @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    
+    ch:b     a :Channel;
+         :output dmx:c14;
+         rdfs:label "b" .
     
     ch:b11     a :Channel;
          :output dmx:c54;
@@ -82,10 +86,6 @@
          :output dmx:c66;
          rdfs:label "b36" .
     
-    ch:blacklight     a :Channel;
-         :output dmx:c14;
-         rdfs:label "blacklight" .
-    
     ch:blue1     a :Channel;
          :output dmx:c23;
          rdfs:label "blue1" .
@@ -134,10 +134,6 @@
          :output dmx:c20;
          rdfs:label "fr20" .
     
-    ch:front1     a :Channel;
-         :output dmx:c1;
-         rdfs:label "front1" .
-    
     ch:front10     a :Channel;
          :output dmx:c10;
          rdfs:label "front10" .
@@ -149,6 +145,10 @@
     ch:front12     a :Channel;
          :output dmx:c12;
          rdfs:label "front12" .
+    
+    ch:front1x     a :Channel;
+         :output dmx:c1;
+         rdfs:label "front1x" .
     
     ch:front2     a :Channel;
          :output dmx:c2;
@@ -254,6 +254,10 @@
          :output dmx:c36;
          rdfs:label "red4" .
     
+    ch:s     a :Channel;
+         :output dmx:c15;
+         rdfs:label "s" .
+    
     ch:s40     a :Channel;
          :output dmx:c40;
          rdfs:label "s40" .
@@ -266,8 +270,12 @@
          :output dmx:c41;
          rdfs:label "sign" .
     
-    ch:strobe     a :Channel;
-         :output dmx:c15;
-         rdfs:label "strobe" .
+    ch:upcenter     a :Channel;
+         :output dmx:c38;
+         rdfs:label "upcenter" .
+    
+    ch:upright     a :Channel;
+         :output dmx:c37;
+         rdfs:label "upright" .
     
 #ENDS

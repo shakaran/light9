@@ -25,23 +25,23 @@ show:dance2009 :playList (
    sh:song11, sh:song12, sh:song13, sh:song14, sh:song15, sh:song16,
    sh:song17 .
 
-sh:song1 rdfs:label "1 ";		:showPath "dance2009/01-out.ogg" .
-sh:song2 rdfs:label "2 newyork";	:showPath "dance2009/02-newyorkmix.ogg" .
-sh:song3 rdfs:label "3 hawaii";		:showPath "dance2009/03-hawaii0.ogg" .
-sh:song4 rdfs:label "4 cheek";		:showPath "dance2009/04-cheekout.ogg" .
-sh:song5 rdfs:label "5 paris";		:showPath "dance2009/05-parisout.ogg" .
-sh:song6 rdfs:label "6 africa";		:showPath "dance2009/06-africaout.ogg" .
-sh:song7 rdfs:label "7 latin";		:showPath "dance2009/07-latinout.ogg" .
-sh:song8 rdfs:label "8 bandstand";	:showPath "dance2009/08-bandstandout.ogg" .
-sh:song9 rdfs:label "9 asian";		:showPath "dance2009/09-asianout.ogg" .
-sh:song10 rdfs:label "10 jitterbug";	:showPath "dance2009/10-jitterbugout.ogg" .
-sh:song11 rdfs:label "11 tequila";	:showPath "dance2009/11-tequila.ogg" .
-sh:song12 rdfs:label "12 walkin";	:showPath "dance2009/12-walkin.ogg" .
-sh:song13 rdfs:label "13 istanbul";	:showPath "dance2009/13-istanbul.ogg" .
-sh:song14 rdfs:label "14 folk";		:showPath "dance2009/14-folkout.ogg" .
-sh:song15 rdfs:label "15 western";	:showPath "dance2009/15-westernout.ogg" .
-sh:song16 rdfs:label "16 hiphop";	:showPath "dance2009/16-hiphopout.ogg" .
-sh:song17 rdfs:label "17 worldbeat";	:showPath "dance2009/17-worldbeat.ogg" .
+sh:song1 rdfs:label "1 opening";		:showPath "dance2009/01-out.ogg" .
+sh:song2 rdfs:label "2 newyork tap";		:showPath "dance2009/02-newyorkmix.ogg" .
+sh:song3 rdfs:label "3 hawaii";			:showPath "dance2009/03-hawaii0.ogg" .
+sh:song4 rdfs:label "4 cheek";			:showPath "dance2009/04-cheekout.ogg" .
+sh:song5 rdfs:label "5 paris";			:showPath "dance2009/05-parisout.ogg" .
+sh:song6 rdfs:label "6 africa";			:showPath "dance2009/06-africaout.ogg" .
+sh:song7 rdfs:label "7 latin tango";		:showPath "dance2009/07-latinout.ogg" .
+sh:song8 rdfs:label "8 bandstand";		:showPath "dance2009/08-bandstandout.ogg" .
+sh:song9 rdfs:label "9 asian";			:showPath "dance2009/09-asianout.ogg" .
+sh:song10 rdfs:label "10 jitterbug";		:showPath "dance2009/10-jitterbugout.ogg" .
+sh:song11 rdfs:label "11 tequila";		:showPath "dance2009/11-tequila.ogg" .
+sh:song12 rdfs:label "12 walkin tap";		:showPath "dance2009/12-walkin.ogg" .
+sh:song13 rdfs:label "13 istanbul";		:showPath "dance2009/13-istanbul.ogg" .
+sh:song14 rdfs:label "14 folk";			:showPath "dance2009/14-folkout.ogg" .
+sh:song15 rdfs:label "15 western";		:showPath "dance2009/15-westernout.ogg" .
+sh:song16 rdfs:label "16 american hiphop";	:showPath "dance2009/16-hiphopout.ogg" .
+sh:song17 rdfs:label "17 jae ho";		:showPath "dance2009/17-jaeho.ogg" .
 
 sub:red :group group:strip; :order 0 .
 sub:orange :group group:strip; :order 1 .
