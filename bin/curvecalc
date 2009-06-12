@@ -20,7 +20,7 @@ except ImportError:
 from twisted.internet import reactor,tksupport
 import twisted
 from twisted.web.xmlrpc import Proxy
-from rdflib import Literal, URIRef, RDF
+from rdflib import Literal, URIRef, RDF, RDFS
 from rdflib.Graph import Graph
 import rdflib
 import logging
@@ -328,7 +328,10 @@ def sub_commands_tk(master, curveset, subterms, root, ssv, graph):
     newname = tk.StringVar()
 
     def add_cmd(evt):
-        add_one_subterm(graph, L9['sub/%s' % newname.get()],
+        uri = L9['sub/%s' % newname.get()]
+        graph.add((uri, RDF.type, L9.Subterm))
+        graph.add((uri, RDFS.label, Literal(newname.get())))
+        add_one_subterm(graph, uri,
                         curveset, subterms, root, ssv, None)
         if evt.state & 4: # control key modifier
             curveset.new_curve(newname.get())
@@ -361,6 +364,7 @@ def createSubtermGraph(song, subterms):
         uri = URIRef(song + "/subterm/" + subterm.submaster.name)
         graph.add((song, L9['subterm'], uri))
         graph.add((uri, RDF.type, L9['Subterm']))
+        graph.add((uri, RDFS.label, Literal(subterm.submaster.name)))
         graph.add((uri, L9['sub'], L9['sub/%s' % subterm.submaster.name]))
         graph.add((uri, L9['expression'], Literal(subterm.subexpr.expr)))
     return graph
