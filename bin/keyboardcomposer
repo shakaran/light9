@@ -201,11 +201,11 @@ class KeyboardComposer(Frame, SubClient):
         for col in range(1, 9):
             try:
                 subtk = self.slider_table[(self.current_row, col - 1)]
-                self.sliders.valueOut("button-upper%d" % col, 127)
+                self.sliders.valueOut("button-upper%d" % col, True)
             except KeyError:
                 # unfilled bottom row has holes (plus rows with incomplete
                 # groups
-                self.sliders.valueOut("button-upper%d" % col, 0)
+                self.sliders.valueOut("button-upper%d" % col, False)
                 self.sliders.valueOut("slider%d" % col, 0)
                 continue
             self.send_to_hw(subtk.name, col)
