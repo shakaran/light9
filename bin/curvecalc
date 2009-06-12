@@ -342,10 +342,15 @@ def sub_commands_tk(master, curveset, subterms, root, ssv, graph):
 
     tk.Button(f, text="reload subs (C-r)", 
         command=reload_subs).pack(side='left')
-    tk.Label(f, text="new subterm named (C-Enter for curve too):").pack(side='left')
+    tk.Label(f, text="new subterm named (C-Enter for curve too, C-n for focus):").pack(side='left')
     entry = tk.Entry(f, textvariable=newname)
     entry.pack(side='left', fill='x', exp=1)
     entry.bind("<Key-Return>", add_cmd)
+
+    def focus_entry():
+        entry.focus()
+        
+    dispatcher.connect(focus_entry, "focus new subterm", weak=False)
 
     return f
 
@@ -464,6 +469,8 @@ def savekey(*args):
     
 root.bind("<Control-Key-s>",savekey)
 root.bind("<Control-Key-r>", lambda evt: dispatcher.send('reload all subs'))
+root.bind("<Control-Key-n>", lambda evt: dispatcher.send('focus new subterm'))
+root.bind("<Control-Key-N>", lambda evt: dispatcher.send('focus new curve'))
 
 create_status_lines(root)
 for helpline in ["Bindings: C-s save subterms;  Esc see current time; S-Esc see curtime to end; C-Esc show all; Mousewheel zoom; C-p play/pause music at mouse",

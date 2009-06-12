@@ -697,7 +697,7 @@ class Curvesetview(tk.Frame):
         
         f = tk.Frame(self,relief='raised',bd=1)
         f.pack(side='top',fill='x')
-        tk.Label(f, text="new curve named:").pack(side='left')
+        tk.Label(f, text="new curve named: (C-N)").pack(side='left')
         
         self.newcurvename = tk.StringVar()
 
@@ -708,8 +708,12 @@ class Curvesetview(tk.Frame):
         entry = tk.Entry(f, textvariable=self.newcurvename)
         entry.pack(side='left', fill='x',exp=1)        
         entry.bind("<Key-Return>", new_curve)
+
+        def focus_entry():
+            entry.focus()
         
-        dispatcher.connect(self.add_curve,"add_curve",sender=self.curveset)
+        dispatcher.connect(self.add_curve, "add_curve", sender=self.curveset)
+        dispatcher.connect(focus_entry, "focus new curve", weak=False)
         
     def add_curve(self,name, slider=None, knobEnabled=False):
         f = tk.Frame(self,relief='raised',bd=1)
