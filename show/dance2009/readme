@@ -1,0 +1,10 @@
+needed modprobe snd-usb-audio to find the sliders
+
+try running two KCs, one just for house lights
+
+dmxserver needs rmmod ftdo_sio; insmod dmx_usb_module/dmx_usb.ko
+
+
+
+
+
