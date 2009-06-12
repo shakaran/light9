@@ -1,0 +1,18 @@
+@prefix ch: <http://light9.bigasterisk.com/theater/piedmont/channel/> .
+@prefix dmx: <http://light9.bigasterisk.com/dmx/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix l9: <http://light9.bigasterisk.com/> .
+@prefix log: <http://www.w3.org/2000/10/swap/log#>.
+@prefix string: <http://www.w3.org/2000/10/swap/string#>.
+
+@prefix prep: <http://light9.bigasterisk.com/prepStatements/> .
+
+{ 
+  [prep:name ?name; prep:output ?c] . 
+
+  ch: log:uri ?channelNamespace .
+  (?channelNamespace ?name) string:concatenation ?uriString . 
+  ?chanUri log:uri ?uriString . 
+} => { 
+  ?chanUri a l9:Channel; rdfs:label ?name; l9:output ?c . 
+} .

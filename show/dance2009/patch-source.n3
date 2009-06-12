@@ -1,0 +1,79 @@
+@prefix : <http://light9.bigasterisk.com/prepStatements/> .
+@prefix dmx: <http://light9.bigasterisk.com/dmx/> .
+
+# build with:
+# python2.5 =cwm patch-source.n3 --filter=patch-rules.n3 --n3=/ > patch.n3
+
+[ :name "oran1"; :output dmx:c21 ] .
+[ :name "oran2"; :output dmx:c25 ] .
+[ :name "oran3"; :output dmx:c29 ] .
+[ :name "oran4"; :output dmx:c33 ] .
+[ :name "gree1"; :output dmx:c22 ] .
+[ :name "gree2"; :output dmx:c26 ] .
+[ :name "gree3"; :output dmx:c30 ] .
+[ :name "gree4"; :output dmx:c34 ] .
+[ :name "blue1"; :output dmx:c23 ] .
+[ :name "blue2"; :output dmx:c27 ] .
+[ :name "blue3"; :output dmx:c31 ] .
+[ :name "blue4"; :output dmx:c35 ] .
+[ :name "red1"; :output dmx:c24 ] .
+[ :name "red2"; :output dmx:c28 ] .
+[ :name "red3"; :output dmx:c32 ] .
+[ :name "red4"; :output dmx:c36 ] .
+# 35 blue has a white in it too
+
+[ :name "b11"; :output dmx:c54 ] .
+[ :name "b12"; :output dmx:c53 ] .
+[ :name "b13"; :output dmx:c52 ] .
+[ :name "b14"; :output dmx:c51 ] .
+[ :name "b15"; :output dmx:c50 ] .
+[ :name "b16"; :output dmx:c49 ] .
+[ :name "b21"; :output dmx:c55 ] .
+[ :name "b22"; :output dmx:c56 ] .
+[ :name "b23"; :output dmx:c57 ] .
+[ :name "b24"; :output dmx:c58 ] .
+[ :name "b25"; :output dmx:c59 ] .
+[ :name "b26"; :output dmx:c60 ] .
+[ :name "b31"; :output dmx:c61 ] .
+[ :name "b32"; :output dmx:c62 ] .
+[ :name "b33"; :output dmx:c63 ] .
+[ :name "b34"; :output dmx:c64 ] .
+[ :name "b35"; :output dmx:c65 ] .
+[ :name "b36"; :output dmx:c66 ] .
+
+[ :name "post-l"; :output dmx:c45 ] .
+[ :name "post-r"; :output dmx:c46 ] .
+
+[ :name "s40"; :output dmx:c40 ] .
+[ :name "sign"; :output dmx:c41 ] .
+[ :name "front1"; :output dmx:c1 ] .
+[ :name "front2"; :output dmx:c2 ] .
+[ :name "front3"; :output dmx:c3 ] .
+[ :name "front4"; :output dmx:c4 ] .
+[ :name "front5"; :output dmx:c5 ] .
+[ :name "front6"; :output dmx:c6 ] .
+[ :name "sharlyn"; :output dmx:c7 ] .
+[ :name "front8"; :output dmx:c8 ] .
+[ :name "front9"; :output dmx:c9 ] .
+[ :name "front10"; :output dmx:c10 ] .
+[ :name "front11"; :output dmx:c11 ] .
+[ :name "front12"; :output dmx:c12 ] .
+
+[ :name "down-l"; :output dmx:c13 ] .
+[ :name "blacklight"; :output dmx:c14 ] .
+[ :name "strobe"; :output dmx:c15 ] .
+[ :name "down-r"; :output dmx:c16 ] .
+[ :name "fr17"; :output dmx:c17 ] .
+[ :name "fr18"; :output dmx:c18 ] .
+[ :name "fr19"; :output dmx:c19 ] .
+[ :name "fr20"; :output dmx:c20 ] .
+
+[ :name "cyc-mid"; :output dmx:c42 ] .
+[ :name "cyc"; :output dmx:c44 ] .
+
+[ :name "house-side"; :output dmx:c68 ] .
+[ :name "house1"; :output dmx:c69 ] .
+[ :name "house4"; :output dmx:c70 ] .
+[ :name "house3"; :output dmx:c71 ] .
+[ :name "house2"; :output dmx:c72 ] .
+

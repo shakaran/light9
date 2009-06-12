@@ -1,0 +1,4 @@
+<http://light9.bigasterisk.com/show/dance2009/song17/subterm/song17> <http://light9.bigasterisk.com/expression> "song17(t)".
+<http://light9.bigasterisk.com/show/dance2009/song17/subterm/song17> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song17>.
+<http://light9.bigasterisk.com/show/dance2009/song17/subterm/song17> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2009/song17> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2009/song17/subterm/song17>.
