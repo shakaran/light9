@@ -252,7 +252,7 @@ class Output:
         if self.later and not self.later.cancelled and not self.later.called:
             self.later.cancel()
 
-        self.later = reactor.callLater(.05, self.update)
+        self.later = reactor.callLater(.02, self.update)
 
         self.recent_t = self.recent_t[-50:]+[t]
         period = (self.recent_t[-1] - self.recent_t[0]) / len(self.recent_t)
