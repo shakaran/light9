@@ -609,8 +609,11 @@ class Curveset:
 
         if self.sliders and name not in ['smooth_music', 'music']:
             num = len(self.sliderCurve) + 1
-            self.sliderCurve[num] = name
-            self.sliderNum[name] = num
+            if num <= 8:
+                self.sliderCurve[num] = name
+                self.sliderNum[name] = num
+            else:
+                num = None
         else:
             num = None
             
