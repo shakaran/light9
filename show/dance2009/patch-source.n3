@@ -70,8 +70,9 @@
 [ :name "fr19"; :output dmx:c19 ] .
 [ :name "fr20"; :output dmx:c20 ] .
 
-[ :name "cyc-mid"; :output dmx:c42 ] .
-[ :name "cyc"; :output dmx:c44 ] .
+[ :name "cyc-left"; :output dmx:c42 ] .
+[ :name "cyc-mid"; :output dmx:c43 ] .
+[ :name "cyc-right"; :output dmx:c44 ] .
 
 [ :name "house-side"; :output dmx:c68 ] .
 [ :name "house1"; :output dmx:c69 ] .
