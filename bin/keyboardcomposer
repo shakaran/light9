@@ -27,6 +27,10 @@ nudge_keys = {
 class DummySliders:
     def valueOut(self, name, value):
         pass
+    def close(self):
+        pass
+    def reopen(self):
+        pass
 
 class SubScale(Scale, Fadable):
     def __init__(self, master, *args, **kw):
@@ -138,7 +142,12 @@ class KeyboardComposer(Frame, SubClient):
         self.rows[self.current_row].focus()
     def connect_to_hw(self, hw_sliders):
         if hw_sliders:
-            self.sliders = Sliders(self)
+            try:
+                self.sliders = Sliders(self)
+            except IOError:
+                print "Couldn't actually find any sliders (but really, it's no problem)"
+                self.sliders = DummySliders()
+                self.use_hw_sliders = False
         else:
             self.sliders = DummySliders()
 
