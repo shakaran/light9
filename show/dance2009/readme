@@ -5,18 +5,101 @@ try running two KCs, one just for house lights
 dmxserver needs rmmod ftdo_sio; insmod dmx_usb_module/dmx_usb.ko
 
 
+major:
+    headsets
 
+sound:
+    mic
 
-song5 paris too loud
+    crackling?
+    song4 music has buzz, esp at beginning and quiet points
+        denoise in audacity?
+    song5 music too loud
+    song10 denoise
 
-
-
+hanging:
     b36 get off stage lip, stay cross
-
     post-l broken
+    add cyc
 
+purchase:
+    backwrap
 
-    buy backwrap
-
+software:
     subcomposer rename channels
     keyboardcomposer colored sub troughs
+    curvecalc corrupts its own save when subterm refers to nonexistent sub
+
+    make trapezoids for all songs initially
+        bows and songN
+
+    delete curves inside curvecalc
+
+    fix curvecalc 'collapsed' button
+
+curve status:
+        general: faster fades at end?
+
+        song1 done
+
+        song2 needs work
+            blue intro, fade to normal song
+            95s new look?
+            118s new look?
+
+        song3 good enough
+            could do something for costume change
+
+        song4 good enough?
+            should be a more different look than song3
+
+        song5 good enough
+
+        song6 needs work
+            start with center look then grow
+            fade lights when they lie down (drop to green)
+
+            maybe gets strobe?
+
+        song7 ...
+            after trumpets slow fade to different look?
+            change before hernando
+            just red+orange for kicks (231)
+
+        song8 needs work
+            need better opening part, otherwise fine
+
+        song9 done
+            
+        song10 needs choreo help
+            opens with SL, C, SR (?) highlight regions maybe
+
+        song11 needs work but no choreo
+            chase in between "tequilas"?
+
+        song12 done
+
+        song13 needs work but now choreo
+            blacklight?
+            gong change?
+
+        song14 "might be okay"
+            vol ch during live?
+
+        song15 needs work
+            add cyc after song change? (120)
+            chase/flashing after 2nd song change?
+
+CRIT    song16 ..........?
+
+CRIT    song17 needs serious work...
+            fade in: flashing with music
+
+            class change (~50s, ~90s, ~120s) should get color change
+            trapezoids are totally off
+            150 patios in
+
+            light chase throughout except when class change
+
+next year:
+    easy switch to booth speakers for testing sound without broadcasting?
