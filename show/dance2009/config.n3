@@ -78,15 +78,34 @@ sub:bblue, sub:bblueall, sub:bneutral, sub:bpurple, sub:bpurpleall, sub:bpurplec
    sub:bred, sub:bredall .
 
 
+chase:colors a :Chase; :channels (
+ch:oran1 ch:gree1 ch:blue1 ch:red1 
+ch:oran2 ch:gree2 ch:blue2 ch:red2 
+ch:oran3 ch:gree2 ch:blue2 ch:red2 
+ch:oran4 ) .
 
-chase:up a :Chase; :channels ( ch:b13 ch:b21 ch:b22 ch:b35 ) .
+chase:colors1 a :Chase; :channels (ch:red1 ch:gree1 ch:oran1 ch:blue1) .
+chase:colors2 a :Chase; :channels (ch:red2 ch:gree2 ch:oran2 ch:blue2) .
+chase:colors3 a :Chase; :channels (ch:red3 ch:gree3 ch:oran3 ch:blue3) .
+chase:colors4 a :Chase; :channels (ch:red4 ch:gree4 ch:oran4 ch:blue4) .
 
-chase:corners a :Chase; :channels (ch:b14 ch:b16 ch:cyc ch:b21 ch:b13) .
+chase:back a :Chase; :channels (
+ch:b15-p
+ch:b13-b
+ch:b12-r
+ch:b21-p
+ch:b22-b
+ch:b23-b
+ch:b24-b
+ch:b25-r
+ch:b33-r
+ch:b34-b
+ch:b35-p
+) .
 
-chase:colors a :Chase; :channels (ch:oran1 ch:gree1 ch:blue1 ch:red1 ch:oran2 ch:gree2 ch:blue2 ch:red2 ch:oran3 ch:gree2 ch:blue2 ch:red2 ch:oran4 ) .
+chase:cycline a :Chase; :channels (ch:cyc-left ch:cyc-mid ch:cyc-right ) .
+chase:cycpong a :Chase; :channels (ch:cyc-left ch:cyc-mid ch:cyc-right ch:cyc-mid) .
 
-chase:rb a :Chase; :channels ( ch:b12 ch:b36 ch:b14 ch:b34 ch:b16
-ch:b32 ch:b22 ch:b26 ) .
 
 
 
