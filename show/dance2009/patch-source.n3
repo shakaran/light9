@@ -62,8 +62,8 @@
 [ :name "front12"; :output dmx:c12 ] .
 
 [ :name "down-l"; :output dmx:c13 ] .
-[ :name "b"; :output dmx:c14 ] .
-[ :name "s"; :output dmx:c15 ] .
+[ :name "strobe"; :output dmx:c14 ] .
+[ :name "blacklight"; :output dmx:c15 ] .
 [ :name "down-r"; :output dmx:c16 ] .
 [ :name "fr17"; :output dmx:c17 ] .
 [ :name "fr18"; :output dmx:c18 ] .

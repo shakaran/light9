@@ -1,18 +1,14 @@
-#Processed by Id: cwm.py,v 1.190 2006/08/09 23:20:42 syosi Exp 
+#Processed by Id: cwm.py,v 1.197 2007/12/13 15:38:39 syosi Exp 
         #    using base file:///home/drewp/projects/light9/show/dance2009/patch-source.n3
         
 #  Notation3 generation by
-#       notation3.py,v 1.191 2006/08/01 01:14:04 syosi Exp
+#       notation3.py,v 1.200 2007/12/11 21:18:08 syosi Exp
 
 #   Base was: file:///home/drewp/projects/light9/show/dance2009/patch-source.n3
      @prefix : <http://light9.bigasterisk.com/> .
     @prefix ch: <http://light9.bigasterisk.com/theater/piedmont/channel/> .
     @prefix dmx: <http://light9.bigasterisk.com/dmx/> .
     @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-    
-    ch:b     a :Channel;
-         :output dmx:c14;
-         rdfs:label "b" .
     
     ch:b11     a :Channel;
          :output dmx:c54;
@@ -85,6 +81,10 @@
     ch:b36     a :Channel;
          :output dmx:c66;
          rdfs:label "b36" .
+    
+    ch:blacklight     a :Channel;
+         :output dmx:c15;
+         rdfs:label "blacklight" .
     
     ch:blue1     a :Channel;
          :output dmx:c23;
@@ -258,10 +258,6 @@
          :output dmx:c36;
          rdfs:label "red4" .
     
-    ch:s     a :Channel;
-         :output dmx:c15;
-         rdfs:label "s" .
-    
     ch:s40     a :Channel;
          :output dmx:c40;
          rdfs:label "s40" .
@@ -273,6 +269,10 @@
     ch:sign     a :Channel;
          :output dmx:c41;
          rdfs:label "sign" .
+    
+    ch:strobe     a :Channel;
+         :output dmx:c14;
+         rdfs:label "strobe" .
     
     ch:upcenter     a :Channel;
          :output dmx:c38;
