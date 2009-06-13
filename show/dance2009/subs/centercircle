@@ -1,0 +1,7 @@
+<http://light9.bigasterisk.com/sub/centercircle> <http://www.w3.org/2000/01/rdf-schema#label> "centercircle".
+<http://light9.bigasterisk.com/sub/centercircle> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK118.
+<http://light9.bigasterisk.com/sub/centercircle> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK119.
+_:awwZwglK118 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b14>.
+_:awwZwglK118 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:awwZwglK119 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/front11>.
+_:awwZwglK119 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
