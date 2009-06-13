@@ -1,0 +1,7 @@
+<http://light9.bigasterisk.com/sub/bpurple> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK78.
+<http://light9.bigasterisk.com/sub/bpurple> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK79.
+<http://light9.bigasterisk.com/sub/bpurple> <http://www.w3.org/2000/01/rdf-schema#label> "bpurple".
+_:awwZwglK78 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b15-p>.
+_:awwZwglK78 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:awwZwglK79 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b35-p>.
+_:awwZwglK79 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.

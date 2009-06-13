@@ -1,4 +1,0 @@
-_:IPpsiXtP50 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/strobe>.
-_:IPpsiXtP50 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
-<http://light9.bigasterisk.com/sub/strobe> <http://light9.bigasterisk.com/lightLevel> _:IPpsiXtP50.
-<http://light9.bigasterisk.com/sub/strobe> <http://www.w3.org/2000/01/rdf-schema#label> "strobe".

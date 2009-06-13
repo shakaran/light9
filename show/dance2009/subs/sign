@@ -1,7 +1,0 @@
-<http://light9.bigasterisk.com/sub/sign> <http://www.w3.org/2000/01/rdf-schema#label> "sign".
-<http://light9.bigasterisk.com/sub/sign> <http://light9.bigasterisk.com/lightLevel> _:wXdfflUK774.
-<http://light9.bigasterisk.com/sub/sign> <http://light9.bigasterisk.com/lightLevel> _:wXdfflUK773.
-_:wXdfflUK773 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/cyc-mid>.
-_:wXdfflUK773 <http://light9.bigasterisk.com/level> "0.345"^^<http://www.w3.org/2001/XMLSchema#decimal>.
-_:wXdfflUK774 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/sign>.
-_:wXdfflUK774 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.

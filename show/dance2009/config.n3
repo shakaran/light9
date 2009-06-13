@@ -61,6 +61,10 @@ sub:song1, sub:song2, sub:song3, sub:song4,
    sub:song11, sub:song12, sub:song13, sub:song14, sub:song15, sub:song16,
    sub:song17 .
 
+group:brow is :group of
+sub:bblue, sub:bblueall, sub:bneutral, sub:bpurple, sub:bpurpleall, sub:bpurplec,
+   sub:bred, sub:bredall .
+
 chase:up a :Chase; :channels ( ch:b13 ch:b21 ch:b22 ch:b35 ) .
 
 chase:corners a :Chase; :channels (ch:b14 ch:b16 ch:cyc ch:b21 ch:b13) .

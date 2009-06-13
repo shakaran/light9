@@ -1,0 +1,4 @@
+<http://light9.bigasterisk.com/sub/bpurplec> <http://www.w3.org/2000/01/rdf-schema#label> "bpurplec".
+<http://light9.bigasterisk.com/sub/bpurplec> <http://light9.bigasterisk.com/lightLevel> _:SOAIiAqO92.
+_:SOAIiAqO92 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:SOAIiAqO92 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b21-p>.

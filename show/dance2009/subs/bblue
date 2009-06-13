@@ -1,0 +1,7 @@
+<http://light9.bigasterisk.com/sub/bblue> <http://www.w3.org/2000/01/rdf-schema#label> "bblue".
+<http://light9.bigasterisk.com/sub/bblue> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK67.
+<http://light9.bigasterisk.com/sub/bblue> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK68.
+_:awwZwglK67 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b13-b>.
+_:awwZwglK67 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:awwZwglK68 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b34-b>.
+_:awwZwglK68 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.

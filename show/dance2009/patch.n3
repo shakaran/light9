@@ -18,49 +18,49 @@
          :output dmx:c54;
          rdfs:label "b11" .
     
-    ch:b12     a :Channel;
+    ch:b12-r     a :Channel;
          :output dmx:c53;
-         rdfs:label "b12" .
+         rdfs:label "b12-r" .
     
-    ch:b13     a :Channel;
+    ch:b13-b     a :Channel;
          :output dmx:c52;
-         rdfs:label "b13" .
+         rdfs:label "b13-b" .
     
     ch:b14     a :Channel;
          :output dmx:c51;
          rdfs:label "b14" .
     
-    ch:b15     a :Channel;
+    ch:b15-p     a :Channel;
          :output dmx:c50;
-         rdfs:label "b15" .
+         rdfs:label "b15-p" .
     
-    ch:b16     a :Channel;
+    ch:b16x     a :Channel;
          :output dmx:c49;
-         rdfs:label "b16" .
+         rdfs:label "b16x" .
     
-    ch:b21     a :Channel;
+    ch:b21-p     a :Channel;
          :output dmx:c55;
-         rdfs:label "b21" .
+         rdfs:label "b21-p" .
     
-    ch:b22     a :Channel;
+    ch:b22-b     a :Channel;
          :output dmx:c56;
-         rdfs:label "b22" .
+         rdfs:label "b22-b" .
     
-    ch:b23     a :Channel;
+    ch:b23-b     a :Channel;
          :output dmx:c57;
-         rdfs:label "b23" .
+         rdfs:label "b23-b" .
     
-    ch:b24     a :Channel;
+    ch:b24-b     a :Channel;
          :output dmx:c58;
-         rdfs:label "b24" .
+         rdfs:label "b24-b" .
     
-    ch:b25     a :Channel;
+    ch:b25-r     a :Channel;
          :output dmx:c59;
-         rdfs:label "b25" .
+         rdfs:label "b25-r" .
     
-    ch:b26     a :Channel;
+    ch:b26x     a :Channel;
          :output dmx:c60;
-         rdfs:label "b26" .
+         rdfs:label "b26x" .
     
     ch:b31     a :Channel;
          :output dmx:c61;
@@ -70,17 +70,17 @@
          :output dmx:c62;
          rdfs:label "b32" .
     
-    ch:b33     a :Channel;
+    ch:b33-r     a :Channel;
          :output dmx:c63;
-         rdfs:label "b33" .
+         rdfs:label "b33-r" .
     
-    ch:b34     a :Channel;
+    ch:b34-b     a :Channel;
          :output dmx:c64;
-         rdfs:label "b34" .
+         rdfs:label "b34-b" .
     
-    ch:b35     a :Channel;
+    ch:b35-p     a :Channel;
          :output dmx:c65;
-         rdfs:label "b35" .
+         rdfs:label "b35-p" .
     
     ch:b36     a :Channel;
          :output dmx:c66;

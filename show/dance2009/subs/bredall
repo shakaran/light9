@@ -1,0 +1,10 @@
+<http://light9.bigasterisk.com/sub/bredall> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK62.
+<http://light9.bigasterisk.com/sub/bredall> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK63.
+<http://light9.bigasterisk.com/sub/bredall> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK64.
+<http://light9.bigasterisk.com/sub/bredall> <http://www.w3.org/2000/01/rdf-schema#label> "bredall".
+_:awwZwglK62 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:awwZwglK62 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b33-r>.
+_:awwZwglK63 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:awwZwglK63 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b25-r>.
+_:awwZwglK64 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:awwZwglK64 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b12-r>.

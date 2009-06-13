@@ -1,0 +1,10 @@
+_:awwZwglK82 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b15-p>.
+_:awwZwglK82 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/bpurpleall> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK82.
+<http://light9.bigasterisk.com/sub/bpurpleall> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK83.
+<http://light9.bigasterisk.com/sub/bpurpleall> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK84.
+<http://light9.bigasterisk.com/sub/bpurpleall> <http://www.w3.org/2000/01/rdf-schema#label> "bpurpleall".
+_:awwZwglK83 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b21-p>.
+_:awwZwglK83 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:awwZwglK84 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b35-p>.
+_:awwZwglK84 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.

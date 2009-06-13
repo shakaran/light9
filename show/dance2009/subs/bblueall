@@ -1,0 +1,16 @@
+_:awwZwglK75 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:awwZwglK75 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b23-b>.
+_:awwZwglK72 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:awwZwglK72 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b13-b>.
+_:awwZwglK74 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:awwZwglK74 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b22-b>.
+_:awwZwglK71 <http://light9.bigasterisk.com/level> "0.41"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:awwZwglK71 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b24-b>.
+_:awwZwglK73 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:awwZwglK73 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b34-b>.
+<http://light9.bigasterisk.com/sub/bblueall> <http://www.w3.org/2000/01/rdf-schema#label> "bblueall".
+<http://light9.bigasterisk.com/sub/bblueall> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK74.
+<http://light9.bigasterisk.com/sub/bblueall> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK71.
+<http://light9.bigasterisk.com/sub/bblueall> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK72.
+<http://light9.bigasterisk.com/sub/bblueall> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK73.
+<http://light9.bigasterisk.com/sub/bblueall> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK75.
