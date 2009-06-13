@@ -121,6 +121,10 @@ class Submaster:
     __rmul__ = __mul__
     def max(self, *othersubs):
         return sub_maxes(self, *othersubs)
+
+    def __add__(self, other):
+        return self.max(other)
+
     def __repr__(self):
         items = self.levels.items()
         items.sort()
