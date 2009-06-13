@@ -55,15 +55,29 @@ sub:scoop :group group:live; :order 4 .
 sub:front :group group:live; :order 5 .
 sub:curtain :group group:live; :order 6 .
 
-group:song is :group of
-sub:song1, sub:song2, sub:song3, sub:song4,
-   sub:song5, sub:song6, sub:song7, sub:song8, sub:song9, sub:song10,
-   sub:song11, sub:song12, sub:song13, sub:song14, sub:song15, sub:song16,
-   sub:song17 .
+sub:song1	:group group:song; :order 1 .
+sub:song2	:group group:song; :order 2 .
+sub:song3	:group group:song; :order 3 .
+sub:song4	:group group:song; :order 4 .
+sub:song5	:group group:song; :order 5 .
+sub:song6	:group group:song; :order 6 .
+sub:song7	:group group:song; :order 7 .
+sub:song8	:group group:song; :order 8 .
+sub:song9	:group group:song; :order 9 .
+sub:song10	:group group:song; :order 10 .
+sub:song11	:group group:song; :order 11 .
+sub:song12	:group group:song; :order 12 .
+sub:song13	:group group:song; :order 13 .
+sub:song14	:group group:song; :order 14 .
+sub:song15	:group group:song; :order 15 .
+sub:song16	:group group:song; :order 16 .
+sub:song17	:group group:song; :order 17 .
 
 group:brow is :group of
 sub:bblue, sub:bblueall, sub:bneutral, sub:bpurple, sub:bpurpleall, sub:bpurplec,
    sub:bred, sub:bredall .
+
+
 
 chase:up a :Chase; :channels ( ch:b13 ch:b21 ch:b22 ch:b35 ) .
 

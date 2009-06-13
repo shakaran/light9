@@ -1,4 +1,15 @@
+<http://light9.bigasterisk.com/show/dance2009/song1/subterm/> <http://www.w3.org/2000/01/rdf-schema#label> "".
+<http://light9.bigasterisk.com/show/dance2009/song1/subterm/> <http://light9.bigasterisk.com/expression> "song1(t)".
+<http://light9.bigasterisk.com/show/dance2009/song1/subterm/> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/>.
+<http://light9.bigasterisk.com/show/dance2009/song1/subterm/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2009/song1/subterm/patios> <http://www.w3.org/2000/01/rdf-schema#label> "patios".
+<http://light9.bigasterisk.com/show/dance2009/song1/subterm/patios> <http://light9.bigasterisk.com/expression> "patios(t)".
+<http://light9.bigasterisk.com/show/dance2009/song1/subterm/patios> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/patios>.
+<http://light9.bigasterisk.com/show/dance2009/song1/subterm/patios> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2009/song1> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2009/song1/subterm/>.
+<http://light9.bigasterisk.com/show/dance2009/song1> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2009/song1/subterm/patios>.
+<http://light9.bigasterisk.com/show/dance2009/song1> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2009/song1/subterm/song1>.
+<http://light9.bigasterisk.com/show/dance2009/song1/subterm/song1> <http://www.w3.org/2000/01/rdf-schema#label> "song1".
 <http://light9.bigasterisk.com/show/dance2009/song1/subterm/song1> <http://light9.bigasterisk.com/expression> "song1(t)".
 <http://light9.bigasterisk.com/show/dance2009/song1/subterm/song1> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song1>.
 <http://light9.bigasterisk.com/show/dance2009/song1/subterm/song1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
-<http://light9.bigasterisk.com/show/dance2009/song1> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2009/song1/subterm/song1>.
