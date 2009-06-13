@@ -730,7 +730,8 @@ class Curvesetview(tk.Frame):
         txt = "curve '%s'" % name
         if len(name) > 7:
             txt = name
-        tk.Label(leftside,text=txt,font="6x10",
+        labelFont = "arial 8"
+        tk.Label(leftside,text=txt,font=labelFont,
                  width=15).pack(side='top')
 
         sliderLabel = None
@@ -743,14 +744,14 @@ class Curvesetview(tk.Frame):
                 if sliderLabel:
                     sliderLabel.pack(side='top')
                 f.pack(exp=1)
-        tk.Checkbutton(leftside, text="collapsed", font="6x10",
+        tk.Checkbutton(leftside, text="collapsed", font=labelFont,
                        variable=collapsed, command=cmd).pack(side='top')
 
         if slider is not None:
             # slider should have a checkbutton, defaults to off for
             # music tracks
             sliderLabel = tk.Label(leftside, text="Slider %s" % slider,
-                                   fg='#800000', font='arial 12 bold')
+                                   fg='#800000', font=labelFont)
             sliderLabel.pack(side='top')
 
         cv = Curveview(f, self.curveset.curves[name],
