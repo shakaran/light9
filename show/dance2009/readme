@@ -4,26 +4,42 @@ try running two KCs, one just for house lights
 
 dmxserver needs rmmod ftdo_sio; insmod dmx_usb_module/dmx_usb.ko
 
+before show:
+OK  mic
+OK  make sure house not in any subs
+OK  turn off daemons on both computers
+?   lose usb mouse on plus
+OK  prepare backup scene on school light board
+OK  add rope to song1
+OK  curtain warmers
 
-major:
-    headsets
+OK  tequila could use some fixes
+OK  opening of 8
+
+
+11 end
+12 blacklight????
+14 sound levels
+
 
 sound:
-    mic
-
-    crackling?
-    song4 music has buzz, esp at beginning and quiet points
-        denoise in audacity?
-    song5 music too loud
-    song10 denoise
+ok? crackling?
+OK  song4 music has buzz, esp at beginning and quiet points
+        denoise in audacity
+        check denoise
+OK  song5 music too loud (check)
+OK  song10 check denoise
+OK  song12 check to see if denoising is okay (at 42s?)
+OK  song14 310s boost vol
 
 hanging:
-    b36 get off stage lip, stay cross
-    post-l broken
-    add cyc
+OK  b36 get off stage lip, stay cross
+OK  post-l broken
+OK  add cyc
+OK  sharlyn light
 
 purchase:
-    backwrap
+OK  backwrap
 
 software:
     subcomposer rename channels
@@ -33,9 +49,12 @@ software:
     make trapezoids for all songs initially
         bows and songN
 
-    delete curves inside curvecalc
+    delete curves, subterms inside curvecalc
 
     fix curvecalc 'collapsed' button
+
+    when dragging points, don't crush the 0 and 1 values
+
 
 curve status:
         general: faster fades at end?
@@ -50,56 +69,96 @@ curve status:
         song3 good enough
             could do something for costume change
 
-        song4 good enough?
-            should be a more different look than song3
+        song4 check with choreo
+            should be a more different look than song3?
+
+            ramp in fade needs work
 
         song5 good enough
 
         song6 needs work
-            start with center look then grow
-            fade lights when they lie down (drop to green)
+        OK  start with center look then grow
+                check with choreo -- might be okay
+        >>> fade lights when they lie down (drop to green)
+                hard -- needs choreo
+                no time to do
 
-            maybe gets strobe?
+        OK  maybe gets strobe?
 
-        song7 ...
-            after trumpets slow fade to different look?
-            change before hernando
-            just red+orange for kicks (231)
+        song7 needs check
+        OK  after trumpets slow fade to different look?
+        OK  change before hernando
+        ok? just red+orange for kicks (231)
 
-        song8 needs work
-            need better opening part, otherwise fine
+        song8 maybe done! :)
+            need better opening part
+            can do without choreo
 
-        song9 done
+            flashing cyc during drum solo?
+
+        song9 needs check
+            needs check of xfade ~195
             
-        song10 needs choreo help
-            opens with SL, C, SR (?) highlight regions maybe
+        song10 needs work, but no choreo
+        ok? opens with SL, C, SR
+            happens again at 100?, 145? -- cleanup timing
+            also cleanup timing at end
 
         song11 needs work but no choreo
             chase in between "tequilas"?
+            fade after first teq late
+            44, 47 needs something
+                and the teq right after it sucks
 
-        song12 done
+        song12 might be fine
+            add narrowfront on the bigger cast
 
-        song13 needs work but now choreo
-            blacklight?
-            gong change?
+        song13 lookin' good!
+        OK  blacklight?
+        OK  gong change?
 
-        song14 "might be okay"
-            vol ch during live?
+        song14 needs check
+            different colors around 310?
 
-        song15 needs work
-            add cyc after song change? (120)
-            chase/flashing after 2nd song change?
+            320 looked weird, sudden light change?
+
+        song15 lookin' good!
+            OK    cyc after song change? (120) too quick
+            OK    chase/flashing after 2nd song change?
 
 CRIT    song16 ..........?
+74 too dark
+120 V form
+132 strobe on cartwheels
+168
+218 walk to back
+226 back to V
+270 flash B row
+290 up/down rows
+300 siren red and all colors
+346 4 clusters
+375 center circle
+390 down ctr
+399 up
+403 jump in the center circle
+410 build more flashing thing
+431 staggered standup (still ctr)
 
-CRIT    song17 needs serious work...
-            fade in: flashing with music
 
-            class change (~50s, ~90s, ~120s) should get color change
-            trapezoids are totally off
-            150 patios in
+        song17 might be fine
+        >>  fade in: flashing with music
 
-            light chase throughout except when class change
+        OK  class change (~50s, ~90s, ~120s) should get color change
+        OK  trapezoids are totally off
+        OK  150 patios in
+
+        >>  check timing, chase
 
 next year:
     easy switch to booth speakers for testing sound without broadcasting?
+    chase should be able to take subs and channels
+    mute for curves in curvecalc
+    get 2nd sliderboard, leave it on KC
+    curvecalc disable slider output for reading input better
+    add silence to songs instead of silence bookend sounds?
+    be able to mute sliders
