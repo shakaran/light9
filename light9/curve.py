@@ -8,8 +8,7 @@ except ImportError:
     import louie as dispatcher
 
 import run_local
-from light9 import Submaster, dmxclient, networking, cursors
-from light9.TLUtility import make_attributes_from_args
+from light9 import cursors
 from light9.dmxchanedit import gradient
 from light9.zoomcontrol import RegionZoom
 from bcf2000 import BCF2000
@@ -145,7 +144,7 @@ class Curveview(tk.Canvas):
     def __init__(self, master, curve, knobEnabled=False, **kw):
         """knobEnabled=True highlights the previous key and ties it to a
         hardware knob"""
-        self.curve=curve
+        self.curve = curve
         self.knobEnabled = knobEnabled
         self._time = 0
         self.last_mouse_world = None
@@ -159,7 +158,7 @@ class Curveview(tk.Canvas):
         dispatcher.connect(self.update_curve,"zoom changed")
         dispatcher.connect(self.update_curve,"points changed",
                            sender=self.curve)
-        dispatcher.connect(self.select_between,"select between")
+        dispatcher.connect(self.select_between, "select between")
         if self.knobEnabled:
             dispatcher.connect(self.knob_in, "knob in")
             dispatcher.connect(self.slider_in, "set key")
@@ -721,7 +720,6 @@ class Curvesetview(tk.Frame):
     def add_curve(self,name, slider=None, knobEnabled=False):
         f = tk.Frame(self,relief='raised',bd=1)
         f.pack(side='top',fill='both',exp=1)
-
 
         leftside = tk.Frame(f)
         leftside.pack(side='left')
