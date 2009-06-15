@@ -163,6 +163,9 @@ OK  mute for curves in curvecalc
     curvecalc disable slider output for reading input better
     add silence to songs instead of silence bookend sounds?
     be able to mute sliders
+    
+    master show runner so curvecalc can't run wrong song (gets rid of shell
+        loop for curvecalc)
 
     order all food ahead of time
     local wifi and web client: play song, stop music, add work lights, test dimmer
