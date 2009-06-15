@@ -13,11 +13,22 @@ from light9.dmxchanedit import gradient
 from light9.zoomcontrol import RegionZoom
 from bcf2000 import BCF2000
 
-class Curve:
+class Curve(object):
     """curve does not know its name. see Curveset"""
     points = None # x-sorted list of (x,y)
     def __init__(self):
         self.points = []
+        self._muted = False
+
+    def muted():
+        doc = "Whether to currently send levels (boolean, obviously)"
+        def fget(self):
+            return self._muted
+        def fset(self, val):
+            self._muted = val
+            dispatcher.send('mute changed', sender=self)
+        return locals()
+    muted = property(**muted())
 
     def load(self,filename):
         self.points[:]=[]
@@ -35,7 +46,10 @@ class Curve:
             f.write("%s %s\n" % p)
         f.close()
 
-    def eval(self,t):
+    def eval(self, t, allow_muting=True):
+        if self.muted and allow_muting:
+            return 0
+
         i = bisect_left(self.points,(t,None))-1
 
         if self.points[i][0]>t:
@@ -154,9 +168,11 @@ class Curveview(tk.Canvas):
         self.selected_points=[] # idx of points being dragged
         self.update_curve()
         # self.bind("<Enter>",self.focus)
-        dispatcher.connect(self.input_time,"input time")
-        dispatcher.connect(self.update_curve,"zoom changed")
-        dispatcher.connect(self.update_curve,"points changed",
+        dispatcher.connect(self.input_time, "input time")
+        dispatcher.connect(self.update_curve, "zoom changed")
+        dispatcher.connect(self.update_curve, "points changed",
+                           sender=self.curve)
+        dispatcher.connect(self.update_curve, "mute changed", 
                            sender=self.curve)
         dispatcher.connect(self.select_between, "select between")
         if self.knobEnabled:
@@ -340,6 +356,11 @@ class Curveview(tk.Canvas):
         
         self.delete('curve')
 
+        if self.curve.muted:
+            self['bg'] = 'grey20'
+        else:
+            self['bg'] = 'black'
+
         if self.winfo_height() < 40:
             self._draw_gradient()
         else:
@@ -355,11 +376,15 @@ class Curveview(tk.Canvas):
         gradient_res = 3
         for x in range(0,self.winfo_width(),gradient_res):
             wx = self.world_from_screen(x,0)[0]
-            mag = self.curve.eval(wx)
+            mag = self.curve.eval(wx, allow_muting=False)
+            if self.curve.muted:
+                low = (8, 8, 8)
+                high = (60, 60, 60)
+            else:
+                low = (20, 10, 50)
+                high = (255, 187, 255)
             self.create_line(x,0, x,40,
-                             fill=gradient(mag,
-                                           low=(20,10,50),
-                                           high=(255,187,255)),
+                             fill=gradient(mag, low=low, high=high),
                              width=gradient_res, tags='curve')
 
     def _draw_markers(self,visible_x):
@@ -381,9 +406,9 @@ class Curveview(tk.Canvas):
     def _draw_one_marker(self,t,label):
         x = self.screen_from_world((t,0))[0]
         ht = self.winfo_height()
-        self.create_line(x,ht,x,ht-20,
+        self.create_line(x,ht,x,ht-20, fill='white',
                          tags=('curve',))
-        self.create_text(x,ht-20,text=label,anchor='s',
+        self.create_text(x,ht-20,text=label,anchor='s', fill='white',
                          tags=('curve',))
 
 
@@ -398,7 +423,12 @@ class Curveview(tk.Canvas):
             linepts.extend(self.screen_from_world(p))
         if len(linepts)<4:
             return
-        line = self.create_line(*linepts,**dict(width=linewidth,tags='curve'))
+        if self.curve.muted:
+            fill = 'grey34'
+        else:
+            fill = 'white'
+        kwargs = dict(width=linewidth, tags='curve', fill=fill)
+        line = self.create_line(*linepts, **kwargs)
 
         # canvas doesnt have keyboard focus, so i can't easily change the
         # cursor when ctrl is pressed
@@ -717,7 +747,9 @@ class Curvesetview(tk.Frame):
         dispatcher.connect(self.add_curve, "add_curve", sender=self.curveset)
         dispatcher.connect(focus_entry, "focus new curve", weak=False)
         
-    def add_curve(self,name, slider=None, knobEnabled=False):
+    def add_curve(self, name, slider=None, knobEnabled=False):
+        labelFont = "arial 8"
+
         f = tk.Frame(self,relief='raised',bd=1)
         f.pack(side='top',fill='both',exp=1)
 
@@ -728,31 +760,64 @@ class Curvesetview(tk.Frame):
         txt = "curve '%s'" % name
         if len(name) > 7:
             txt = name
-        labelFont = "arial 8"
-        tk.Label(leftside,text=txt,font=labelFont,
-                 width=15).pack(side='top')
+        curve_name_label = tk.Label(leftside,text=txt,font=labelFont,
+                 width=15)
+        curve_name_label.pack(side='left')
 
         sliderLabel = None
-        def cmd():
+        def collapsed_cmd():
             if collapsed.get():
                 if sliderLabel:
                     sliderLabel.pack_forget()
                 f.pack(exp=0)
             else:
                 if sliderLabel:
-                    sliderLabel.pack(side='top')
+                    sliderLabel.pack(side='left')
                 f.pack(exp=1)
-        tk.Checkbutton(leftside, text="collapsed", font=labelFont,
-                       variable=collapsed, command=cmd).pack(side='top')
+        collapsed_cb = tk.Checkbutton(leftside, text="C",
+                       font=labelFont, variable=collapsed, 
+                       command=collapsed_cmd)
+        collapsed_cb.pack(side='left')
+
+        muted = tk.IntVar()
+        default_bg = leftside['bg']
+        muted_cb = tk.Checkbutton(leftside, text="M", font=labelFont,
+                       variable=muted)
+        muted_cb.pack(side='left')
 
         if slider is not None:
             # slider should have a checkbutton, defaults to off for
             # music tracks
             sliderLabel = tk.Label(leftside, text="Slider %s" % slider,
                                    fg='#800000', font=labelFont)
-            sliderLabel.pack(side='top')
+            sliderLabel.pack(side='left')
 
         cv = Curveview(f, self.curveset.curves[name],
                        knobEnabled=knobEnabled)
         cv.pack(side='left',fill='both',exp=1)
         self.curves[name] = cv
+
+        def muted_cmd(*args):
+            new_mute = muted.get()
+            old_mute = cv.curve.muted
+            if new_mute == old_mute:
+                return
+
+            cv.curve.muted = new_mute
+
+            if muted.get():
+                new_bg = 'grey20'
+            else:
+                new_bg = default_bg
+
+            widgets = [leftside, collapsed_cb, muted_cb, curve_name_label, f]
+            if sliderLabel:
+                widgets.append(sliderLabel)
+            for widget in widgets:
+                widget['bg'] = new_bg
+        muted.trace('w', muted_cmd)
+
+        def mute_changed():
+            muted.set(cv.curve.muted)
+
+        dispatcher.connect(mute_changed, 'mute changed', sender=cv.curve)
