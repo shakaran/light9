@@ -16,10 +16,11 @@ OK  curtain warmers
 OK  tequila could use some fixes
 OK  opening of 8
 
-
-11 end
-12 blacklight????
-14 sound levels
+first show:
+ok? 11 end
+ok? 12 blacklight????
+ok? 14 sound levels
+OK  16 stuff
 
 
 sound:
@@ -51,7 +52,7 @@ software:
 
     delete curves, subterms inside curvecalc
 
-    fix curvecalc 'collapsed' button
+OK  fix curvecalc 'collapsed' button
 
     when dragging points, don't crush the 0 and 1 values
 
@@ -157,7 +158,7 @@ CRIT    song16 ..........?
 next year:
     easy switch to booth speakers for testing sound without broadcasting?
     chase should be able to take subs and channels
-    mute for curves in curvecalc
+OK  mute for curves in curvecalc
     get 2nd sliderboard, leave it on KC
     curvecalc disable slider output for reading input better
     add silence to songs instead of silence bookend sounds?
