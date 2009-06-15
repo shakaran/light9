@@ -1,7 +1,7 @@
 from __future__ import division
-import sys,math,glob,random,os, time
-from bisect import bisect_left,bisect,bisect_right
-import Tkinter as tk
+import math, glob, time
+from bisect import bisect_left,bisect
+import Tix as tk
 try:
     from dispatch import dispatcher
 except ImportError:
@@ -29,6 +29,9 @@ class Curve(object):
             dispatcher.send('mute changed', sender=self)
         return locals()
     muted = property(**muted())
+
+    def toggleMute(self):
+        self.muted = not self.muted
 
     def load(self,filename):
         self.points[:]=[]
@@ -228,6 +231,10 @@ class Curveview(tk.Canvas):
                   self.select_release)
 
         self.bind("<ButtonPress-1>", self.check_deselect, add=True)
+
+        self.bind("<Key-m>", lambda *args: self.curve.toggleMute())
+        self.bind("<Key-c>", lambda *args: dispatcher.send('toggle collapse',
+                                                           sender=self.curve))
 
     def knob_in(self, curve, value):
         """user turned a hardware knob, which edits the point to the
@@ -721,9 +728,8 @@ class Curveset:
         self.sliders.valueOut("knob%s" % num, value * 127)
 
 class Curvesetview(tk.Frame):
-    curves = None # curvename : Curveview
     def __init__(self, master, curveset, **kw):
-        self.curves = {}
+        self.curves = {} # curvename : Curveview
         self.curveset = curveset
         tk.Frame.__init__(self,master,**kw)
         
@@ -765,7 +771,16 @@ class Curvesetview(tk.Frame):
         curve_name_label.pack(side='left')
 
         sliderLabel = None
-        def collapsed_cmd():
+
+        collapsed_cb = tk.Checkbutton(leftside, text="C",
+                       font=labelFont, variable=collapsed)
+        collapsed_cb.pack(side='left')
+
+        def toggleCollapsed():
+            collapsed.set(not collapsed.get())
+
+
+        def update_ui_to_collapsed_state(*args):
             if collapsed.get():
                 if sliderLabel:
                     sliderLabel.pack_forget()
@@ -774,10 +789,8 @@ class Curvesetview(tk.Frame):
                 if sliderLabel:
                     sliderLabel.pack(side='left')
                 f.pack(exp=1)
-        collapsed_cb = tk.Checkbutton(leftside, text="C",
-                       font=labelFont, variable=collapsed, 
-                       command=collapsed_cmd)
-        collapsed_cb.pack(side='left')
+        collapsed.trace('w', update_ui_to_collapsed_state)
+
 
         muted = tk.IntVar()
         default_bg = leftside['bg']
@@ -797,7 +810,8 @@ class Curvesetview(tk.Frame):
         cv.pack(side='left',fill='both',exp=1)
         self.curves[name] = cv
 
-        def muted_cmd(*args):
+        def sync_mute_to_curve(*args):
+            """send value from Tk var to the master attribute inside Curve"""
             new_mute = muted.get()
             old_mute = cv.curve.muted
             if new_mute == old_mute:
@@ -805,6 +819,9 @@ class Curvesetview(tk.Frame):
 
             cv.curve.muted = new_mute
 
+        muted.trace('w', sync_mute_to_curve)
+
+        def update_mute_look():
             if muted.get():
                 new_bg = 'grey20'
             else:
@@ -815,9 +832,14 @@ class Curvesetview(tk.Frame):
                 widgets.append(sliderLabel)
             for widget in widgets:
                 widget['bg'] = new_bg
-        muted.trace('w', muted_cmd)
 
         def mute_changed():
             muted.set(cv.curve.muted)
+            update_mute_look()
 
-        dispatcher.connect(mute_changed, 'mute changed', sender=cv.curve)
+        dispatcher.connect(mute_changed, 'mute changed', sender=cv.curve,
+                           weak=False)
+
+        dispatcher.connect(toggleCollapsed, "toggle collapse", sender=cv.curve,
+                           weak=False)
+
