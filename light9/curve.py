@@ -727,6 +727,14 @@ class Curveset:
             return
         self.sliders.valueOut("knob%s" % num, value * 127)
 
+class CurveRow(tk.Frame):
+    """
+    one of the repeating curve rows
+    """
+    def __init__(self, master):
+        tk.Frame(self, master, relief='raised', bd=1)
+
+
 class Curvesetview(tk.Frame):
     def __init__(self, master, curveset, **kw):
         self.curves = {} # curvename : Curveview
@@ -756,7 +764,12 @@ class Curvesetview(tk.Frame):
     def add_curve(self, name, slider=None, knobEnabled=False):
         labelFont = "arial 8"
 
-        f = tk.Frame(self,relief='raised',bd=1)
+        f = CurveRow(self)
+
+
+        # move the stuff below here into CurveRow class
+
+        
         f.pack(side='top',fill='both',exp=1)
 
         leftside = tk.Frame(f)
