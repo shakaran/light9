@@ -203,6 +203,9 @@ class Subterm:
             dispatcher.send("expr_error", sender=self.subexpr, exc=str(e))
             return Submaster.Submaster('Error: %s' % str(e), temporary=True)
 
+    def __repr__(self):
+        return "<Subterm %s %s>" % (self.submaster, self.subexpr)
+
 class Subtermview(tk.Frame):
     def __init__(self, master, graph, st, **kw):
         self.subterm = st
@@ -271,7 +274,8 @@ class Output:
             self.lastsendtime = now
             self.lastsendlevs = levs
 
-def create_status_lines(master):
+def makeStatusLines(master):
+    """various labels that listen for dispatcher signals"""
     for signame,textfilter in [
         ('input time',lambda t: "%.2fs"%t),
         ('output levels',
@@ -282,13 +286,13 @@ def create_status_lines(master):
         ('update period',lambda t: "%.1fms"%(t*1000)),
         ('update status',lambda t: str(t)),
         ]:
-        l = tk.Label(master,anchor='w',justify='left')
+        l = tk.Label(master, anchor='w', justify='left', text='%s:' % signame)
         l.pack(side='top',fill='x')
         dispatcher.connect(lambda val,l=l,sn=signame,tf=textfilter:
                            l.config(text=sn+": "+tf(val)),
-                           signame,weak=0)
+                           signame, weak=False)
 
-def add_one_subterm(graph, subUri, curveset, subterms, root, master, expr=None):
+def add_one_subterm(graph, subUri, curveset, subterms, master, expr=None):
     subname = graph.label(subUri)
     if expr is None:
         expr = '%s(t)' % subname
@@ -302,7 +306,7 @@ def add_one_subterm(graph, subUri, curveset, subterms, root, master, expr=None):
 
     return term
 
-def sub_commands_tk(master, curveset, subterms, root, ssv, graph):
+def makeSubtermCommandRow(master, curveset, subterms, root, ssv, graph):
     """
     the row that starts with 'reload subs' button
     """
@@ -314,7 +318,7 @@ def sub_commands_tk(master, curveset, subterms, root, ssv, graph):
         graph.add((uri, RDF.type, L9.Subterm))
         graph.add((uri, RDFS.label, Literal(newname.get())))
         add_one_subterm(graph, uri,
-                        curveset, subterms, root, ssv, None)
+                        curveset, subterms, ssv, None)
         if evt.state & 4: # control key modifier
             curveset.new_curve(newname.get())
         newname.set('')
@@ -356,19 +360,17 @@ def createSubtermGraph(song, subterms):
         graph.add((uri, L9['expression'], Literal(subterm.subexpr.expr)))
     return graph
 
-def add_subterms_for_song(graph, song, curveset, subterms, root, master):
+def add_subterms_for_song(graph, song, curveset, subterms, master):
     for st in graph.objects(song, L9['subterm']):
         try:
-            add_one_subterm(graph, graph.value(st, L9['sub']), curveset, subterms,
-                            root, master, graph.value(st, L9['expression']))
+            add_one_subterm(graph, graph.value(st, L9['sub']), curveset,
+                            subterms, master, graph.value(st, L9['expression']))
         except rdflib.exceptions.UniquenessError:
             print "working around curvecalc save corruption"
             # curvecalc put all the expressions on one subterm, which is wrong
             for expr in graph.objects(st, L9['expression']):
                 add_one_subterm(graph, graph.value(st, L9['sub']),
-                                curveset, subterms,
-                                root, master,
-                                expr)
+                                curveset, subterms, master, expr)
                 
 
 def graphPathForSubterms(song):
@@ -419,11 +421,6 @@ def createHelpLines(root):
 
 
 def main():
-    root=tk.Tk()
-    root.tk_setPalette("gray50")
-    toplevelat("curvecalc",root)
-    root.tk_focusFollowsMouse()
-
     parser = optparse.OptionParser()
     parser.set_usage("%prog [opts] songURI")
     parser.add_option("--sliders", action='store_true',
@@ -439,53 +436,67 @@ def main():
 
     log.debug("music")
     music=Music()
-
-    zc = Zoomcontrol(root)
-    zc.pack(side='top',fill='x')
-
-    curveset = Curveset(sliders=opts.sliders)
-    csv = Curvesetview(root, curveset)
-    csv.pack(side='top',fill='both',exp=1)
-
-    subtermArea = tk.Frame(root)
-    subtermArea.pack(side='top', fill='x')
-
-    sw = tk.ScrolledWindow(subtermArea)
-    sw.pack(fill='both')
-    subtermScroll = tk.Frame(sw.subwidget('window'))
-    subtermScroll.pack(fill='both')
-
     graph = makeGraph()
-
-
-    musicfilename = showconfig.songOnDisk(song)
-    maxtime = wavelength(musicfilename)
-    dispatcher.send("max time",maxtime=maxtime)
-    dispatcher.connect(lambda: maxtime, "get max time",weak=0)
-    dispatcher.send("show all")
-    curveset.load(basename=os.path.join(showconfig.curvesDir(),
-                                        showconfig.songFilenameFromURI(song)),
-                  skipMusic=opts.skip_music)
-
+    curveset = Curveset(sliders=opts.sliders)
     subterms = []
-    sub_commands_tk(root, curveset, subterms, root, subtermArea,
-                    graph).pack(side='top',fill='both')
 
-    try:
-        graph.parse(graphPathForSubterms(song), format='n3')
-        add_subterms_for_song(graph, song, curveset, subterms, root,
-                              subtermScroll)
-    except OSError, e:
-        print e
-
+    graph.parse(graphPathForSubterms(song), format='n3')
+    
     log.debug("output")
     out = Output(subterms, music)
 
+    musicfilename = showconfig.songOnDisk(song)
+    maxtime = wavelength(musicfilename)
+    dispatcher.connect(lambda: maxtime, "get max time", weak=False)
+
+
+    root=tk.Tk()
+    root.tk_setPalette("gray50")
+    toplevelat("curvecalc",root)
+    root.tk_focusFollowsMouse()
+    root.title("Curvemaster 3000MX - %s" % graph.label(song))
+
+    if 'fixed top rows':
+        zc = Zoomcontrol(root)
+        zc.pack(side='top', fill='x')
+
+    if 'panes':
+        panes = tk.PanedWindow(root, height=1)
+        panes.add('curvesetView')
+        panes.add('subterms')
+        panes.pack(side='top', fill='both', expand=True)
+
+        csv = Curvesetview(panes.subwidget('curvesetView'), curveset,
+                           height=400)
+        csv.pack(fill='both', expand=True)
+
+        subtermArea = tk.Frame(panes.subwidget('subterms'), height=100)
+        subtermArea.pack(fill='both', expand=True)
+
+        subtermScroll = tk.ScrolledWindow(subtermArea)
+        subtermScroll.pack(fill='both')
+
+    if 'fixed bottom rows':
+        makeSubtermCommandRow(root, curveset, subterms, root, subtermArea,
+                              graph).pack(side='top', fill='x')
+        makeStatusLines(root)
+
+        helpBox = tk.Frame(root)
+        createHelpLines(helpBox)
+        helpBox.pack(side='top', fill='x')
+
+    add_subterms_for_song(graph, song, curveset, subterms,
+                          subtermScroll.subwidget('window'))
     setupKeyBindings(root, song, subterms, curveset)
 
-    create_status_lines(root)
-    createHelpLines(root)
-    root.title("Curvemaster 3000MX - %s" % graph.label(song))
+    # curvesetview must already exist, since this makes 'add_curve'
+    # signals for all the initial curves
+    curveset.load(basename=os.path.join(showconfig.curvesDir(),
+                                        showconfig.songFilenameFromURI(song)),
+                  skipMusic=opts.skip_music)
+    
+    dispatcher.send("max time",maxtime=maxtime)
+    dispatcher.send("show all")
 
     tksupport.install(root,ms=20)
     log.debug("run")

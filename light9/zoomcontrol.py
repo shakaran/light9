@@ -173,8 +173,8 @@ class Zoomcontrol(object,tk.Canvas):
                     txt=txt+"sec"
                 self.create_line(x,0,x,15,
                                  tags=('tics',))
-                self.create_text(x,self.winfo_height()-1,anchor='s',
-                                 text=txt,tags=('tics',),font='6x13')
+                self.create_text(x, self.winfo_height()-1, anchor='s',
+                                 text=txt, tags=('tics',), font='arial 7')
                 lastx = x
 
 
