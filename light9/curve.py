@@ -731,8 +731,93 @@ class CurveRow(tk.Frame):
     """
     one of the repeating curve rows
     """
-    def __init__(self, master):
-        tk.Frame(self, master, relief='raised', bd=1)
+    def __init__(self, master, name, curve, slider, knobEnabled):
+        tk.Frame.__init__(self, master, relief='raised', bd=1)
+
+        labelFont = "arial 8"
+
+        leftside = tk.Frame(self)
+        leftside.pack(side='left')
+
+        collapsed = tk.IntVar()
+        txt = "curve '%s'" % name
+        if len(name) > 7:
+            txt = name
+        curve_name_label = tk.Label(leftside,text=txt,font=labelFont,
+                 width=15)
+        curve_name_label.pack(side='left')
+
+        sliderLabel = None
+
+        collapsed_cb = tk.Checkbutton(leftside, text="C",
+                       font=labelFont, variable=collapsed)
+        collapsed_cb.pack(side='left')
+
+        def toggleCollapsed():
+            collapsed.set(not collapsed.get())
+
+
+        def update_ui_to_collapsed_state(*args):
+            if collapsed.get():
+                if sliderLabel:
+                    sliderLabel.pack_forget()
+                self.pack(exp=0)
+            else:
+                if sliderLabel:
+                    sliderLabel.pack(side='left')
+                self.pack(exp=1)
+        collapsed.trace('w', update_ui_to_collapsed_state)
+
+
+        muted = tk.IntVar()
+        default_bg = leftside['bg']
+        muted_cb = tk.Checkbutton(leftside, text="M", font=labelFont,
+                       variable=muted)
+        muted_cb.pack(side='left')
+
+        if slider is not None:
+            # slider should have a checkbutton, defaults to off for
+            # music tracks
+            sliderLabel = tk.Label(leftside, text="Slider %s" % slider,
+                                   fg='#800000', font=labelFont)
+            sliderLabel.pack(side='left')
+
+        cv = Curveview(self, curve,
+                       knobEnabled=knobEnabled)
+        cv.pack(side='left',fill='both',exp=1)
+
+        def sync_mute_to_curve(*args):
+            """send value from Tk var to the master attribute inside Curve"""
+            new_mute = muted.get()
+            old_mute = cv.curve.muted
+            if new_mute == old_mute:
+                return
+
+            cv.curve.muted = new_mute
+
+        muted.trace('w', sync_mute_to_curve)
+
+        def update_mute_look():
+            if muted.get():
+                new_bg = 'grey20'
+            else:
+                new_bg = default_bg
+
+            widgets = [leftside, collapsed_cb, muted_cb, curve_name_label, self]
+            if sliderLabel:
+                widgets.append(sliderLabel)
+            for widget in widgets:
+                widget['bg'] = new_bg
+
+        def mute_changed():
+            muted.set(cv.curve.muted)
+            update_mute_look()
+
+        dispatcher.connect(mute_changed, 'mute changed', sender=cv.curve,
+                           weak=False)
+
+        dispatcher.connect(toggleCollapsed, "toggle collapse", sender=cv.curve,
+                           weak=False)
 
 
 class Curvesetview(tk.Frame):
@@ -762,97 +847,7 @@ class Curvesetview(tk.Frame):
         dispatcher.connect(focus_entry, "focus new curve", weak=False)
         
     def add_curve(self, name, slider=None, knobEnabled=False):
-        labelFont = "arial 8"
-
-        f = CurveRow(self)
-
-
-        # move the stuff below here into CurveRow class
-
-        
+        curve = self.curveset.curves[name]
+        f = CurveRow(self, name, curve, slider, knobEnabled)
         f.pack(side='top',fill='both',exp=1)
-
-        leftside = tk.Frame(f)
-        leftside.pack(side='left')
-
-        collapsed = tk.IntVar()
-        txt = "curve '%s'" % name
-        if len(name) > 7:
-            txt = name
-        curve_name_label = tk.Label(leftside,text=txt,font=labelFont,
-                 width=15)
-        curve_name_label.pack(side='left')
-
-        sliderLabel = None
-
-        collapsed_cb = tk.Checkbutton(leftside, text="C",
-                       font=labelFont, variable=collapsed)
-        collapsed_cb.pack(side='left')
-
-        def toggleCollapsed():
-            collapsed.set(not collapsed.get())
-
-
-        def update_ui_to_collapsed_state(*args):
-            if collapsed.get():
-                if sliderLabel:
-                    sliderLabel.pack_forget()
-                f.pack(exp=0)
-            else:
-                if sliderLabel:
-                    sliderLabel.pack(side='left')
-                f.pack(exp=1)
-        collapsed.trace('w', update_ui_to_collapsed_state)
-
-
-        muted = tk.IntVar()
-        default_bg = leftside['bg']
-        muted_cb = tk.Checkbutton(leftside, text="M", font=labelFont,
-                       variable=muted)
-        muted_cb.pack(side='left')
-
-        if slider is not None:
-            # slider should have a checkbutton, defaults to off for
-            # music tracks
-            sliderLabel = tk.Label(leftside, text="Slider %s" % slider,
-                                   fg='#800000', font=labelFont)
-            sliderLabel.pack(side='left')
-
-        cv = Curveview(f, self.curveset.curves[name],
-                       knobEnabled=knobEnabled)
-        cv.pack(side='left',fill='both',exp=1)
-        self.curves[name] = cv
-
-        def sync_mute_to_curve(*args):
-            """send value from Tk var to the master attribute inside Curve"""
-            new_mute = muted.get()
-            old_mute = cv.curve.muted
-            if new_mute == old_mute:
-                return
-
-            cv.curve.muted = new_mute
-
-        muted.trace('w', sync_mute_to_curve)
-
-        def update_mute_look():
-            if muted.get():
-                new_bg = 'grey20'
-            else:
-                new_bg = default_bg
-
-            widgets = [leftside, collapsed_cb, muted_cb, curve_name_label, f]
-            if sliderLabel:
-                widgets.append(sliderLabel)
-            for widget in widgets:
-                widget['bg'] = new_bg
-
-        def mute_changed():
-            muted.set(cv.curve.muted)
-            update_mute_look()
-
-        dispatcher.connect(mute_changed, 'mute changed', sender=cv.curve,
-                           weak=False)
-
-        dispatcher.connect(toggleCollapsed, "toggle collapse", sender=cv.curve,
-                           weak=False)
 
