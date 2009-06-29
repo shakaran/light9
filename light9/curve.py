@@ -164,6 +164,7 @@ class Curveview(tk.Canvas):
     def __init__(self, master, curve, knobEnabled=False, **kw):
         """knobEnabled=True highlights the previous key and ties it to a
         hardware knob"""
+        self.redrawsEnabled = False
         self.curve = curve
         self.knobEnabled = knobEnabled
         self._time = 0
@@ -172,7 +173,6 @@ class Curveview(tk.Canvas):
                            relief='sunken',bd=1,
                            closeenough=5,takefocus=1, **kw)
         self.selected_points=[] # idx of points being dragged
-        self.update_curve()
         # self.bind("<Enter>",self.focus)
         dispatcher.connect(self.input_time, "input time")
         dispatcher.connect(self.update_curve, "zoom changed")
@@ -193,11 +193,15 @@ class Curveview(tk.Canvas):
 
 
         for butnum,factor in (5, 1.5),(4, 1/1.5):
-            self.bind("<ButtonPress-%s>"%butnum,
-                      lambda ev,factor=factor:
-                      dispatcher.send("zoom about mouse",
-                                      t=self.world_from_screen(ev.x,0)[0],
-                                      factor=factor))
+            def onMouseWheel(ev,factor=factor):
+                dispatcher.send("zoom about mouse",
+                                t=self.world_from_screen(ev.x,0)[0],
+                                factor=factor)
+                # this is supposed to make the canvases redraw more
+                # visibly, so we don't waste line redraws that never
+                # get seen. I'm not sure if it works.
+                self.update()
+            self.bind("<ButtonPress-%s>" % butnum, onMouseWheel)
         self.bind("<Key-Escape>", lambda ev:
                   dispatcher.send("see time",
                                   t=self.current_time()))
@@ -238,6 +242,12 @@ class Curveview(tk.Canvas):
         self.bind("<Key-m>", lambda *args: self.curve.toggleMute())
         self.bind("<Key-c>", lambda *args: dispatcher.send('toggle collapse',
                                                            sender=self.curve))
+
+    def goLive(self):
+        """this is for startup performance only, since the curves were
+        getting redrawn many times. """
+        self.redrawsEnabled = True
+        self.update_curve()
 
     def knob_in(self, curve, value):
         """user turned a hardware knob, which edits the point to the
@@ -353,8 +363,10 @@ class Curveview(tk.Canvas):
                 dispatcher.send("knob out", value=prevKey[1], curve=self.curve)
         
     def update_curve(self,*args):
+        if not self.redrawsEnabled:
+            return
         self.width, self.height = self.winfo_width(), self.winfo_height()
-        
+
         self.zoom = dispatcher.send("zoom area")[0][1]
         cp = self.curve.points
 
@@ -427,6 +439,7 @@ class Curveview(tk.Canvas):
         linepts=[]
         step=1
         linewidth=2
+        # 800? maybe this should be related to self.width
         if len(visible_points)>800:
             step = int(len(visible_points)/800)
             linewidth=1
@@ -829,8 +842,8 @@ class CurveRow(tk.Frame):
 
 class Curvesetview(tk.ScrolledWindow):
     def __init__(self, master, curveset, **kw):
-        self.curves = {} # curvename : Curveview
         self.curveset = curveset
+        self.allCurveRows = set()
         tk.ScrolledWindow.__init__(self,master,**kw)
         
         f = tk.Frame(self.window,relief='raised',bd=1)
@@ -857,4 +870,12 @@ class Curvesetview(tk.ScrolledWindow):
         curve = self.curveset.curves[name]
         f = CurveRow(self.window, name, curve, slider, knobEnabled)
         f.pack(side='top', fill='both')
+        self.allCurveRows.add(f)
+
+    def goLive(self):
+        """for startup performance, none of the curves redraw
+        themselves until this is called once (and then they're normal)"""
+        
+        for cr in self.allCurveRows:
+            cr.curveView.goLive()
 

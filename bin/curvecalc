@@ -466,9 +466,9 @@ def main():
         panes.add('subterms')
         panes.pack(side='top', fill='both', expand=True)
 
-        csv = Curvesetview(panes.subwidget('curvesetView'), curveset,
-                           height=400)
-        csv.pack(fill='both', expand=True)
+        curvesetView = Curvesetview(panes.subwidget('curvesetView'), curveset,
+                                    height=400)
+        curvesetView.pack(fill='both', expand=True)
 
         subtermArea = tk.Frame(panes.subwidget('subterms'), height=100)
         subtermArea.pack(fill='both', expand=True)
@@ -497,6 +497,11 @@ def main():
     
     dispatcher.send("max time",maxtime=maxtime)
     dispatcher.send("show all")
+    
+    # this is scheduled after some tk shuffling, to try to minimize
+    # the number of times we redraw the curve at startup. If tk is
+    # very slow, it's ok. You'll just get some wasted redraws.
+    reactor.callLater(.1, curvesetView.goLive)
 
     tksupport.install(root, ms=10)
     log.debug("run")
