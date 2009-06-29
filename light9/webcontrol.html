@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:n="http://nevow.com/ns/nevow/0.1">
+  <head>
+    <title>light9 remote</title>
+    <style type="text/css" media="all">
+      /* <![CDATA[ */
+
+body {
+    background:black none repeat scroll 0 0;
+    color:white;
+    width:320px;
+}
+div.section {
+    border:2px groove #060;
+    margin:5px;
+    padding:5px;
+}
+.doubleWide {
+    width:120px;
+    background:#610;
+}
+.section img {
+    width:36px;
+    vertical-align: middle;
+}
+form {
+    display:inline;
+}
+button {
+    height:64px;
+    width:64px;
+    background:#035;
+    color:white;
+    margin:5px;
+    vertical-align:top;
+    border:1px #035 outset;
+    -moz-border-radius:8px;
+}
+
+div.status {
+    color:#FFFF00;
+    font-family:monospace;
+    text-align:center;
+}
+
+div.status img {
+    width: 32px;
+    vertical-align: middle;
+    margin-right: 3px;
+}
+
+      /* ]]> */
+    </style>
+
+  </head>
+  <body>
+
+    <div class="status"><n:invisible n:render="status"/></div>
+
+    <div class="section music">
+      <div class="title"><img src="icon/music.png"/> Music control</div>
+      <n:invisible n:render="songButtons"/>
+
+      <form method="post" action="stopMusic">
+	<button type="submit" class="doubleWide">Stop music</button>
+      </form>
+    </div>
+
+    <div class="section light">
+      <div class="title"><img src="icon/tvshow.png"/> Light control</div>
+      <div>
+	<form style="display: inline" method="post" action="worklightsOn">
+	  <button type="submit">Works on</button>
+	</form>
+	<form style="display: inline" method="post" action="worklightsOff">
+	  <button type="submit">Works off</button>
+	</form>
+      </div>
+    </div>
+
+  </body>
+</html>

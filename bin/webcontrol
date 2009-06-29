@@ -1,0 +1,114 @@
+#!/usr/bin/python
+"""
+web UI for various commands that we might want to run from remote
+computers and phones
+
+todo:
+disable buttons that don't make sense
+"""
+import sys, xmlrpclib, traceback
+from twisted.internet import reactor
+from twisted.python import log
+from twisted.python.util import sibpath
+from twisted.internet.defer import inlineCallbacks, returnValue
+from twisted.web.client import getPage
+from nevow.appserver import NevowSite
+from nevow import rend, static, loaders, inevow, url, tags as T
+from rdflib import URIRef
+from louie.robustapply import robust_apply
+from light9 import showconfig, networking
+from light9.namespaces import L9
+from urllib import urlencode
+
+# move to web lib
+def post(root, path, **args):
+    return getPage(root.rstrip('/') + '/' + path.lstrip('/'),
+                   method='POST',
+                   postdata=urlencode(args))
+
+
+class Commands(object):
+    @staticmethod
+    def playSong(graph, songUri):
+        s = xmlrpclib.ServerProxy(networking.musicUrl())
+        songPath = graph.value(URIRef(songUri), L9.showPath)
+        if songPath is None:
+            raise ValueError("unknown song %s" % songUri)
+        return s.playfile(songPath.encode('ascii'))
+
+    @staticmethod
+    def stopMusic(graph):
+        s = xmlrpclib.ServerProxy(networking.musicUrl())
+        return s.stop()
+
+    @staticmethod
+    def worklightsOn(graph):
+        return post(networking.keyboardComposerUrl(), 'fadesub',
+                    subname='scoop', level=.5, secs=.5)
+
+    @staticmethod
+    def worklightsOff(graph):
+        return post(networking.keyboardComposerUrl(), 'fadesub',
+                    subname='scoop', level=0, secs=.5)
+
+    @staticmethod
+    def dimmerSet(graph, dimmer, value):
+        raise NotImplementedError("subcomposer doesnt have an http port yet")
+
+class Main(rend.Page):
+    docFactory = loaders.xmlfile(sibpath(__file__, "../light9/webcontrol.html"))
+
+    def __init__(self, graph):
+        self.graph = graph
+        rend.Page.__init__(self)
+
+    def render_status(self, ctx, data):
+        pic = T.img(src="icon/enabled.png")
+        if ctx.arg('error'):
+            pic = T.img(src="icon/warning.png")
+        return [pic, ctx.arg('status') or 'ready']
+
+    def render_songButtons(self, ctx, data):
+        show = URIRef("http://light9.bigasterisk.com/show/dance2009") # ?
+        playList = graph.value(show, L9['playList'])
+        songs = list(graph.items(playList))
+        out = []
+        for song in songs:
+            out.append(
+                T.form(method="post", action="playSong")[
+                    T.input(type='hidden', name='songUri', value=song),
+                    T.button(type='submit')[graph.label(song)]])
+        return out
+
+    @inlineCallbacks
+    def locateChild(self, ctx, segments):
+        try:
+            func = getattr(Commands, segments[0])
+            req = inevow.IRequest(ctx)
+            simpleArgDict = dict((k, v[0]) for k,v in req.args.items())
+            try:
+                ret = yield robust_apply(func, func, self.graph,
+                                         **simpleArgDict)
+            except KeyboardInterrupt: raise
+            except Exception, e:
+                print "Error on command %s" % segments[0]
+                traceback.print_exc()
+                returnValue((url.here.up().
+                             add('status', str(e)).
+                             add('error', 1), segments[1:]))
+                
+            returnValue((url.here.up().add('status', ret), segments[1:]))
+            #actually return the orig page, with a status message from the func
+        except AttributeError:
+            pass
+        returnValue(rend.Page.locateChild(self, ctx, segments))
+
+    def child_icon(self, ctx):
+        return static.File("/usr/share/pyshared/elisa/plugins/poblesec/tango")
+            
+graph = showconfig.getGraph()
+
+log.startLogging(sys.stdout)
+
+reactor.listenTCP(9000, NevowSite(Main(graph)))
+reactor.run()
