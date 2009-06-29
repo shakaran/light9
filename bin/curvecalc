@@ -498,7 +498,7 @@ def main():
     dispatcher.send("max time",maxtime=maxtime)
     dispatcher.send("show all")
 
-    tksupport.install(root,ms=20)
+    tksupport.install(root, ms=10)
     log.debug("run")
     prof.run(reactor.run, profile=False)
 
