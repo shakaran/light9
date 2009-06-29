@@ -26,3 +26,6 @@ def kcPort():
 
 def kcServer():
     return 'plus'
+
+def keyboardComposerUrl():
+    return "http://%s:%s" % (kcServer(), kcPort())

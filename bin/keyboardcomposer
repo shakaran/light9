@@ -1,11 +1,11 @@
 #!/usr/bin/python
 
 from __future__ import division, nested_scopes
-import os, sys, time, subprocess
+import cgi, os, sys, time, subprocess
 from optparse import OptionParser
 
 from twisted.internet import reactor, tksupport
-from twisted.web import xmlrpc, server
+from twisted.web import xmlrpc, server, resource
 from Tix import *
 import Tix as tk
 import pickle
@@ -359,18 +359,39 @@ class KeyboardComposer(Frame, SubClient):
             if subtk.scale.scale_var.get() != 0:
                 subtk.scale.fade(value=0.0, length=0)
 
-class LevelServer(xmlrpc.XMLRPC):
+# move to web lib
+def postArgGetter(request):
+    """return a function that takes arg names and returns string
+    values. Supports args encoded in the url or in postdata. No
+    support for repeated args."""
+    # this is something nevow normally does for me
+    request.content.seek(0)
+    fields = cgi.FieldStorage(request.content, request.received_headers,
+                              environ={'REQUEST_METHOD': 'POST'})
+    def getArg(n):
+        try:
+            return request.args[n][0]
+        except KeyError:
+            return fields[n].value
+    return getArg
+
+
+class LevelServerHttp(resource.Resource):
+    isLeaf = True
     def __init__(self,name_to_subtk):
         self.name_to_subtk = name_to_subtk
+
+    def render_POST(self, request):
+        arg = postArgGetter(request)
         
-    def xmlrpc_fadesub(self,subname,level,secs):
-        """submaster will fade to level in secs"""
-        try:
-            self.name_to_subtk[subname].scale.fade(level,secs)
-            ret='ok'
-        except Exception,e:
-            ret=str(e)
-        return ret
+        if request.path == '/fadesub':
+            # fadesub?subname=scoop&level=0&secs=.2
+            self.name_to_subtk[arg('subname')].scale.fade(
+                float(arg('level')),
+                float(arg('secs')))
+            return "set %s to %s" % (arg('subname'), arg('level'))
+        else:
+            raise NotImplementedError(repr(request))
 
 class Sliders(BCF2000):
     def __init__(self, kc):
@@ -432,8 +453,8 @@ if __name__ == "__main__":
 
     import twisted.internet
     try:
-        ls = LevelServer(kc.name_to_subtk)
-        reactor.listenTCP(networking.kcPort(), server.Site(ls))
+        reactor.listenTCP(networking.kcPort(),
+                          server.Site(LevelServerHttp(kc.name_to_subtk)))
     except twisted.internet.error.CannotListenError, e:
         print "Can't (and won't!) start level server:"
         print e
