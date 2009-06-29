@@ -171,6 +171,7 @@ OK  mute for curves in curvecalc
         loop for curvecalc)
 
     order all food ahead of time
-    local wifi and web client: play song, stop music, add work lights, test dimmer
+OK  local wifi and web client: play song, stop music, add work lights, test dimmer
+    figure out how to serve wifi to devices in the theater
     do song-end fades by hand instead of in curvecalc
 
