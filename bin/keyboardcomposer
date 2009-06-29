@@ -131,6 +131,52 @@ class KeyboardComposer(Frame, SubClient):
         self.sub_name.pack(side=LEFT)
 
         self.stop_frequent_update_time = 0
+                
+    def draw_sliders(self):
+        self.tk_focusFollowsMouse()
+
+        rowcount = -1
+        col = 0
+        last_group = None
+        graph = showconfig.getGraph()
+        withgroups = sorted((graph.value(sub.uri, L9['group']), 
+                             graph.value(sub.uri, L9['order']), 
+                             sub)
+            for sub in self.submasters.get_all_subs())
+
+        for group, order, sub in withgroups:
+            group = graph.value(sub.uri, L9['group'])
+
+            if col == 0 or group != last_group: # make new row
+                row = self.make_row()
+                rowcount += 1
+                col = 0
+            current_level = self.current_sub_levels.get(sub.name, 0)
+            subtk = self.draw_sub_slider(row, col, sub.name, current_level)
+            self.slider_table[(rowcount, col)] = subtk
+            self.name_to_subtk[sub.name] = subtk
+
+            def slider_changed(x, y, z, subtk=subtk,
+                               col=col, sub=sub, rowcount=rowcount):
+                subtk.scale.draw_indicator_colors()
+                self.send_levels()
+                if rowcount == self.current_row:
+                    self.send_to_hw(sub.name, col + 1)
+
+            subtk.slider_var.trace('w', slider_changed)
+
+            # initial position
+            self.send_to_hw(sub.name, col + 1)
+            col = (col + 1) % 8
+            last_group = group
+
+    def draw_sub_slider(self, row, col, name, current_level):
+        subtk = SubmasterTk(row, name, current_level)
+        subtk.place(relx=col / 8, rely=0, relwidth=1 / 8, relheight=1)
+        self.setup_key_nudgers(subtk.scale)
+
+        self.slider_vars[name] = subtk.slider_var
+        return subtk
 
     def toggle_slider_connectedness(self):
         self.use_hw_sliders = not self.use_hw_sliders
@@ -140,6 +186,7 @@ class KeyboardComposer(Frame, SubClient):
             self.sliders.close()
         self.change_row(self.current_row)
         self.rows[self.current_row].focus()
+
     def connect_to_hw(self, hw_sliders):
         if hw_sliders:
             try:
@@ -169,6 +216,7 @@ class KeyboardComposer(Frame, SubClient):
 
         keyhintrow.pack(fill=X, expand=0)
         self.keyhints = keyhintrow
+
     def setup_key_nudgers(self, tkobject):
         for d, keys in nudge_keys.items():
             for key in keys:
@@ -243,44 +291,6 @@ class KeyboardComposer(Frame, SubClient):
         except KeyError:
             return # no slider assigned at that column
         subtk.scale.set(value)
-                
-    def draw_sliders(self):
-        self.tk_focusFollowsMouse()
-
-        rowcount = -1
-        col = 0
-        last_group = None
-        graph = showconfig.getGraph()
-        withgroups = sorted((graph.value(sub.uri, L9['group']), 
-                             graph.value(sub.uri, L9['order']), 
-                             sub)
-            for sub in self.submasters.get_all_subs())
-
-        for group, order, sub in withgroups:
-            group = graph.value(sub.uri, L9['group'])
-
-            if col == 0 or group != last_group: # make new row
-                row = self.make_row()
-                rowcount += 1
-                col = 0
-            current_level = self.current_sub_levels.get(sub.name, 0)
-            subtk = self.draw_sub_slider(row, col, sub.name, current_level)
-            self.slider_table[(rowcount, col)] = subtk
-            self.name_to_subtk[sub.name] = subtk
-
-            def slider_changed(x, y, z, subtk=subtk,
-                               col=col, sub=sub, rowcount=rowcount):
-                subtk.scale.draw_indicator_colors()
-                self.send_levels()
-                if rowcount == self.current_row:
-                    self.send_to_hw(sub.name, col + 1)
-
-            subtk.slider_var.trace('w', slider_changed)
-
-            # initial position
-            self.send_to_hw(sub.name, col + 1)
-            col = (col + 1) % 8
-            last_group = group
 
     def send_to_hw(self, subName, hwNum):
         if isinstance(self.sliders, DummySliders):
@@ -303,13 +313,7 @@ class KeyboardComposer(Frame, SubClient):
         self.setup_key_nudgers(row)
         self.rows.append(row)
         return row
-    def draw_sub_slider(self, row, col, name, current_level):
-        subtk = SubmasterTk(row, name, current_level)
-        subtk.place(relx=col / 8, rely=0, relwidth=1 / 8, relheight=1)
-        self.setup_key_nudgers(subtk.scale)
 
-        self.slider_vars[name] = subtk.slider_var
-        return subtk
     def highlight_row(self, row):
         row = self.rows[row]
         row['bg'] = 'red'
