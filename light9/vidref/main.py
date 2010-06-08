@@ -97,12 +97,12 @@ class Main(object):
         
         tee = makeElem("tee")
 
-        source.link(csp)
-        csp.link(caps)
-        caps.link(tee)
-        tee.link(sink)
+        source.link(sink)#csp)
+#        csp.link(caps)
+#        caps.link(tee)
+#        tee.link(sink)
 
-        tee.link(recSink)
+#        tee.link(recSink)
 #        tee.link(sink2)
 
         mainwin.show_all()

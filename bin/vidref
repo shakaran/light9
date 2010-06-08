@@ -1,5 +1,7 @@
 #!/usr/bin/python
 import gtk
+import sys
+sys.path.append(".")
 from light9.vidref.main import Main
 
 
