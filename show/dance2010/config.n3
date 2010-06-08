@@ -1,0 +1,194 @@
+@prefix : <http://light9.bigasterisk.com/> .
+@prefix ch: <http://light9.bigasterisk.com/theater/piedmont/channel/> .
+@prefix chase: <http://light9.bigasterisk.com/chase/> .
+@prefix dmx: <http://light9.bigasterisk.com/dmx/> .
+@prefix group: <http://light9.bigasterisk.com/group/> .
+@prefix mus: <http://light9.bigasterisk.com/music/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://light9.bigasterisk.com/show/dance2010/> .
+@prefix show: <http://light9.bigasterisk.com/show/> .
+@prefix sub: <http://light9.bigasterisk.com/sub/> .
+
+mus:preSong :showPath "dance2008/silence-4sec.ogg" .
+mus:postSong :showPath "dance2008/silence-15sec.ogg" .
+
+show:dance2010 :playList (
+  sh:song1  sh:song2  sh:song3  sh:song4  sh:song5
+  sh:song6  sh:song7  sh:song8  sh:song9  sh:song10
+  sh:song11 sh:song12 sh:song13 sh:song14 sh:song15
+  sh:song16 sh:song17
+) .
+
+:Song is rdf:type of sh:song1, sh:song2, sh:song3, sh:song4,
+   sh:song5, sh:song6, sh:song7, sh:song8, sh:song9, sh:song10,
+   sh:song11, sh:song12, sh:song13, sh:song14, sh:song15, sh:song16,
+   sh:song17 .
+
+sh:song1 rdfs:label "1 chorus";		:showPath "dance2010/01-chorusmix.wav" .
+sh:song2 rdfs:label "2 dolly";		:showPath "dance2010/02-dolly.wav" .
+sh:song3 rdfs:label "3 opposites";	:showPath "dance2010/03-oppositesmix.wav" .
+sh:song4 rdfs:label "4 top hat";	:showPath "dance2010/04-tophat.wav" .
+sh:song5 rdfs:label "5 temple";		:showPath "dance2010/05-temple.wav" .
+sh:song6 rdfs:label "6 ";		:showPath "dance2010/06-contemporarymix.wav" .
+sh:song7 rdfs:label "7 jackson";	:showPath "dance2010/07-jacksonmix.wav" .
+sh:song8 rdfs:label "8 singing";	:showPath "dance2010/08-singingmix.wav" .
+sh:song9 rdfs:label "9 abc";		:showPath "dance2010/09-abc.wav" .
+sh:song10 rdfs:label "10 ritz";		:showPath "dance2010/10-ritz.wav" .
+sh:song11 rdfs:label "11 ";		:showPath "dance2010/11-blackmix.wav" .
+sh:song12 rdfs:label "12 eleanor";	:showPath "dance2010/12-eleanor.wav" .
+sh:song13 rdfs:label "13 ";		:showPath "dance2010/13-sleepingmix.wav" .
+sh:song14 rdfs:label "14 charity";	:showPath "dance2010/14-charitymix.wav" .
+sh:song15 rdfs:label "15 fosse";	:showPath "dance2010/15-fossemix.wav" .
+sh:song16 rdfs:label "16 hip hop";	:showPath "dance2010/16-hiphopmix.wav" .
+sh:song17 rdfs:label "17 broadway";	:showPath "dance2010/17-broadwaymix.wav" .
+
+sub:red :group group:strip; :order 0 .
+sub:orange :group group:strip; :order 1 .
+sub:green :group group:strip; :order 2 .
+sub:blue :group group:strip; :order 3.
+
+sub:sharlyn :group group:live; :order 1 .
+sub:cyc :group group:live; :order 2 .
+sub:house :group group:live; :order 3 .
+sub:scoop :group group:live; :order 4 .
+sub:front :group group:live; :order 5 .
+sub:curtain :group group:live; :order 6 .
+
+sub:scoop :color "#ffaa77" .
+
+sub:song1	:group group:song; :order 1 .
+sub:song2	:group group:song; :order 2 .
+sub:song3	:group group:song; :order 3 .
+sub:song4	:group group:song; :order 4 .
+sub:song5	:group group:song; :order 5 .
+sub:song6	:group group:song; :order 6 .
+sub:song7	:group group:song; :order 7 .
+sub:song8	:group group:song; :order 8 .
+sub:song9	:group group:song; :order 9 .
+sub:song10	:group group:song; :order 10 .
+sub:song11	:group group:song; :order 11 .
+sub:song12	:group group:song; :order 12 .
+sub:song13	:group group:song; :order 13 .
+sub:song14	:group group:song; :order 14 .
+sub:song15	:group group:song; :order 15 .
+sub:song16	:group group:song; :order 16 .
+sub:song17	:group group:song; :order 17 .
+
+group:brow is :group of
+sub:bblue, sub:bblueall, sub:bneutral, sub:bpurple, sub:bpurpleall, sub:bpurplec,
+   sub:bred, sub:bredall .
+
+
+chase:colors a :Chase; :channels (
+ch:oran1 ch:gree1 ch:blue1 ch:red1 
+ch:oran2 ch:gree2 ch:blue2 ch:red2 
+ch:oran3 ch:gree2 ch:blue2 ch:red2 
+ch:oran4 ) .
+
+chase:colors1 a :Chase; :channels (ch:red1 ch:gree1 ch:oran1 ch:blue1) .
+chase:colors2 a :Chase; :channels (ch:red2 ch:gree2 ch:oran2 ch:blue2) .
+chase:colors3 a :Chase; :channels (ch:red3 ch:gree3 ch:oran3 ch:blue3) .
+chase:colors4 a :Chase; :channels (ch:red4 ch:gree4 ch:oran4 ch:blue4) .
+
+chase:back a :Chase; :channels (
+ch:b15-p
+ch:b13-b
+ch:b12-r
+ch:b21-p
+ch:b22-b
+ch:b23-b
+ch:b24-b
+ch:b25-r
+ch:b33-r
+ch:b34-b
+ch:b35-p
+) .
+
+chase:cycline a :Chase; :channels (ch:cyc-left ch:cyc-mid ch:cyc-right ) .
+chase:cycpong a :Chase; :channels (ch:cyc-left ch:cyc-mid ch:cyc-right ch:cyc-mid) .
+
+
+
+
+
+#ch:b26 :previewLayer [ :path "lightsim/skyline/front-left.png" ] .
+#ch:front11 :previewLayer [ :path "lightsim/skyline/front-right.png" ] . 
+#ch:house1 :previewLayer [ :path "lightsim/skyline/bg.png" ] . 
+#ch:gree1 :previewLayer [ :path "lightsim/skyline/cyc-lo-grn.png" ] . 
+#ch:oran1 :previewLayer [ :path "lightsim/skyline/cyc-lo-or.png" ] . 
+#ch:red1 :previewLayer [ :path "lightsim/skyline/cyc-lo-red.png" ] . 
+#ch:blue1 :previewLayer [ :path "lightsim/skyline/cyc-lo-blu.png" ]; rdfs:comment "(image is blank)". 
+
+dmx:c1 :dmxAddress 1 .
+dmx:c2 :dmxAddress 2 .
+dmx:c3 :dmxAddress 3 .
+dmx:c4 :dmxAddress 4 .
+dmx:c5 :dmxAddress 5 .
+dmx:c6 :dmxAddress 6 .
+dmx:c7 :dmxAddress 7 .
+dmx:c8 :dmxAddress 8 .
+dmx:c9 :dmxAddress 9 .
+dmx:c10 :dmxAddress 10 .
+dmx:c11 :dmxAddress 11 .
+dmx:c12 :dmxAddress 12 .
+dmx:c13 :dmxAddress 13 .
+dmx:c14 :dmxAddress 14 .
+dmx:c15 :dmxAddress 15 .
+dmx:c16 :dmxAddress 16 .
+dmx:c17 :dmxAddress 17 .
+dmx:c18 :dmxAddress 18 .
+dmx:c19 :dmxAddress 19 .
+dmx:c20 :dmxAddress 20 .
+dmx:c21 :dmxAddress 21 .
+dmx:c22 :dmxAddress 22 .
+dmx:c23 :dmxAddress 23 .
+dmx:c24 :dmxAddress 24 .
+dmx:c25 :dmxAddress 25 .
+dmx:c26 :dmxAddress 26 .
+dmx:c27 :dmxAddress 27 .
+dmx:c28 :dmxAddress 28 .
+dmx:c29 :dmxAddress 29 .
+dmx:c30 :dmxAddress 30 .
+dmx:c31 :dmxAddress 31 .
+dmx:c32 :dmxAddress 32 .
+dmx:c33 :dmxAddress 33 .
+dmx:c34 :dmxAddress 34 .
+dmx:c35 :dmxAddress 35 .
+dmx:c36 :dmxAddress 36 .
+dmx:c37 :dmxAddress 37 .
+dmx:c38 :dmxAddress 38 .
+dmx:c39 :dmxAddress 39 .
+dmx:c40 :dmxAddress 40 .
+dmx:c41 :dmxAddress 41 .
+dmx:c42 :dmxAddress 42 .
+dmx:c43 :dmxAddress 43 .
+dmx:c44 :dmxAddress 44 .
+dmx:c45 :dmxAddress 45 .
+dmx:c46 :dmxAddress 46 .
+dmx:c47 :dmxAddress 47 .
+dmx:c48 :dmxAddress 48 .
+dmx:c49 :dmxAddress 49 .
+dmx:c50 :dmxAddress 50 .
+dmx:c51 :dmxAddress 51 .
+dmx:c52 :dmxAddress 52 .
+dmx:c53 :dmxAddress 53 .
+dmx:c54 :dmxAddress 54 .
+dmx:c55 :dmxAddress 55 .
+dmx:c56 :dmxAddress 56 .
+dmx:c57 :dmxAddress 57 .
+dmx:c58 :dmxAddress 58 .
+dmx:c59 :dmxAddress 59 .
+dmx:c60 :dmxAddress 60 .
+dmx:c61 :dmxAddress 61 .
+dmx:c62 :dmxAddress 62 .
+dmx:c63 :dmxAddress 63 .
+dmx:c64 :dmxAddress 64 .
+dmx:c65 :dmxAddress 65 .
+dmx:c66 :dmxAddress 66 .
+dmx:c67 :dmxAddress 67 .
+dmx:c68 :dmxAddress 68 .
+dmx:c69 :dmxAddress 69 .
+dmx:c70 :dmxAddress 70 .
+dmx:c71 :dmxAddress 71 .
+dmx:c72 :dmxAddress 72 .

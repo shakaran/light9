@@ -1,0 +1,30 @@
+for local testing on plus:
+
+sudo -u mpd -s
+export LD_LIBRARY_PATH=/home/drewp/score
+./mpd --no-daemon
+
+fix networking.py to look for player on plus
+
+PYTHONPATH=../pympd bin/ascoltami --show http://light9.bigasterisk.com/show/dance2010
+
+plus(pts/3):~/projects/light9% bin/dmxserver -n
+
+vidref
+grab time from asco
+always record picture against {songuri}/vid/{take}/{songtime}, so we never miss a recording (but at night when they're all gone, we don't need any recordings?)
+play prev videos
+let me tag a good rehearsal or toss junk rehearsals. if we juggle the playback time too much, you can be sure it's not a good pass
+qt window with one live pane and any number of synced playback panes.
+Do we need to detach from current song+time to view something else?
+curvecalc should be able to fetch a sample of a lit frame to stick in its timeline
+need to move curvecalc to qt?
+can i dynamically change the output filename of a filesink? that might be the way to steer the ouptut correctly. But, i might want to append one take's frames into one file. Maybe use a standard compressor like mjpeg, and separately map the in-movie timestamp to our playback timestamp in case they drift.
+new take for every single restart? i guess so, since they could pass over the same song time.
+get twisted qt wrapper for our networking
+
+show is 70min of music: at 8fps and 50k/pic, 1.6MB of image data per pass.
+
+
+todo:
+- check if mpd has a working precise-time system yet, so we could get off the patched one
