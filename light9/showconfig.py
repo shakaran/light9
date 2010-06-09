@@ -41,7 +41,8 @@ def findMpdHome():
     including trailing slash"""
     
     mpdHome = None
-    for mpdConfFilename in ["~/.mpdconf", "/etc/mpd.conf"]:
+    for mpdConfFilename in ["/my/dl/modified/mpd/src/mpdconf-testing",
+                            "~/.mpdconf", "/etc/mpd.conf"]:
         try:
             mpdConfFile = open(path.expanduser(mpdConfFilename))
         except IOError:
@@ -76,7 +77,10 @@ def songInMpd(song):
 def songOnDisk(song):
     """given a song URI, where's the on-disk file that mpd would read?"""
     graph = getGraph()
-    songFullPath = path.join(findMpdHome(), graph.value(song, L9['showPath']))
+    showPath = graph.value(song, L9['showPath'])
+    if not showPath:
+        raise ValueError("no mpd path found for subject=%r" % song)
+    songFullPath = path.join(findMpdHome(), showPath)
     return songFullPath
 
 def songFilenameFromURI(uri):

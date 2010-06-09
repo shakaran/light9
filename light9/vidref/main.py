@@ -22,23 +22,7 @@ logging.basicConfig(level=logging.WARN)
 logging.getLogger().setLevel(logging.WARN)
 #restkit.set_logging(logging.WARN)
 
-print jsonlib.loads(restkit.Resource(networking.musicUrl()).get("api/position").body, use_float=True)
-
-import StringIO
-# gtk.gdk.pixbuf_new_from_data(img.tostring() seems like it would be better
-# http://www.daa.com.au/pipermail/pygtk/2003-June/005268.html
-def Image_to_GdkPixbuf (image):
-    file = StringIO.StringIO ()
-    image.save (file, 'ppm')
-    contents = file.getvalue()
-    file.close ()
-    loader = gtk.gdk.PixbufLoader ('pnm')
-    loader.write (contents, len (contents))
-    pixbuf = loader.get_pixbuf ()
-    loader.close ()
-    return pixbuf
-
-existingDir = "/tmp/vidref/play-light9.bigasterisk.com_show_dance2010_song7-1276057905"
+existingDir = "/tmp/vidref/play-light9.bigasterisk.com_show_dance2010_song7-1276065914"
 existingFrames = sorted([Decimal(f.split('.jpg')[0])
                          for f in os.listdir(existingDir)])
 
@@ -57,7 +41,7 @@ class VideoRecordSink(gst.Element):
         self.sinkpad.set_chain_function(self.chainfunc)
         self.lastTime = 0
         
-        self.musicResource = restkit.Resource(networking.musicUrl())
+        self.musicResource = restkit.Resource(networking.musicUrl(api='rest'))
 
         self.imagesToSave = Queue()
         self.startBackgroundImageSaver(self.imagesToSave)
@@ -66,8 +50,8 @@ class VideoRecordSink(gst.Element):
         """do image saves in another thread to not block gst"""
         def imageSaver():
             while True:
-                position, img = imagesToSave.get()
-                self.saveImg(position, img)
+                args = imagesToSave.get()
+                self.saveImg(*args)
                 imagesToSave.task_done()
         
         t = Thread(target=imageSaver)
@@ -79,18 +63,16 @@ class VideoRecordSink(gst.Element):
         self.info("%s timestamp(buffer):%d" % (pad, buffer.timestamp))
 
         try:
-            position = jsonlib.loads(self.musicResource.get("api/position").body,
+            position = jsonlib.loads(self.musicResource.get("position").body,
                                      use_float=True)
             if not position['song']:
                 return gst.FLOW_OK
             
 
             cap = buffer.caps[0]
-            #img = Image.fromstring('RGB', (cap['width'], cap['height']),
-            #                       buffer.data)
-            #self.imagesToSave.put((position, img))
-            #pixbuf = Image_to_GdkPixbuf(img)
-            #otherPic.set_from_pixbuf(pixbuf)
+            img = Image.fromstring('RGB', (cap['width'], cap['height']),
+                                   buffer.data)
+            self.imagesToSave.put((position, img, buffer.timestamp))
         except:
             traceback.print_exc()
 
@@ -101,7 +83,7 @@ class VideoRecordSink(gst.Element):
         
         return gst.FLOW_OK
 
-    def saveImg(self, position, img):
+    def saveImg(self, position, img, bufferTimestamp):
         outDir = "/tmp/vidref/play-%s-%d" % (
             position['song'].split('://')[-1].replace('/','_'),
             position['started'])
@@ -117,17 +99,19 @@ class VideoRecordSink(gst.Element):
         img.save(outFilename)
 
         now = time.time()
-        print "wrote %s delay of %.2fms" % (outFilename,
-                                        (now - self.lastTime) * 1000)
+        print "wrote %s delay of %.2fms %s" % (outFilename,
+                                        (now - self.lastTime) * 1000,
+                                               bufferTimestamp)
         self.lastTime = now
 
     def updateOtherFrames(self, position):
-        inPic = self.findClosestFrame(position['t']+.15)
-        print "load", inPic
+        inPic = self.findClosestFrame(position['t']+.2)
+        #print "load", inPic
         with gtk.gdk.lock:
             otherPic.set_from_file(inPic)
-            otherPic.queue_draw_area(0,0,320,240)
-            otherPic.get_window().process_updates(True)
+            if 0:
+                otherPic.queue_draw_area(0,0,320,240)
+                otherPic.get_window().process_updates(True)
 
     def findClosestFrame(self, t):
         i = bisect_left(existingFrames, Decimal(str(t)))
@@ -158,7 +142,7 @@ class Main(object):
         ##     source = makeElem("v4l2src", "vsource")
         ##     source.set_property("device", "/dev/video0")
 
-        dv = "dv1394src ! dvdemux ! dvdec ! videoscale ! video/x-raw-yuv,width=320"
+        dv = "dv1394src ! dvdemux ! dvdec ! videoscale ! video/x-raw-yuv,width=320,height=240;video/x-raw-rgb,width=320,height=240 ! queue name=vid"
         v4l = "v4l2src device=/dev/video0 ! hqdn3d name=vid" 
 
         pipeline = gst.parse_launch(dv)
