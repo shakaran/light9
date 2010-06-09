@@ -1,14 +1,28 @@
 #!/usr/bin/python
+
+"""
+
+dvcam test
+gst-launch dv1394src ! dvdemux name=d ! dvdec ! ffmpegcolorspace ! hqdn3d ! xvimagesink
+
+"""
 import pygst
 pygst.require("0.10")
-import gst, gobject
+import gst, gobject, time, jsonlib, restkit, logging, os, traceback
+from decimal import Decimal
+from bisect import bisect_left
 import pygtk
 import gtk
 from twisted.python.util import sibpath
 import Image
+from threading import Thread
+from Queue import Queue
+from light9 import networking
+logging.basicConfig(level=logging.WARN)
+logging.getLogger().setLevel(logging.WARN)
+#restkit.set_logging(logging.WARN)
 
-otherPic = None
-
+print jsonlib.loads(restkit.Resource(networking.musicUrl()).get("api/position").body, use_float=True)
 
 import StringIO
 # gtk.gdk.pixbuf_new_from_data(img.tostring() seems like it would be better
@@ -24,7 +38,13 @@ def Image_to_GdkPixbuf (image):
     loader.close ()
     return pixbuf
 
-class MySink(gst.Element):
+existingDir = "/tmp/vidref/play-light9.bigasterisk.com_show_dance2010_song7-1276057905"
+existingFrames = sorted([Decimal(f.split('.jpg')[0])
+                         for f in os.listdir(existingDir)])
+
+otherPic = None
+
+class VideoRecordSink(gst.Element):
     _sinkpadtemplate = gst.PadTemplate ("sinkpadtemplate",
                                         gst.PAD_SINK,
                                         gst.PAD_ALWAYS,
@@ -35,27 +55,89 @@ class MySink(gst.Element):
         self.sinkpad = gst.Pad(self._sinkpadtemplate, "sink")
         self.add_pad(self.sinkpad)
         self.sinkpad.set_chain_function(self.chainfunc)
+        self.lastTime = 0
+        
+        self.musicResource = restkit.Resource(networking.musicUrl())
+
+        self.imagesToSave = Queue()
+        self.startBackgroundImageSaver(self.imagesToSave)
+
+    def startBackgroundImageSaver(self, imagesToSave):
+        """do image saves in another thread to not block gst"""
+        def imageSaver():
+            while True:
+                position, img = imagesToSave.get()
+                self.saveImg(position, img)
+                imagesToSave.task_done()
+        
+        t = Thread(target=imageSaver)
+        t.setDaemon(True)
+        t.start()
         
     def chainfunc(self, pad, buffer):
         global nextImageCb
         self.info("%s timestamp(buffer):%d" % (pad, buffer.timestamp))
-        
-        if 1:
-            try:
-                cap = buffer.caps[0]
-                img = Image.fromstring('RGB', (cap['width'], cap['height']),
-                                       buffer.data)
-            except:
-                import traceback
-                traceback.print_exc()
-                raise
 
-            print "got image to save"
+        try:
+            position = jsonlib.loads(self.musicResource.get("api/position").body,
+                                     use_float=True)
+            if not position['song']:
+                return gst.FLOW_OK
+            
+
+            cap = buffer.caps[0]
+            #img = Image.fromstring('RGB', (cap['width'], cap['height']),
+            #                       buffer.data)
+            #self.imagesToSave.put((position, img))
             #pixbuf = Image_to_GdkPixbuf(img)
             #otherPic.set_from_pixbuf(pixbuf)
-            
+        except:
+            traceback.print_exc()
+
+        try:
+            self.updateOtherFrames(position)
+        except:
+            traceback.print_exc()
+        
         return gst.FLOW_OK
-gobject.type_register(MySink)
+
+    def saveImg(self, position, img):
+        outDir = "/tmp/vidref/play-%s-%d" % (
+            position['song'].split('://')[-1].replace('/','_'),
+            position['started'])
+        outFilename = "%s/%08.03f.jpg" % (outDir, position['t'])
+        if os.path.exists(outFilename): # we're paused on one time
+            return
+        
+        try:
+            os.makedirs(outDir)
+        except OSError:
+            pass
+
+        img.save(outFilename)
+
+        now = time.time()
+        print "wrote %s delay of %.2fms" % (outFilename,
+                                        (now - self.lastTime) * 1000)
+        self.lastTime = now
+
+    def updateOtherFrames(self, position):
+        inPic = self.findClosestFrame(position['t']+.15)
+        print "load", inPic
+        with gtk.gdk.lock:
+            otherPic.set_from_file(inPic)
+            otherPic.queue_draw_area(0,0,320,240)
+            otherPic.get_window().process_updates(True)
+
+    def findClosestFrame(self, t):
+        i = bisect_left(existingFrames, Decimal(str(t)))
+        if i >= len(existingFrames):
+            i = len(existingFrames) - 1
+        return os.path.join(existingDir, "%08.03f.jpg" % existingFrames[i])
+    
+
+
+gobject.type_register(VideoRecordSink)
 
 class Main(object):
     def __init__(self):
@@ -69,45 +151,37 @@ class Main(object):
             "foo" : self.OnPlay,
             })
 
-        pipeline = gst.Pipeline("player")
+        # other sources: videotestsrc, v4l2src device=/dev/video0
+        ## if 0:
+        ##     source = makeElem("videotestsrc", "video")
+        ## else:
+        ##     source = makeElem("v4l2src", "vsource")
+        ##     source.set_property("device", "/dev/video0")
+
+        dv = "dv1394src ! dvdemux ! dvdec ! videoscale ! video/x-raw-yuv,width=320"
+        v4l = "v4l2src device=/dev/video0 ! hqdn3d name=vid" 
+
+        pipeline = gst.parse_launch(dv)
 
         def makeElem(t, n=None):
             e = gst.element_factory_make(t, n)
             pipeline.add(e)
             return e
         
-        if 0:
-            source = makeElem("videotestsrc", "video")
-        else:
-            source = makeElem("v4l2src", "vsource")
-            source.set_property("device", "/dev/video0")
+        sink = makeElem("xvimagesink")
+        recSink = VideoRecordSink()
+        pipeline.add(recSink)
 
-        csp = makeElem("ffmpegcolorspace")
-
+        tee = makeElem("tee")
+        
         caps = makeElem("capsfilter")
         caps.set_property('caps', gst.caps_from_string('video/x-raw-rgb'))
 
-        sink = makeElem("xvimagesink", "sink")
-
-        recSink = MySink()
-        pipeline.add(recSink)
-
-        # using this adds 5% cpu; not sure the advantage
-        scaler = makeElem("videoscale", "vscale")
-        
-        tee = makeElem("tee")
-
-        source.link(sink)#csp)
-#        csp.link(caps)
-#        caps.link(tee)
-#        tee.link(sink)
-
-#        tee.link(recSink)
-#        tee.link(sink2)
+        gst.element_link_many(pipeline.get_by_name("vid"), tee, sink)
+        gst.element_link_many(tee, makeElem("ffmpegcolorspace"), caps, recSink)
 
         mainwin.show_all()
 
-#        sink2.set_xwindow_id(wtree.get_object("liveVideo").window.xid)
         sink.set_xwindow_id(wtree.get_object("vid3").window.xid)
 
         pipeline.set_state(gst.STATE_PLAYING)

@@ -23,8 +23,8 @@
         </child>
         <child>
           <object class="GtkImage" id="liveVideo">
-            <property name="width_request">320</property>
-            <property name="height_request">240</property>
+            <property name="width_request">474</property>
+            <property name="height_request">291</property>
             <property name="visible">True</property>
           </object>
           <packing>
@@ -61,8 +61,8 @@
             </child>
           </object>
           <packing>
-            <property name="x">332</property>
-            <property name="y">28</property>
+            <property name="x">496</property>
+            <property name="y">41</property>
           </packing>
         </child>
       </object>
