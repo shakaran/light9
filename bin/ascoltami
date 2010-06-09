@@ -35,7 +35,7 @@ todo:
 from __future__ import division,nested_scopes
 
 from optparse import OptionParser
-import sys, os,math,time
+import sys, os,math,time, jsonlib
 from rdflib import URIRef
 import Tkinter as tk
 import logging
@@ -44,7 +44,7 @@ log.setLevel(logging.INFO)
 
 from twisted.internet import reactor,tksupport
 from twisted.internet.error import CannotListenError
-from twisted.web import xmlrpc, server
+from twisted.web import xmlrpc, server, resource
 
 import run_local
 from light9 import networking, showconfig, wavelength
@@ -63,7 +63,17 @@ def shortSongPath(song, all):
     prefixlen = all[0].rfind(os.sep)+1 
 
     return os.path.splitext(song[prefixlen:])[0]
-    
+
+class RestApi(resource.Resource):
+    isLeaf = True
+    def __init__(self, player):
+        resource.Resource.__init__(self)
+        self.player = player
+    def render_GET(self, request):
+        if request.postpath == ['position']:
+            return jsonlib.write({"song" : self.player.song_uri,
+                                  "t" : self.player.smoothCurrentTime(),
+                                  "started" : self.player.playStartTime})
 
 class XMLRPCServe(xmlrpc.XMLRPC):
     def __init__(self,player):
@@ -123,6 +133,7 @@ class Player:
         self.total_time = tk.DoubleVar()
         self.filename_var = tk.StringVar()
         self.song_uri = None
+        self.playStartTime = 0
 
         self.pre_post_names = showconfig.prePostSong()
 
@@ -192,9 +203,14 @@ class Player:
         p = showconfig.songOnDisk(song)
         self.total_time.set(wavelength.wavelength(p))
 
+    def mpdPlay(self):
+        """vidref wants to know when this play started"""
+        self.playStartTime = time.time()
+        self.mpd.play()
+
     def play(self, song=None):
         if song is None:
-            self.mpd.play()
+            self.mpdPlay()
             return
     
         self.mpd.clear()
@@ -231,16 +247,17 @@ class Player:
         self.mpd.seek(seconds=0, song=0)
         self.mpd.stop()
         
-    def seek_to(self, time):
-        if time < 0:
+    def seek_to(self, t):
+        if t < 0:
             # seeking to anything within my 4-sec silence ogg goes
             # right to zero. maybe ogg seeking is too coarse?
-            self.mpd.seek(seconds=time - (-4), song=0)
-        elif time > self.total_time.get():
-            self.mpd.seek(seconds=time - self.total_time.get(), song=2)
+            self.mpd.seek(seconds=t - (-4), song=0)
+        elif t > self.total_time.get():
+            self.mpd.seek(seconds=t - self.total_time.get(), song=2)
         else:
-            self.mpd.seek(seconds=time, song=1)
-        self.last_autopause_time = time
+            self.mpd.seek(seconds=t, song=1)
+        self.last_autopause_time = t
+        self.playStartTime = time.time()
 
     def skip_intro(self):
         self.seek_to(0)
@@ -254,7 +271,7 @@ class Player:
             if status.state == 'play':
                 self.mpd.pause()
             else:
-                self.mpd.play()
+                self.mpdPlay()
         self.mpd.status().addCallback(finish)
 
     def pause(self):
@@ -507,6 +524,8 @@ def main():
         if not options.show:
             raise ValueError("missing --show http://...")
         playList = graph.value(URIRef(options.show), L9['playList'])
+        if not playList:
+            raise ValueError("%r has no l9:playList" % options.show)
         songs = list(graph.items(playList))
     else:
         raise NotImplementedError("don't know how to make rdf song nodes from cmdline song paths")
@@ -544,8 +563,13 @@ def main():
 
     tksupport.install(root,ms=10)
 
+    rootResource = resource.Resource()
+    site = server.Site(rootResource)
+    rootResource.putChild("api", RestApi(player))
+    rootResource.putChild("RPC2", XMLRPCServe(player))
+    
     try:
-        reactor.listenTCP(networking.musicPort(),server.Site(XMLRPCServe(player)))
+        reactor.listenTCP(networking.musicPort(), site)
         print "started server on %s" % networking.musicPort()
     except CannotListenError:
         print "no server started- %s is in use" % networking.musicPort()
