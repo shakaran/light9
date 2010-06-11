@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>ascoltami</title>
+    <script type="text/javascript" src="static/jquery-1.4.2.min.js"></script>
+      <script type="text/javascript" src="static/jquery-ui-1.8.2.custom/js/jquery-ui-1.8.2.custom.min.js"></script>
+      <link rel="Stylesheet" type="text/css" href="static/jquery-ui-1.8.2.custom/css/smoothness/jquery-ui-1.8.2.custom.css"/>
+      <link rel="Stylesheet" type="text/css" href="static/style.css"/>
+  </head>
+  <body>
+
+
+    <div class="songs">
+    </div>
+
+
+    <div>Song: <span id="currentSong"/></div>
+    <div>Time: <span id="currentTime"/></div>
+    <div>Left: <span id="leftTime"/></div>
+    <div>
+      <div id="timeSlider"/>
+    </div>
+
+    <div class="commands">
+      <button id="cmd-stop">Stop C-s</button>
+      <button id="cmd-play">Play C-p</button>
+      <button id="cmd-intro">Skip intro C-i</button>
+      <button id="cmd-post">Skip to Post C-t</button>
+      <button id="cmd-go">Go  space</button>
+    </div>
+
+bind keys, spacebar, css work
+
+<script type="text/javascript">
+// <![CDATA[
+$(function () {
+
+    var times = {
+	intro: 4,
+	post: 10
+    };
+    var currentDuration = 0;
+
+    function updateCurrent() {
+	$.getJSON("time", {}, function (data, status) {
+	    $("#currentSong").text(data.song);
+	    $("#currentTime").text(data.t);
+	    $("#leftTime").text(data.duration - data.t);
+	    currentDuration = data.duration;
+	    $("#timeSlider").slider({value: data.t,
+				     max: data.duration});
+
+	});
+    }
+
+    $.getJSON("songs", {}, function (data, status) {
+	$.each(data.songs, function (i, song) {
+	    var button = $("<button>");
+	    button.text(song.label);
+	    button.data(song);
+	    button.click(function () {
+		$.post("song", button.data("path"), 
+		       function (data, textStatus, xhr) {
+		    
+		       });
+	    });
+	    $(".songs").append($("<div>").append(button));
+	});
+    });
+
+    var tojs = JSON.stringify;
+
+    $("#cmd-stop").click(function () { $.post("time", tojs({pause: true})); });
+    $("#cmd-play").click(function () { $.post("time", tojs({resume: true})); });
+    $("#cmd-intro").click(function () { $.post("time", tojs({t: times.intro}))});
+    $("#cmd-post").click(function () { 
+	$.post("time", tojs({t: currentDuration - times.post}))
+    });
+    $("#cmd-go").click(function () {
+	
+    });
+
+    var pendingSlide = false;
+    $("#timeSlider").slider({
+	step: .01,
+	slide: function (event, ui) {
+	    if (pendingSlide) {
+		return;
+	    }
+	    pendingSlide = true;
+	    $.post("time", '{"t" : '+ui.value+'}', 
+		   function (data, status, xhr) {
+		       pendingSlide = false;
+		   });
+	},
+});
+    
+    function updateLoop() {
+	updateCurrent();
+	setTimeout(updateLoop, 300);
+    }
+    updateLoop();
+});
+// ]]>
+</script>
+
+
+  </body>
+</html>

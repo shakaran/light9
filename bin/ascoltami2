@@ -1,0 +1,37 @@
+#!/usr/bin/python
+import web, thread, gobject, sys, optparse, logging
+from rdflib import URIRef
+sys.path.append(".")
+from light9.ascoltami.player import Player
+from light9.ascoltami.webapp import makeApp
+from light9 import networking, showconfig
+
+log = logging.getLogger()
+logging.basicConfig()
+gobject.threads_init()
+
+parser = optparse.OptionParser()
+parser.add_option('--show',
+    help='show URI, like http://light9.bigasterisk.com/show/dance2008')
+parser.add_option("-v", "--verbose", action="store_true",
+                  help="logging.DEBUG")
+graph = showconfig.getGraph()
+(options, args) = parser.parse_args()
+
+
+log.setLevel(logging.DEBUG if options.verbose else logging.INFO)
+
+graph = showconfig.getGraph()
+if not options.show:
+    raise ValueError("missing --show http://...")
+        
+player = Player()
+
+# the cherrypy server would wedge when vidref pounds on it; this
+# one seems to run
+thread.start_new(web.httpserver.runbasic,
+                 (makeApp(player, graph, URIRef(options.show)).wsgifunc(),
+                  ('0.0.0.0', networking.musicPort())))
+
+mainloop = gobject.MainLoop()
+mainloop.run()
