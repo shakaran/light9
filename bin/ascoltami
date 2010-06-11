@@ -516,9 +516,14 @@ def main():
     parser = OptionParser()
     parser.add_option('--show',
         help='show URI, like http://light9.bigasterisk.com/show/dance2008')
+    parser.add_option("-v", "--verbose", action="store_true",
+                      help="logging.DEBUG")
     graph = showconfig.getGraph()
     (options, songfiles) = parser.parse_args()
 
+    if options.verbose:
+        log.setLevel(logging.DEBUG)
+        
     if len(songfiles)<1:
         graph = showconfig.getGraph()
         if not options.show:
