@@ -10,8 +10,8 @@
 @prefix show: <http://light9.bigasterisk.com/show/> .
 @prefix sub: <http://light9.bigasterisk.com/sub/> .
 
-mus:preSong :showPath "dance2008/silence-4sec.ogg" .
-mus:postSong :showPath "dance2008/silence-15sec.ogg" .
+mus:preSong :showPath "dance2010/silence-4sec.ogg" .
+mus:postSong :showPath "dance2010/silence-15sec.ogg" .
 
 show:dance2010 :playList (
   sh:song1  sh:song2  sh:song3  sh:song4  sh:song5
@@ -25,23 +25,23 @@ show:dance2010 :playList (
    sh:song11, sh:song12, sh:song13, sh:song14, sh:song15, sh:song16,
    sh:song17 .
 
-sh:song1 rdfs:label "1 chorus";		:showPath "dance2010/01-chorusmix.wav" .
-sh:song2 rdfs:label "2 dolly";		:showPath "dance2010/02-dolly.wav" .
-sh:song3 rdfs:label "3 opposites";	:showPath "dance2010/03-oppositesmix.wav" .
-sh:song4 rdfs:label "4 top hat";	:showPath "dance2010/04-tophat.wav" .
-sh:song5 rdfs:label "5 temple";		:showPath "dance2010/05-temple.wav" .
-sh:song6 rdfs:label "6 ";		:showPath "dance2010/06-contemporarymix.wav" .
-sh:song7 rdfs:label "7 jackson";	:showPath "dance2010/07-jacksonmix.wav" .
-sh:song8 rdfs:label "8 singing";	:showPath "dance2010/08-singingmix.wav" .
-sh:song9 rdfs:label "9 abc";		:showPath "dance2010/09-abc.wav" .
-sh:song10 rdfs:label "10 ritz";		:showPath "dance2010/10-ritz.wav" .
-sh:song11 rdfs:label "11 ";		:showPath "dance2010/11-blackmix.wav" .
-sh:song12 rdfs:label "12 eleanor";	:showPath "dance2010/12-eleanor.wav" .
-sh:song13 rdfs:label "13 ";		:showPath "dance2010/13-sleepingmix.wav" .
-sh:song14 rdfs:label "14 charity";	:showPath "dance2010/14-charitymix.wav" .
-sh:song15 rdfs:label "15 fosse";	:showPath "dance2010/15-fossemix.wav" .
-sh:song16 rdfs:label "16 hip hop";	:showPath "dance2010/16-hiphopmix.wav" .
-sh:song17 rdfs:label "17 broadway";	:showPath "dance2010/17-broadwaymix.wav" .
+sh:song1 rdfs:label "1 chorus";		:showPath "file:///my/proj/light9/show/dance2010/music/01-chorusmix.wav" .
+sh:song2 rdfs:label "2 dolly";		:showPath "file:///my/proj/light9/show/dance2010/music/02-dolly.wav" .
+sh:song3 rdfs:label "3 opposites";	:showPath "file:///my/proj/light9/show/dance2010/music/03-oppositesmix.wav" .
+sh:song4 rdfs:label "4 top hat";	:showPath "file:///my/proj/light9/show/dance2010/music/04-tophat.wav" .
+sh:song5 rdfs:label "5 temple";		:showPath "file:///my/proj/light9/show/dance2010/music/05-temple.wav" .
+sh:song6 rdfs:label "6 ";		:showPath "file:///my/proj/light9/show/dance2010/music/06-contemporarymix.wav" .
+sh:song7 rdfs:label "7 jackson";	:showPath "file:///my/proj/light9/show/dance2010/music/07-jacksonmix-complete.wav" .
+sh:song8 rdfs:label "8 singing";	:showPath "file:///my/proj/light9/show/dance2010/music/08-singingmix.wav" .
+sh:song9 rdfs:label "9 abc";		:showPath "file:///my/proj/light9/show/dance2010/music/09-abc.wav" .
+sh:song10 rdfs:label "10 ritz";		:showPath "file:///my/proj/light9/show/dance2010/music/10-ritz.wav" .
+sh:song11 rdfs:label "11 black or white";		:showPath "file:///my/proj/light9/show/dance2010/music/11-blackmix.wav" .
+sh:song12 rdfs:label "12 eleanor";	:showPath "file:///my/proj/light9/show/dance2010/music/12-eleanor.wav" .
+sh:song13 rdfs:label "13 sleeping";		:showPath "file:///my/proj/light9/show/dance2010/music/13-sleepingmix.wav" .
+sh:song14 rdfs:label "14 charity";	:showPath "file:///my/proj/light9/show/dance2010/music/14-charitymix.wav" .
+sh:song15 rdfs:label "15 fosse";	:showPath "file:///my/proj/light9/show/dance2010/music/15-fossemix.wav" .
+sh:song16 rdfs:label "16 hip hop";	:showPath "file:///my/proj/light9/show/dance2010/music/16-hiphopmix.wav" .
+sh:song17 rdfs:label "17 broadway";	:showPath "file:///my/proj/light9/show/dance2010/music/17-broadwaymix.wav" .
 
 sub:red :group group:strip; :order 0 .
 sub:orange :group group:strip; :order 1 .

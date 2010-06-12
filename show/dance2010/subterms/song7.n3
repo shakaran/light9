@@ -1,0 +1,5 @@
+<http://light9.bigasterisk.com/show/dance2010/song7/subterm/scoops> <http://www.w3.org/2000/01/rdf-schema#label> "scoops".
+<http://light9.bigasterisk.com/show/dance2010/song7/subterm/scoops> <http://light9.bigasterisk.com/expression> "scoops(t)".
+<http://light9.bigasterisk.com/show/dance2010/song7/subterm/scoops> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/scoops>.
+<http://light9.bigasterisk.com/show/dance2010/song7/subterm/scoops> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song7> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song7/subterm/scoops>.
