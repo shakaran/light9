@@ -77,6 +77,87 @@
             <property name="y">23</property>
           </packing>
         </child>
+        <child>
+          <object class="GtkToggleButton" id="liveVideoEnabled">
+            <property name="label" translatable="yes">Enabled</property>
+            <property name="width_request">110</property>
+            <property name="height_request">36</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="active">True</property>
+            <signal name="toggled" handler="on_liveVideoEnabled_toggled"/>
+          </object>
+          <packing>
+            <property name="x">20</property>
+            <property name="y">307</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="liveFrameRate">
+            <property name="width_request">52</property>
+            <property name="height_request">25</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="invisible_char">&#x25CF;</property>
+            <property name="numeric">True</property>
+          </object>
+          <packing>
+            <property name="x">96</property>
+            <property name="y">360</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label1">
+            <property name="width_request">75</property>
+            <property name="height_request">20</property>
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">Frame rate</property>
+          </object>
+          <packing>
+            <property name="x">16</property>
+            <property name="y">363</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkComboBox" id="videoSource">
+            <property name="width_request">100</property>
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="x">114</property>
+            <property name="y">405</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label4">
+            <property name="width_request">85</property>
+            <property name="height_request">20</property>
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">Input source</property>
+          </object>
+          <packing>
+            <property name="x">20</property>
+            <property name="y">407</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow" id="scrolledwindow1">
+            <property name="width_request">336</property>
+            <property name="height_request">310</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="hscrollbar_policy">automatic</property>
+            <property name="vscrollbar_policy">automatic</property>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="x">383</property>
+            <property name="y">323</property>
+          </packing>
+        </child>
       </object>
     </child>
   </object>
