@@ -4,38 +4,51 @@
 alternate to the mpd music player, for ascoltami
 """
 from __future__ import division
-import time, logging
-import gst
+import time, logging, traceback
+import gst, gobject
 log = logging.getLogger()
 
 class Player(object):
-    def __init__(self):
-
-        self.playbin = self.pipeline = gst.parse_launch("playbin2 name=b")
+    def __init__(self, autoStopOffset=4):
+        self.autoStopOffset = autoStopOffset
+        self.playbin = self.pipeline = gst.parse_launch("playbin2")
         self.playStartTime = 0
-        self._duration = 0
-        self.pauseTime = 0
+        self.lastWatchTime = 0
+        self.autoStopTime = 0
 
-        self.setSong("file:///my/proj/light9/show/dance2010/music/07-jacksonmix-complete.wav")
-        
+        # before playbin2:
         #self.pipeline = gst.parse_launch("filesrc name=file location=%s ! wavparse name=src ! audioconvert ! alsasink name=out" % songFile)
 
-        def on_any(bus, msg):
-            print bus, msg
+        gobject.timeout_add(50, self.watchTime)
 
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
+
+        def on_any(bus, msg):
+            print bus, msg
         #bus.connect('message', on_any)
 
         def onStreamStatus(bus, message):
             (statusType, _elem) = message.parse_stream_status()
             if statusType == gst.STREAM_STATUS_TYPE_ENTER:
                 self.setupAutostop()
-
-            # we should run our own poller looking for crosses over the autostop threshold and pausing. When i used the pipeline.seek end-time, it caused lots of unwanted other pausing and was hard to turn off.
-                
-            #print message, bus
         bus.connect('message::stream-status', onStreamStatus)
+
+    def watchTime(self):
+        try:
+            try:
+                t = self.currentTime()
+            except gst.QueryError:
+                return True
+            log.debug("watch %s < %s < %s",
+                      self.lastWatchTime, self.autoStopTime, t)
+            if self.lastWatchTime < self.autoStopTime < t:
+                log.info("autostop")
+                self.pause()
+            self.lastWatchTime = t
+        except:
+            traceback.print_exc()
+        return True
 
     def seek(self, t):
         assert self.playbin.seek_simple(
@@ -54,17 +67,18 @@ class Player(object):
         self.pipeline.set_state(gst.STATE_PLAYING)
         self.playStartTime = time.time()
 
-
-
-#        GST_MESSAGE_DURATION
-        
-
     def currentTime(self):
-        cur, _format = self.playbin.query_position(gst.FORMAT_TIME)
+        try:
+            cur, _format = self.playbin.query_position(gst.FORMAT_TIME)
+        except gst.QueryError:
+            return 0
         return cur / gst.SECOND
 
     def duration(self):
-        return self.playbin.query_duration(gst.FORMAT_TIME)[0] / gst.SECOND
+        try:
+            return self.playbin.query_duration(gst.FORMAT_TIME)[0] / gst.SECOND
+        except gst.QueryError:
+            return 0
         
     def pause(self):
         self.pipeline.set_state(gst.STATE_PAUSED)
@@ -72,32 +86,21 @@ class Player(object):
     def resume(self):
         self.pipeline.set_state(gst.STATE_PLAYING)
         pos = self.currentTime()
-        autoStop = self.duration() - 10
+        autoStop = self.duration() - self.autoStopOffset
         if abs(pos - autoStop) < .01:
             self.releaseAutostop()
 
-
     def setupAutostop(self):
-        return
         dur = self.duration()
-        autoStop = (dur - 10.0)
-        log.info("autostop will be at %s", autoStop)
-        print "seek", self.pipeline.seek(1.0, gst.FORMAT_TIME,
-                           gst.SEEK_FLAG_ACCURATE,
-                           gst.SEEK_TYPE_NONE, 0,
-                           gst.SEEK_TYPE_SET, autoStop * gst.SECOND)
+        self.autoStopTime = (dur - self.autoStopOffset)
+        log.info("autostop will be at %s", self.autoStopTime)
+        # pipeline.seek can take a stop time, but using that wasn't
+        # working out well. I'd get pauses at other times that were
+        # hard to remove.
 
-    def releaseAutostop(self):
-        log.info("release autostop")
-        
-        print "seek", self.pipeline.seek(
-            1.0, gst.FORMAT_TIME,
-            gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE | gst.SEEK_FLAG_SKIP,
-            gst.SEEK_TYPE_NONE, 0,
-            gst.SEEK_TYPE_END, 0)
-        print self.pipeline.get_state()
-        self.pipeline.set_state(gst.STATE_PLAYING)
-
-                           
+    def isPlaying(self):
+        _, state, _ = self.pipeline.get_state()
+        return state == gst.STATE_PLAYING
+                  
                            
         

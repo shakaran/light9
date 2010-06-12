@@ -16,6 +16,7 @@ class timeResource(object):
         return jsonlib.write({"song" : player.playbin.get_property("uri"),
                               "started" : player.playStartTime,
                               "duration" : player.duration(),
+                              "playing" : player.isPlaying(),
                               "t" : player.currentTime()})
 
     def POST(self):

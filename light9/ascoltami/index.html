@@ -11,50 +11,69 @@
   </head>
   <body>
 
-
-    <div class="songs">
-    </div>
-
+    <div class="songs"/>
 
     <div>Song: <span id="currentSong"/></div>
     <div>Time: <span id="currentTime"/></div>
     <div>Left: <span id="leftTime"/></div>
-    <div>
+    <div>Until autostop: <span id="leftAutoStopTime"/></div>
+    <div class="timeRow">
       <div id="timeSlider"/>
     </div>
 
     <div class="commands">
-      <button id="cmd-stop">Stop C-s</button>
-      <button id="cmd-play">Play C-p</button>
-      <button id="cmd-intro">Skip intro C-i</button>
-      <button id="cmd-post">Skip to Post C-t</button>
-      <button id="cmd-go">Go  space</button>
+      <button id="cmd-stop" class="playMode">Stop<div class="key">C-s</div></button>
+      <button id="cmd-play" class="playMode">Play <div class="key">C-p</div></button>
+      <button id="cmd-intro">Skip intro <div class="key">C-i</div></button>
+      <button id="cmd-post">Skip to Post <div class="key">C-t</div></button>
+      <button id="cmd-go">Go  <div class="key">space</div></button>
     </div>
 
-bind keys, spacebar, css work
+todo: go button actions, display next action
 
 <script type="text/javascript">
 // <![CDATA[
 $(function () {
 
-    var times = {
+    var times = { // need to get these from server
 	intro: 4,
-	post: 10
+	post: 4
     };
-    var currentDuration = 0;
 
+    var currentDuration = 0;
+    var currentHighlightedSong = "";
+    var lastPlaying;
     function updateCurrent() {
 	$.getJSON("time", {}, function (data, status) {
 	    $("#currentSong").text(data.song);
-	    $("#currentTime").text(data.t);
-	    $("#leftTime").text(data.duration - data.t);
+	    if (data.song != currentHighlightedSong) {
+		showCurrentSong(data.song);
+	    }
+	    $("#currentTime").text(data.t.toFixed(1));
+	    $("#leftTime").text((data.duration - data.t).toFixed(1));
+	    $("#leftAutoStopTime").text(
+		Math.max(0, data.duration - times.post - data.t).toFixed(1));
 	    currentDuration = data.duration;
 	    $("#timeSlider").slider({value: data.t,
 				     max: data.duration});
-
+	    if (data.playing != lastPlaying) {
+		$(".playMode").removeClass("active");
+		$(data.playing ? "#cmd-play" : "#cmd-stop").addClass("active");
+		lastPlaying = data.playing;
+	    }
 	});
     }
-
+    function showCurrentSong(uri) {
+	$(".songs div").each(function (i, row) {
+	    row = $(row);
+	    if (row.find("button").data("path") == uri) {
+		row.addClass("currentSong");
+	    } else {
+		row.removeClass("currentSong");
+	    }
+	});
+	currentHighlightedSong = uri;
+    }
     $.getJSON("songs", {}, function (data, status) {
 	$.each(data.songs, function (i, song) {
 	    var button = $("<button>");
@@ -63,7 +82,7 @@ $(function () {
 	    button.click(function () {
 		$.post("song", button.data("path"), 
 		       function (data, textStatus, xhr) {
-		    
+			   showCurrentSong(song.uri);
 		       });
 	    });
 	    $(".songs").append($("<div>").append(button));
@@ -72,14 +91,27 @@ $(function () {
 
     var tojs = JSON.stringify;
 
+    $(document).keypress(function (ev) {
+	if (1 || ev.ctrlKey) {
+	    if (ev.which == 115) { $("#cmd-stop").click(); return false; }
+	    if (ev.which == 112) { $("#cmd-play").click(); return false; }
+	    if (ev.which == 105) { $("#cmd-intro").click(); return false; }
+	    if (ev.which == 116) { $("#cmd-post").click(); return false; }
+	}
+	if (ev.which == 32) { $("#cmd-go").click(); return false; }
+	return true;
+    });
+
     $("#cmd-stop").click(function () { $.post("time", tojs({pause: true})); });
     $("#cmd-play").click(function () { $.post("time", tojs({resume: true})); });
-    $("#cmd-intro").click(function () { $.post("time", tojs({t: times.intro}))});
+    $("#cmd-intro").click(function () { 
+	$.post("time", tojs({t: times.intro, resume: true}))
+    });
     $("#cmd-post").click(function () { 
-	$.post("time", tojs({t: currentDuration - times.post}))
+	$.post("time", tojs({t: currentDuration - times.post, resume: true}))
     });
     $("#cmd-go").click(function () {
-	
+	// todo
     });
 
     var pendingSlide = false;
@@ -95,11 +127,11 @@ $(function () {
 		       pendingSlide = false;
 		   });
 	},
-});
+    });
     
     function updateLoop() {
 	updateCurrent();
-	setTimeout(updateLoop, 300);
+	setTimeout(updateLoop, 200);
     }
     updateLoop();
 });
