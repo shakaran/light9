@@ -3,17 +3,19 @@ import run_local
 import light9.networking
 
 import Tkinter as tk
-import xmlrpclib, socket, time
+import time
+import restkit, jsonlib
 
 class MusicTime:
     def __init__(self, url):
-        self.player = xmlrpclib.Server(url)
+        self.player = restkit.Resource(url)
     def get_music_time(self):
         playtime = None
         while not playtime:
             try:
-                playtime = self.player.gettime()
-            except socket.error, e:
+                playtime = jsonlib.read(self.player.get("time").body,
+                                        use_float=True)['t']
+            except restkit.RequestError, e:
                 print "Server error %s, waiting" % e
                 time.sleep(2)
         return playtime

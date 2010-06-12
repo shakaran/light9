@@ -11,12 +11,8 @@ def dmxServerUrl():
 def dmxServerPort():
     return 8030
     
-def musicUrl(api='xmlrpc'):
-    site = "http://dash:%s/" % musicPort()
-    if api == 'rest':
-        return site + "api/"
-    else:
-        return site + "RPC2"
+def musicUrl():
+    return "http://dash:%s/" % musicPort()
 
 def musicPort():
     return 8040

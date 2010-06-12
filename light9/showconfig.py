@@ -80,8 +80,9 @@ def songOnDisk(song):
     showPath = graph.value(song, L9['showPath'])
     if not showPath:
         raise ValueError("no mpd path found for subject=%r" % song)
-    songFullPath = path.join(findMpdHome(), showPath)
-    return songFullPath
+    if showPath.startswith("file://"):
+        showPath = showPath[7:]
+    return showPath
 
 def songFilenameFromURI(uri):
     """

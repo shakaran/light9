@@ -1,6 +1,6 @@
 import web, jsonlib
 from twisted.python.util import sibpath
-from light9.namespaces import L9, MUS
+from light9.namespaces import L9
 
 player = None
 graph = None
@@ -9,6 +9,8 @@ show = None
 class root(object):
     def GET(self):
         web.header("Content-type", "application/xhtml+xml")
+        # todo: use a template; embed the show name and the intro/post
+        # times into the page
         return open(sibpath(__file__, "index.html")).read()
 
 class timeResource(object):
@@ -49,6 +51,15 @@ class songResource(object):
         """post a uri of song to switch to (and start playing)"""
         player.setSong(web.data())
         return "ok"
+    
+class seekPlayOrPause(object):
+    def POST(self):
+        data = jsonlib.read(web.data(), use_float=True)
+        if player.isPlaying():
+            player.pause()
+        else:
+            player.seek(data['t'])
+            player.resume()
 
 def makeApp(thePlayer, theGraph, theShow):
     global player, graph, show
@@ -58,7 +69,7 @@ def makeApp(thePlayer, theGraph, theShow):
             "/time", "timeResource",
             "/song", "songResource",
             "/songs", "songs",
-            "/api/position", "timeResource", # old
+            "/seekPlayOrPause", "seekPlayOrPause",
             )
 
     app = web.application(urls, globals(), autoreload=False)

@@ -16,6 +16,7 @@ from nevow.appserver import NevowSite
 from nevow import rend, static, loaders, inevow, url, tags as T
 from rdflib import URIRef
 from louie.robustapply import robust_apply
+sys.path.append(".")
 from light9 import showconfig, networking
 from light9.namespaces import L9
 from urllib import urlencode

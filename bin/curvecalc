@@ -17,8 +17,14 @@ try:
 except ImportError:
     import louie as dispatcher 
 from twisted.internet import reactor,tksupport
+import jsonlib
 import twisted
-from twisted.web.xmlrpc import Proxy
+from twisted.web.client import Agent
+from twisted.internet.protocol import Protocol
+from twisted.internet.defer import Deferred     
+from zope.interface import implements
+from twisted.internet.defer import succeed
+from twisted.web.iweb import IBodyProducer
 from rdflib import Literal, URIRef, RDF, RDFS
 from rdflib.Graph import Graph
 import rdflib
@@ -37,33 +43,62 @@ from light9.uihelpers import toplevelat
 from light9.namespaces import L9
 import light9.Effects
 
+class GatherJson(Protocol):
+    """calls back the 'finished' deferred with the parsed json data we
+    received"""
+    def __init__(self, finished):
+        self.finished = finished
+        self.buf = ""
+
+    def dataReceived(self, bytes):
+        self.buf += bytes
+
+    def connectionLost(self, reason):
+        self.finished.callback(jsonlib.read(self.buf, use_float=True))
+
+class StringProducer(object):
+    # http://twistedmatrix.com/documents/current/web/howto/client.html
+    implements(IBodyProducer)
+
+    def __init__(self, body):
+        self.body = body
+        self.length = len(body)
+
+    def startProducing(self, consumer):
+        consumer.write(self.body)
+        return succeed(None)
+
+    def pauseProducing(self):
+        pass
+
+    def stopProducing(self):
+        pass
+
 class Music:
     def __init__(self):
-        self.player=None # xmlrpc Proxy to player
         self.recenttime=0
-
+        self.player = Agent(reactor)
         dispatcher.connect(self.seekplay_or_pause,"music seek")
         
     def current_time(self):
         """return deferred which gets called with the current time"""
-        if self.player is None:
-            print "connect to player"
-            self.player = Proxy(networking.musicUrl())
-#            d = self.player.callRemote("songlength")
-#            d.addCallback(lambda l: dispatcher.send("max time",maxtime=l))
-#            d = self.player.callRemote("songname")
-#            d.addCallback(lambda n: dispatcher.send("songname",name=n))
-        d = self.player.callRemote('gettime')
-        def sendtime(t):
-            dispatcher.send("input time",val=t)
-            return t # pass along to the real receiver
-        def error(e):
-            pass#self.player=None
-        d.addCallback(sendtime)
+        d = self.player.request("GET", networking.musicUrl() + "time")
+        d.addCallback(self._timeReturned)
         return d
+
+    def _timeReturned(self, response):
+        done = Deferred()
+        done.addCallback(self._bodyReceived)
+        response.deliverBody(GatherJson(done))
+        return done
+
+    def _bodyReceived(self, data):
+        dispatcher.send("input time",val=data['t'])
+        return data['t'] # pass along to the real receiver
     
     def seekplay_or_pause(self,t):
-        self.player.callRemote('seekplay_or_pause',t)
+        d = self.player.request("POST",
+                                networking.musicUrl() + "seekPlayOrPause", bodyProducer=StringProducer(jsonlib.write({"t" : t})))
 
 class Expr(object):
     """singleton, provides functions for use in subterm expressions,
@@ -241,7 +276,6 @@ class Output:
         self.later = reactor.callLater(1,self.update)
         
     def update2(self,t):
-
         # spot alsa soundcard offset is always 0, we get times about a
         # second ahead of what's really getting played
         #t = t - .7
