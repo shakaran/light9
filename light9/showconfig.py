@@ -1,8 +1,9 @@
-import time
+import time, logging
 from os import path, getenv
 from rdflib.Graph import Graph
 from rdflib import URIRef
 from namespaces import MUS, L9
+log = logging.getLogger('showconfig')
 
 _config = (None, None, None) # graph, mtime, len
 def getGraph():
@@ -14,6 +15,7 @@ def getGraph():
     now = time.time()
     diskMtime = path.getmtime(configPath)
     if diskMtime <= _config[1]:
+        log.info("reuse graph")
         graph = _config[0]
         # i'm scared of some program modifying the graph, and then i
         # return that from a new getGraph call. Maybe I should be
@@ -23,8 +25,11 @@ def getGraph():
         return _config[0]
 
     graph = Graph()
+    log.info("reading %s", configPath)
     graph.parse(configPath, format='n3')
-    graph.parse(path.join(root(), "patch.n3"), format="n3")
+    patchPath = path.join(root(), "patch.n3")
+    log.info("reading %s", patchPath)
+    graph.parse(patchPath, format="n3")
     
     _config = (graph, diskMtime, len(graph))
     return graph
