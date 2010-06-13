@@ -16,7 +16,7 @@ import Image
 from threading import Thread
 from Queue import Queue
 from light9 import networking
-from light9.vidref.replay import ReplayViews
+from light9.vidref.replay import ReplayViews, songDir, takeDir
 
 log = logging.getLogger()
 
@@ -109,9 +109,7 @@ class VideoRecordSink(gst.Element):
         return gst.FLOW_OK
 
     def saveImg(self, position, img, bufferTimestamp):
-        outDir = "/tmp/vidref/play-%s-%d" % (
-            position['song'].split('://')[-1].replace('/','_'),
-            position['started'])
+        outDir = takeDir(songDir(position['song']), position['started'])
         outFilename = "%s/%08.03f.jpg" % (outDir, position['t'])
         if os.path.exists(outFilename): # we're paused on one time
             return
@@ -140,7 +138,9 @@ class Main(object):
         mainwin.connect("destroy", gtk.main_quit)
         wtree.connect_signals(self)
 
-        self.replayViews = ReplayViews(wtree.get_object("image1"))#"replayScroll"))
+        wtree.get_object("replayPanel").show()
+        rp = wtree.get_object("replayVbox")
+        self.replayViews = ReplayViews(rp)
 
         mainwin.show_all()
         self.liveVideoXid = wtree.get_object("vid3").window.xid

@@ -2,10 +2,15 @@ import os, gtk
 from bisect import bisect_left
 from decimal import Decimal
 
-existingDir = "/tmp/vidref/play-_my_proj_light9_show_dance2010_music_01-chorusmix.wav-1276415052"
-existingFrames = sorted([Decimal(f.split('.jpg')[0])
-                         for f in os.listdir(existingDir)])
 
+def songDir(song):
+    return "/tmp/vidref/play-%s" % song.split('://')[-1].replace('/','_')
+
+def takeDir(songDir, startTime):
+    """
+    startTime: unix seconds (str ok)
+    """
+    return os.path.join(songDir, str(int(startTime)))
 
 class ReplayViews(object):
     """
@@ -13,13 +18,12 @@ class ReplayViews(object):
     these windows to be added
     """
     def __init__(self, parent):
-        self.out = ReplayView(parent, Replay(existingDir))
-        return
-        for x in range(1000):
-            lab = gtk.Label()
-            lab.set_text("hello")
-            parent.add_with_viewport(lab)
-    
+        # today, parent is the vbox the replay windows should appear in
+        self.parent = parent
+        self.lastSong = None
+
+        self.views = []
+     
     def update(self, position):
         """
         freshen all replay windows. We get called this about every
@@ -27,20 +31,21 @@ class ReplayViews(object):
 
         may be responsible for making new children if we change song
         """
-        self.out.updatePic(position)
+        if position['song'] != self.lastSong:
+            self.loadViewsForSong(position['song'])
+            self.lastSong = position['song']
+        for v in self.views:
+            v.updatePic(position)
 
-class Replay(object):
-    """
-    model for one of the replay widgets
-    """
-    def __init__(self, sourceDir):
-        self.sourceDir = sourceDir
 
-    def findClosestFrame(self, t):
-        i = bisect_left(existingFrames, Decimal(str(t)))
-        if i >= len(existingFrames):
-            i = len(existingFrames) - 1
-        return os.path.join(existingDir, "%08.03f.jpg" % existingFrames[i])
+    def loadViewsForSong(self, song):
+        # remove previous ones
+        
+        takes = os.listdir(songDir(song))
+        for take in takes:
+            td = takeDir(songDir(song), take)
+            rv = ReplayView(self.parent, Replay(td))
+            self.views.append(rv)
 
 class ReplayView(object):
     """
@@ -48,8 +53,15 @@ class ReplayView(object):
     """
     def __init__(self, parent, replay):
         self.replay = replay
-#        self.loadWindwos
-        self.picWidget = parent
+
+        # this *should* be a composite widget from glade
+        img = gtk.Image()
+        img.set_size_request(320, 240)
+        parent.pack_end(img, False, False)
+        img.show()
+        self.picWidget = img
+        
+#        self.picWidget = parent.get_children()[0].get_child()
         
     def updatePic(self, position):
         inPic = self.replay.findClosestFrame(position['t']+.25)
@@ -60,3 +72,17 @@ class ReplayView(object):
                 self.picWidget.queue_draw_area(0,0,320,240)
                 self.picWidget.get_window().process_updates(True)
     
+class Replay(object):
+    """
+    model for one of the replay widgets
+    """
+    def __init__(self, takeDir):
+        self.takeDir = takeDir
+
+    def findClosestFrame(self, t):
+        existingFrames = sorted([Decimal(f.split('.jpg')[0])
+                                 for f in os.listdir(self.takeDir)])
+        i = bisect_left(existingFrames, Decimal(str(t)))
+        if i >= len(existingFrames):
+            i = len(existingFrames) - 1
+        return os.path.join(self.takeDir, "%08.03f.jpg" % existingFrames[i])

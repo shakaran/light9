@@ -6,7 +6,7 @@ import sys, logging
 sys.path.append(".")
 from light9.vidref.main import Main
 
- # then vidref file cleanup, livevideo ui elements, input picker. find replay dirs correctly. show multiple replays. trash. reorder/pin.
+ # find replay dirs correctly. show multiple replays. trash. reorder/pin.
                 
 
 logging.basicConfig()

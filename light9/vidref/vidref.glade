@@ -3,6 +3,8 @@
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
   <object class="GtkWindow" id="MainWindow">
+    <property name="width_request">990</property>
+    <property name="height_request">709</property>
     <property name="default_width">500</property>
     <property name="default_height">500</property>
     <child>
@@ -160,123 +162,10 @@
                     <property name="visible">True</property>
                     <property name="resize_mode">queue</property>
                     <child>
-                      <object class="GtkVBox" id="vbox1">
+                      <object class="GtkVBox" id="replayVbox">
                         <property name="visible">True</property>
                         <child>
-                          <object class="GtkHandleBox" id="handlebox1">
-                            <property name="height_request">273</property>
-                            <property name="visible">True</property>
-                            <child>
-                              <object class="GtkHBox" id="hbox1">
-                                <property name="visible">True</property>
-                                <child>
-                                  <object class="GtkAspectFrame" id="aspectframe1">
-                                    <property name="width_request">320</property>
-                                    <property name="height_request">240</property>
-                                    <property name="visible">True</property>
-                                    <property name="label_xalign">0</property>
-                                    <property name="shadow_type">out</property>
-                                    <property name="ratio">1.3300000429153442</property>
-                                    <child>
-                                      <object class="GtkImage" id="image1">
-                                        <property name="width_request">320</property>
-                                        <property name="height_request">240</property>
-                                        <property name="visible">True</property>
-                                        <property name="stock">gtk-missing-image</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkVBox" id="vbox2">
-                                    <property name="visible">True</property>
-                                    <child>
-                                      <object class="GtkHBox" id="hbox2">
-                                        <property name="visible">True</property>
-                                        <child>
-                                          <object class="GtkLabel" id="label5">
-                                            <property name="visible">True</property>
-                                            <property name="label" translatable="yes">Started:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">False</property>
-                                            <property name="position">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkEntry" id="entry1">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="editable">False</property>
-                                            <property name="invisible_char">&#x25CF;</property>
-                                            <property name="width_chars">12</property>
-                                            <property name="text" translatable="yes">Sat 14:22:25</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">False</property>
-                                            <property name="position">1</property>
-                                          </packing>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkToggleButton" id="togglebutton1">
-                                        <property name="label" translatable="yes">Enabled</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="button1">
-                                        <property name="label" translatable="yes">Delete</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="image">image2</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="position">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="checkbutton1">
-                                        <property name="label" translatable="yes">Pin to top</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="position">3</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="position">0</property>
-                          </packing>
+                          <placeholder/>
                         </child>
                         <child>
                           <placeholder/>
@@ -299,6 +188,117 @@
             </child>
           </object>
           <packing>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkWindow" id="replayPanel">
+    <child>
+      <object class="GtkHBox" id="replayPanel2">
+        <property name="visible">True</property>
+        <child>
+          <object class="GtkAspectFrame" id="aspectframe1">
+            <property name="width_request">320</property>
+            <property name="height_request">240</property>
+            <property name="visible">True</property>
+            <property name="label_xalign">0</property>
+            <property name="shadow_type">out</property>
+            <property name="ratio">1.3300000429153442</property>
+            <child>
+              <object class="GtkImage" id="image1">
+                <property name="width_request">320</property>
+                <property name="height_request">240</property>
+                <property name="visible">True</property>
+                <property name="stock">gtk-missing-image</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkVBox" id="vbox2">
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkHBox" id="hbox2">
+                <property name="visible">True</property>
+                <child>
+                  <object class="GtkLabel" id="label5">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Started:</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="entry1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="editable">False</property>
+                    <property name="invisible_char">&#x25CF;</property>
+                    <property name="width_chars">12</property>
+                    <property name="text" translatable="yes">Sat 14:22:25</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToggleButton" id="togglebutton1">
+                <property name="label" translatable="yes">Enabled</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button1">
+                <property name="label" translatable="yes">Delete</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="image">image2</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="checkbutton1">
+                <property name="label" translatable="yes">Pin to top</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
             <property name="position">1</property>
           </packing>
         </child>
