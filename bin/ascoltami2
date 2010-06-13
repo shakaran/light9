@@ -6,8 +6,8 @@ from light9.ascoltami.player import Player
 from light9.ascoltami.webapp import makeApp
 from light9 import networking, showconfig
 
-log = logging.getLogger()
 logging.basicConfig()
+log = logging.getLogger()
 gobject.threads_init()
 
 parser = optparse.OptionParser()
@@ -15,16 +15,14 @@ parser.add_option('--show',
     help='show URI, like http://light9.bigasterisk.com/show/dance2008')
 parser.add_option("-v", "--verbose", action="store_true",
                   help="logging.DEBUG")
-graph = showconfig.getGraph()
 (options, args) = parser.parse_args()
-
 
 log.setLevel(logging.DEBUG if options.verbose else logging.INFO)
 
-graph = showconfig.getGraph()
 if not options.show:
     raise ValueError("missing --show http://...")
         
+graph = showconfig.getGraph()
 player = Player()
 
 # the cherrypy server would wedge when vidref pounds on it; this

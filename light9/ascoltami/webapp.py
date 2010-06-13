@@ -33,7 +33,6 @@ class timeResource(object):
 
 class songs(object):
     def GET(self):
-
         playList = graph.value(show, L9['playList'])
         if not playList:
             raise ValueError("%r has no l9:playList" % show)

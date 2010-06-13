@@ -64,6 +64,7 @@ class Player(object):
         log.info("set song to %r" % songUri)
         self.pipeline.set_state(gst.STATE_READY)
         self.pipeline.set_property("uri", songUri)
+        # todo: don't have any error report yet if the uri can't be read
         self.pipeline.set_state(gst.STATE_PLAYING)
         self.playStartTime = time.time()
 
