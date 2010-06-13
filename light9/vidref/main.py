@@ -10,22 +10,15 @@ import pygst
 pygst.require("0.10")
 import gst, gobject, time, jsonlib, restkit, logging, os, traceback
 from decimal import Decimal
-from bisect import bisect_left
-import pygtk
 import gtk
 from twisted.python.util import sibpath
 import Image
 from threading import Thread
 from Queue import Queue
 from light9 import networking
+from light9.vidref.replay import ReplayViews
 
 log = logging.getLogger()
-
-existingDir = "/tmp/vidref/play-_my_proj_light9_show_dance2010_music_07-jacksonmix-complete.wav-1276331148"
-existingFrames = sorted([Decimal(f.split('.jpg')[0])
-                         for f in os.listdir(existingDir)])
-
-otherPic = None
 
 class MusicTime(object):
     """
@@ -44,6 +37,8 @@ class MusicTime(object):
         """
         dict with 't' and 'song', etc.
         """
+        if not hasattr(self, 'position'):
+            return {'t' : 0, 'song' : None}
         pos = self.position.copy()
         if pos['playing']:
             pos['t'] = pos['t'] + (time.time() - self.positionFetchTime)
@@ -56,26 +51,6 @@ class MusicTime(object):
             self.positionFetchTime = time.time()
             self.position = position
             time.sleep(self.period)
-
-class ReplayFrames(object):
-    """
-    supplies all the frames from disk for the replay videos
-    """
-    def update(self, position):
-        inPic = self.findClosestFrame(position['t']+.2)
-        with gtk.gdk.lock:
-            otherPic.set_from_file(inPic)
-            if 0:
-                # force redraw of that widget
-                otherPic.queue_draw_area(0,0,320,240)
-                otherPic.get_window().process_updates(True)
-
-    def findClosestFrame(self, t):
-        i = bisect_left(existingFrames, Decimal(str(t)))
-        if i >= len(existingFrames):
-            i = len(existingFrames) - 1
-        return os.path.join(existingDir, "%08.03f.jpg" % existingFrames[i])
-
         
 class VideoRecordSink(gst.Element):
     _sinkpadtemplate = gst.PadTemplate ("sinkpadtemplate",
@@ -109,7 +84,6 @@ class VideoRecordSink(gst.Element):
         t.start()
 
     def chainfunc(self, pad, buffer):
-        return gst.FLOW_OK
         global nextImageCb
         self.info("%s timestamp(buffer):%d" % (pad, buffer.timestamp))
 
@@ -160,25 +134,31 @@ gobject.type_register(VideoRecordSink)
 
 class Main(object):
     def __init__(self):
-        global otherPic
         wtree = gtk.Builder()
         wtree.add_from_file(sibpath(__file__, "vidref.glade"))
         mainwin = wtree.get_object("MainWindow")
-        otherPic = wtree.get_object("liveVideo")
         mainwin.connect("destroy", gtk.main_quit)
         wtree.connect_signals(self)
 
-        # other sources: videotestsrc, v4l2src device=/dev/video0
-        ## if 0:
-        ##     source = makeElem("videotestsrc", "video")
-        ## else:
-        ##     source = makeElem("v4l2src", "vsource")
-        ##     source.set_property("device", "/dev/video0")
+        self.replayViews = ReplayViews(wtree.get_object("image1"))#"replayScroll"))
 
-        dv = "dv1394src name=src1 ! dvdemux ! dvdec"
-        v4l = "v4l2src device=/dev/video0 ! hqdn3d" 
+        mainwin.show_all()
+        self.liveVideoXid = wtree.get_object("vid3").window.xid
 
-        cam = (dv + " ! "
+        self.setInput('dv')
+
+    def getInputs(self):
+        return ['auto', 'dv', 'video0']
+
+    def setInput(self, name):
+        sourcePipe = {
+            "auto": "autovideosrc name=src1",
+            "testpattern" : "videotestsrc name=src1",
+            "dv": "dv1394src name=src1 ! dvdemux ! dvdec",
+            "v4l": "v4l2src device=/dev/video0 name=src1 ! hqdn3d" ,
+            }[name]
+
+        cam = (sourcePipe + " ! "
               "videorate ! video/x-raw-yuv,framerate=15/1 ! "
               "videoscale ! video/x-raw-yuv,width=320,height=240;video/x-raw-rgb,width=320,height=240 ! "
               "queue name=vid")
@@ -191,8 +171,7 @@ class Main(object):
             return e
         
         sink = makeElem("xvimagesink")
-        replay = ReplayFrames()
-        recSink = VideoRecordSink(replay)
+        recSink = VideoRecordSink(self.replayViews)
         self.pipeline.add(recSink)
 
         tee = makeElem("tee")
@@ -202,12 +181,8 @@ class Main(object):
 
         gst.element_link_many(self.pipeline.get_by_name("vid"), tee, sink)
         gst.element_link_many(tee, makeElem("ffmpegcolorspace"), caps, recSink)
-
-        mainwin.show_all()
-
-        sink.set_xwindow_id(wtree.get_object("vid3").window.xid)
-
-        self.pipeline.set_state(gst.STATE_PLAYING)
+        sink.set_xwindow_id(self.liveVideoXid)
+        self.pipeline.set_state(gst.STATE_PLAYING)        
 
     def on_liveVideoEnabled_toggled(self, widget):
         if widget.get_active():
