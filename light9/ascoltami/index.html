@@ -67,7 +67,7 @@ $(function () {
     function showCurrentSong(uri) {
 	$(".songs div").each(function (i, row) {
 	    row = $(row);
-	    if (row.find("button").data("path") == uri) {
+	    if (row.find("button").data("uri") == uri) {
 		row.addClass("currentSong");
 	    } else {
 		row.removeClass("currentSong");
@@ -81,7 +81,7 @@ $(function () {
 	    button.text(song.label);
 	    button.data(song);
 	    button.click(function () {
-		$.post("song", button.data("path"), 
+		$.post("song", button.data("uri"), 
 		       function (data, textStatus, xhr) {
 			   showCurrentSong(song.uri);
 		       });

@@ -1,10 +1,23 @@
 import web, jsonlib
 from twisted.python.util import sibpath
 from light9.namespaces import L9
-
+from rdflib import URIRef
 player = None
 graph = None
 show = None
+
+
+def songLocation(graph, songUri):
+    loc = graph.value(songUri, L9['showPath'])
+    if loc is None:
+        raise ValueError("no showPath for %r" % songUri)
+    return loc
+    
+def songUri(graph, locationUri):
+    try:
+        return graph.subjects(L9['showPath'], locationUri).next()
+    except StopIteration:
+        raise ValueError("no song has :showPath of %r" % locationUri)
 
 class root(object):
     def GET(self):
@@ -15,13 +28,24 @@ class root(object):
 
 class timeResource(object):
     def GET(self):
-        return jsonlib.write({"song" : player.playbin.get_property("uri"),
-                              "started" : player.playStartTime,
-                              "duration" : player.duration(),
-                              "playing" : player.isPlaying(),
-                              "t" : player.currentTime()})
+        playingLocation = player.playbin.get_property("uri")
+        if playingLocation:
+            song = songUri(graph, URIRef(playingLocation))
+        else:
+            song = None
+        return jsonlib.write({
+            "song" : song,
+            "started" : player.playStartTime,
+            "duration" : player.duration(),
+            "playing" : player.isPlaying(),
+            "t" : player.currentTime()})
 
     def POST(self):
+        """
+        post a json object with {pause: true} or {resume: true} if you
+        want those actions. Use {t: <seconds>} to seek, optionally
+        with a pause/resume command too.
+        """
         params = jsonlib.read(web.data(), use_float=True)
         if params.get('pause', False):
             player.pause()
@@ -48,7 +72,7 @@ class songs(object):
 class songResource(object):
     def POST(self):
         """post a uri of song to switch to (and start playing)"""
-        player.setSong(web.data())
+        player.setSong(songLocation(graph, URIRef(web.data())))
         return "ok"
     
 class seekPlayOrPause(object):
