@@ -9,14 +9,13 @@ gst-launch dv1394src ! dvdemux name=d ! dvdec ! ffmpegcolorspace ! hqdn3d ! xvim
 import pygst
 pygst.require("0.10")
 import gst, gobject, time, jsonlib, restkit, logging, os, traceback
-from decimal import Decimal
 import gtk
 from twisted.python.util import sibpath
 import Image
 from threading import Thread
 from Queue import Queue
 from light9 import networking
-from light9.vidref.replay import ReplayViews, songDir, takeDir
+from light9.vidref.replay import ReplayViews, songDir, takeDir, framerate
 
 log = logging.getLogger()
 
@@ -26,7 +25,13 @@ class MusicTime(object):
     upon request, adjusted to be more precise with the system clock
     """
     def __init__(self, period=.2):
-        """period is the seconds between http time requests."""
+        """period is the seconds between http time requests.
+
+        The choice of period doesn't need to be tied to framerate,
+        it's more the size of the error you can tolerate (since we
+        make up times between the samples, and we'll just run off the
+        end of a song)
+        """
         self.period = period
         self.musicResource = restkit.Resource(networking.musicUrl())
         t = Thread(target=self._timeUpdate)
@@ -48,7 +53,13 @@ class MusicTime(object):
         while True:
             position = jsonlib.loads(self.musicResource.get("time").body,
                                      use_float=True)
+
+            # this is meant to be the time when the server gave me its
+            # report, and I don't know if that's closer to the
+            # beginning of my request or the end of it (or some
+            # fraction of the way through)
             self.positionFetchTime = time.time()
+            
             self.position = position
             time.sleep(self.period)
         
@@ -58,15 +69,14 @@ class VideoRecordSink(gst.Element):
                                         gst.PAD_ALWAYS,
                                         gst.caps_new_any())
 
-    def __init__(self, replay):
+    def __init__(self, musicTime):
         gst.Element.__init__(self)
-        self.replay = replay
         self.sinkpad = gst.Pad(self._sinkpadtemplate, "sink")
         self.add_pad(self.sinkpad)
         self.sinkpad.set_chain_function(self.chainfunc)
         self.lastTime = 0
         
-        self.musicTime = MusicTime()
+        self.musicTime = musicTime
 
         self.imagesToSave = Queue()
         self.startBackgroundImageSaver(self.imagesToSave)
@@ -84,9 +94,6 @@ class VideoRecordSink(gst.Element):
         t.start()
 
     def chainfunc(self, pad, buffer):
-        global nextImageCb
-        self.info("%s timestamp(buffer):%d" % (pad, buffer.timestamp))
-
         position = self.musicTime.getLatest()
 
         if not position['song']:
@@ -101,14 +108,10 @@ class VideoRecordSink(gst.Element):
         except:
             traceback.print_exc()
 
-        try:
-            self.replay.update(position)
-        except:
-            traceback.print_exc()
-
         return gst.FLOW_OK
 
     def saveImg(self, position, img, bufferTimestamp):
+        t1 = time.time()
         outDir = takeDir(songDir(position['song']), position['started'])
         outFilename = "%s/%08.03f.jpg" % (outDir, position['t'])
         if os.path.exists(outFilename): # we're paused on one time
@@ -122,23 +125,24 @@ class VideoRecordSink(gst.Element):
         img.save(outFilename)
 
         now = time.time()
-        log.info("wrote %s delay of %.2fms %s",
-                 outFilename,
-                 (now - self.lastTime) * 1000,
-                 bufferTimestamp)
+        log.debug("wrote %s delay of %.2fms, took %.2fms",
+                  outFilename,
+                  (now - self.lastTime) * 1000,
+                  (now - t1) * 1000)
         self.lastTime = now
 
 gobject.type_register(VideoRecordSink)
 
 class Main(object):
     def __init__(self):
+        self.musicTime = MusicTime()
         wtree = gtk.Builder()
         wtree.add_from_file(sibpath(__file__, "vidref.glade"))
         mainwin = wtree.get_object("MainWindow")
         mainwin.connect("destroy", gtk.main_quit)
         wtree.connect_signals(self)
 
-        wtree.get_object("replayPanel").show()
+        # wtree.get_object("replayPanel").show() # demo only
         rp = wtree.get_object("replayVbox")
         self.replayViews = ReplayViews(rp)
 
@@ -146,6 +150,17 @@ class Main(object):
         self.liveVideoXid = wtree.get_object("vid3").window.xid
 
         self.setInput('dv')
+
+        gobject.timeout_add(1000 // framerate, self.updateLoop)
+
+    def updateLoop(self):
+        position = self.musicTime.getLatest()
+        try:
+            with gtk.gdk.lock:
+                self.replayViews.update(position)
+        except:
+            traceback.print_exc()
+        return True
 
     def getInputs(self):
         return ['auto', 'dv', 'video0']
@@ -159,9 +174,9 @@ class Main(object):
             }[name]
 
         cam = (sourcePipe + " ! "
-              "videorate ! video/x-raw-yuv,framerate=15/1 ! "
+              "videorate ! video/x-raw-yuv,framerate=%s/1 ! "
               "videoscale ! video/x-raw-yuv,width=320,height=240;video/x-raw-rgb,width=320,height=240 ! "
-              "queue name=vid")
+              "queue name=vid" % framerate)
 
         self.pipeline = gst.parse_launch(cam)
 
@@ -171,7 +186,7 @@ class Main(object):
             return e
         
         sink = makeElem("xvimagesink")
-        recSink = VideoRecordSink(self.replayViews)
+        recSink = VideoRecordSink(self.musicTime)
         self.pipeline.add(recSink)
 
         tee = makeElem("tee")

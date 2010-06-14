@@ -2,16 +2,23 @@
 import gobject
 gobject.threads_init()
 import gtk
-import sys, logging
+import sys, logging, optparse
 sys.path.append(".")
 from light9.vidref.main import Main
 
- # find replay dirs correctly. show multiple replays. trash. reorder/pin.
-                
+ # find replay dirs correctly. show multiple
+ # replays. trash. reorder/pin. dump takes that are too short; they're
+ # just from seeking
+
+parser = optparse.OptionParser()
+parser.add_option("-v", "--verbose", action="store_true",
+                  help="logging.DEBUG")
+(options, args) = parser.parse_args()
+
 
 logging.basicConfig()
 log = logging.getLogger()
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.DEBUG if options.verbose else logging.INFO)
 logging.getLogger("restkit.client").setLevel(logging.WARN)
 
 

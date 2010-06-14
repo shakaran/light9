@@ -3,9 +3,8 @@
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
   <object class="GtkWindow" id="MainWindow">
-    <property name="width_request">990</property>
-    <property name="height_request">709</property>
-    <property name="default_width">500</property>
+    <property name="title" translatable="yes">vidref</property>
+    <property name="default_width">690</property>
     <property name="default_height">500</property>
     <child>
       <object class="GtkHBox" id="hbox3">
