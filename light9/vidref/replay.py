@@ -7,7 +7,8 @@ log = logging.getLogger()
 framerate = 15
 
 def songDir(song):
-    return "/tmp/vidref/play-%s" % song.split('://')[-1].replace('/','_')
+    safeUri = song.split('://')[-1].replace('/','_')
+    return os.path.expanduser("~/light9-vidref/play-%s" % safeUri)
 
 def takeDir(songDir, startTime):
     """
@@ -71,6 +72,7 @@ class ReplayView(object):
     def __init__(self, parent, replay):
         self.replay = replay
         self.enabled = True
+        self.showingPic = None
 
         # this *should* be a composite widget from glade
 
@@ -155,7 +157,7 @@ class ReplayView(object):
         self.replayPanel.destroy()
         self.enabled = False
         
-    def updatePic(self, position):
+    def updatePic(self, position, lag=.2):
 
         # this should skip updating off-screen widgets! maybe that is
         # done by declaring the widget dirty and then reacting to a
@@ -164,13 +166,17 @@ class ReplayView(object):
         if not self.enabled:
             return
         
-        inPic = self.replay.findClosestFrame(position['t']+.25)
+        inPic = self.replay.findClosestFrame(position['t'] + lag)
+
+        if inPic == self.showingPic:
+            return
         with gtk.gdk.lock:
             self.picWidget.set_from_file(inPic)
             if 0:
                 # force redraw of that widget
                 self.picWidget.queue_draw_area(0,0,320,240)
                 self.picWidget.get_window().process_updates(True)
+        self.showingPic = inPic
     
 class Replay(object):
     """

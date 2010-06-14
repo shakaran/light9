@@ -149,7 +149,7 @@ class Main(object):
         mainwin.show_all()
         self.liveVideoXid = wtree.get_object("vid3").window.xid
 
-        self.setInput('dv')
+        self.setInput('dv') # auto seems to not search for dv
 
         gobject.timeout_add(1000 // framerate, self.updateLoop)
 
