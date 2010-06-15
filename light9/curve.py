@@ -13,6 +13,10 @@ from light9.dmxchanedit import gradient
 from light9.zoomcontrol import RegionZoom
 from bcf2000 import BCF2000
 
+# todo: move to config, consolidate with ascoltami, musicPad, etc
+introPad = 4
+postPad = 4
+
 class Curve(object):
     """curve does not know its name. see Curveset"""
     points = None # x-sorted list of (x,y)
@@ -418,20 +422,24 @@ class Curveview(tk.Canvas):
         if t2-t1<30:
             for t in range(int(t1),int(t2)+1):
                 mark(t,str(t))
-        mark(-4,"-4")
+        mark(introPad, str(introPad))
 
         endtimes = dispatcher.send("get max time")
         if endtimes:
             endtime = endtimes[0][1]
             mark(endtime,"end %.1f"%endtime)
-            mark(endtime+10,"post %.1f"%(endtime+10))
+            mark(endtime - postPad, "post %.1f" % (endtime - postPad))
         
     def _draw_one_marker(self,t,label):
         x = self.screen_from_world((t,0))[0]
         ht = self.height
-        self.create_line(x,ht,x,ht-20, fill='white',
-                         tags=('curve',))
-        self.create_text(x,ht-20,text=label,anchor='s', fill='white',
+        if not 0 <= x < self.winfo_width():
+            return
+        x = max(5, x) # cheat left-edge stuff onscreen
+        self.create_line(x, ht,
+                         x, ht - 20,
+                         fill='white', tags=('curve',))
+        self.create_text(x, ht-20, text=label, anchor='s', fill='white',
                          font="arial 7", tags=('curve',))
 
 
@@ -682,7 +690,7 @@ class Curveset:
         return self.curves.copy()
     
     def get_time_range(self):
-        return -4, dispatcher.send("get max time")[0][1]+15
+        return 0, dispatcher.send("get max time")[0][1]
 
     def new_curve(self,name):
         if name=="":

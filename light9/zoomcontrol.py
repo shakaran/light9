@@ -8,7 +8,7 @@ from light9 import cursors
 
 class Zoomcontrol(object,tk.Canvas):
 
-    mintime=-5
+    mintime = 0
 
     def maxtime():
         doc = "seconds at the right edge of the bar"
@@ -75,7 +75,7 @@ class Zoomcontrol(object,tk.Canvas):
         
         dispatcher.connect(lambda: (self.start,self.end),"zoom area",weak=0)
         dispatcher.connect(self.input_time,"input time")
-        dispatcher.connect(lambda maxtime: (setattr(self,'maxtime',maxtime+15),
+        dispatcher.connect(lambda maxtime: (setattr(self,'maxtime',maxtime),
                                             self.redrawzoom()),
                            "max time",weak=0)
         dispatcher.connect(self.zoom_about_mouse, "zoom about mouse")
@@ -167,7 +167,7 @@ class Zoomcontrol(object,tk.Canvas):
         lastx=-1000
         for t in range(0,int(self.maxtime)):
             x = self.can_for_t(t)
-            if 0<x<self.winfo_width() and x-lastx>30:
+            if 0 < x < self.winfo_width() and x-lastx>30:
                 txt=str(t)
                 if lastx==-1000:
                     txt=txt+"sec"
