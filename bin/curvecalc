@@ -17,7 +17,7 @@ try:
 except ImportError:
     import louie as dispatcher 
 from twisted.internet import reactor,tksupport
-import jsonlib
+import jsonlib, restkit
 import twisted
 from twisted.web.client import Agent
 from twisted.internet.protocol import Protocol
@@ -453,10 +453,16 @@ def createHelpLines(root):
                         anchor='w')
         line.pack(side='top',fill='x')
 
+def currentlyPlayingSong():
+    """ask the music player what song it's on"""
+    t = jsonlib.read(restkit.Resource(networking.musicUrl()).get("time").body)
+    if t['song'] is None:
+        raise ValueError("music player is not playing any song")
+    return URIRef(t['song'])
 
 def main():
     parser = optparse.OptionParser()
-    parser.set_usage("%prog [opts] songURI")
+    parser.set_usage("%prog [opts] [songURI]")
     parser.add_option("--sliders", action='store_true',
                       help='use hardware sliders')
     parser.add_option("--skip-music", action='store_true',
@@ -466,7 +472,7 @@ def main():
     try:
         song = URIRef(args[0])
     except IndexError:
-        raise SystemExit("song URI is required, e.g. 'http://light9.bigasterisk.com/show/dance2008/song3'")
+        song = currentlyPlayingSong()
 
     log.debug("music")
     music=Music()
