@@ -69,8 +69,9 @@ class VideoRecordSink(gst.Element):
                                         gst.PAD_ALWAYS,
                                         gst.caps_new_any())
 
-    def __init__(self, musicTime):
+    def __init__(self, musicTime, updateRecordingTo):
         gst.Element.__init__(self)
+        self.updateRecordingTo = updateRecordingTo
         self.sinkpad = gst.Pad(self._sinkpadtemplate, "sink")
         self.add_pad(self.sinkpad)
         self.sinkpad.set_chain_function(self.chainfunc)
@@ -129,6 +130,7 @@ class VideoRecordSink(gst.Element):
                   outFilename,
                   (now - self.lastTime) * 1000,
                   (now - t1) * 1000)
+        self.updateRecordingTo(outDir)
         self.lastTime = now
 
 gobject.type_register(VideoRecordSink)
@@ -141,6 +143,8 @@ class Main(object):
         mainwin = wtree.get_object("MainWindow")
         mainwin.connect("destroy", gtk.main_quit)
         wtree.connect_signals(self)
+
+        self.recordingTo = wtree.get_object('recordingTo')
 
         # wtree.get_object("replayPanel").show() # demo only
         rp = wtree.get_object("replayVbox")
@@ -186,7 +190,15 @@ class Main(object):
             return e
         
         sink = makeElem("xvimagesink")
-        recSink = VideoRecordSink(self.musicTime)
+        def setRec(t):
+            # if you're selecting the text while gtk is updating it,
+            # you can get a crash in xcb_io
+            if getattr(self, '_lastRecText', None) == t:
+                return
+            with gtk.gdk.lock:
+                self.recordingTo.set_text(t)
+            self._lastRecText = t
+        recSink = VideoRecordSink(self.musicTime, setRec)
         self.pipeline.add(recSink)
 
         tee = makeElem("tee")

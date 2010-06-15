@@ -74,9 +74,10 @@
                         <property name="width_request">75</property>
                         <property name="height_request">20</property>
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Frame rate</property>
+                        <property name="label" translatable="yes">Frame rate:</property>
                       </object>
                       <packing>
+                        <property name="expand">False</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
@@ -106,9 +107,10 @@
                         <property name="width_request">85</property>
                         <property name="height_request">20</property>
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Input source</property>
+                        <property name="label" translatable="yes">Input source:</property>
                       </object>
                       <packing>
+                        <property name="expand">False</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
@@ -125,6 +127,36 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkHBox" id="hbox1">
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkLabel" id="label6">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Recording
+to:</property>
+                      </object>
+                      <packing>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkTextView" id="recordingToView">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="editable">False</property>
+                        <property name="wrap_mode">char</property>
+                        <property name="buffer">recordingTo</property>
+                      </object>
+                      <packing>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">3</property>
                   </packing>
                 </child>
               </object>
@@ -306,5 +338,8 @@
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="stock">gtk-delete</property>
+  </object>
+  <object class="GtkTextBuffer" id="recordingTo">
+    <property name="text" translatable="yes">/home/drewp/light9-vidref/play-light9.bigasterisk.com_show_dance2010_song6/1276582699</property>
   </object>
 </interface>

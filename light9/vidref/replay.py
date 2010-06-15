@@ -54,7 +54,12 @@ class ReplayViews(object):
             v.destroy()
         self.views[:] = []
 
-        takes = sorted(os.listdir(songDir(song)))
+        d = songDir(song)
+        try:
+            takes = sorted(os.listdir(d))
+        except OSError:
+            return
+        
         for take in takes:
             td = takeDir(songDir(song), take)
             r = Replay(td)
