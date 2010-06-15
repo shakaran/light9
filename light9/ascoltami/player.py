@@ -63,10 +63,24 @@ class Player(object):
         """
         log.info("set song to %r" % songUri)
         self.pipeline.set_state(gst.STATE_READY)
+        self.preload(songUri)
         self.pipeline.set_property("uri", songUri)
         # todo: don't have any error report yet if the uri can't be read
         self.pipeline.set_state(gst.STATE_PLAYING)
         self.playStartTime = time.time()
+
+    def preload(self, songUri):
+        """
+        to avoid disk seek stutters, which happened sometimes (in 2007) with the
+        non-gst version of this program, we read the whole file to get
+        more OS caching.
+
+        i don't care that it's blocking.
+        """
+        assert songUri.startswith('file://')
+        p = songUri[len('file://'):]
+        log.info("preloading %s", p)
+        open(p).read()
 
     def currentTime(self):
         try:
