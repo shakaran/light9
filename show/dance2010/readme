@@ -28,3 +28,12 @@ show is 70min of music: at 8fps and 50k/pic, 1.6MB of image data per pass.
 
 todo:
 - check if mpd has a working precise-time system yet, so we could get off the patched one
+
+==================================================
+rewrites!
+
+after you get all the music files into config.n3, run bin/musicPad
+once, and then update all their paths to the new pad/ directory.
+
+THEN run bin/wavecurve
+
