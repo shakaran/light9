@@ -1,0 +1,44 @@
+#!/usr/bin/python
+"""
+rewrite all the songs with silence at the start and end
+"""
+import sys, wave, logging, os
+sys.path.append(".")
+from light9 import networking, showconfig
+from light9.namespaces import L9
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger()
+
+introPad = 4
+postPad = 4
+
+graph = showconfig.getGraph()
+# instead of taking a show uri like it should, i just convert every
+# path i find in the graph (hoping that you only loaded statements for
+# the current show)
+for p in sorted(graph.objects(None, L9['showPath'])):
+    assert p.startswith("file://")
+    p = p[len("file://"):]
+    
+    log.info("read %s", p)
+    inputWave = wave.open(p, 'r')
+
+    outputDir = os.path.join(os.path.dirname(p), "pad")
+    try:
+        os.makedirs(outputDir)
+    except OSError:
+        pass # exists
+    outputPath = os.path.join(outputDir, os.path.basename(p))
+    outputWave = wave.open(outputPath, 'w')
+    outputWave.setparams(inputWave.getparams())
+
+    bytesPerSecond = (inputWave.getnchannels() * inputWave.getsampwidth() *
+                      inputWave.getframerate())
+    
+    outputWave.writeframesraw("\x00" * (bytesPerSecond * introPad))
+    outputWave.writeframesraw(inputWave.readframes(inputWave.getnframes()))
+    outputWave.writeframesraw("\x00" * (bytesPerSecond * postPad))
+    outputWave.close()
+    log.info("wrote %s", outputPath)
+
+    
