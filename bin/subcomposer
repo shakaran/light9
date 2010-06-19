@@ -11,7 +11,7 @@ except ImportError:
 
 import run_local
 from light9.dmxchanedit import Levelbox
-from light9 import dmxclient, Patch, Submaster
+from light9 import dmxclient, Patch, Submaster, showconfig
 from light9.uihelpers import toplevelat
 
 class Subcomposer(tk.Frame):
@@ -86,7 +86,7 @@ class Subcomposer(tk.Frame):
         s.save()
     def loadsub(self, subname):
         """puts a sub into the levels, replacing old level values"""
-        s=Submaster.Submasters().get_sub_by_name(subname)
+        s=Submaster.Submasters(showconfig.getGraph()).get_sub_by_name(subname)
         self.set_levels(s.get_dmx_list())
         dispatcher.send("levelchanged")
     def sendupdate(self):
