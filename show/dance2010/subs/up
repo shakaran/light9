@@ -1,0 +1,7 @@
+<http://light9.bigasterisk.com/sub/up> <http://www.w3.org/2000/01/rdf-schema#label> "up".
+<http://light9.bigasterisk.com/sub/up> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK107.
+<http://light9.bigasterisk.com/sub/up> <http://light9.bigasterisk.com/lightLevel> _:awwZwglK106.
+_:awwZwglK107 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/upcenter>.
+_:awwZwglK107 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:awwZwglK106 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/upright>.
+_:awwZwglK106 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.

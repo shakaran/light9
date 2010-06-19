@@ -1,0 +1,13 @@
+_:amWXRCkA38 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/blue3>.
+_:amWXRCkA38 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/blue> <http://light9.bigasterisk.com/lightLevel> _:amWXRCkA38.
+<http://light9.bigasterisk.com/sub/blue> <http://light9.bigasterisk.com/lightLevel> _:amWXRCkA37.
+<http://light9.bigasterisk.com/sub/blue> <http://light9.bigasterisk.com/lightLevel> _:amWXRCkA39.
+<http://light9.bigasterisk.com/sub/blue> <http://light9.bigasterisk.com/lightLevel> _:amWXRCkA40.
+<http://light9.bigasterisk.com/sub/blue> <http://www.w3.org/2000/01/rdf-schema#label> "blue".
+_:amWXRCkA37 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/blue1>.
+_:amWXRCkA37 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:amWXRCkA39 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/blue2>.
+_:amWXRCkA39 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:amWXRCkA40 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/blue4>.
+_:amWXRCkA40 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
