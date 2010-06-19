@@ -1,0 +1,7 @@
+<http://light9.bigasterisk.com/sub/bwarm> <http://light9.bigasterisk.com/lightLevel> _:aGhWvQpp73.
+<http://light9.bigasterisk.com/sub/bwarm> <http://light9.bigasterisk.com/lightLevel> _:aGhWvQpp72.
+<http://light9.bigasterisk.com/sub/bwarm> <http://www.w3.org/2000/01/rdf-schema#label> "bwarm".
+_:aGhWvQpp73 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b25-R-w>.
+_:aGhWvQpp73 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:aGhWvQpp72 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b22-L-w>.
+_:aGhWvQpp72 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
