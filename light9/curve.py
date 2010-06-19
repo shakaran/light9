@@ -780,9 +780,11 @@ class CurveRow(tk.Frame):
         if len(name) > 7:
             txt = name
         curve_name_label = tk.Label(leftside, text=txt, font=labelFont,width=15)
-        curve_name_label.pack(side='left')
+        curve_name_label.pack(side='top')
 
-        collapsed_cb = tk.Checkbutton(leftside, text="C",
+        bools = tk.Frame(leftside)
+        bools.pack(side='top')
+        collapsed_cb = tk.Checkbutton(bools, text="C",
                                       font=labelFont, variable=self.collapsed)
         collapsed_cb.pack(side='left')
         self.collapsed.trace('w', self.update_ui_to_collapsed_state)
@@ -790,7 +792,7 @@ class CurveRow(tk.Frame):
                            sender=curve)
 
         self.default_bg = leftside['bg']
-        muted_cb = tk.Checkbutton(leftside, text="M", font=labelFont,
+        muted_cb = tk.Checkbutton(bools, text="M", font=labelFont,
                                   variable=self.muted)
         muted_cb.pack(side='left')
         self.muted.trace('w', self.sync_mute_to_curve)
@@ -802,7 +804,7 @@ class CurveRow(tk.Frame):
             # music tracks
             self.sliderLabel = tk.Label(leftside, text="Slider %s" % slider,
                                         fg='#800000', font=labelFont)
-            self.sliderLabel.pack(side='left')
+            self.sliderLabel.pack(side='top')
 
         # widgets that need recoloring when we tint the row:
         self.widgets = [leftside, collapsed_cb, muted_cb,
@@ -879,6 +881,7 @@ class Curvesetview(tk.ScrolledWindow):
         f = CurveRow(self.window, name, curve, slider, knobEnabled)
         f.pack(side='top', fill='both')
         self.allCurveRows.add(f)
+        f.curveView.goLive()
 
     def goLive(self):
         """for startup performance, none of the curves redraw
