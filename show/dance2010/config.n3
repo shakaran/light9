@@ -78,11 +78,6 @@ sub:song15	:group group:song; :order 15 .
 sub:song16	:group group:song; :order 16 .
 sub:song17	:group group:song; :order 17 .
 
-group:brow is :group of
-sub:bblue, sub:bblueall, sub:bneutral, sub:bpurple, sub:bpurpleall, sub:bpurplec,
-   sub:bred, sub:bredall .
-
-
 chase:colors a :Chase; :channels (
 ch:oran1 ch:gree1 ch:blue1 ch:red1 
 ch:oran2 ch:gree2 ch:blue2 ch:red2 
