@@ -46,6 +46,7 @@ class Submaster:
             assert isinstance(graph, Graph)
         self.name = name
         self.uri = sub
+        self.graph = graph
         self.temporary = temporary
         if leveldict:
             self.levels = leveldict
@@ -215,7 +216,7 @@ def combine_subdict(subdict, name=None, permanent=False):
 
 class Submasters:
     "Collection o' Submaster objects"
-    def __init__(self):
+    def __init__(self, graph):
         self.submasters = {}
 
         files = os.listdir(showconfig.subsDir())
@@ -225,7 +226,7 @@ class Submasters:
             if filename.startswith('.') or filename.endswith('~') or \
                filename.startswith('CVS'):
                 continue
-            self.submasters[filename] = Submaster(filename)
+            self.submasters[filename] = Submaster(filename, graph=graph)
         print "loaded subs", self.submasters
     def get_all_subs(self):
         "All Submaster objects"

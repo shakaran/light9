@@ -3,6 +3,7 @@
 from __future__ import division, nested_scopes
 import cgi, os, sys, time, subprocess
 from optparse import OptionParser
+import webcolors, colorsys
 
 from twisted.internet import reactor, tksupport
 from twisted.web import xmlrpc, server, resource
@@ -52,13 +53,18 @@ class SubScale(Scale, Fadable):
             self['troughcolor'] = 'blue'
 
 class SubmasterTk(Frame):
-    def __init__(self, master, name, current_level):
-        Frame.__init__(self, master, bd=1, relief='raised', bg='black')
-        self.name = name
+    def __init__(self, master, sub, current_level):
+        bg = sub.graph.value(sub.uri, L9.color, default='#000000')
+        rgb = webcolors.hex_to_rgb(bg)
+        hsv = colorsys.rgb_to_hsv(*[x/255 for x in rgb])
+        darkBg = webcolors.rgb_to_hex(tuple([x * 255 for x in colorsys.hsv_to_rgb(
+            hsv[0], hsv[1], .3)]))
+        Frame.__init__(self, master, bd=1, relief='raised', bg=bg)
+        self.name = sub.name
         self.slider_var = DoubleVar()
         self.slider_var.set(current_level)
         self.scale = SubScale(self, variable=self.slider_var, width=20)
-        namelabel = Label(self, text=name, font="Arial 7", bg='black',
+        namelabel = Label(self, text=sub.name, font="Arial 7", bg=darkBg,
             fg='white', pady=0)
         namelabel.pack(side=TOP)
         levellabel = Label(self, textvariable=self.slider_var, font="Arial 7",
@@ -71,10 +77,11 @@ class SubmasterTk(Frame):
         subprocess.Popen(["bin/subcomposer", "--no-geometry", self.name])
 
 class KeyboardComposer(Frame, SubClient):
-    def __init__(self, root, submasters, current_sub_levels=None,
+    def __init__(self, root, graph, submasters, current_sub_levels=None,
                  hw_sliders=True):
         Frame.__init__(self, root, bg='black')
         SubClient.__init__(self)
+        self.graph = graph
         self.submasters = submasters
         self.name_to_subtk = {}
         self.current_sub_levels = {}
@@ -138,21 +145,20 @@ class KeyboardComposer(Frame, SubClient):
         rowcount = -1
         col = 0
         last_group = None
-        graph = showconfig.getGraph()
-        withgroups = sorted((graph.value(sub.uri, L9['group']), 
-                             graph.value(sub.uri, L9['order']), 
+        withgroups = sorted((self.graph.value(sub.uri, L9['group']), 
+                             self.graph.value(sub.uri, L9['order']), 
                              sub)
             for sub in self.submasters.get_all_subs())
 
         for group, order, sub in withgroups:
-            group = graph.value(sub.uri, L9['group'])
+            group = self.graph.value(sub.uri, L9['group'])
 
             if col == 0 or group != last_group: # make new row
                 row = self.make_row()
                 rowcount += 1
                 col = 0
             current_level = self.current_sub_levels.get(sub.name, 0)
-            subtk = self.draw_sub_slider(row, col, sub.name, current_level)
+            subtk = self.draw_sub_slider(row, col, sub, current_level)
             self.slider_table[(rowcount, col)] = subtk
             self.name_to_subtk[sub.name] = subtk
 
@@ -170,12 +176,12 @@ class KeyboardComposer(Frame, SubClient):
             col = (col + 1) % 8
             last_group = group
 
-    def draw_sub_slider(self, row, col, name, current_level):
-        subtk = SubmasterTk(row, name, current_level)
+    def draw_sub_slider(self, row, col, sub, current_level):
+        subtk = SubmasterTk(row, sub, current_level)
         subtk.place(relx=col / 8, rely=0, relwidth=1 / 8, relheight=1)
         self.setup_key_nudgers(subtk.scale)
 
-        self.slider_vars[name] = subtk.slider_var
+        self.slider_vars[sub.name] = subtk.slider_var
         return subtk
 
     def toggle_slider_connectedness(self):
@@ -439,8 +445,10 @@ if __name__ == "__main__":
     parser.add_option('--no-sliders', action='store_true',
                       help="don't attach to hardware sliders")
     opts, args = parser.parse_args()
+
+    graph = showconfig.getGraph()
     
-    s = Submasters()
+    s = Submasters(graph)
 
     root = Tk()
     tl = toplevelat("Keyboard Composer", existingtoplevel=root)
@@ -448,7 +456,8 @@ if __name__ == "__main__":
     startLevels = None
     if opts.nonpersistent:
         startLevels = {}
-    kc = KeyboardComposer(tl, s, startLevels, hw_sliders=not opts.no_sliders)
+    kc = KeyboardComposer(tl, graph, s, startLevels,
+                          hw_sliders=not opts.no_sliders)
     kc.pack(fill=BOTH, expand=1)
 
     for helpline in ["Bindings: B3 mute; C-l edit levels in subcomposer"]:
