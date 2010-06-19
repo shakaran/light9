@@ -52,7 +52,13 @@ sub:scoop :group group:live; :order 4 .
 sub:front :group group:live; :order 5 .
 sub:curtain :group group:live; :order 6 .
 
-sub:scoop :color "#ffaa77" .
+sub:bcool   :color "#81b5b1"; :group group:back; :order 0 .
+sub:bblue   :color "#3e6dca"; :group group:back; :order 1 .
+sub:bbluec  :color "#003cb3"; :group group:back; :order 2 .
+sub:bwarm   :color "#ffaa77"; :group group:back; :order 3 .
+sub:bpurple :color "#b4099d"; :group group:back; :order 4 .
+sub:bred    :color "#c0341b"; :group group:back; :order 5 .
+sub:bredc   :color "#ff0000"; :group group:back; :order 6 .
 
 sub:song1	:group group:song; :order 1 .
 sub:song2	:group group:song; :order 2 .
