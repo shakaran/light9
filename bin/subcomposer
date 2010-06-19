@@ -172,6 +172,10 @@ if __name__ == "__main__":
         sc.fill_both_boxes(args[0])
 
     while 1:
-        root.update()
+        try:
+            root.update()
+        except tk.TclError:
+            break
+
         sc.considersendupdate()
         time.sleep(.01)
