@@ -20,7 +20,7 @@ def musicPort():
 
 def mpdServer():
     """servername, port"""
-    return os.getenv('LIGHT9_MPD_SERVER', 'score'),6600
+    return os.getenv('LIGHT9_MPD_SERVER', 'django'),6600
 
 def kcPort():
     return 8050

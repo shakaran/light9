@@ -24,24 +24,24 @@
 [ :name "upcenter"; :output dmx:c38 ] .
 # 35 blue has a white in it too
 
-[ :name "b11"; :output dmx:c54 ] .
-[ :name "b12-r"; :output dmx:c53 ] .
-[ :name "b13-b"; :output dmx:c52 ] .
-[ :name "b14"; :output dmx:c51 ] .
-[ :name "b15-p"; :output dmx:c50 ] .
-[ :name "b16"; :output dmx:c49 ] .
-[ :name "b21-p"; :output dmx:c55 ] .
-[ :name "b22-b"; :output dmx:c56 ] .
-[ :name "b23-b"; :output dmx:c57 ] .
-[ :name "b24-b"; :output dmx:c58 ] .
-[ :name "b25-r"; :output dmx:c59 ] .
-[ :name "b26"; :output dmx:c60 ] .
-[ :name "b31"; :output dmx:c61 ] .
-[ :name "b32"; :output dmx:c62 ] .
-[ :name "b33-r"; :output dmx:c63 ] .
-[ :name "b34-b"; :output dmx:c64 ] .
-[ :name "b35-p"; :output dmx:c65 ] .
-[ :name "b36"; :output dmx:c66 ] .
+[ :name "b11-C-b"; :output dmx:c54 ] .
+[ :name "b12-L-p"; :output dmx:c53 ] .
+[ :name "b13-C-r"; :output dmx:c52 ] .
+[ :name "b14-L-#"; :output dmx:c51 ] .
+[ :name "b15-R"; :output dmx:c50 ] .
+[ :name "b16-R-r"; :output dmx:c49 ] .
+[ :name "b21-R-c"; :output dmx:c55 ] .
+[ :name "b22-L-w"; :output dmx:c56 ] .
+[ :name "b23-L-b"; :output dmx:c57 ] .
+[ :name "b24-R-b"; :output dmx:c58 ] .
+[ :name "b25-R-w"; :output dmx:c59 ] .
+[ :name "b26-L-c"; :output dmx:c60 ] .
+[ :name "b31-L-r"; :output dmx:c61 ] .
+[ :name "b32-L"; :output dmx:c62 ] .
+[ :name "b33-R-#"; :output dmx:c63 ] .
+[ :name "b34-C-r"; :output dmx:c64 ] .
+[ :name "b35-L-p"; :output dmx:c65 ] .
+[ :name "b36-C-b"; :output dmx:c66 ] .
 
 [ :name "post-l"; :output dmx:c45 ] .
 [ :name "post-r"; :output dmx:c46 ] .
