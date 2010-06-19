@@ -41,3 +41,19 @@ make new CDs with corrected songs
 sync songs across computers
 test dmx dongle, sliders box, sound playback
 
+
+for 2011:
+- bring a mouse for the curvecalc laptop
+- vidref should have a time slider
+- factor out music dir so it can be different per machine
+- all settings should be in RDF and live-shared across all apps, maybe with anzo for updates
+- when curvecalc says 'Slider 1', the X coordinates of the curve get misaligned
+- asco should say clearly what machine it's running on
+- asco should have GUI for picking which sound output you want, and store the setting
+- vidref should have snapshot button for taking pics of the stage
+- bring mini tripod or beanbag for the vidref camera
+- more remote contol stuff
+- gel sample pack
+- vidref adjustable crop to the stage aspect
+- vidref should have an 'in progress' row to prove that it's recording something new
+- 
