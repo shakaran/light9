@@ -1,5 +1,5 @@
 from __future__ import division
-import random
+from random import Random
 import light9.Submaster as Submaster
 from chase import chase as chase_logic
 import showconfig
@@ -8,10 +8,14 @@ from light9 import Patch
 from light9.namespaces import L9
 
 def chase(t, ontime=0.5, offset=0.2, onval=1.0, 
-          offval=0.0, names=None, combiner=max):
+          offval=0.0, names=None, combiner=max, random=False):
     """names is list of URIs. returns a submaster that chases through
     the inputs"""
-    sub_vals = {}
+    if random:
+        r = Random(random)
+        names = names[:]
+        r.shuffle(names)
+
     chase_vals = chase_logic(t, ontime, offset, onval, offval, names, combiner)
     lev = {}
     for uri, value in chase_vals.items():
@@ -22,6 +26,28 @@ def chase(t, ontime=0.5, offset=0.2, onval=1.0,
                    uri)
             continue
         lev[dmx] = value
+
+    ret = Submaster.Submaster(leveldict=lev, temporary=True)
+    return ret
+
+def stack(t, names=None):
+    """names is list of URIs. returns a submaster that stacks the the inputs"""
+    frac = 1.0 / (len(names) + 1)
+    threshold = frac
+
+    lev = {}
+    for uri in names:
+        try:
+            dmx = Patch.dmx_from_uri(uri)
+        except KeyError:
+            print ("chase includes %r, which doesn't resolve to a dmx chan" %
+                   uri)
+            continue
+        lev[dmx] = 1
+
+        threshold += frac
+        if threshold > t:
+            break
 
     ret = Submaster.Submaster(leveldict=lev, temporary=True)
     return ret
