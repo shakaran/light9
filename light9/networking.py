@@ -12,7 +12,8 @@ def dmxServerPort():
     return 8030
     
 def musicUrl():
-    return "http://dash:%s/" % musicPort()
+    # must have trailing slash!
+    return "http://django:%s/" % musicPort()
 
 def musicPort():
     return 8040
