@@ -689,7 +689,7 @@ static int dmx_usb_probe(struct usb_interface *interface, const struct usb_devic
 	dev->minor = interface->minor;
 
 	/* let the user know what node this device is now attached to */
-	info ("DMX USB device now attached to dmx%d", dev->minor);
+	err ("info: DMX USB device now attached to dmx%d", dev->minor);
 	return 0;
 
 error:
@@ -743,7 +743,7 @@ static void dmx_usb_disconnect(struct usb_interface *interface)
 
 	up (&disconnect_sem);
 
-	info("DMX USB #%d now disconnected", minor);
+	err("info: DMX USB #%d now disconnected", minor);
 }
 
 
@@ -763,7 +763,7 @@ static int __init dmx_usb_init(void)
 		return result;
 	}
 
-	info(DRIVER_DESC " " DRIVER_VERSION);
+	err("info: " DRIVER_DESC " " DRIVER_VERSION);
 	return 0;
 }
 
