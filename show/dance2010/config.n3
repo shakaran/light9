@@ -94,18 +94,33 @@ chase:colors2 a :Chase; :channels (ch:red2 ch:gree2 ch:oran2 ch:blue2) .
 chase:colors3 a :Chase; :channels (ch:red3 ch:gree3 ch:oran3 ch:blue3) .
 chase:colors4 a :Chase; :channels (ch:red4 ch:gree4 ch:oran4 ch:blue4) .
 
-chase:back a :Chase; :channels (
-ch:b15-p
-ch:b13-b
-ch:b12-r
-ch:b21-p
-ch:b22-b
-ch:b23-b
-ch:b24-b
-ch:b25-r
-ch:b33-r
-ch:b34-b
-ch:b35-p
+chase:back a :Chase; rdfs:comment "back non-white, brightness order"; 
+  :channels (
+ch:b35-L-p
+ch:b12-L-p
+ch:b36-C-b
+ch:b24-R-b
+ch:b11-C-b
+ch:b23-L-b
+ch:b26-L-c
+ch:b21-R-c
+ch:b31-L-r
+ch:b13-C-r
+ch:b16-R-r
+ch:b34-C-r
+ch:b25-R-w
+ch:b22-L-w
+) .
+
+chase:scoop a :Chase; :channels (
+ch:down-r
+ch:down-c
+ch:down-l
+ch:upcenter
+ch:upright
+ch:cyc-right
+ch:cyc-mid
+ch:cyc-left
 ) .
 
 chase:cycline a :Chase; :channels (ch:cyc-left ch:cyc-mid ch:cyc-right ) .
