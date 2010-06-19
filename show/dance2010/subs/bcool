@@ -1,0 +1,7 @@
+_:lvJDnERf98 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:lvJDnERf98 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b26-L-c>.
+_:lvJDnERf99 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:lvJDnERf99 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b21-R-c>.
+<http://light9.bigasterisk.com/sub/bcool> <http://light9.bigasterisk.com/lightLevel> _:lvJDnERf98.
+<http://light9.bigasterisk.com/sub/bcool> <http://light9.bigasterisk.com/lightLevel> _:lvJDnERf99.
+<http://light9.bigasterisk.com/sub/bcool> <http://www.w3.org/2000/01/rdf-schema#label> "bcool".

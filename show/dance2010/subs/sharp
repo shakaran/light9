@@ -1,0 +1,7 @@
+_:lvJDnERf78 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b14-L-#>.
+_:lvJDnERf78 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:lvJDnERf79 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b33-R-#>.
+_:lvJDnERf79 <http://light9.bigasterisk.com/level> "0.835"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/sharp> <http://light9.bigasterisk.com/lightLevel> _:lvJDnERf78.
+<http://light9.bigasterisk.com/sub/sharp> <http://light9.bigasterisk.com/lightLevel> _:lvJDnERf79.
+<http://light9.bigasterisk.com/sub/sharp> <http://www.w3.org/2000/01/rdf-schema#label> "sharp".

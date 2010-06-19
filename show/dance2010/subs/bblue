@@ -1,0 +1,13 @@
+_:lvJDnERf90 <http://light9.bigasterisk.com/level> "0.85"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:lvJDnERf90 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b23-L-b>.
+_:lvJDnERf91 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:lvJDnERf91 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b36-C-b>.
+_:lvJDnERf89 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:lvJDnERf89 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b24-R-b>.
+<http://light9.bigasterisk.com/sub/bblue> <http://www.w3.org/2000/01/rdf-schema#label> "bblue".
+<http://light9.bigasterisk.com/sub/bblue> <http://light9.bigasterisk.com/lightLevel> _:lvJDnERf91.
+<http://light9.bigasterisk.com/sub/bblue> <http://light9.bigasterisk.com/lightLevel> _:lvJDnERf89.
+<http://light9.bigasterisk.com/sub/bblue> <http://light9.bigasterisk.com/lightLevel> _:lvJDnERf90.
+<http://light9.bigasterisk.com/sub/bblue> <http://light9.bigasterisk.com/lightLevel> _:lvJDnERf88.
+_:lvJDnERf88 <http://light9.bigasterisk.com/level> "0.95"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:lvJDnERf88 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b11-C-b>.
