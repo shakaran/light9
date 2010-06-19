@@ -40,10 +40,10 @@ sh:song15 rdfs:label "15 fosse";           :showPath <file:///my/proj/light9/sho
 sh:song16 rdfs:label "16 hip hop";         :showPath <file:///my/proj/light9/show/dance2010/music/pad/16-hiphopmix.wav> .
 sh:song17 rdfs:label "17 broadway";        :showPath <file:///my/proj/light9/show/dance2010/music/pad/17-broadwaymix.wav> .
 
-sub:red :group group:strip; :order 0 .
-sub:orange :group group:strip; :order 1 .
-sub:green :group group:strip; :order 2 .
-sub:blue :group group:strip; :order 3.
+sub:red    :color "#ff0000"; :group group:strip; :order 0 .
+sub:orange :color "#f65d00"; :group group:strip; :order 1 .
+sub:green  :color "#1d9500"; :group group:strip; :order 2 .
+sub:blue   :color "#0000ff"; :group group:strip; :order 3.
 
 sub:sharlyn :group group:live; :order 1 .
 sub:cyc :group group:live; :order 2 .
