@@ -38,7 +38,7 @@ class ReplayViews(object):
         a new replay view)
         """
         t1 = time.time()
-        if position['started'] != self.lastStart:
+        if position.get('started') != self.lastStart:
             self.loadViewsForSong(position['song'])
             self.lastStart = position['started']
         for v in self.views:
