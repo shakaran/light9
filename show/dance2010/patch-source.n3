@@ -68,9 +68,9 @@
 [ :name "down-c"; :output dmx:c19 ] .
 [ :name "fr20x"; :output dmx:c20 ] .
 
-[ :name "cyc-left"; :output dmx:c42 ] .
+[ :name "cyc-right"; :output dmx:c41 ] .
 [ :name "cyc-mid"; :output dmx:c43 ] .
-[ :name "cyc-right"; :output dmx:c44 ] .
+[ :name "cyc-left"; :output dmx:c44 ] .
 
 [ :name "house-side"; :output dmx:c68 ] .
 [ :name "house1"; :output dmx:c69 ] .

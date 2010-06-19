@@ -103,7 +103,7 @@
          rdfs:label "blue4" .
     
     ch:cyc-left     a :Channel;
-         :output dmx:c42;
+         :output dmx:c44;
          rdfs:label "cyc-left" .
     
     ch:cyc-mid     a :Channel;
@@ -111,8 +111,12 @@
          rdfs:label "cyc-mid" .
     
     ch:cyc-right     a :Channel;
-         :output dmx:c44;
+         :output dmx:c41;
          rdfs:label "cyc-right" .
+    
+    ch:down-c     a :Channel;
+         :output dmx:c19;
+         rdfs:label "down-c" .
     
     ch:down-l     a :Channel;
          :output dmx:c17;
@@ -125,10 +129,6 @@
     ch:fr18x     a :Channel;
          :output dmx:c18;
          rdfs:label "fr18x" .
-    
-    ch:fr19     a :Channel;
-         :output dmx:c19;
-         rdfs:label "fr19" .
     
     ch:fr20x     a :Channel;
          :output dmx:c20;
