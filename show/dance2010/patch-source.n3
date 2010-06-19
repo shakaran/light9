@@ -29,13 +29,13 @@
 [ :name "b13-b"; :output dmx:c52 ] .
 [ :name "b14"; :output dmx:c51 ] .
 [ :name "b15-p"; :output dmx:c50 ] .
-[ :name "b16x"; :output dmx:c49 ] .
+[ :name "b16"; :output dmx:c49 ] .
 [ :name "b21-p"; :output dmx:c55 ] .
 [ :name "b22-b"; :output dmx:c56 ] .
 [ :name "b23-b"; :output dmx:c57 ] .
 [ :name "b24-b"; :output dmx:c58 ] .
 [ :name "b25-r"; :output dmx:c59 ] .
-[ :name "b26x"; :output dmx:c60 ] .
+[ :name "b26"; :output dmx:c60 ] .
 [ :name "b31"; :output dmx:c61 ] .
 [ :name "b32"; :output dmx:c62 ] .
 [ :name "b33-r"; :output dmx:c63 ] .
@@ -46,10 +46,9 @@
 [ :name "post-l"; :output dmx:c45 ] .
 [ :name "post-r"; :output dmx:c46 ] .
 
-[ :name "s40"; :output dmx:c40 ] .
-[ :name "sign"; :output dmx:c41 ] .
-[ :name "front1x"; :output dmx:c1 ] .
-[ :name "front2"; :output dmx:c2 ] .
+[ :name "s40x"; :output dmx:c40 ] .
+[ :name "front1"; :output dmx:c1 ] .
+[ :name "front2x"; :output dmx:c2 ] .
 [ :name "front3"; :output dmx:c3 ] .
 [ :name "front4"; :output dmx:c4 ] .
 [ :name "front5"; :output dmx:c5 ] .
@@ -61,14 +60,13 @@
 [ :name "front11"; :output dmx:c11 ] .
 [ :name "front12"; :output dmx:c12 ] .
 
-[ :name "down-l"; :output dmx:c13 ] .
 [ :name "strobe"; :output dmx:c14 ] .
 [ :name "blacklight"; :output dmx:c15 ] .
 [ :name "down-r"; :output dmx:c16 ] .
-[ :name "fr17"; :output dmx:c17 ] .
-[ :name "fr18"; :output dmx:c18 ] .
+[ :name "down-l"; :output dmx:c17 ] .
+[ :name "fr18x"; :output dmx:c18 ] .
 [ :name "fr19"; :output dmx:c19 ] .
-[ :name "fr20"; :output dmx:c20 ] .
+[ :name "fr20x"; :output dmx:c20 ] .
 
 [ :name "cyc-left"; :output dmx:c42 ] .
 [ :name "cyc-mid"; :output dmx:c43 ] .
