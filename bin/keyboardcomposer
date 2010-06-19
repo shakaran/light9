@@ -353,7 +353,7 @@ class KeyboardComposer(Frame, SubClient):
 
     def refresh(self):
         self.save()
-        self.submasters = Submasters()
+        self.submasters = Submasters(self.graph)
         self.current_sub_levels, self.current_row = \
             pickle.load(file('.keyboardcomposer.savedlevels'))
         for r in self.rows:
