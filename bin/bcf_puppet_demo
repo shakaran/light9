@@ -1,0 +1,16 @@
+#!/usr/bin/python
+"""
+tiny bcf2000 controller demo
+"""
+from bcf2000 import BCF2000
+from twisted.internet import reactor
+
+class PuppetSliders(BCF2000):
+    def valueIn(self, name, value):
+        if name == 'slider1':
+            self.valueOut('slider5', value)
+
+
+
+b = PuppetSliders()
+reactor.run()
