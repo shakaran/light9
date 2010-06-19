@@ -1,0 +1,14 @@
+@prefix : <http://light9.bigasterisk.com/> .
+@prefix sub: <http://light9.bigasterisk.com/sub/> .
+@prefix t: <http://light9.bigasterisk.com/show/dance2008/song10/subterm/> .
+ <http://light9.bigasterisk.com/show/dance2008/song10>
+     :subterm t:blacklight,
+                t:song10,
+                t:song3black .
+    t:song10     a :Subterm;
+         :expression "song10(t)";
+         :sub sub:song10 .
+    t:blacklight     a :Subterm;
+         :expression "blacklight(t)>0";
+         :sub sub:blacklight .
+
