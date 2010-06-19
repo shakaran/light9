@@ -27,8 +27,7 @@ def chase(t, ontime=0.5, offset=0.2, onval=1.0,
             continue
         lev[dmx] = value
 
-    ret = Submaster.Submaster(leveldict=lev, temporary=True)
-    return ret
+    return Submaster.Submaster(leveldict=lev, temporary=True)
 
 def stack(t, names=None):
     """names is list of URIs. returns a submaster that stacks the the inputs"""
@@ -49,8 +48,7 @@ def stack(t, names=None):
         if threshold > t:
             break
 
-    ret = Submaster.Submaster(leveldict=lev, temporary=True)
-    return ret
+    return Submaster.Submaster(leveldict=lev, temporary=True)
 
 def configExprGlobals():
     graph = showconfig.getGraph()
@@ -63,4 +61,5 @@ def configExprGlobals():
         print "%r is a chase" % shortName
 
     ret['chase'] = chase
+    ret['stack'] = stack
     return ret
