@@ -55,6 +55,8 @@ sub:scoop :group group:live; :order 4 .
 sub:front :group group:live; :order 5 .
 sub:curtain :group group:live; :order 6 .
 
+sub:scoop :color "#ffaa77" .
+
 sub:song1	:group group:song; :order 1 .
 sub:song2	:group group:song; :order 2 .
 sub:song3	:group group:song; :order 3 .
