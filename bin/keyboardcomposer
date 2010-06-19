@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from __future__ import division, nested_scopes
-import cgi, os, sys, time, subprocess
+import cgi, os, sys, time, subprocess, logging
 from optparse import OptionParser
 import webcolors, colorsys
 
@@ -444,10 +444,13 @@ if __name__ == "__main__":
                       help="don't load or save levels")
     parser.add_option('--no-sliders', action='store_true',
                       help="don't attach to hardware sliders")
+    parser.add_option('-v', action='store_true', help="log info level")
     opts, args = parser.parse_args()
 
+    logging.basicConfig(level=logging.INFO if opts.v else logging.WARN)
+    log = logging.getLogger()
+
     graph = showconfig.getGraph()
-    
     s = Submasters(graph)
 
     root = Tk()
