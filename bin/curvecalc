@@ -30,8 +30,6 @@ from rdflib.Graph import Graph
 import rdflib
 import logging
 log = logging.getLogger()
-logging.basicConfig(format="%(asctime)s %(levelname)-5s %(name)s %(filename)s:%(lineno)d: %(message)s")
-log.setLevel(logging.DEBUG)
 
 import run_local
 from light9 import Submaster, dmxclient, networking, showconfig, prof, Patch
@@ -396,6 +394,7 @@ def createSubtermGraph(song, subterms):
 
 def add_subterms_for_song(graph, song, curveset, subterms, master):
     for st in graph.objects(song, L9['subterm']):
+        log.info("song %s has subterm %s", song, st)
         try:
             add_one_subterm(graph, graph.value(st, L9['sub']), curveset,
                             subterms, master, graph.value(st, L9['expression']))
@@ -468,6 +467,10 @@ def main():
     parser.add_option("--skip-music", action='store_true',
                       help="ignore music and smooth_music curve files")
     opts, args = parser.parse_args()
+
+    logging.basicConfig(format="%(asctime)s %(levelname)-5s %(name)s %(filename)s:%(lineno)d: %(message)s")
+    log.setLevel(logging.INFO)
+
 
     try:
         song = URIRef(args[0])

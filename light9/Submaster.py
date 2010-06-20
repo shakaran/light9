@@ -56,7 +56,7 @@ class Submaster:
             self.reload(quiet=True, graph=graph)
         if not self.temporary:
             dispatcher.connect(self.reload, 'reload all subs')
-        log.info("%s initial levels %s", self.name, self.levels)
+        log.debug("%s initial levels %s", self.name, self.levels)
         
     def reload(self, quiet=False, graph=None):
         if self.temporary:
