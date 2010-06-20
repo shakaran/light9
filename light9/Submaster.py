@@ -70,9 +70,13 @@ class Submaster:
                 # use the main one! The sub graphs will eventually
                 # just be part of the one and only shared graph
                 graph = Graph()
-                inFile = showconfig.subFile(self.name)
-                log.info("reading %s", inFile)
-                graph.parse(inFile, format="n3")
+                if not self.name:
+                    # anon sub, maybe for a chase
+                    pass
+                else:
+                    inFile = showconfig.subFile(self.name)
+                    log.info("reading %s", inFile)
+                    graph.parse(inFile, format="n3")
             self.uri = L9['sub/%s' % self.name]
             for lev in graph.objects(self.uri, L9['lightLevel']):
                 chan = graph.value(lev, L9['channel'])
