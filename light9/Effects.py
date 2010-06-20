@@ -29,25 +29,27 @@ def chase(t, ontime=0.5, offset=0.2, onval=1.0,
 
     return Submaster.Submaster(leveldict=lev, temporary=True)
 
-def stack(t, names=None):
-    """names is list of URIs. returns a submaster that stacks the the inputs"""
-    frac = 1.0 / (len(names) + 1)
-    threshold = frac
+def stack(t, names=None, fade=0):
+    """names is list of URIs. returns a submaster that stacks the the inputs
+
+    fade=0 makes steps, fade=1 means each one gets its full fraction
+    of the time to fade in. Fades never...
+    """
+    frac = 1.0 / len(names)
 
     lev = {}
-    for uri in names:
-        try:
-            dmx = Patch.dmx_from_uri(uri)
-        except KeyError:
-            print ("stack includes %r, which doesn't resolve to a dmx chan" %
-                   uri)
-            continue
-        lev[dmx] = 1
-
-        threshold += frac
-        if threshold > t:
+    for i, uri in enumerate(names):
+        if t >= (i + 1) * frac:
+            try:
+                dmx = Patch.dmx_from_uri(uri)
+            except KeyError:
+                print ("stack includes %r, which doesn't resolve to a dmx chan"%
+                       uri)
+                continue
+            lev[dmx] = 1
+        else:
             break
-
+    
     return Submaster.Submaster(leveldict=lev, temporary=True)
 
 def configExprGlobals():
