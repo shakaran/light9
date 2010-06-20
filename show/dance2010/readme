@@ -71,3 +71,5 @@ for 2011:
           raise RequestError(e)
       RequestError: [Errno 111] Connection refused
 - asco stops considerably after the autostop time (according to curvecalc)
+- CC should support zoom-crushing towards the left as well
+- vidref's replay 'enabled' button should be completely sticky across sessions
