@@ -503,7 +503,7 @@ def main():
     root.tk_setPalette("gray50")
     toplevelat("curvecalc",root)
     root.tk_focusFollowsMouse()
-    root.title("Curvemaster 3000MX - %s" % graph.label(song))
+    root.title("Was Curvemaster 3000MX. Now Curvemaster 30002MX! - %s" % graph.label(song))
 
     if 'fixed top rows':
         zc = Zoomcontrol(root)
