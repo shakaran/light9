@@ -182,6 +182,8 @@ class ReplayView(object):
                 self.picWidget.queue_draw_area(0,0,320,240)
                 self.picWidget.get_window().process_updates(True)
         self.showingPic = inPic
+
+_existingFrames = {}  # takeDir : frames
     
 class Replay(object):
     """
@@ -189,8 +191,13 @@ class Replay(object):
     """
     def __init__(self, takeDir):
         self.takeDir = takeDir
-        self.existingFrames = sorted([Decimal(f.split('.jpg')[0])
-                                 for f in os.listdir(self.takeDir)])
+        try:
+            self.existingFrames = _existingFrames[self.takeDir]
+        except KeyError:
+            log.info("scanning %s", self.takeDir)
+            self.existingFrames = sorted([Decimal(f.split('.jpg')[0])
+                                          for f in os.listdir(self.takeDir)])
+            _existingFrames[self.takeDir] = self.existingFrames
 
     def tooShort(self, minSeconds=5):
         return len(self.existingFrames) < (minSeconds * framerate)

@@ -51,16 +51,20 @@ class MusicTime(object):
 
     def _timeUpdate(self):
         while True:
-            position = jsonlib.loads(self.musicResource.get("time").body,
-                                     use_float=True)
+            try:
+                position = jsonlib.loads(self.musicResource.get("time").body,
+                                         use_float=True)
 
-            # this is meant to be the time when the server gave me its
-            # report, and I don't know if that's closer to the
-            # beginning of my request or the end of it (or some
-            # fraction of the way through)
-            self.positionFetchTime = time.time()
-            
-            self.position = position
+                # this is meant to be the time when the server gave me its
+                # report, and I don't know if that's closer to the
+                # beginning of my request or the end of it (or some
+                # fraction of the way through)
+                self.positionFetchTime = time.time()
+
+                self.position = position
+            except restkit.RequestError, e:
+                log.error(e)
+                time.sleep(1)
             time.sleep(self.period)
         
 class VideoRecordSink(gst.Element):
