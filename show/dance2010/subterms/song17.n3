@@ -1,0 +1,15 @@
+<http://light9.bigasterisk.com/show/dance2010/song17/subterm/full> <http://light9.bigasterisk.com/expression> "full(t)".
+<http://light9.bigasterisk.com/show/dance2010/song17/subterm/full> <http://www.w3.org/2000/01/rdf-schema#label> "full".
+<http://light9.bigasterisk.com/show/dance2010/song17/subterm/full> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song17/subterm/full> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/full>.
+<http://light9.bigasterisk.com/show/dance2010/song17/subterm/song17> <http://light9.bigasterisk.com/expression> "song17(t)".
+<http://light9.bigasterisk.com/show/dance2010/song17/subterm/song17> <http://www.w3.org/2000/01/rdf-schema#label> "song17".
+<http://light9.bigasterisk.com/show/dance2010/song17/subterm/song17> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song17/subterm/song17> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song17>.
+<http://light9.bigasterisk.com/show/dance2010/song17/subterm/patios> <http://light9.bigasterisk.com/expression> "patios(t)".
+<http://light9.bigasterisk.com/show/dance2010/song17/subterm/patios> <http://www.w3.org/2000/01/rdf-schema#label> "patios".
+<http://light9.bigasterisk.com/show/dance2010/song17/subterm/patios> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song17/subterm/patios> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/patios>.
+<http://light9.bigasterisk.com/show/dance2010/song17> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song17/subterm/full>.
+<http://light9.bigasterisk.com/show/dance2010/song17> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song17/subterm/song17>.
+<http://light9.bigasterisk.com/show/dance2010/song17> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song17/subterm/patios>.

@@ -1,0 +1,13 @@
+_:WyLpkeSB5935 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b12-L-p>.
+_:WyLpkeSB5935 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WyLpkeSB5934 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b35-L-p>.
+_:WyLpkeSB5934 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WyLpkeSB5933 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b13-C-r>.
+_:WyLpkeSB5933 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WyLpkeSB5936 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b34-C-r>.
+_:WyLpkeSB5936 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/song16tightred> <http://www.w3.org/2000/01/rdf-schema#label> "song16tightred".
+<http://light9.bigasterisk.com/sub/song16tightred> <http://light9.bigasterisk.com/lightLevel> _:WyLpkeSB5935.
+<http://light9.bigasterisk.com/sub/song16tightred> <http://light9.bigasterisk.com/lightLevel> _:WyLpkeSB5934.
+<http://light9.bigasterisk.com/sub/song16tightred> <http://light9.bigasterisk.com/lightLevel> _:WyLpkeSB5936.
+<http://light9.bigasterisk.com/sub/song16tightred> <http://light9.bigasterisk.com/lightLevel> _:WyLpkeSB5933.
