@@ -73,12 +73,24 @@ for 2011:
 - asco stops considerably after the autostop time (according to curvecalc)
 - CC should support zoom-crushing towards the left as well
 - vidref's replay 'enabled' button should be completely sticky across sessions
-
+- audio process pipeline; RDF graph should track versions of songs (padded, normalized)
+- vidref can loop like this if asco goes down:
+       File "/home/drewp/projects/light9/light9/vidref/main.py", line 168, in updateLoop
+         self.replayViews.update(position)
+       File "/home/drewp/projects/light9/light9/vidref/replay.py", line 42, in update
+         self.loadViewsForSong(position['song'])
+       File "/home/drewp/projects/light9/light9/vidref/replay.py", line 57, in loadViewsForSong
+         d = songDir(song)
+       File "/home/drewp/projects/light9/light9/vidref/replay.py", line 10, in songDir
+         safeUri = song.split('://')[-1].replace('/','_')
+     AttributeError: 'NoneType' object has no attribute 'split'
+- CC subterms that are just curve(t) should not appear as rows; they should be described in their curverow
+- all machines should have this control panel: set audio output to house or local; what's the song time; scrub around in this song; switches for emergency lights; make a checkpoint (if we dont have complete history yet)
 
 #3: 306 horns- strobe.
 255 light the sides. r first
 
-4 louder
+#4 louder
 
 #5 test blacklight
 
@@ -88,18 +100,20 @@ start cyc, with just 5
 
 #8 test BL
 
-10 louder
+#10 louder
 
 #11 test BL
 112 strobe? with the sound effect
 180 challenge R then L
 191 busy before the end, then light their line
 
-14 test BL
+#14 test BL
 146 darker before kick line, so we can get brighter on it at this time
 
-16 softer beginning
+#16 softer beginning
 587 strobe to 595
 655 fade as they sit
 
+  how to normalize audio:
+     plus(pts/0):~/projects/light9/show/dance2008/music/norm% normalize-audio -v --mix *.wav
 
