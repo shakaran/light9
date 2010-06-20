@@ -40,7 +40,7 @@ class Submaster:
         """
         if name is sub is leveldict is None:
             raise TypeError("more args are needed")
-        if sub is not None:
+        if sub is not None and name is None:
             name = graph.label(sub)
         if graph is not None:
             # old code was passing leveldict as second positional arg

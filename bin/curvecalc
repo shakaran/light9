@@ -243,8 +243,7 @@ class Subtermview(tk.Frame):
     def __init__(self, master, graph, st, **kw):
         self.subterm = st
         tk.Frame.__init__(self,master,bd=1,relief='raised',**kw)
-        l = tk.Label(self,
-                     text="sub %s" % graph.label(self.subterm.submaster.uri))
+        l = tk.Label(self, text="sub %s" % self.subterm.submaster.name)
         l.pack(side='left')
         sev=Subexprview(self,self.subterm.subexpr)
         sev.pack(side='left',fill='both',exp=1)
@@ -326,10 +325,16 @@ def makeStatusLines(master):
 
 def add_one_subterm(graph, subUri, curveset, subterms, master, expr=None):
     subname = graph.label(subUri)
+    print "%s's label is %s" % (subUri, subname)
+    if not subname: # fake sub, like for a chase
+        st = graph.subjects(L9['sub'], subUri).next()
+        subname = graph.label(st)
+        print "using parent subterm's name instead. parent %r, name %r" % (st, subname)
+    assert subname, "%s has no name" % subUri
     if expr is None:
         expr = '%s(t)' % subname
 
-    term = Subterm(Submaster.Submaster(graph=graph, sub=subUri),
+    term = Subterm(Submaster.Submaster(graph=graph, name=subname, sub=subUri),
                    Subexpr(curveset,expr))
     subterms.append(term)
 
@@ -384,6 +389,7 @@ def createSubtermGraph(song, subterms):
     """rdf graph describing the subterms, readable by add_subterms_for_song"""
     graph = Graph()
     for subterm in subterms:
+        assert subterm.submaster.name, "submaster has no name"
         uri = URIRef(song + "/subterm/" + subterm.submaster.name)
         graph.add((song, L9['subterm'], uri))
         graph.add((uri, RDF.type, L9['Subterm']))
