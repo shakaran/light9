@@ -1,0 +1,10 @@
+_:HFBSErCJ412 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:HFBSErCJ412 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b35-L-p>.
+<http://light9.bigasterisk.com/sub/redleft> <http://www.w3.org/2000/01/rdf-schema#label> "redleft".
+<http://light9.bigasterisk.com/sub/redleft> <http://light9.bigasterisk.com/lightLevel> _:HFBSErCJ412.
+<http://light9.bigasterisk.com/sub/redleft> <http://light9.bigasterisk.com/lightLevel> _:HFBSErCJ411.
+<http://light9.bigasterisk.com/sub/redleft> <http://light9.bigasterisk.com/lightLevel> _:HFBSErCJ413.
+_:HFBSErCJ411 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:HFBSErCJ411 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b13-C-r>.
+_:HFBSErCJ413 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:HFBSErCJ413 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b31-L-r>.

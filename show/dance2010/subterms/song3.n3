@@ -1,0 +1,21 @@
+<http://light9.bigasterisk.com/show/dance2010/song3/subterm/> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/>.
+<http://light9.bigasterisk.com/show/dance2010/song3/subterm/> <http://www.w3.org/2000/01/rdf-schema#label> "".
+<http://light9.bigasterisk.com/show/dance2010/song3/subterm/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song3/subterm/> <http://light9.bigasterisk.com/expression> "chscoop(t)*chase(t, names=scoop, ontime=.2, offset=.1, random=1)".
+<http://light9.bigasterisk.com/show/dance2010/song3/subterm/> <http://light9.bigasterisk.com/expression> "ch1(t)*chase(t, names=back, ontime=.2, offset=.1)".
+<http://light9.bigasterisk.com/show/dance2010/song3/subterm/redblue> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/redblue>.
+<http://light9.bigasterisk.com/show/dance2010/song3/subterm/redblue> <http://www.w3.org/2000/01/rdf-schema#label> "redblue".
+<http://light9.bigasterisk.com/show/dance2010/song3/subterm/redblue> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song3/subterm/redblue> <http://light9.bigasterisk.com/expression> "redblue(t)".
+<http://light9.bigasterisk.com/show/dance2010/song3/subterm/bluered> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/bluered>.
+<http://light9.bigasterisk.com/show/dance2010/song3/subterm/bluered> <http://www.w3.org/2000/01/rdf-schema#label> "bluered".
+<http://light9.bigasterisk.com/show/dance2010/song3/subterm/bluered> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song3/subterm/bluered> <http://light9.bigasterisk.com/expression> "bluered(t)".
+<http://light9.bigasterisk.com/show/dance2010/song3> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song3/subterm/>.
+<http://light9.bigasterisk.com/show/dance2010/song3> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song3/subterm/redblue>.
+<http://light9.bigasterisk.com/show/dance2010/song3> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song3/subterm/bluered>.
+<http://light9.bigasterisk.com/show/dance2010/song3> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song3/subterm/bredc>.
+<http://light9.bigasterisk.com/show/dance2010/song3/subterm/bredc> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/bredc>.
+<http://light9.bigasterisk.com/show/dance2010/song3/subterm/bredc> <http://www.w3.org/2000/01/rdf-schema#label> "bredc".
+<http://light9.bigasterisk.com/show/dance2010/song3/subterm/bredc> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song3/subterm/bredc> <http://light9.bigasterisk.com/expression> "bredc(t)".

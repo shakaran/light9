@@ -1,0 +1,13 @@
+_:HFBSErCJ1404 <http://light9.bigasterisk.com/level> "0.315"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:HFBSErCJ1404 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b22-L-w>.
+_:HFBSErCJ1405 <http://light9.bigasterisk.com/level> "0.87"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:HFBSErCJ1405 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b23-L-b>.
+_:HFBSErCJ1402 <http://light9.bigasterisk.com/level> "0.695"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:HFBSErCJ1402 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b11-C-b>.
+<http://light9.bigasterisk.com/sub/blueleft> <http://light9.bigasterisk.com/lightLevel> _:HFBSErCJ1405.
+<http://light9.bigasterisk.com/sub/blueleft> <http://light9.bigasterisk.com/lightLevel> _:HFBSErCJ1402.
+<http://light9.bigasterisk.com/sub/blueleft> <http://light9.bigasterisk.com/lightLevel> _:HFBSErCJ1404.
+<http://light9.bigasterisk.com/sub/blueleft> <http://light9.bigasterisk.com/lightLevel> _:HFBSErCJ1403.
+<http://light9.bigasterisk.com/sub/blueleft> <http://www.w3.org/2000/01/rdf-schema#label> "blueleft".
+_:HFBSErCJ1403 <http://light9.bigasterisk.com/level> "0.42"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:HFBSErCJ1403 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b12-L-p>.

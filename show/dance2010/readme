@@ -56,4 +56,6 @@ for 2011:
 - gel sample pack
 - vidref adjustable crop to the stage aspect
 - vidref should have an 'in progress' row to prove that it's recording something new
-- 
+- curvecalc still has a problem making empty-name subterms. that should never happen, even once
+- remote-run GUIs should say what machine they're on. Or, everyone should say what RDF server it's talking tox
+- scrub inside curvecalc, preview a video in it
