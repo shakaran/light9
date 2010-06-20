@@ -45,6 +45,12 @@ class Player(object):
             if self.lastWatchTime < self.autoStopTime < t:
                 log.info("autostop")
                 self.pause()
+            if self.isPlaying() and t >= self.duration() - .2:
+                # i don't expect to hit dur exactly with this
+                # polling. What would be better would be to watch for
+                # the EOS signal and react to that
+                self.pause()
+                self.seek(0)
             self.lastWatchTime = t
         except:
             traceback.print_exc()
