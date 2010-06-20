@@ -100,6 +100,22 @@ ch:cyc-mid
 ch:cyc-left
 ) .
 
+chase:backorder a :Chase; rdfs:comment "back, right-to-left"; 
+  :channels (
+ch:b36-C-b
+ch:b34-C-r
+ch:b31-L-r
+ch:b26-L-c
+ch:b25-R-w
+ch:b24-R-b
+ch:b23-L-b
+ch:b22-L-w
+ch:b21-R-c
+ch:b16-R-r
+ch:b13-C-r
+ch:b11-C-b
+) .
+
 
 
 chase:cycline a :Chase; :channels (ch:cyc-left ch:cyc-mid ch:cyc-right ) .
