@@ -56,7 +56,7 @@ class ReplayViews(object):
 
         d = songDir(song)
         try:
-            takes = sorted(os.listdir(d))
+            takes = sorted(t for t in os.listdir(d) if t.isdigit())
         except OSError:
             return
         
