@@ -1,0 +1,13 @@
+<http://light9.bigasterisk.com/sub/song11> <http://www.w3.org/2000/01/rdf-schema#label> "song11".
+<http://light9.bigasterisk.com/sub/song11> <http://light9.bigasterisk.com/lightLevel> _:UoBkHSda1860.
+<http://light9.bigasterisk.com/sub/song11> <http://light9.bigasterisk.com/lightLevel> _:UoBkHSda1863.
+<http://light9.bigasterisk.com/sub/song11> <http://light9.bigasterisk.com/lightLevel> _:UoBkHSda1862.
+<http://light9.bigasterisk.com/sub/song11> <http://light9.bigasterisk.com/lightLevel> _:UoBkHSda1861.
+_:UoBkHSda1863 <http://light9.bigasterisk.com/level> "0.35"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:UoBkHSda1863 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b32-L>.
+_:UoBkHSda1862 <http://light9.bigasterisk.com/level> "0.4175"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:UoBkHSda1862 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b33-R-#>.
+_:UoBkHSda1861 <http://light9.bigasterisk.com/level> "0.5"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:UoBkHSda1861 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b14-L-#>.
+_:UoBkHSda1860 <http://light9.bigasterisk.com/level> "0.35"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:UoBkHSda1860 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b15-R>.
