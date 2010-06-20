@@ -59,3 +59,4 @@ for 2011:
 - curvecalc still has a problem making empty-name subterms. that should never happen, even once
 - remote-run GUIs should say what machine they're on. Or, everyone should say what RDF server it's talking tox
 - scrub inside curvecalc, preview a video in it
+- bring curvecalc's logging inside the GUI window

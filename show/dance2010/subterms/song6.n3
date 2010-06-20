@@ -1,0 +1,25 @@
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/song06open> <http://light9.bigasterisk.com/expression> "song06open(t)".
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/song06open> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song06open>.
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/song06open> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/song06open> <http://www.w3.org/2000/01/rdf-schema#label> "song06open".
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/song06center> <http://light9.bigasterisk.com/expression> "song06center(t)".
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/song06center> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song06center>.
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/song06center> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/song06center> <http://www.w3.org/2000/01/rdf-schema#label> "song06center".
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/song06color> <http://light9.bigasterisk.com/expression> "song06color(t)".
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/song06color> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song06color>.
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/song06color> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/song06color> <http://www.w3.org/2000/01/rdf-schema#label> "song06color".
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/chcol> <http://light9.bigasterisk.com/expression> "chcol(t)*chase(t, names=back, ontime=2.5, offset=-1.4 )".
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/chcol> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/chcol>.
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/chcol> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/chcol> <http://www.w3.org/2000/01/rdf-schema#label> "chcol".
+<http://light9.bigasterisk.com/show/dance2010/song6> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song6/subterm/song06open>.
+<http://light9.bigasterisk.com/show/dance2010/song6> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song6/subterm/song06center>.
+<http://light9.bigasterisk.com/show/dance2010/song6> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song6/subterm/full>.
+<http://light9.bigasterisk.com/show/dance2010/song6> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song6/subterm/song06color>.
+<http://light9.bigasterisk.com/show/dance2010/song6> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song6/subterm/chcol>.
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/full> <http://light9.bigasterisk.com/expression> "full(t)".
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/full> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/full>.
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/full> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song6/subterm/full> <http://www.w3.org/2000/01/rdf-schema#label> "full".

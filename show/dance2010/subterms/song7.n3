@@ -1,5 +1,10 @@
-<http://light9.bigasterisk.com/show/dance2010/song7> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song7/subterm/>.
-<http://light9.bigasterisk.com/show/dance2010/song7/subterm/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
 <http://light9.bigasterisk.com/show/dance2010/song7/subterm/> <http://www.w3.org/2000/01/rdf-schema#label> "".
+<http://light9.bigasterisk.com/show/dance2010/song7/subterm/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song7/subterm/> <http://light9.bigasterisk.com/expression> "".
 <http://light9.bigasterisk.com/show/dance2010/song7/subterm/> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/>.
-<http://light9.bigasterisk.com/show/dance2010/song7/subterm/> <http://light9.bigasterisk.com/expression> "scoops(t)".
+<http://light9.bigasterisk.com/show/dance2010/song7/subterm/song07bk> <http://www.w3.org/2000/01/rdf-schema#label> "song07bk".
+<http://light9.bigasterisk.com/show/dance2010/song7/subterm/song07bk> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song7/subterm/song07bk> <http://light9.bigasterisk.com/expression> "song07bk(t)".
+<http://light9.bigasterisk.com/show/dance2010/song7/subterm/song07bk> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song07bk>.
+<http://light9.bigasterisk.com/show/dance2010/song7> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song7/subterm/>.
+<http://light9.bigasterisk.com/show/dance2010/song7> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song7/subterm/song07bk>.
