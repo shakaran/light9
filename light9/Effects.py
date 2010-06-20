@@ -39,7 +39,7 @@ def stack(t, names=None):
         try:
             dmx = Patch.dmx_from_uri(uri)
         except KeyError:
-            print ("chase includes %r, which doesn't resolve to a dmx chan" %
+            print ("stack includes %r, which doesn't resolve to a dmx chan" %
                    uri)
             continue
         lev[dmx] = 1
