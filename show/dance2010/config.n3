@@ -60,24 +60,6 @@ sub:bpurple :color "#b4099d"; :group group:back; :order 4 .
 sub:bred    :color "#c0341b"; :group group:back; :order 5 .
 sub:bredc   :color "#ff0000"; :group group:back; :order 6 .
 
-sub:song1	:group group:song; :order 1 .
-sub:song2	:group group:song; :order 2 .
-sub:song3	:group group:song; :order 3 .
-sub:song4	:group group:song; :order 4 .
-sub:song5	:group group:song; :order 5 .
-sub:song6	:group group:song; :order 6 .
-sub:song7	:group group:song; :order 7 .
-sub:song8	:group group:song; :order 8 .
-sub:song9	:group group:song; :order 9 .
-sub:song10	:group group:song; :order 10 .
-sub:song11	:group group:song; :order 11 .
-sub:song12	:group group:song; :order 12 .
-sub:song13	:group group:song; :order 13 .
-sub:song14	:group group:song; :order 14 .
-sub:song15	:group group:song; :order 15 .
-sub:song16	:group group:song; :order 16 .
-sub:song17	:group group:song; :order 17 .
-
 chase:colors a :Chase; :channels (
 ch:oran1 ch:gree1 ch:blue1 ch:red1 
 ch:oran2 ch:gree2 ch:blue2 ch:red2 
