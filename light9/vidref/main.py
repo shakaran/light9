@@ -102,7 +102,7 @@ class VideoRecordSink(gst.Element):
         position = self.musicTime.getLatest()
 
         if not position['song']:
-            print "no song"
+            print "no song" # todo: this prints too much when the player has no song
             return gst.FLOW_OK
 
         try:

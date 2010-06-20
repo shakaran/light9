@@ -54,6 +54,9 @@ class ReplayViews(object):
             v.destroy()
         self.views[:] = []
 
+        if not song:
+            return
+        
         d = songDir(song)
         try:
             takes = sorted(t for t in os.listdir(d) if t.isdigit())
