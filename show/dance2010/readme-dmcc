@@ -1,78 +1,90 @@
-refocus:
-
-dead:
-strobe
-blacklight
+key: WF = WONTFIX = won't fix
+     NY = "next year" != New York
+     NB = "no bug" !+ "note bene" ~= "nutter butter"
+     x  = done
+     12 = was 10!
 
 fix:
-denoise the heck out of everything
-    normalize
-asco needs to set time to 0 at end of song?
-b23 needs blackwrap!
-headsewt(s?)
-curvecalc fights when recording
-sharlyn special
+WF  denoise the heck out of everything
+x   normalize
+x   asco needs to set time to 0 at end of song?
+x   b23 needs blackwrap!
+x   headset(s?)
+NY  curvecalc fights when recording
+x   sharlyn special
+    warmers
 
 persong:
     song01:
         posts in song01?
-        check actual fades
+      ! check actual fades
 
     song02:
+        good!
 
     song03:
+     x  122 chimes hands up little bursts or something
+        230 muddy colors, boring
 
     song04:
-        check fade in
-        otherwise fine
+    x   check fade in
 
     song05:
-        check fade in, bow
+    ?   check fade in, bow
+        good?
 
     song06:
-        shimmering lights at beginning -- do they fade?
-        fade to water
+    NB  shimmering lights at beginning -- do they fade?
+    x   fade to water
         check midsong fades for song06color (fade to center)
 
     song07:
-        yikes
+        bad!???
+
+     x  310 dancers in the dark edges
 
     song08:
         good?
 
     song09:
-        check chase/main look integration
-        other effects?
-        intro effect
+    x   check chase/main look integration
+    x   other effects? (110)
+        intro effect (boring but passable)
 
     song10:
         good?
 
     song11:
-        intro effect: lots of colors?  really fast color chase
-        bridge: blacklight?
-        "i'm not going to spend my life being a color"
+    x   intro effect: lots of colors?  really fast color chase
+    ?       freeze when music stalls?
+    x   bridge: blacklight?
+    x   "i'm not going to spend my life being a color"
 
     song12:
         spotlight!
 
     song13:
-        song opening sound sucks (extra bad)
+    WF  song opening sound sucks (extra bad)
 
     song14:
-        check intro fade
-        too loud?
+    x   check intro fade
 
     song15:
-        blackbird: faster fade with organ (t = 98)
-        all that jazz: start with red c on v, grow to all red ("come on")
+    x   blackbird: faster fade with organ (t = 98)
+    x   all that jazz: start with red c on v, grow to all red ("come on")
             beats on "all -- that -- jazz"
 
-        160 need to work out fade
+    x   check with dancers
 
     song16:
-        500 up and back and sweep?
-        550 stacks
+        184 "strike a pose"
+        254 "vogue vogue vogue"
+        310 too white/bright -- solid color and lower white instead?
+        340 missing song change event (still too white)
+    x   660 full comes in too late
+
+        500 up and back and sweep?  low prio
+    x   550 stacks
 
     song17:
         good!
