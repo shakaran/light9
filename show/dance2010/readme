@@ -85,9 +85,9 @@ for 2011:
          safeUri = song.split('://')[-1].replace('/','_')
      AttributeError: 'NoneType' object has no attribute 'split'
 - CC subterms that are just curve(t) should not appear as rows; they should be described in their curverow
-- all machines should have this control panel: set audio output to house or local; what's the song time; scrub around in this song; switches for emergency lights; make a checkpoint (if we dont have complete history yet)
+- all machines should have this control panel: set audio output to house or local; what's the song time; scrub around in this song; switches for emergency lights; make a checkpoint (if we dont have complete history yet); "it looks bad" button, to make a todo note for that time
 - hardest thing is seeing an area on stage and getting light onto it. lightsim could help
-
+- compute whole-stage brightness and show that as a track, so we can adjust the light mix to create overall looks
 
 #3: 306 horns- strobe.
 255 light the sides. r first

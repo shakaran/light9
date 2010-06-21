@@ -1,40 +1,40 @@
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/song11> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song11>.
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/song11> <http://www.w3.org/2000/01/rdf-schema#label> "song11".
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/song11> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/song11> <http://light9.bigasterisk.com/expression> "song11(t)".
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/strobe> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/strobe>.
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/strobe> <http://www.w3.org/2000/01/rdf-schema#label> "strobe".
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/strobe> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/strobe> <http://light9.bigasterisk.com/expression> "strobe(t)>0".
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolor> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/chcolor>.
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolor> <http://www.w3.org/2000/01/rdf-schema#label> "chcolor".
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolor> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolor> <http://light9.bigasterisk.com/expression> "chcolor(t)*chase(t, names=colors+back, ontime=.1, offset=0, offval=.1, random=1)".
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch1> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/ch1>.
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch1> <http://www.w3.org/2000/01/rdf-schema#label> "ch1".
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch1> <http://light9.bigasterisk.com/expression> "ch1(t)*(chase(t, names=scoop,ontime=.15, offset=.4,offval=.2,random=1)+chase(t, names=scoop,ontime=.18, offset=.35,offval=.3,random=2))".
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/blacklight> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/blacklight>.
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/blacklight> <http://www.w3.org/2000/01/rdf-schema#label> "blacklight".
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/blacklight> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/blacklight> <http://light9.bigasterisk.com/expression> "blacklight(t)>0".
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/full> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/full>.
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/full> <http://www.w3.org/2000/01/rdf-schema#label> "full".
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/full> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/full> <http://light9.bigasterisk.com/expression> "full(t)".
-<http://light9.bigasterisk.com/show/dance2010/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song11/subterm/song11>.
-<http://light9.bigasterisk.com/show/dance2010/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song11/subterm/strobe>.
-<http://light9.bigasterisk.com/show/dance2010/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolor>.
-<http://light9.bigasterisk.com/show/dance2010/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch1>.
-<http://light9.bigasterisk.com/show/dance2010/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song11/subterm/blacklight>.
-<http://light9.bigasterisk.com/show/dance2010/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song11/subterm/full>.
-<http://light9.bigasterisk.com/show/dance2010/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolslow>.
-<http://light9.bigasterisk.com/show/dance2010/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch2>.
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolslow> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/chcolslow>.
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolslow> <http://www.w3.org/2000/01/rdf-schema#label> "chcolslow".
 <http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolslow> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolslow> <http://www.w3.org/2000/01/rdf-schema#label> "chcolslow".
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolslow> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/chcolslow>.
 <http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolslow> <http://light9.bigasterisk.com/expression> "chcolslow(t)*chase(t, names=colors+back, ontime=.3, offset=-.1, offval=.1, random=1)".
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch2> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/ch2>.
-<http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch2> <http://www.w3.org/2000/01/rdf-schema#label> "ch2".
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolor> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolor> <http://www.w3.org/2000/01/rdf-schema#label> "chcolor".
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolor> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/chcolor>.
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolor> <http://light9.bigasterisk.com/expression> "chcolor(t)*chase(t, names=colors+back, ontime=.1, offset=0, offval=.1, random=1)".
 <http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch2> <http://www.w3.org/2000/01/rdf-schema#label> "ch2".
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch2> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/ch2>.
 <http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch2> <http://light9.bigasterisk.com/expression> "ch2(t)*chase(t, names=scoop,ontime=.05, offset=.05,offval=.1,random=1)".
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/song11> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/song11> <http://www.w3.org/2000/01/rdf-schema#label> "song11".
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/song11> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song11>.
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/song11> <http://light9.bigasterisk.com/expression> "song11(t)".
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/full> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/full> <http://www.w3.org/2000/01/rdf-schema#label> "full".
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/full> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/full>.
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/full> <http://light9.bigasterisk.com/expression> "full(t)".
+<http://light9.bigasterisk.com/show/dance2010/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolslow>.
+<http://light9.bigasterisk.com/show/dance2010/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song11/subterm/chcolor>.
+<http://light9.bigasterisk.com/show/dance2010/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch2>.
+<http://light9.bigasterisk.com/show/dance2010/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song11/subterm/song11>.
+<http://light9.bigasterisk.com/show/dance2010/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song11/subterm/full>.
+<http://light9.bigasterisk.com/show/dance2010/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song11/subterm/blacklight>.
+<http://light9.bigasterisk.com/show/dance2010/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch1>.
+<http://light9.bigasterisk.com/show/dance2010/song11> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2010/song11/subterm/strobe>.
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/blacklight> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/blacklight> <http://www.w3.org/2000/01/rdf-schema#label> "blacklight".
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/blacklight> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/blacklight>.
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/blacklight> <http://light9.bigasterisk.com/expression> "blacklight(t)>0".
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch1> <http://www.w3.org/2000/01/rdf-schema#label> "ch1".
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch1> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/ch1>.
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/ch1> <http://light9.bigasterisk.com/expression> "ch1(t)*(chase(t, names=scoop,ontime=.15, offset=.4,offval=.2,random=1)+chase(t, names=scoop,ontime=.18, offset=.35,offval=.3,random=2))".
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/strobe> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/strobe> <http://www.w3.org/2000/01/rdf-schema#label> "strobe".
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/strobe> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/strobe>.
+<http://light9.bigasterisk.com/show/dance2010/song11/subterm/strobe> <http://light9.bigasterisk.com/expression> "strobe(t)>0".
