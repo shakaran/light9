@@ -56,7 +56,7 @@ for 2011:
 - gel sample pack
 - vidref adjustable crop to the stage aspect
 - vidref should have an 'in progress' row to prove that it's recording something new
-- curvecalc still has a problem making empty-name subterms. that should never happen, even once
+OK curvecalc still has a problem making empty-name subterms. that should never happen, even once
 - remote-run GUIs should say what machine they're on. Or, everyone should say what RDF server it's talking tox
 - scrub inside curvecalc, preview a video in it
 - bring curvecalc's logging inside the GUI window
@@ -74,7 +74,7 @@ for 2011:
 - CC should support zoom-crushing towards the left as well
 - vidref's replay 'enabled' button should be completely sticky across sessions
 - audio process pipeline; RDF graph should track versions of songs (padded, normalized)
-- vidref can loop like this if asco goes down:
+OK vidref can loop like this if asco goes down:
        File "/home/drewp/projects/light9/light9/vidref/main.py", line 168, in updateLoop
          self.replayViews.update(position)
        File "/home/drewp/projects/light9/light9/vidref/replay.py", line 42, in update
