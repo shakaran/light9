@@ -516,7 +516,7 @@ def main():
         panes.pack(side='top', fill='both', expand=True)
 
         curvesetView = Curvesetview(panes.subwidget('curvesetView'), curveset,
-                                    height=400)
+                                    height=600)
         curvesetView.pack(fill='both', expand=True)
 
         subtermArea = tk.Frame(panes.subwidget('subterms'), height=100)
