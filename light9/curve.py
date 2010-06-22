@@ -1,5 +1,5 @@
 from __future__ import division
-import math, glob, time
+import math, glob, time, logging
 from bisect import bisect_left,bisect
 import Tix as tk
 try:
@@ -13,6 +13,7 @@ from light9.dmxchanedit import gradient
 from light9.zoomcontrol import RegionZoom
 from bcf2000 import BCF2000
 
+log = logging.getLogger()
 # todo: move to config, consolidate with ascoltami, musicPad, etc
 introPad = 4
 postPad = 4
@@ -165,12 +166,13 @@ class Sketch:
 
 
 class Curveview(tk.Canvas):
-    def __init__(self, master, curve, knobEnabled=False, **kw):
+    def __init__(self, master, curve, knobEnabled=False, isMusic=False, **kw):
         """knobEnabled=True highlights the previous key and ties it to a
         hardware knob"""
         self.redrawsEnabled = False
         self.curve = curve
         self.knobEnabled = knobEnabled
+        self._isMusic = isMusic
         self._time = 0
         self.last_mouse_world = None
         tk.Canvas.__init__(self,master,width=10,height=10,
@@ -399,8 +401,16 @@ class Curveview(tk.Canvas):
             if len(visible_points)<50:
                 self._draw_handle_points(visible_idxs,visible_points)
 
+    def is_music(self):
+        """are we one of the music curves (which might be drawn a bit
+        differently)"""
+        return self._isMusic
+
     def _draw_gradient(self):
-        gradient_res = 3
+        t1 = time.time()
+        gradient_res = 6 if self.is_music() else 3
+        startX = startColor = None
+        rects = 0
         for x in range(0, self.width, gradient_res):
             wx = self.world_from_screen(x,0)[0]
             mag = self.curve.eval(wx, allow_muting=False)
@@ -410,9 +420,22 @@ class Curveview(tk.Canvas):
             else:
                 low = (20, 10, 50)
                 high = (255, 187, 255)
-            self.create_line(x,0, x,40,
-                             fill=gradient(mag, low=low, high=high),
-                             width=gradient_res, tags='curve')
+            color = gradient(mag, low=low, high=high)
+            if color != startColor:
+                if startColor is not None:
+                    self._draw_gradient_slice(startX, x, startColor)
+                    rects += 1
+                startX = x
+                startColor = color
+
+        if startColor is not None:
+            self._draw_gradient_slice(startX, self.width, startColor)
+            rects += 1
+        log.debug("redraw %s rects in %.02f ms", rects, 1000 * (time.time()-t1))
+
+    def _draw_gradient_slice(self, x1, x2, color):
+        self.create_rectangle(x1, 0, x2, 40,
+                              fill=color, width=0, tags='curve')        
 
     def _draw_markers(self,visible_x):
         mark = self._draw_one_marker
@@ -772,7 +795,8 @@ class CurveRow(tk.Frame):
         leftside = tk.Frame(self)
         leftside.pack(side='left')
 
-        self.curveView = Curveview(self, curve, knobEnabled=knobEnabled)
+        self.curveView = Curveview(self, curve, knobEnabled=knobEnabled,
+                                   isMusic=name in ['music', 'smooth_music'])
         self.curveView.pack(side='left', fill='both', expand=True)
         self.curveView.config(height=100)
 
