@@ -41,6 +41,10 @@ def root():
             "LIGHT9_SHOW env variable has not been set to the show root")
     return r
 
+def showUri():
+    """Return the show URI associated with $LIGHT9_SHOW."""
+    return URIRef(file(path.join(root(), 'URI').read().strip()))
+
 def findMpdHome():
     """top of the music directory for the mpd on this system,
     including trailing slash"""
@@ -58,7 +62,6 @@ def findMpdHome():
                 return mpdHome.rstrip(path.sep) + path.sep  
 
     raise ValueError("can't find music_directory in any mpd config file")
-
 
 def songInMpd(song):
     """
@@ -98,6 +101,14 @@ def songFilenameFromURI(uri):
     assert isinstance(uri, URIRef)
     return uri.split('/')[-1]
 
+def getSongsFromShow(graph, show):
+    playList = graph.value(show, L9['playList'])
+    if not playList:
+        raise ValueError("%r has no l9:playList" % show)
+    songs = list(graph.items(playList))
+
+    return songs
+
 def curvesDir():
     return path.join(root(),"curves")
 
@@ -117,4 +128,3 @@ def prePostSong():
     graph = getGraph()
     return [graph.value(MUS['preSong'], L9['showPath']),
             graph.value(MUS['postSong'], L9['showPath'])]
-

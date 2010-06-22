@@ -6,20 +6,18 @@ import sys, wave, logging, os
 sys.path.append(".")
 from light9 import networking, showconfig
 from light9.namespaces import L9
+from light9.ascoltami.playlist import Playlist
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
 
 introPad = 4
 postPad = 9 # 5 + autostop + 4
 
-graph = showconfig.getGraph()
+playlist = Playlist.fromShow(showconfig.getGraph(), showconfig.showUri())
 # instead of taking a show uri like it should, i just convert every
 # path i find in the graph (hoping that you only loaded statements for
 # the current show)
-for p in sorted(graph.objects(None, L9['showPath'])):
-    assert p.startswith("file://")
-    p = p[len("file://"):]
-    
+for p in playlist.allSongPaths():
     log.info("read %s", p)
     inputWave = wave.open(p, 'r')
 

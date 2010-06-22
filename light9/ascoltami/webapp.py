@@ -1,11 +1,10 @@
 import web, jsonlib
 from twisted.python.util import sibpath
 from light9.namespaces import L9
+from light9.showconfig import getSongsFromShow
 from rdflib import URIRef
-player = None
-graph = None
-show = None
 
+app = None
 
 def songLocation(graph, songUri):
     loc = graph.value(songUri, L9['showPath'])
@@ -28,7 +27,10 @@ class root(object):
 
 class timeResource(object):
     def GET(self):
-        playingLocation = player.playbin.get_property("uri")
+        player = app.player
+        graph = app.graph
+
+        playingLocation = player.getSong()
         if playingLocation:
             song = songUri(graph, URIRef(playingLocation))
         else:
@@ -47,6 +49,7 @@ class timeResource(object):
         with a pause/resume command too.
         """
         params = jsonlib.read(web.data(), use_float=True)
+        player = app.player
         if params.get('pause', False):
             player.pause()
         if params.get('resume', False):
@@ -57,12 +60,10 @@ class timeResource(object):
 
 class songs(object):
     def GET(self):
-        playList = graph.value(show, L9['playList'])
-        if not playList:
-            raise ValueError("%r has no l9:playList" % show)
-        songs = list(graph.items(playList))
+        graph = app.graph
 
-        
+        songs = getSongsFromShow(graph, app.show)
+
         web.header("Content-type", "application/json")
         return jsonlib.write({"songs" : [
             {"uri" : s,
@@ -72,11 +73,15 @@ class songs(object):
 class songResource(object):
     def POST(self):
         """post a uri of song to switch to (and start playing)"""
-        player.setSong(songLocation(graph, URIRef(web.data())))
+        graph = app.graph
+
+        app.player.setSong(songLocation(graph, URIRef(web.data())))
         return "ok"
     
 class seekPlayOrPause(object):
     def POST(self):
+        player = app.player
+
         data = jsonlib.read(web.data(), use_float=True)
         if player.isPlaying():
             player.pause()
@@ -84,16 +89,15 @@ class seekPlayOrPause(object):
             player.seek(data['t'])
             player.resume()
 
-def makeApp(thePlayer, theGraph, theShow):
-    global player, graph, show
-    player, graph, show = thePlayer, theGraph, theShow
+def makeWebApp(theApp):
+    global app
+    app = theApp
 
-    urls = ("/", "root",
-            "/time", "timeResource",
-            "/song", "songResource",
-            "/songs", "songs",
-            "/seekPlayOrPause", "seekPlayOrPause",
+    urls = (r"/", "root",
+            r"/time", "timeResource",
+            r"/song", "songResource",
+            r"/songs", "songs",
+            r"/seekPlayOrPause", "seekPlayOrPause",
             )
 
-    app = web.application(urls, globals(), autoreload=False)
-    return app
+    return web.application(urls, globals(), autoreload=False)

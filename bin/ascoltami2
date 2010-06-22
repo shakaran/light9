@@ -3,33 +3,56 @@ import web, thread, gobject, sys, optparse, logging
 from rdflib import URIRef
 sys.path.append(".")
 from light9.ascoltami.player import Player
+from light9.ascoltami.playlist import Playlist, NoSuchSong
 from light9.ascoltami.webapp import makeApp
 from light9 import networking, showconfig
 
-logging.basicConfig()
-log = logging.getLogger()
-gobject.threads_init()
+class App:
+    def __init__(self, graph, show):
+        self.graph = graph
+        self.player = Player(onEOS=self.onEOS)
+        self.show = show
+        self.playlist = Playlist.fromShow(graph, show)
 
-parser = optparse.OptionParser()
-parser.add_option('--show',
-    help='show URI, like http://light9.bigasterisk.com/show/dance2008')
-parser.add_option("-v", "--verbose", action="store_true",
-                  help="logging.DEBUG")
-(options, args) = parser.parse_args()
+    def run(self, musicPort):
+        # the cherrypy server would wedge when vidref pounds on it; this
+        # one seems to run
+        thread.start_new(web.httpserver.runbasic,
+                         (makeWebApp(self).wsgifunc(),
+                          ('0.0.0.0', musicPort)))
 
-log.setLevel(logging.DEBUG if options.verbose else logging.INFO)
+        mainloop = gobject.MainLoop()
+        mainloop.run()
 
-if not options.show:
-    raise ValueError("missing --show http://...")
-        
-graph = showconfig.getGraph()
-player = Player()
+    def onEOS(self, song):
+        self.player.pause()
+        self.player.seek(0)
 
-# the cherrypy server would wedge when vidref pounds on it; this
-# one seems to run
-thread.start_new(web.httpserver.runbasic,
-                 (makeApp(player, graph, URIRef(options.show)).wsgifunc(),
-                  ('0.0.0.0', networking.musicPort())))
+        try:
+            nextSong = self.playlist.nextSong(song)
+        except NoSuchSong: # we're at the end of the playlist
+            return
 
-mainloop = gobject.MainLoop()
-mainloop.run()
+        self.player.setSong(nextSong, play=False)
+
+if __name__ == "__main__":
+    logging.basicConfig()
+    log = logging.getLogger()
+    gobject.threads_init()
+
+    parser = optparse.OptionParser()
+    parser.add_option('--show',
+        help='show URI, like http://light9.bigasterisk.com/show/dance2008')
+    parser.add_option("-v", "--verbose", action="store_true",
+                      help="logging.DEBUG")
+    (options, args) = parser.parse_args()
+
+    log.setLevel(logging.DEBUG if options.verbose else logging.INFO)
+
+    if not options.show:
+        raise ValueError("missing --show http://...")
+            
+    graph = showconfig.getGraph()
+    app = App(graph, URIRef(options.show))
+    musicPort = networking.musicPort()
+    app.run(musicPort)

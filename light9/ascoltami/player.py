@@ -9,7 +9,13 @@ import gst, gobject
 log = logging.getLogger()
 
 class Player(object):
-    def __init__(self, autoStopOffset=4):
+    def __init__(self, autoStopOffset=4, onEOS=None):
+        """autoStopOffset is the number of seconds before the end of
+        song before automatically stopping (which is really pausing).
+        onEOS is an optional function to be called when we reach the
+        end of a stream (for example, can be used to advance the song).
+        It is called with one argument which is the URI of the song that
+        just finished."""
         self.autoStopOffset = autoStopOffset
         self.playbin = self.pipeline = gst.parse_launch("playbin2")
         self.playStartTime = 0
@@ -45,12 +51,13 @@ class Player(object):
             if self.lastWatchTime < self.autoStopTime < t:
                 log.info("autostop")
                 self.pause()
-            if self.isPlaying() and t >= self.duration() - .2:
-                # i don't expect to hit dur exactly with this
-                # polling. What would be better would be to watch for
-                # the EOS signal and react to that
-                self.pause()
-                self.seek(0)
+            if not self.onEOS:
+                if self.isPlaying() and t >= self.duration() - .2:
+                    # i don't expect to hit dur exactly with this
+                    # polling. What would be better would be to watch for
+                    # the EOS signal and react to that
+                    self.onEOS(self.getSong())
+
             self.lastWatchTime = t
         except:
             traceback.print_exc()
@@ -63,7 +70,7 @@ class Player(object):
             t * gst.SECOND)
         self.playStartTime = time.time()
 
-    def setSong(self, songUri):
+    def setSong(self, songUri, play=True):
         """
         uri like file:///my/proj/light9/show/dance2010/music/07.wav
         """
@@ -72,8 +79,13 @@ class Player(object):
         self.preload(songUri)
         self.pipeline.set_property("uri", songUri)
         # todo: don't have any error report yet if the uri can't be read
-        self.pipeline.set_state(gst.STATE_PLAYING)
-        self.playStartTime = time.time()
+        if play:
+            self.pipeline.set_state(gst.STATE_PLAYING)
+            self.playStartTime = time.time()
+
+    def getSong(self):
+        """Returns the URI of the current song."""
+        return self.playbin.get_property("uri")
 
     def preload(self, songUri):
         """
@@ -122,6 +134,3 @@ class Player(object):
     def isPlaying(self):
         _, state, _ = self.pipeline.get_state()
         return state == gst.STATE_PLAYING
-                  
-                           
-        
