@@ -43,7 +43,7 @@ def root():
 
 def showUri():
     """Return the show URI associated with $LIGHT9_SHOW."""
-    return URIRef(file(path.join(root(), 'URI').read().strip()))
+    return URIRef(file(path.join(root(), 'URI')).read().strip())
 
 def findMpdHome():
     """top of the music directory for the mpd on this system,
