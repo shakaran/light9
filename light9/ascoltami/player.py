@@ -21,7 +21,8 @@ class Player(object):
         self.playStartTime = 0
         self.lastWatchTime = 0
         self.autoStopTime = 0
-
+        self.onEOS = onEOS
+        
         # before playbin2:
         #self.pipeline = gst.parse_launch("filesrc name=file location=%s ! wavparse name=src ! audioconvert ! alsasink name=out" % songFile)
 

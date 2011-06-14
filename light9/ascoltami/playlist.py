@@ -7,6 +7,7 @@ class NoSuchSong(ValueError):
 
 class Playlist(object):
     def __init__(self, graph, playlistUri):
+        self.graph = graph
         self.songs = list(graph.items(playlistUri))
     def nextSong(self, currentSong):
         """Returns the next song in the playlist or raises NoSuchSong if 
@@ -31,7 +32,7 @@ class Playlist(object):
         """Returns a list of the filesystem paths to all songs in order."""
         paths = []
         for song in self.songs:
-            p = graph.value(song, L9['showPath'])
+            p = self.graph.value(song, L9['showPath'])
             assert p.startswith("file://"), p
             p = p[len("file://"):]
             paths.append(p)

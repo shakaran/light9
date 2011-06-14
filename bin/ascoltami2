@@ -4,7 +4,7 @@ from rdflib import URIRef
 sys.path.append(".")
 from light9.ascoltami.player import Player
 from light9.ascoltami.playlist import Playlist, NoSuchSong
-from light9.ascoltami.webapp import makeApp
+from light9.ascoltami.webapp import makeWebApp
 from light9 import networking, showconfig
 
 class App:
