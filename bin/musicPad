@@ -4,7 +4,7 @@ rewrite all the songs with silence at the start and end
 """
 import sys, wave, logging, os
 sys.path.append(".")
-from light9 import networking, showconfig
+from light9 import showconfig
 from light9.namespaces import L9
 from light9.ascoltami.playlist import Playlist
 logging.basicConfig(level=logging.INFO)

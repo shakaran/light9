@@ -80,7 +80,7 @@ class Music:
         
     def current_time(self):
         """return deferred which gets called with the current time"""
-        d = self.player.request("GET", networking.musicUrl() + "time")
+        d = self.player.request("GET", networking.musicPlayer.path("time"))
         d.addCallback(self._timeReturned)
         return d
 
@@ -96,7 +96,8 @@ class Music:
     
     def seekplay_or_pause(self,t):
         d = self.player.request("POST",
-                                networking.musicUrl() + "seekPlayOrPause", bodyProducer=StringProducer(jsonlib.write({"t" : t})))
+                                networking.musicPlayer.path("seekPlayOrPause"),
+                                bodyProducer=StringProducer(jsonlib.write({"t" : t})))
 
 class Expr(object):
     """singleton, provides functions for use in subterm expressions,

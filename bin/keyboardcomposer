@@ -470,7 +470,7 @@ if __name__ == "__main__":
 
     import twisted.internet
     try:
-        reactor.listenTCP(networking.kcPort(),
+        reactor.listenTCP(networking.keyboardComposer.port,
                           server.Site(LevelServerHttp(kc.name_to_subtk)))
     except twisted.internet.error.CannotListenError, e:
         print "Can't (and won't!) start level server:"

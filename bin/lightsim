@@ -118,7 +118,7 @@ if __name__ == '__main__':
     window = Window(requiredImages(graph))
     window.show()
 
-    serv = Proxy(networking.dmxServerUrl())
+    serv = Proxy(networking.dmxServer.url)
     pollFreq = updatefreq.Updatefreq()
     LoopingCall(poll, graph, serv, pollFreq, window.glWidget).start(.05)
 

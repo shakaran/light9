@@ -13,7 +13,7 @@ fadesecs = '0'
 if len(sys.argv)>3:
     fadesecs = sys.argv[3]
 
-levelServer = Resource(networking.keyboardComposerUrl())
+levelServer = Resource(networking.keyboardComposer.url)
 levelServer.post('fadesub', subname=subname, level=level, secs=fadesecs)
 
 

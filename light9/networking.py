@@ -1,32 +1,37 @@
-import os
-from ConfigParser import SafeConfigParser
-# my intent was to pull these from a file in the LIGHT9_SHOW/ directory
+from urlparse import urlparse
+from urllib import splitport
+from showconfig import getGraph, showUri
+from namespaces import L9
 
+class ServiceAddress(object):
+    def __init__(self, service):
+        self.service = service
 
-def dmxServerUrl():
-    #host = os.getenv('DMXHOST', 'localhost')
-    #url = "http://%s:8030" % host
-    return "http://plus:%s" % dmxServerPort()
+    def _url(self):
+        graph = getGraph()
+        net = graph.value(showUri(), L9['networking'])
+        return graph.value(net, self.service)
 
-def dmxServerPort():
-    return 8030
-    
-def musicUrl():
-    # must have trailing slash!
-    return "http://django:%s/" % musicPort()
+    @property
+    def port(self):
+        _, netloc, _, _, _, _ = urlparse(self._url())
+        host, port = splitport(netloc)
+        return int(port)
 
-def musicPort():
-    return 8040
+    @property
+    def host(self):
+        _, netloc, _, _, _, _ = urlparse(self._url())
+        host, port = splitport(netloc)
+        return host
 
-def mpdServer():
-    """servername, port"""
-    return os.getenv('LIGHT9_MPD_SERVER', 'django'),6600
+    @property
+    def url(self):
+        return self._url()
 
-def kcPort():
-    return 8050
+    def path(self, more):
+        return self.url + more
 
-def kcServer():
-    return 'plus'
+dmxServer = ServiceAddress(L9['dmxServer'])
+musicPlayer = ServiceAddress(L9['musicPlayer'])
+keyboardComposer = ServiceAddress(L9['keyboardComposer'])
 
-def keyboardComposerUrl():
-    return "http://%s:%s" % (kcServer(), kcPort())

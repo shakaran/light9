@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     parser = optparse.OptionParser()
     parser.add_option('--show',
-        help='show URI, like http://light9.bigasterisk.com/show/dance2008')
+        help='show URI, like http://light9.bigasterisk.com/show/dance2008', default=showconfig.showUri())
     parser.add_option("-v", "--verbose", action="store_true",
                       help="logging.DEBUG")
     (options, args) = parser.parse_args()
@@ -54,5 +54,4 @@ if __name__ == "__main__":
             
     graph = showconfig.getGraph()
     app = App(graph, URIRef(options.show))
-    musicPort = networking.musicPort()
-    app.run(musicPort)
+    app.run(networking.musicPlayer.port)

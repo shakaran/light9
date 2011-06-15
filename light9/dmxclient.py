@@ -23,7 +23,7 @@ def outputlevels(levellist,twisted=0,clientid=_id):
     global _dmx, _id
 
     if _dmx is None:
-        url = networking.dmxServerUrl()
+        url = networking.dmxServer.url
         if not twisted:
             _dmx = xmlrpclib.Server(url)
         else:

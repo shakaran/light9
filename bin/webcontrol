@@ -22,8 +22,8 @@ from light9.namespaces import L9
 from urllib import urlencode
 
 # move to web lib
-def post(root, path, **args):
-    return getPage(root.rstrip('/') + '/' + path.lstrip('/'),
+def post(url, **args):
+    return getPage(url,
                    method='POST',
                    postdata=urlencode(args))
 
@@ -31,7 +31,7 @@ def post(root, path, **args):
 class Commands(object):
     @staticmethod
     def playSong(graph, songUri):
-        s = xmlrpclib.ServerProxy(networking.musicUrl())
+        s = xmlrpclib.ServerProxy(networking.musicPlayer.url)
         songPath = graph.value(URIRef(songUri), L9.showPath)
         if songPath is None:
             raise ValueError("unknown song %s" % songUri)
@@ -39,17 +39,17 @@ class Commands(object):
 
     @staticmethod
     def stopMusic(graph):
-        s = xmlrpclib.ServerProxy(networking.musicUrl())
+        s = xmlrpclib.ServerProxy(networking.musicPlayer.url)
         return s.stop()
 
     @staticmethod
     def worklightsOn(graph):
-        return post(networking.keyboardComposerUrl(), 'fadesub',
+        return post(networking.keyboardComposer.path('fadesub'),
                     subname='scoop', level=.5, secs=.5)
 
     @staticmethod
     def worklightsOff(graph):
-        return post(networking.keyboardComposerUrl(), 'fadesub',
+        return post(networking.keyboardComposer.path('fadesub'),
                     subname='scoop', level=0, secs=.5)
 
     @staticmethod

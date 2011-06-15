@@ -42,7 +42,7 @@ class MusicTimeTk(tk.Frame, MusicTime):
 if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser()
-    parser.add_option("-u", "--url", default=light9.networking.musicUrl())
+    parser.add_option("-u", "--url", default=light9.networking.musicPlayer.url)
     options, args = parser.parse_args()
     
     root = tk.Tk()

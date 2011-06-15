@@ -33,7 +33,7 @@ class MusicTime(object):
         end of a song)
         """
         self.period = period
-        self.musicResource = restkit.Resource(networking.musicUrl())
+        self.musicResource = restkit.Resource(networking.musicPlayer.url)
         t = Thread(target=self._timeUpdate)
         t.setDaemon(True)
         t.start()

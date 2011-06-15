@@ -213,7 +213,7 @@ print options
 if options.dummy:
     os.environ['DMXDUMMY'] = "1"
 
-port = networking.dmxServerPort()
+port = networking.dmxServer.port
 print "starting xmlrpc server on port %s" % port
 reactor.listenTCP(port,server.Site(XMLRPCServe(options)))
 reactor.run()
