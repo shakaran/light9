@@ -48,7 +48,7 @@ for 2011:
 - factor out music dir so it can be different per machine
 - all settings should be in RDF and live-shared across all apps, maybe with anzo for updates
 - when curvecalc says 'Slider 1', the X coordinates of the curve get misaligned
-- asco should say clearly what machine it's running on
+OK asco should say clearly what machine it's running on
 - asco should have GUI for picking which sound output you want, and store the setting
 - vidref should have snapshot button for taking pics of the stage
 - bring mini tripod or beanbag for the vidref camera

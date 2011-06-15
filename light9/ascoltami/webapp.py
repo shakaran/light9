@@ -1,9 +1,10 @@
-import web, jsonlib
+import web, jsonlib, socket
 from twisted.python.util import sibpath
 from light9.namespaces import L9
 from light9.showconfig import getSongsFromShow
 from rdflib import URIRef
-
+from web.contrib.template import render_genshi
+render = render_genshi([sibpath(__file__, ".")])
 app = None
 
 def songLocation(graph, songUri):
@@ -23,7 +24,7 @@ class root(object):
         web.header("Content-type", "application/xhtml+xml")
         # todo: use a template; embed the show name and the intro/post
         # times into the page
-        return open(sibpath(__file__, "index.html")).read()
+        return render.index(host=socket.gethostname())
 
 class timeResource(object):
     def GET(self):
@@ -35,6 +36,7 @@ class timeResource(object):
             song = songUri(graph, URIRef(playingLocation))
         else:
             song = None
+        web.header("content-type", "application/json")
         return jsonlib.write({
             "song" : song,
             "started" : player.playStartTime,
@@ -56,6 +58,7 @@ class timeResource(object):
             player.resume()
         if 't' in params:
             player.seek(params['t'])
+        web.header("content-type", "text/plain")
         return "ok"
 
 class songs(object):
@@ -76,6 +79,7 @@ class songResource(object):
         graph = app.graph
 
         app.player.setSong(songLocation(graph, URIRef(web.data())))
+        web.header("content-type", "text/plain")
         return "ok"
     
 class seekPlayOrPause(object):
