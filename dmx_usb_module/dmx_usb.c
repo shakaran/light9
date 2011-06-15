@@ -38,6 +38,12 @@
 #define dbg(format, arg...) do { if (debug) printk(KERN_DEBUG __FILE__ ": " format "\n" , ## arg); } while (0)
 
 
+// from http://www.linuxinsight.com/vmware-workstation-7.1.3-runs-great-on-linux-kernel-2.6.37.html
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 37)
+   #define DECLARE_MUTEX(_m) DEFINE_SEMAPHORE(_m)
+   #define init_MUTEX(_m) sema_init(_m, 1)
+#endif
+
 /* Version Information */
 #define DRIVER_VERSION "v0.1.20060816"
 #define DRIVER_AUTHOR "Erwin Rol, erwin@erwinrol.com"
@@ -96,7 +102,7 @@ static DECLARE_MUTEX (disconnect_sem);
 /* local function prototypes */
 //static ssize_t dmx_usb_read	(struct file *file, char *buffer, size_t count, loff_t *ppos);
 static ssize_t dmx_usb_write	(struct file *file, const char *buffer, size_t count, loff_t *ppos);
-static int dmx_usb_ioctl	(struct inode *inode, struct file *file, unsigned int cmd, unsigned long arg);
+static int dmx_usb_ioctl	(struct file *file, unsigned int cmd, unsigned long arg);
 static int dmx_usb_open		(struct inode *inode, struct file *file);
 static int dmx_usb_release	(struct inode *inode, struct file *file);
 
@@ -119,7 +125,7 @@ static struct file_operations dmx_usb_fops = {
 
 	/* .read =		dmx_usb_read, */ 
 	.write =	dmx_usb_write,
-	.ioctl =	dmx_usb_ioctl,
+	.unlocked_ioctl = dmx_usb_ioctl,
 	.open =		dmx_usb_open,
 	.release =	dmx_usb_release,
 };
@@ -526,9 +532,13 @@ exit:
 
 /**
  */
-static int dmx_usb_ioctl (struct inode *inode, struct file *file, unsigned int cmd, unsigned long arg)
+static int dmx_usb_ioctl (struct file *file, unsigned int cmd, unsigned long arg)
 {
 	struct dmx_usb_device *dev;
+
+	lock_kernel(); // this was originally getting the Big Kernel
+	// Lock. I don't know if that was needed, but I don't want to
+	// destabilize anything as I move to unlocked_ioctl
 
 	dev = (struct dmx_usb_device *)file->private_data;
 
@@ -538,6 +548,7 @@ static int dmx_usb_ioctl (struct inode *inode, struct file *file, unsigned int c
 	/* verify that the device wasn't unplugged */
 	if (!dev->present) {
 		up (&dev->sem);
+		unlock_kernel();
 		return -ENODEV;
 	}
 
@@ -549,6 +560,7 @@ static int dmx_usb_ioctl (struct inode *inode, struct file *file, unsigned int c
 	/* unlock the device */
 	up (&dev->sem);
 
+	unlock_kernel();
 	/* return that we did not understand this ioctl call */
 	return -ENOTTY;
 }
