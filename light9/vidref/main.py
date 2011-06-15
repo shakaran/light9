@@ -52,7 +52,7 @@ class MusicTime(object):
     def _timeUpdate(self):
         while True:
             try:
-                position = jsonlib.loads(self.musicResource.get("time").body,
+                position = jsonlib.loads(self.musicResource.get("time").body_string(),
                                          use_float=True)
 
                 # this is meant to be the time when the server gave me its
