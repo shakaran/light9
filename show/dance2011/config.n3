@@ -17,14 +17,21 @@ show:dance2011 :playList (
   sh:song16 sh:song17
 ) .
 
+show:dance2011 :networking sh:netHome .
+sh:netHome  
+  :musicPlayer <http://dash:8040/>;
+  :dmxServer <http://dash:8030/>;
+  :keyboardComposer <http://dash:8050/> .
+
+
 :Song is rdf:type of sh:song1, sh:song2, sh:song3, sh:song4,
    sh:song5, sh:song6, sh:song7, sh:song8, sh:song9, sh:song10,
    sh:song11, sh:song12, sh:song13, sh:song14, sh:song15, sh:song16,
    sh:song17 .
 
 sh:song1 rdfs:label  "1 opening";	:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/01-opening.wav> .
-sh:song2 rdfs:label  "2 ";		:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/02-mix.wav> .
-sh:song3 rdfs:label  "3 ";		:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/03-mix.wav> .
+sh:song2 rdfs:label  "2 ";	:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/02-mix.wav> .
+sh:song3 rdfs:label  "3 kung fu";		:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/03-mix.wav> .
 sh:song4 rdfs:label  "4 ";		:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/04.wav> .
 sh:song5 rdfs:label  "5 ballgame";	:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/05-ballgame.wav> .
 sh:song6 rdfs:label  "6 marching";	:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/06-marching.wav> .
