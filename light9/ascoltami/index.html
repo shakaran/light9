@@ -45,7 +45,7 @@ $(function () {
     var currentDuration = 0;
     var currentHighlightedSong = "";
     var lastPlaying;
-    function updateCurrent() {
+    function updateCurrent(doneCallback) {
 	$.getJSON("time", {}, function (data, status) {
 	    $("#currentSong").text(data.song);
 	    if (data.song != currentHighlightedSong) {
@@ -63,6 +63,7 @@ $(function () {
 		$(data.playing ? "#cmd-play" : "#cmd-stop").addClass("active");
 		lastPlaying = data.playing;
 	    }
+	    doneCallback();
 	});
     }
     function showCurrentSong(uri) {
@@ -131,11 +132,20 @@ $(function () {
 	},
     });
     
+    var raf = window.requestAnimationFrame ||
+	window.mozRequestAnimationFrame || 
+	window.webkitRequestAnimationFrame;
+
     function updateLoop() {
-	updateCurrent();
-	setTimeout(updateLoop, 200);
+	var whenDone = function () {
+	    setTimeout(function () { 
+		raf(updateLoop);
+	    }, 50);
+	};
+	updateCurrent(whenDone);
     }
     updateLoop();
+
 });
 // ]]>
 </script>
