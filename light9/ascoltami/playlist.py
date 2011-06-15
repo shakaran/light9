@@ -32,11 +32,14 @@ class Playlist(object):
         """Returns a list of the filesystem paths to all songs in order."""
         paths = []
         for song in self.songs:
-            p = self.graph.value(song, L9['showPath'])
-            assert p.startswith("file://"), p
-            p = p[len("file://"):]
-            paths.append(p)
+            paths.append(self.songPath(song))
         return paths
+    
+    def songPath(self, uri):
+        """filesystem path to a song"""
+        p = self.graph.value(uri, L9['showPath'])
+        assert p.startswith("file://"), p
+        return p[len("file://"):]
 
     @classmethod
     def fromShow(playlistClass, graph, show):

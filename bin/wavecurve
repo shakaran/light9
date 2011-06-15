@@ -26,10 +26,12 @@ if options.all:
     from light9 import showconfig
     from light9.namespaces import L9
     from rdflib import RDF
+    from light9.ascoltami.playlist import Playlist
     graph = showconfig.getGraph()
 
     playlist = Playlist.fromShow(showconfig.getGraph(), showconfig.showUri())
-    for inpath in playlist.allSongPaths():
+    for song in playlist.allSongs():
+        inpath = playlist.songPath(song)
         for curveName, t in [('music', .01),
                              ('smooth_music', .07)]:
             outpath = showconfig.curvesDir() + "/%s-%s" % (
