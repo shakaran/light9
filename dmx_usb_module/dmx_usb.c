@@ -259,7 +259,7 @@ static void dmx_usb_set_break(struct dmx_usb_device* dev, int break_state)
 static inline void dmx_usb_delete (struct dmx_usb_device *dev)
 {
 	kfree (dev->bulk_in_buffer);
-	usb_buffer_free (dev->udev, dev->bulk_out_size,
+	usb_free_coherent (dev->udev, dev->bulk_out_size,
 				dev->bulk_out_buffer,
 				dev->write_urb->transfer_dma);
 	usb_free_urb (dev->write_urb);
@@ -652,7 +652,7 @@ static int dmx_usb_probe(struct usb_interface *interface, const struct usb_devic
 			buffer_size = endpoint->wMaxPacketSize;
 			dev->bulk_out_size = 513;
 			dev->write_urb->transfer_flags = URB_NO_TRANSFER_DMA_MAP;
-			dev->bulk_out_buffer = usb_buffer_alloc (udev,
+			dev->bulk_out_buffer = usb_alloc_coherent (udev,
 					buffer_size, GFP_KERNEL,
 					&dev->write_urb->transfer_dma);
 			if (!dev->bulk_out_buffer) {
