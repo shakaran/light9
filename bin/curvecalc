@@ -492,7 +492,13 @@ def main():
     curveset = Curveset(sliders=opts.sliders)
     subterms = []
 
-    graph.parse(graphPathForSubterms(song), format='n3')
+    subtermPath = graphPathForSubterms(song)
+    try:
+        graph.parse(subtermPath, format='n3')
+    except urllib2.URLError, e:
+        if e.reason.errno != 2:
+            raise
+        log.info("%s not found, starting with empty graph" % subtermPath)
     
     log.debug("output")
     out = Output(subterms, music)
