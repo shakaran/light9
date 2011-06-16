@@ -15,7 +15,7 @@ def getGraph():
     now = time.time()
     diskMtime = path.getmtime(configPath)
     if diskMtime <= _config[1]:
-        log.info("reuse graph")
+        log.info("config.n3 hasn't changed")
         graph = _config[0]
         # i'm scared of some program modifying the graph, and then i
         # return that from a new getGraph call. Maybe I should be

@@ -10,7 +10,7 @@ class ServiceAddress(object):
     def _url(self):
         graph = getGraph()
         net = graph.value(showUri(), L9['networking'])
-        return graph.value(net, self.service)
+        return str(graph.value(net, self.service))
 
     @property
     def port(self):
@@ -29,7 +29,7 @@ class ServiceAddress(object):
         return self._url()
 
     def path(self, more):
-        return self.url + more
+        return self.url + str(more)
 
 dmxServer = ServiceAddress(L9['dmxServer'])
 musicPlayer = ServiceAddress(L9['musicPlayer'])
