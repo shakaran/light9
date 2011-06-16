@@ -197,6 +197,8 @@ class Replay(object):
             log.info("scanning %s", self.takeDir)
             self.existingFrames = sorted([Decimal(f.split('.jpg')[0])
                                           for f in os.listdir(self.takeDir)])
+            if not self.existingFrames:
+                raise NotImplementedError("suspiciously found no frames in dir %s" % self.takeDir)
             _existingFrames[self.takeDir] = self.existingFrames
 
     def tooShort(self, minSeconds=5):
