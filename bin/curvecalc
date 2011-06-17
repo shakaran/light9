@@ -453,6 +453,22 @@ def setupKeyBindings(root, song, subterms, curveset):
     root.bind("<Destroy>",lambda ev: reactor.stop)
     root.protocol('WM_DELETE_WINDOW', reactor.stop)
 
+def setupMenubar(barFrame, root):
+    class newMenu(object):
+        def __init__(self, name):
+            self.name = name
+        def __enter__(self):
+            m = tk.Menubutton(barFrame, text=self.name)
+            m.pack(side='left')
+            mm = tk.Menu(m)
+            m.config(menu=mm)
+            return mm
+        def __exit__(self, type, value, traceback):
+            return False
+        
+    with newMenu("Curvecalc") as mm:
+        mm.add_command(label='Quit', command=root.destroy)
+
 def createHelpLines(root):
     for helpline in ["Bindings: C-s save subterms;  Esc see current time; S-Esc see curtime to end; C-Esc show all; Mousewheel zoom; C-p play/pause music at mouse",
                      "Curve point bindings: B1 drag point; C-B1 curve add point; S-B1 sketch points; Del selected points; 1..5 add point at time; B1 drag select points",
@@ -512,7 +528,11 @@ def main():
     root.tk_setPalette("gray50")
     toplevelat("curvecalc",root)
     root.tk_focusFollowsMouse()
-    root.title("Was Curvemaster 3000MX. Now Curvemaster 30002MX! - %s" % graph.label(song))
+    root.title("curvecalc - %s" % graph.label(song))
+
+    menubar = tk.Frame(root)
+    menubar.pack(side='top', fill='x')
+    setupMenubar(menubar, root)
 
     if 'fixed top rows':
         zc = Zoomcontrol(root)
