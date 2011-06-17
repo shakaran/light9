@@ -453,7 +453,7 @@ def setupKeyBindings(root, song, subterms, curveset):
     root.bind("<Destroy>",lambda ev: reactor.stop)
     root.protocol('WM_DELETE_WINDOW', reactor.stop)
 
-def setupMenubar(barFrame, root):
+def setupMenubar(barFrame, root, song, subterms, curveset):
     class newMenu(object):
         def __init__(self, name):
             self.name = name
@@ -466,12 +466,31 @@ def setupMenubar(barFrame, root):
         def __exit__(self, type, value, traceback):
             return False
         
-    with newMenu("Curvecalc") as mm:
-        mm.add_command(label='Quit', command=root.destroy)
+    def notImpl(*args):
+        print "sorry, menu command binding isn't done yet. Use the keyboard shortcut"
+        
+    with newMenu("Curvecalc") as m:
+        m.add_command(label='Save', underline=0, accelerator="Ctrl+s",
+                      command=lambda *args: savekey(song, subterms, curveset))
+        m.add_command(label='Quit', command=root.destroy)
+
+    with newMenu("View") as m:
+        m.add_command(label="See current time", accelerator="Esc", command=notImpl)
+        m.add_command(label="See from current time -> end", accelerator="Shift+Esc", command=notImpl)
+        m.add_command(label="Zoom all", accelerator="Ctrl+Esc", command=notImpl)
+        m.add_command(label="Zoom in", accelerator="Wheel up", command=notImpl)
+        m.add_command(label="Zoom out", accelerator="Wheel down", command=notImpl)
+
+    with newMenu("Playback") as m:
+        m.add_command(label="Play/pause at mouse", accelerator="Ctrl+P", command=notImpl)
+
+    with newMenu("Points") as m:
+        m.add_command(label="Delete", accelerator="Del", command=notImpl)
+
 
 def createHelpLines(root):
-    for helpline in ["Bindings: C-s save subterms;  Esc see current time; S-Esc see curtime to end; C-Esc show all; Mousewheel zoom; C-p play/pause music at mouse",
-                     "Curve point bindings: B1 drag point; C-B1 curve add point; S-B1 sketch points; Del selected points; 1..5 add point at time; B1 drag select points",
+    for helpline in ["Mousewheel zoom; C-p play/pause music at mouse",
+                     "Curve point bindings: B1 drag point; C-B1 curve add point; S-B1 sketch points; 1..5 add point at time; B1 drag select points",
                      "Available in functions: nsin/ncos period=amp=1; within(a,b) bef(x) aft(x) compare to time; smoove(x) cubic smoothstep; chan(name); curvename(t) eval curve"]:
         line = tk.Label(root, text=helpline, font="Helvetica -12 italic",
                         anchor='w')
@@ -532,7 +551,6 @@ def main():
 
     menubar = tk.Frame(root)
     menubar.pack(side='top', fill='x')
-    setupMenubar(menubar, root)
 
     if 'fixed top rows':
         zc = Zoomcontrol(root)
@@ -566,6 +584,7 @@ def main():
     add_subterms_for_song(graph, song, curveset, subterms,
                           subtermScroll.subwidget('window'))
     setupKeyBindings(root, song, subterms, curveset)
+    setupMenubar(menubar, root, song, subterms, curveset)
 
     # curvesetview must already exist, since this makes 'add_curve'
     # signals for all the initial curves
