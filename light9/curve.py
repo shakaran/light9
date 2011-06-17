@@ -238,10 +238,10 @@ class Curveview(tk.Canvas):
         self.dragging_dots = False
         self.selecting = False
         self.bind("<ButtonPress-1>",#"<Alt-Key>",
-                  self.select_press)
+                  self.select_press, add=True)
         self.bind("<Motion>", self.select_motion, add=True)
         self.bind("<ButtonRelease-1>", #"<Alt-KeyRelease>",
-                  self.select_release)
+                  self.select_release, add=True)
 
         self.bind("<ButtonPress-1>", self.check_deselect, add=True)
 
@@ -291,6 +291,9 @@ class Curveview(tk.Canvas):
             self.highlight_selected_dots()
 
     def select_press(self,ev):
+        # todo: these select_ handlers are getting called on c-a-drag
+        # zooms too. the dispatching should be more selective than
+        # just calling both handlers all the time
         self.print_state("select_press")
         if self.dragging_dots:
             return

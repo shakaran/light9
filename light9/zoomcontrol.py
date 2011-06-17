@@ -37,7 +37,19 @@ class Zoomcontrol(object,tk.Canvas):
             self._end = v
         return locals()
     end = property(**end())
-        
+
+    def offset():
+        doc = "virtual attr that adjusts start and end together"
+        def fget(self):
+            # work off the midpoint so that "crushing works equally
+            # well in both directions
+            return (self.start + self.end) / 2
+        def fset(self, value):
+            d = self.end-self.start
+            self.start = value - d / 2
+            self.end = value + d / 2
+        return locals()
+    offset = property(**offset())
 
     def __init__(self,master,**kw):
         self.maxtime=370
@@ -123,6 +135,7 @@ class Zoomcontrol(object,tk.Canvas):
     def release(self,ev):
         if hasattr(self,'adjustingattr'): del self.adjustingattr
         if hasattr(self,'lastx'): del self.lastx
+        
     def adjust(self,ev,attr=None):
 
         if not hasattr(self,'adjustingattr'):
@@ -135,17 +148,6 @@ class Zoomcontrol(object,tk.Canvas):
         self.lastx = ev.x
         setattr(self,attr,self.t_for_can(new))
         self.redrawzoom()
-        
-    def offset():
-        doc = "virtual attr that adjusts start and end together"
-        def fget(self):
-            return self.start
-        def fset(self, value):
-            d = self.end-self.start
-            self.start = value
-            self.end = self.start+d
-        return locals()
-    offset = property(**offset())
 
     def can_for_t(self,t):
         return (t-self.mintime)/(self.maxtime-self.mintime)*(self.winfo_width()-30)+20
@@ -163,6 +165,9 @@ class Zoomcontrol(object,tk.Canvas):
         self.coords(self.leftbrack,scan+lip,y1,scan,y1,scan,y2,scan+lip,y2)
         self.coords(self.rightbrack,ecan-lip,y1,ecan,y1,ecan,y2,ecan-lip,y2)
         self.coords(self.shade,scan+5,y1+lip,ecan-5,y2-lip)
+        self.redrawTics()
+        
+    def redrawTics(self):
         self.delete("tics")
         lastx=-1000
         for t in range(0,int(self.maxtime)):
@@ -193,6 +198,7 @@ class RegionZoom:
             #canvas.bind("<Control-Alt-%s>" % evtype, method, add=True)
             if 1 or evtype != "ButtonPress-1":
                 canvas.bind("<%s>" % evtype, method,add=True)
+
         canvas.bind("<Leave>", self.finish)
         self.start_t = self.old_cursor = None
         self.state = self.mods = None
@@ -204,6 +210,8 @@ class RegionZoom:
         if ev.state == 12:
             self.mods = "c-a"
         elif ev.state == 13:
+            # todo: right now this never happens because only the
+            # sketching handler gets the event
             self.mods = "c-s-a"
         elif ev.state == 0:
             return # no 
@@ -217,13 +225,15 @@ class RegionZoom:
         can = self.canvas
 
         for pos in ('start_t','end_t','hi','lo'):
-            can.create_line(0,0,50,50, width=3, fill='black',
+            can.create_line(0,0,50,50, width=3, fill='yellow',
                             tags=("regionzoom",pos))
         # if updatelines isn't called here, subsequent updatelines
         # will fail for reasons i don't understand
         self.updatelines()
 
-        cursors.push(can, "@/home/drewp/projects/light9/cursor1.xbm")
+        # todo: just holding the modifiers ought to turn on the zoom
+        # cursor (which is not finished)
+        cursors.push(can, "@light9/cursor1.xbm")
         
     def updatelines(self):
 

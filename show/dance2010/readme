@@ -71,7 +71,7 @@ OK curvecalc still has a problem making empty-name subterms. that should never h
           raise RequestError(e)
       RequestError: [Errno 111] Connection refused
 - asco stops considerably after the autostop time (according to curvecalc)
-- CC should support zoom-crushing towards the left as well
+OK CC should support zoom-crushing towards the left as well
 - vidref's replay 'enabled' button should be completely sticky across sessions
 - audio process pipeline; RDF graph should track versions of songs (padded, normalized)
 OK vidref can loop like this if asco goes down:
