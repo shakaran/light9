@@ -168,7 +168,11 @@ class Main(object):
         self.replayViews = ReplayViews(rp)
 
         mainwin.show_all()
-        self.liveVideoXid = wtree.get_object("vid3").window.xid
+        vid3 = wtree.get_object("vid3")
+        self.liveVideoXid = vid3.window.xid
+        vid3.props.height_request = 240-70-50
+        wtree.get_object("frame1").props.height_request = 277-70-50
+        
 
         self.setInput('dv') # auto seems to not search for dv
 
@@ -207,6 +211,7 @@ class Main(object):
         cam = (sourcePipe + " ! "
               "videorate ! video/x-raw-yuv,framerate=%s/1 ! "
               "videoscale ! video/x-raw-yuv,width=320,height=240;video/x-raw-rgb,width=320,height=240 ! "
+              "videocrop top=70 bottom=50 ! "
               "queue name=vid" % framerate)
 
         self.pipeline = gst.parse_launch(cam)

@@ -111,13 +111,13 @@ class ReplayView(object):
         if True:
             af = gtk.AspectFrame()
             af.set_visible(True)
-            af.set_size_request(320, 240)
+            af.set_size_request(320, 240-70-50)
             af.set_shadow_type(gtk.SHADOW_OUT)
             af.props.obey_child = True
 
             img = gtk.Image()
             img.set_visible(True)
-            img.set_size_request(320, 240)
+            img.set_size_request(320, 240-70-50)
             self.picWidget = img
 
             af.add(img)
