@@ -70,7 +70,6 @@ class Main(rend.Page):
         return [pic, ctx.arg('status') or 'ready']
 
     def render_songButtons(self, ctx, data):
-        show = URIRef("http://light9.bigasterisk.com/show/dance2009") # ?
         playList = graph.value(show, L9['playList'])
         songs = list(graph.items(playList))
         out = []
@@ -108,6 +107,7 @@ class Main(rend.Page):
         return static.File("/usr/share/pyshared/elisa/plugins/poblesec/tango")
             
 graph = showconfig.getGraph()
+show = showconfig.showUri()
 
 log.startLogging(sys.stdout)
 
