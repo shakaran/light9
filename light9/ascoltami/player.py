@@ -71,14 +71,14 @@ class Player(object):
             t * gst.SECOND)
         self.playStartTime = time.time()
 
-    def setSong(self, songUri, play=True):
+    def setSong(self, songLoc, play=True):
         """
         uri like file:///my/proj/light9/show/dance2010/music/07.wav
         """
-        log.info("set song to %r" % songUri)
+        log.info("set song to %r" % songLoc)
         self.pipeline.set_state(gst.STATE_READY)
-        self.preload(songUri)
-        self.pipeline.set_property("uri", songUri)
+        self.preload(songLoc)
+        self.pipeline.set_property("uri", songLoc)
         # todo: don't have any error report yet if the uri can't be read
         if play:
             self.pipeline.set_state(gst.STATE_PLAYING)
@@ -88,7 +88,7 @@ class Player(object):
         """Returns the URI of the current song."""
         return self.playbin.get_property("uri")
 
-    def preload(self, songUri):
+    def preload(self, songPath):
         """
         to avoid disk seek stutters, which happened sometimes (in 2007) with the
         non-gst version of this program, we read the whole file to get
@@ -96,10 +96,9 @@ class Player(object):
 
         i don't care that it's blocking.
         """
-        assert songUri.startswith('file://')
-        p = songUri[len('file://'):]
-        log.info("preloading %s", p)
-        open(p).read()
+        log.info("preloading %s", songPath)
+        assert songPath.startswith("file://"), songPath
+        open(songPath[len("file://"):]).read()
 
     def currentTime(self):
         try:

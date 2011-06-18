@@ -23,29 +23,30 @@ sh:netHome
   :dmxServer <http://dash:8030/>;
   :keyboardComposer <http://dash:8050/> .
 
-
 :Song is rdf:type of sh:song1, sh:song2, sh:song3, sh:song4,
    sh:song5, sh:song6, sh:song7, sh:song8, sh:song9, sh:song10,
    sh:song11, sh:song12, sh:song13, sh:song14, sh:song15, sh:song16,
    sh:song17 .
 
-sh:song1 rdfs:label  "1 opening";	:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/01-opening.wav> .
-sh:song2 rdfs:label  "2 ";	:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/02-mix.wav> .
-sh:song3 rdfs:label  "3 kung fu";		:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/03-mix.wav> .
-sh:song4 rdfs:label  "4 ";		:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/04.wav> .
-sh:song5 rdfs:label  "5 ballgame";	:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/05-ballgame.wav> .
-sh:song6 rdfs:label  "6 marching";	:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/06-marching.wav> .
-sh:song7 rdfs:label  "7 cirque";	:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/07-cirque-mix.wav> .
-sh:song8 rdfs:label  "8 racecar";	:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/08-racecar-mix.wav> .
-sh:song9 rdfs:label  "9 " ;		:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/09-mix.wav> .
-sh:song10 rdfs:label "10" ;		:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/10-mix.wav> .
-sh:song11 rdfs:label "11 ball";		:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/11-ball-cut2.wav> .
-sh:song12 rdfs:label "12 ";		:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/12-mix.wav> .
-sh:song13 rdfs:label "13 ";		:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/13-mix.wav> .
-sh:song14 rdfs:label "14 ";		:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/14-conv.wav> .
-sh:song15 rdfs:label "15 ";		:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/15-mix.wav> .
-sh:song16 rdfs:label "16 ";		:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/16-mix.wav> .
-sh:song17 rdfs:label "17 rocky";	:showPath <file:///my/music/projects/sharlyn2011/final/norm/pad/17-rocky.wav> .
+show:dance2011 :musicRoot "/my/music/projects/sharlyn2011/final/norm/pad" .
+
+sh:song1 rdfs:label  "1 opening";	:songFilename "01-opening.wav" .
+sh:song2 rdfs:label  "2 ";	        :songFilename "02-mix.wav" .
+sh:song3 rdfs:label  "3 kung fu";	:songFilename "03-mix.wav" .
+sh:song4 rdfs:label  "4 ";		:songFilename "04.wav" .
+sh:song5 rdfs:label  "5 ballgame";	:songFilename "05-ballgame.wav" .
+sh:song6 rdfs:label  "6 marching";	:songFilename "06-marching.wav" .
+sh:song7 rdfs:label  "7 cirque";	:songFilename "07-cirque-mix.wav" .
+sh:song8 rdfs:label  "8 racecar";	:songFilename "08-racecar-mix.wav" .
+sh:song9 rdfs:label  "9 " ;		:songFilename "09-mix.wav" .
+sh:song10 rdfs:label "10" ;		:songFilename "10-mix.wav" .
+sh:song11 rdfs:label "11 ball";		:songFilename "11-ball-cut2.wav" .
+sh:song12 rdfs:label "12 ";		:songFilename "12-mix.wav" .
+sh:song13 rdfs:label "13 ";		:songFilename "13-mix.wav" .
+sh:song14 rdfs:label "14 ";		:songFilename "14-conv.wav" .
+sh:song15 rdfs:label "15 ";		:songFilename "15-mix.wav" .
+sh:song16 rdfs:label "16 ";		:songFilename "16-mix.wav" .
+sh:song17 rdfs:label "17 rocky";	:songFilename "17-rocky.wav" .
 
 sub:red    :color "#ff0000"; :group group:strip; :order 0 .
 sub:orange :color "#f65d00"; :group group:strip; :order 1 .

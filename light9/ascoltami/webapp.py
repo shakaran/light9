@@ -1,23 +1,21 @@
 import web, jsonlib, socket
 from twisted.python.util import sibpath
 from light9.namespaces import L9
-from light9.showconfig import getSongsFromShow
+from light9.showconfig import getSongsFromShow, songOnDisk
 from rdflib import URIRef
 from web.contrib.template import render_genshi
 render = render_genshi([sibpath(__file__, ".")])
 app = None
 
+
+_songUris = {} # locationUri : song
 def songLocation(graph, songUri):
-    loc = graph.value(songUri, L9['showPath'])
-    if loc is None:
-        raise ValueError("no showPath for %r" % songUri)
+    loc = URIRef("file://%s" % songOnDisk(songUri))
+    _songUris[loc] = songUri
     return loc
     
 def songUri(graph, locationUri):
-    try:
-        return graph.subjects(L9['showPath'], locationUri).next()
-    except StopIteration:
-        raise ValueError("no song has :showPath of %r" % locationUri)
+    return _songUris[locationUri]
 
 class root(object):
     def GET(self):
