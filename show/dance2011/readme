@@ -1,7 +1,7 @@
 leftover software todo from last year:
 
 OK vidref should have a time slider
-- factor out music dir so it can be different per machine
+OK factor out music dir so it can be different per machine
 - all settings should be in RDF and live-shared across all apps, maybe with anzo for updates
 - asco should have GUI for picking which sound output you want, and store the setting
 - vidref should have snapshot button for taking pics of the stage
