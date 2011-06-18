@@ -3,7 +3,7 @@
 
 from __future__ import division
 import sys, time
-import numarray as num
+import numpy as num
 import Tkinter as tk
 import Image
 from louie import dispatcher
