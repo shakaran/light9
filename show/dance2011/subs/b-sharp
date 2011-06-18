@@ -1,0 +1,7 @@
+<http://light9.bigasterisk.com/sub/b-sharp> <http://www.w3.org/2000/01/rdf-schema#label> "b-sharp".
+<http://light9.bigasterisk.com/sub/b-sharp> <http://light9.bigasterisk.com/lightLevel> _:JAcYDQnP901.
+<http://light9.bigasterisk.com/sub/b-sharp> <http://light9.bigasterisk.com/lightLevel> _:JAcYDQnP902.
+_:JAcYDQnP901 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b11-#-c>.
+_:JAcYDQnP901 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:JAcYDQnP902 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b36-#-c>.
+_:JAcYDQnP902 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.

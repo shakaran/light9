@@ -1,0 +1,7 @@
+_:JAcYDQnP906 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/front4-r>.
+_:JAcYDQnP906 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/f-cross> <http://www.w3.org/2000/01/rdf-schema#label> "f-cross".
+<http://light9.bigasterisk.com/sub/f-cross> <http://light9.bigasterisk.com/lightLevel> _:JAcYDQnP906.
+<http://light9.bigasterisk.com/sub/f-cross> <http://light9.bigasterisk.com/lightLevel> _:JAcYDQnP905.
+_:JAcYDQnP905 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/front9-l>.
+_:JAcYDQnP905 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
