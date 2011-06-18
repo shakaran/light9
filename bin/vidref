@@ -18,7 +18,9 @@ parser.add_option("-v", "--verbose", action="store_true",
 
 logging.basicConfig()
 log = logging.getLogger()
-log.setLevel(logging.DEBUG if options.verbose else logging.INFO)
+log.setLevel(logging.DEBUG)
+# limit the stdout one, but leave debug messages for the gtk logger
+log.handlers[0].setLevel(logging.DEBUG if options.verbose else logging.WARN)
 logging.getLogger("restkit.client").setLevel(logging.WARN)
 
 

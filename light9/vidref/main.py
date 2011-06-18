@@ -139,7 +139,7 @@ class VideoRecordSink(gst.Element):
         img.save(outFilename)
 
         now = time.time()
-        log.debug("wrote %s delay of %.2fms, took %.2fms",
+        log.info("wrote %s delay of %.2fms, took %.2fms",
                   outFilename,
                   (now - self.lastTime) * 1000,
                   (now - t1) * 1000)
@@ -159,8 +159,9 @@ class Main(object):
 
         self.recordingTo = wtree.get_object('recordingTo')
         self.musicScale = wtree.get_object("musicScale")
-        self.musicScale.connect("value-changed",
-                            lambda r: self.musicTime.sendTime(r.get_value()))
+        self.musicScale.connect("value-changed", self.onMusicScaleValue)
+        self.ignoreScaleChanges = False
+        self.attachLog(wtree.get_object("lastLog"))
 
         # wtree.get_object("replayPanel").show() # demo only
         rp = wtree.get_object("replayVbox")
@@ -172,6 +173,16 @@ class Main(object):
         self.setInput('dv') # auto seems to not search for dv
 
         gobject.timeout_add(1000 // framerate, self.updateLoop)
+
+    def attachLog(self, textBuffer):
+        """write log lines to this gtk buffer"""
+        class ToBuffer(logging.Handler):
+            def emit(self, record):
+                textBuffer.set_text(record.getMessage())
+
+        h = ToBuffer()
+        h.setLevel(logging.INFO)
+        log.addHandler(h)
 
     def updateLoop(self):
         position = self.musicTime.getLatest()
@@ -241,5 +252,15 @@ class Main(object):
         print widget.get_value()
 
     def onMusicTimeChange(self, position):
-        self.musicScale.set_range(0, position['duration'])
-        self.musicScale.set_value(position['t'])
+        self.ignoreScaleChanges = True
+        try:
+            self.musicScale.set_range(0, position['duration'])
+            self.musicScale.set_value(position['t'])
+        finally:
+            self.ignoreScaleChanges = False
+
+    def onMusicScaleValue(self, scaleRange):
+        """the scale position has changed. if it was by the user, send
+        it back to music player"""
+        if not self.ignoreScaleChanges:
+            self.musicTime.sendTime(scaleRange.get_value())
