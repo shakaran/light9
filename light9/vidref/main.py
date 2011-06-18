@@ -24,8 +24,10 @@ class MusicTime(object):
     fetch times from ascoltami in a background thread; return times
     upon request, adjusted to be more precise with the system clock
     """
-    def __init__(self, period=.2):
+    def __init__(self, period=.2, onChange=lambda position: None):
         """period is the seconds between http time requests.
+
+        We call onChange with the time in seconds and the total time
 
         The choice of period doesn't need to be tied to framerate,
         it's more the size of the error you can tolerate (since we
@@ -33,6 +35,7 @@ class MusicTime(object):
         end of a song)
         """
         self.period = period
+        self.onChange = onChange
         self.musicResource = restkit.Resource(networking.musicPlayer.url)
         t = Thread(target=self._timeUpdate)
         t.setDaemon(True)
@@ -62,10 +65,16 @@ class MusicTime(object):
                 self.positionFetchTime = time.time()
 
                 self.position = position
+                self.onChange(position)
             except restkit.RequestError, e:
                 log.error(e)
                 time.sleep(1)
             time.sleep(self.period)
+
+    def sendTime(self, t):
+        """request that the player go to this time"""
+        self.musicResource.post("time", payload=jsonlib.dumps({"t" : t}),
+                                headers={"content-type" : "application/json"})
         
 class VideoRecordSink(gst.Element):
     _sinkpadtemplate = gst.PadTemplate ("sinkpadtemplate",
@@ -141,7 +150,7 @@ gobject.type_register(VideoRecordSink)
 
 class Main(object):
     def __init__(self):
-        self.musicTime = MusicTime()
+        self.musicTime = MusicTime(onChange=self.onMusicTimeChange)
         wtree = gtk.Builder()
         wtree.add_from_file(sibpath(__file__, "vidref.glade"))
         mainwin = wtree.get_object("MainWindow")
@@ -149,6 +158,9 @@ class Main(object):
         wtree.connect_signals(self)
 
         self.recordingTo = wtree.get_object('recordingTo')
+        self.musicScale = wtree.get_object("musicScale")
+        self.musicScale.connect("value-changed",
+                            lambda r: self.musicTime.sendTime(r.get_value()))
 
         # wtree.get_object("replayPanel").show() # demo only
         rp = wtree.get_object("replayVbox")
@@ -227,3 +239,7 @@ class Main(object):
                                                    
     def on_liveFrameRate_value_changed(self, widget):
         print widget.get_value()
+
+    def onMusicTimeChange(self, position):
+        self.musicScale.set_range(0, position['duration'])
+        self.musicScale.set_value(position['t'])
