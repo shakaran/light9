@@ -13,7 +13,7 @@ class MusicTime:
         playtime = None
         while not playtime:
             try:
-                playtime = jsonlib.read(self.player.get("time").body,
+                playtime = jsonlib.read(self.player.get("time").body_string(),
                                         use_float=True)['t']
             except restkit.RequestError, e:
                 print "Server error %s, waiting" % e
