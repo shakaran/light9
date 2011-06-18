@@ -1,0 +1,19 @@
+leftover software todo from last year:
+
+OK vidref should have a time slider
+- factor out music dir so it can be different per machine
+- all settings should be in RDF and live-shared across all apps, maybe with anzo for updates
+- asco should have GUI for picking which sound output you want, and store the setting
+- vidref should have snapshot button for taking pics of the stage
+- bring mini tripod or beanbag for the vidref camera
+- more remote contol stuff
+- vidref adjustable crop to the stage aspect
+- vidref should have an 'in progress' row to prove that it's recording something new
+- remote-run GUIs should say what machine they're on. Or, everyone should say what RDF server it's talking tox
+- scrub inside curvecalc, preview a video in it
+- bring curvecalc's logging inside the GUI window
+- asco stops considerably after the autostop time (according to curvecalc)
+- vidref's replay 'enabled' button should be completely sticky across sessions
+- audio process pipeline; RDF graph should track versions of songs (padded, normalized)
+
+
