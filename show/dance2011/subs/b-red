@@ -1,0 +1,7 @@
+<http://light9.bigasterisk.com/sub/b-red> <http://www.w3.org/2000/01/rdf-schema#label> "b-red".
+<http://light9.bigasterisk.com/sub/b-red> <http://light9.bigasterisk.com/lightLevel> _:WakxhKmO118.
+<http://light9.bigasterisk.com/sub/b-red> <http://light9.bigasterisk.com/lightLevel> _:WakxhKmO117.
+_:WakxhKmO118 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WakxhKmO118 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b31-r-l>.
+_:WakxhKmO117 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WakxhKmO117 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b16-r-r>.

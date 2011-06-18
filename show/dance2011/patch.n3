@@ -1,86 +1,86 @@
 #Processed by Id: cwm.py,v 1.197 2007/12/13 15:38:39 syosi Exp 
-        #    using base file:///home/dmcc/rev/light9/show/dance2010/patch-source.n3
+        #    using base file:///home/drewp/projects/light9/show/dance2011/patch-source.n3
         
 #  Notation3 generation by
 #       notation3.py,v 1.200 2007/12/11 21:18:08 syosi Exp
 
-#   Base was: file:///home/dmcc/rev/light9/show/dance2010/patch-source.n3
+#   Base was: file:///home/drewp/projects/light9/show/dance2011/patch-source.n3
      @prefix : <http://light9.bigasterisk.com/> .
     @prefix ch: <http://light9.bigasterisk.com/theater/piedmont/channel/> .
     @prefix dmx: <http://light9.bigasterisk.com/dmx/> .
     @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
     
-    ch:b11-C-b     a :Channel;
+    <http://light9.bigasterisk.com/theater/piedmont/channel/b11-#-c>     a :Channel;
          :output dmx:c54;
-         rdfs:label "b11-C-b" .
+         rdfs:label "b11-#-c" .
     
-    ch:b12-L-p     a :Channel;
+    ch:b12-p-r     a :Channel;
          :output dmx:c53;
-         rdfs:label "b12-L-p" .
+         rdfs:label "b12-p-r" .
     
-    ch:b13-C-r     a :Channel;
+    ch:b13-fos-l     a :Channel;
          :output dmx:c52;
-         rdfs:label "b13-C-r" .
+         rdfs:label "b13-fos-l" .
     
-    <http://light9.bigasterisk.com/theater/piedmont/channel/b14-L-#>     a :Channel;
+    ch:b14-b-c     a :Channel;
          :output dmx:c51;
-         rdfs:label "b14-L-#" .
+         rdfs:label "b14-b-c" .
     
-    ch:b15-R     a :Channel;
+    ch:b15-c-r     a :Channel;
          :output dmx:c50;
-         rdfs:label "b15-R" .
+         rdfs:label "b15-c-r" .
     
-    ch:b16-R-r     a :Channel;
+    ch:b16-r-r     a :Channel;
          :output dmx:c49;
-         rdfs:label "b16-R-r" .
+         rdfs:label "b16-r-r" .
     
-    ch:b21-R-c     a :Channel;
+    ch:b21-c-l     a :Channel;
          :output dmx:c55;
-         rdfs:label "b21-R-c" .
+         rdfs:label "b21-c-l" .
     
-    ch:b22-L-w     a :Channel;
+    ch:b22-fos-c     a :Channel;
          :output dmx:c56;
-         rdfs:label "b22-L-w" .
+         rdfs:label "b22-fos-c" .
     
-    ch:b23-L-b     a :Channel;
+    ch:b23x     a :Channel;
          :output dmx:c57;
-         rdfs:label "b23-L-b" .
+         rdfs:label "b23x" .
     
-    ch:b24-R-b     a :Channel;
+    ch:b24-w-l     a :Channel;
          :output dmx:c58;
-         rdfs:label "b24-R-b" .
+         rdfs:label "b24-w-l" .
     
-    ch:b25-R-w     a :Channel;
+    ch:b25-w-r     a :Channel;
          :output dmx:c59;
-         rdfs:label "b25-R-w" .
+         rdfs:label "b25-w-r" .
     
-    ch:b26-L-c     a :Channel;
+    ch:b26-c-r     a :Channel;
          :output dmx:c60;
-         rdfs:label "b26-L-c" .
+         rdfs:label "b26-c-r" .
     
-    ch:b31-L-r     a :Channel;
+    ch:b31-r-l     a :Channel;
          :output dmx:c61;
-         rdfs:label "b31-L-r" .
+         rdfs:label "b31-r-l" .
     
-    ch:b32-L     a :Channel;
+    ch:b32-c-l     a :Channel;
          :output dmx:c62;
-         rdfs:label "b32-L" .
+         rdfs:label "b32-c-l" .
     
-    <http://light9.bigasterisk.com/theater/piedmont/channel/b33-R-#>     a :Channel;
+    ch:b33-b-c     a :Channel;
          :output dmx:c63;
-         rdfs:label "b33-R-#" .
+         rdfs:label "b33-b-c" .
     
-    ch:b34-C-r     a :Channel;
+    ch:b34-fos-r     a :Channel;
          :output dmx:c64;
-         rdfs:label "b34-C-r" .
+         rdfs:label "b34-fos-r" .
     
-    ch:b35-L-p     a :Channel;
+    ch:b35-p-l     a :Channel;
          :output dmx:c65;
-         rdfs:label "b35-L-p" .
+         rdfs:label "b35-p-l" .
     
-    ch:b36-C-b     a :Channel;
+    <http://light9.bigasterisk.com/theater/piedmont/channel/b36-#-c>     a :Channel;
          :output dmx:c66;
-         rdfs:label "b36-C-b" .
+         rdfs:label "b36-#-c" .
     
     ch:blacklight     a :Channel;
          :output dmx:c15;
@@ -115,68 +115,68 @@
          rdfs:label "cyc-right" .
     
     ch:down-c     a :Channel;
-         :output dmx:c19;
+         :output dmx:c18;
          rdfs:label "down-c" .
     
     ch:down-l     a :Channel;
-         :output dmx:c17;
+         :output dmx:c16;
          rdfs:label "down-l" .
     
+    ch:down-l-P     a :Channel;
+         :output dmx:c17;
+         rdfs:label "down-l-P" .
+    
     ch:down-r     a :Channel;
-         :output dmx:c16;
+         :output dmx:c20;
          rdfs:label "down-r" .
     
-    ch:fr18x     a :Channel;
-         :output dmx:c18;
-         rdfs:label "fr18x" .
+    ch:down-r-P     a :Channel;
+         :output dmx:c19;
+         rdfs:label "down-r-P" .
     
-    ch:fr20x     a :Channel;
-         :output dmx:c20;
-         rdfs:label "fr20x" .
-    
-    ch:front1     a :Channel;
+    ch:front1-l     a :Channel;
          :output dmx:c1;
-         rdfs:label "front1" .
+         rdfs:label "front1-l" .
     
-    ch:front10     a :Channel;
+    ch:front10-r3     a :Channel;
          :output dmx:c10;
-         rdfs:label "front10" .
+         rdfs:label "front10-r3" .
     
-    ch:front11     a :Channel;
+    ch:front11-c     a :Channel;
          :output dmx:c11;
-         rdfs:label "front11" .
+         rdfs:label "front11-c" .
     
-    ch:front12     a :Channel;
+    ch:front12-crap     a :Channel;
          :output dmx:c12;
-         rdfs:label "front12" .
+         rdfs:label "front12-crap" .
     
-    ch:front2x     a :Channel;
+    ch:front2-l     a :Channel;
          :output dmx:c2;
-         rdfs:label "front2x" .
+         rdfs:label "front2-l" .
     
-    ch:front3     a :Channel;
+    ch:front3-l3     a :Channel;
          :output dmx:c3;
-         rdfs:label "front3" .
+         rdfs:label "front3-l3" .
     
-    ch:front4     a :Channel;
+    ch:front4-r     a :Channel;
          :output dmx:c4;
-         rdfs:label "front4" .
+         rdfs:label "front4-r" .
     
-    ch:front5     a :Channel;
+    ch:front5-l     a :Channel;
          :output dmx:c5;
-         rdfs:label "front5" .
+         rdfs:label "front5-l" .
     
-    ch:front6     a :Channel;
+    ch:front6-pool     a :Channel;
          :output dmx:c6;
-         rdfs:label "front6" .
+         rdfs:label "front6-pool" .
     
-    ch:front8     a :Channel;
+    ch:front8-r     a :Channel;
          :output dmx:c8;
-         rdfs:label "front8" .
+         rdfs:label "front8-r" .
     
-    ch:front9     a :Channel;
+    ch:front9-l     a :Channel;
          :output dmx:c9;
-         rdfs:label "front9" .
+         rdfs:label "front9-l" .
     
     ch:gree1     a :Channel;
          :output dmx:c22;
@@ -266,9 +266,9 @@
          :output dmx:c14;
          rdfs:label "strobe" .
     
-    ch:upcenter     a :Channel;
+    ch:upleft     a :Channel;
          :output dmx:c38;
-         rdfs:label "upcenter" .
+         rdfs:label "upleft" .
     
     ch:upright     a :Channel;
          :output dmx:c37;

@@ -1,0 +1,7 @@
+_:JAcYDQnP108 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:JAcYDQnP108 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/front5-l>.
+_:JAcYDQnP107 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:JAcYDQnP107 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/front8-r>.
+<http://light9.bigasterisk.com/sub/edges> <http://www.w3.org/2000/01/rdf-schema#label> "edges".
+<http://light9.bigasterisk.com/sub/edges> <http://light9.bigasterisk.com/lightLevel> _:JAcYDQnP108.
+<http://light9.bigasterisk.com/sub/edges> <http://light9.bigasterisk.com/lightLevel> _:JAcYDQnP107.

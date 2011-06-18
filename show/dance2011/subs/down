@@ -1,0 +1,10 @@
+_:VNKZVyGO127 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/down-r>.
+_:VNKZVyGO127 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:VNKZVyGO126 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/down-c>.
+_:VNKZVyGO126 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/down> <http://light9.bigasterisk.com/lightLevel> _:VNKZVyGO127.
+<http://light9.bigasterisk.com/sub/down> <http://light9.bigasterisk.com/lightLevel> _:VNKZVyGO126.
+<http://light9.bigasterisk.com/sub/down> <http://light9.bigasterisk.com/lightLevel> _:VNKZVyGO125.
+<http://light9.bigasterisk.com/sub/down> <http://www.w3.org/2000/01/rdf-schema#label> "down".
+_:VNKZVyGO125 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/down-l>.
+_:VNKZVyGO125 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.

@@ -16,4 +16,18 @@ OK factor out music dir so it can be different per machine
 - vidref's replay 'enabled' button should be completely sticky across sessions
 - audio process pipeline; RDF graph should track versions of songs (padded, normalized)
 
+- subcomposter needs refresh
 
+
+bring:
+500W bulbs
+gels
+blackwrap
+flashlight
+
+shopping:
+500W bulbs
+AA batts
+
+todo:
+vidref raise for musicScale race condition

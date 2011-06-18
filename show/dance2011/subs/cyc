@@ -1,0 +1,10 @@
+_:JAcYDQnP111 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:JAcYDQnP111 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/cyc-right>.
+_:JAcYDQnP112 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:JAcYDQnP112 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/cyc-mid>.
+<http://light9.bigasterisk.com/sub/cyc> <http://light9.bigasterisk.com/lightLevel> _:JAcYDQnP112.
+<http://light9.bigasterisk.com/sub/cyc> <http://light9.bigasterisk.com/lightLevel> _:JAcYDQnP111.
+<http://light9.bigasterisk.com/sub/cyc> <http://light9.bigasterisk.com/lightLevel> _:JAcYDQnP113.
+<http://light9.bigasterisk.com/sub/cyc> <http://www.w3.org/2000/01/rdf-schema#label> "cyc".
+_:JAcYDQnP113 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:JAcYDQnP113 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/cyc-left>.

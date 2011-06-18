@@ -1,0 +1,7 @@
+_:ctBVxUFA108 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/post-l>.
+_:ctBVxUFA108 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:ctBVxUFA107 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/post-r>.
+_:ctBVxUFA107 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/patios> <http://www.w3.org/2000/01/rdf-schema#label> "patios".
+<http://light9.bigasterisk.com/sub/patios> <http://light9.bigasterisk.com/lightLevel> _:ctBVxUFA108.
+<http://light9.bigasterisk.com/sub/patios> <http://light9.bigasterisk.com/lightLevel> _:ctBVxUFA107.

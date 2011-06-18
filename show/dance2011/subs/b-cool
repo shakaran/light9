@@ -1,0 +1,13 @@
+_:WakxhKmO107 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b26-c-r>.
+_:WakxhKmO107 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WakxhKmO110 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b32-c-l>.
+_:WakxhKmO110 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/b-cool> <http://light9.bigasterisk.com/lightLevel> _:WakxhKmO109.
+<http://light9.bigasterisk.com/sub/b-cool> <http://light9.bigasterisk.com/lightLevel> _:WakxhKmO107.
+<http://light9.bigasterisk.com/sub/b-cool> <http://light9.bigasterisk.com/lightLevel> _:WakxhKmO108.
+<http://light9.bigasterisk.com/sub/b-cool> <http://light9.bigasterisk.com/lightLevel> _:WakxhKmO110.
+<http://light9.bigasterisk.com/sub/b-cool> <http://www.w3.org/2000/01/rdf-schema#label> "b-cool".
+_:WakxhKmO108 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b21-c-l>.
+_:WakxhKmO108 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:WakxhKmO109 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b15-c-r>.
+_:WakxhKmO109 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.

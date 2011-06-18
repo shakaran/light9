@@ -1,0 +1,4 @@
+_:JAcYDQnP116 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:JAcYDQnP116 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/cyc-right>.
+<http://light9.bigasterisk.com/sub/cyc-r> <http://www.w3.org/2000/01/rdf-schema#label> "cyc-r".
+<http://light9.bigasterisk.com/sub/cyc-r> <http://light9.bigasterisk.com/lightLevel> _:JAcYDQnP116.
