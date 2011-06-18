@@ -47,7 +47,7 @@ for 2011:
 - vidref should have a time slider
 - factor out music dir so it can be different per machine
 - all settings should be in RDF and live-shared across all apps, maybe with anzo for updates
-- when curvecalc says 'Slider 1', the X coordinates of the curve get misaligned
+OK when curvecalc says 'Slider 1', the X coordinates of the curve get misaligned
 OK asco should say clearly what machine it's running on
 - asco should have GUI for picking which sound output you want, and store the setting
 - vidref should have snapshot button for taking pics of the stage
@@ -60,7 +60,7 @@ OK curvecalc still has a problem making empty-name subterms. that should never h
 - remote-run GUIs should say what machine they're on. Or, everyone should say what RDF server it's talking tox
 - scrub inside curvecalc, preview a video in it
 - bring curvecalc's logging inside the GUI window
-- vidref stopped here once:
+OK vidref stopped here once:
         File "/usr/lib/python2.6/threading.py", line 484, in run
           self.__target(*self.__args, **self.__kwargs)
         File "/home/drewp/projects/light9/light9/vidref/main.py", line 54, in _timeUpdate
