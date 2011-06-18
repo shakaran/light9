@@ -161,7 +161,7 @@ class Main(object):
         self.musicScale = wtree.get_object("musicScale")
         self.musicScale.connect("value-changed", self.onMusicScaleValue)
         self.ignoreScaleChanges = False
-        self.attachLog(wtree.get_object("lastLog"))
+        # self.attachLog(wtree.get_object("lastLog"))
 
         # wtree.get_object("replayPanel").show() # demo only
         rp = wtree.get_object("replayVbox")
