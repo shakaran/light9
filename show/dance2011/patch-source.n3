@@ -25,6 +25,9 @@
 # 35 blue has a white in it too
 # nice rhyme, drew
 
+[ :name "strobespeed"; :output dmx:c47 ] .
+[ :name "strobebright"; :output dmx:c48 ] .
+
 [ :name "b11-#-c"; :output dmx:c54 ] .
 [ :name "b12-p-r"; :output dmx:c53 ] .
 [ :name "b13-fos-l"; :output dmx:c52 ] .
@@ -62,8 +65,7 @@
 [ :name "front11-c"; :output dmx:c11 ] .
 [ :name "front12-crap"; :output dmx:c12 ] .
 
-[ :name "strobe"; :output dmx:c14 ] .
-[ :name "blacklight"; :output dmx:c15 ] .
+[ :name "blacklight"; :output dmx:c14 ] .
 [ :name "down-l"; :output dmx:c16 ] .
 [ :name "down-l-P"; :output dmx:c17 ] .
 [ :name "down-c"; :output dmx:c18 ] .

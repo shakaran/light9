@@ -1,0 +1,10 @@
+_:JAcYDQnP1603 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/down-c>.
+_:JAcYDQnP1603 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:JAcYDQnP1601 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/front6-pool>.
+_:JAcYDQnP1601 <http://light9.bigasterisk.com/level> "0.73"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:JAcYDQnP1602 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b14-b-c>.
+_:JAcYDQnP1602 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/centerpool> <http://www.w3.org/2000/01/rdf-schema#label> "centerpool".
+<http://light9.bigasterisk.com/sub/centerpool> <http://light9.bigasterisk.com/lightLevel> _:JAcYDQnP1603.
+<http://light9.bigasterisk.com/sub/centerpool> <http://light9.bigasterisk.com/lightLevel> _:JAcYDQnP1601.
+<http://light9.bigasterisk.com/sub/centerpool> <http://light9.bigasterisk.com/lightLevel> _:JAcYDQnP1602.

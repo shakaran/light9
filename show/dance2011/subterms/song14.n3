@@ -1,0 +1,15 @@
+<http://light9.bigasterisk.com/show/dance2011/song14> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2011/song14/subterm/song14>.
+<http://light9.bigasterisk.com/show/dance2011/song14> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2011/song14/subterm/bow>.
+<http://light9.bigasterisk.com/show/dance2011/song14> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2011/song14/subterm/frontbig>.
+<http://light9.bigasterisk.com/show/dance2011/song14/subterm/bow> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2011/song14/subterm/bow> <http://www.w3.org/2000/01/rdf-schema#label> "bow".
+<http://light9.bigasterisk.com/show/dance2011/song14/subterm/bow> <http://light9.bigasterisk.com/expression> "bow(t)".
+<http://light9.bigasterisk.com/show/dance2011/song14/subterm/bow> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/bow>.
+<http://light9.bigasterisk.com/show/dance2011/song14/subterm/song14> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2011/song14/subterm/song14> <http://www.w3.org/2000/01/rdf-schema#label> "song14".
+<http://light9.bigasterisk.com/show/dance2011/song14/subterm/song14> <http://light9.bigasterisk.com/expression> "song14(t)".
+<http://light9.bigasterisk.com/show/dance2011/song14/subterm/song14> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song14>.
+<http://light9.bigasterisk.com/show/dance2011/song14/subterm/frontbig> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2011/song14/subterm/frontbig> <http://www.w3.org/2000/01/rdf-schema#label> "frontbig".
+<http://light9.bigasterisk.com/show/dance2011/song14/subterm/frontbig> <http://light9.bigasterisk.com/expression> "frontbig(t)".
+<http://light9.bigasterisk.com/show/dance2011/song14/subterm/frontbig> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/frontbig>.

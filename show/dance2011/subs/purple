@@ -1,0 +1,13 @@
+_:JAcYDQnP1608 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/down-r-P>.
+_:JAcYDQnP1608 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:JAcYDQnP1607 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b35-p-l>.
+_:JAcYDQnP1607 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/purple> <http://light9.bigasterisk.com/lightLevel> _:JAcYDQnP1608.
+<http://light9.bigasterisk.com/sub/purple> <http://light9.bigasterisk.com/lightLevel> _:JAcYDQnP1607.
+<http://light9.bigasterisk.com/sub/purple> <http://light9.bigasterisk.com/lightLevel> _:JAcYDQnP1609.
+<http://light9.bigasterisk.com/sub/purple> <http://light9.bigasterisk.com/lightLevel> _:JAcYDQnP1606.
+<http://light9.bigasterisk.com/sub/purple> <http://www.w3.org/2000/01/rdf-schema#label> "purple".
+_:JAcYDQnP1609 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b12-p-r>.
+_:JAcYDQnP1609 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:JAcYDQnP1606 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/down-l-P>.
+_:JAcYDQnP1606 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.

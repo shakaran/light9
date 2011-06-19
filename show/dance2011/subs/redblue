@@ -1,0 +1,10 @@
+_:qyqxyPaF120 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b31-r-l>.
+_:qyqxyPaF120 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/redblue> <http://light9.bigasterisk.com/lightLevel> _:qyqxyPaF120.
+<http://light9.bigasterisk.com/sub/redblue> <http://light9.bigasterisk.com/lightLevel> _:qyqxyPaF119.
+<http://light9.bigasterisk.com/sub/redblue> <http://light9.bigasterisk.com/lightLevel> _:qyqxyPaF118.
+<http://light9.bigasterisk.com/sub/redblue> <http://www.w3.org/2000/01/rdf-schema#label> "redblue".
+_:qyqxyPaF119 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b15-c-r>.
+_:qyqxyPaF119 <http://light9.bigasterisk.com/level> "0.585"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:qyqxyPaF118 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b14-b-c>.
+_:qyqxyPaF118 <http://light9.bigasterisk.com/level> "0.785"^^<http://www.w3.org/2001/XMLSchema#decimal>.

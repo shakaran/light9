@@ -35,7 +35,7 @@ sh:song2 rdfs:label  "2 specialty tap";     :songFilename "02-mix.wav" .
 sh:song3 rdfs:label  "3 kung fu";           :songFilename "03-mix.wav" .
 sh:song4 rdfs:label  "4 going gets tough";  :songFilename "04.wav" .
 sh:song5 rdfs:label  "5 ballgame tap";      :songFilename "05-ballgame.wav" .
-sh:song6 rdfs:label  "6 marching bang";     :songFilename "06-marching.wav" .
+sh:song6 rdfs:label  "6 marching band";     :songFilename "06-marching.wav" .
 sh:song7 rdfs:label  "7 gymnastics";        :songFilename "07-cirque-mix.wav" .
 sh:song8 rdfs:label  "8 racecar";           :songFilename "08-racecar-mix.wav" .
 sh:song9 rdfs:label  "9 tennis" ;           :songFilename "09-mix.wav" .
@@ -52,6 +52,7 @@ sub:red    :color "#ff0000"; :group group:strip; :order 0 .
 sub:orange :color "#f65d00"; :group group:strip; :order 1 .
 sub:green  :color "#1d9500"; :group group:strip; :order 2 .
 sub:blue   :color "#0000ff"; :group group:strip; :order 3.
+sub:purple :color "#ff00cd"; :group group:strip; :order 4.
 
 sub:sharlyn :group group:live; :order 1 .
 sub:cyc :group group:live; :order 2 .
@@ -60,13 +61,13 @@ sub:scoop :group group:live; :order 4 .
 sub:front :group group:live; :order 5 .
 sub:curtain :group group:live; :order 6 .
 
-sub:bcool   :color "#81b5b1"; :group group:back; :order 0 .
-sub:bblue   :color "#3e6dca"; :group group:back; :order 1 .
-sub:bbluec  :color "#003cb3"; :group group:back; :order 2 .
-sub:bwarm   :color "#ffaa77"; :group group:back; :order 3 .
-sub:bpurple :color "#b4099d"; :group group:back; :order 4 .
-sub:bred    :color "#c0341b"; :group group:back; :order 5 .
-sub:bredc   :color "#ff0000"; :group group:back; :order 6 .
+<http://light9.bigasterisk.com/sub/b-cool>   :color "#81b5b1"; :group group:back; :order 0 .
+<http://light9.bigasterisk.com/sub/b-blue>   :color "#3e6dca"; :group group:back; :order 1 .
+<http://light9.bigasterisk.com/sub/bbluec>  :color "#003cb3"; :group group:back; :order 2 .
+<http://light9.bigasterisk.com/sub/b-warm>   :color "#ffaa77"; :group group:back; :order 3 .
+<http://light9.bigasterisk.com/sub/b-purple> :color "#b4099d"; :group group:back; :order 4 .
+<http://light9.bigasterisk.com/sub/b-red>    :color "#c0341b"; :group group:back; :order 5 .
+<http://light9.bigasterisk.com/sub/bredc>   :color "#ff0000"; :group group:back; :order 6 .
 
 chase:colors a :Chase; :channels (
 ch:oran1 ch:gree1 ch:blue1 ch:red1 
@@ -79,76 +80,52 @@ chase:colors2 a :Chase; :channels (ch:red2 ch:gree2 ch:oran2 ch:blue2) .
 chase:colors3 a :Chase; :channels (ch:red3 ch:gree3 ch:oran3 ch:blue3) .
 chase:colors4 a :Chase; :channels (ch:red4 ch:gree4 ch:oran4 ch:blue4) .
 
+chase:colorrb a :Chase; :channels (
+ch:blue1 ch:red1 
+ch:blue2 ch:red2 
+ch:blue2 ch:red2 
+ ) .
+
 chase:back a :Chase; rdfs:comment "back non-white, brightness order"; 
   :channels (
-ch:b35-L-p
-ch:b12-L-p
-ch:b36-C-b
-ch:b24-R-b
-ch:b11-C-b
-ch:b23-L-b
-ch:b26-L-c
-ch:b21-R-c
-ch:b31-L-r
-ch:b13-C-r
-ch:b16-R-r
-ch:b34-C-r
-ch:b25-R-w
-ch:b22-L-w
+ch:b16-r-r
+ch:b15-c-r
+ch:b14-b-c
+ch:b12-p-r
+ch:b21-c-l
+ch:b24-w-l
+ch:b25-w-r
+ch:b26-c-r
+ch:b31-r-l
+ch:b32-c-l
+ch:b33-b-c
+ch:b35-p-l
 ) .
-
-
-chase:back2 a :Chase; rdfs:comment "back non-white, brightness order, sans purple"; 
-  :channels (
-ch:b36-C-b
-ch:b24-R-b
-ch:b11-C-b
-ch:b23-L-b
-ch:b26-L-c
-ch:b21-R-c
-ch:b31-L-r
-ch:b13-C-r
-ch:b16-R-r
-ch:b34-C-r
-ch:b25-R-w
-ch:b22-L-w
-) .
-
 
 chase:scoop a :Chase; :channels (
 ch:down-r
 ch:down-c
 ch:down-l
-ch:upcenter
+ch:upleft
 ch:upright
 ch:cyc-right
 ch:cyc-mid
 ch:cyc-left
 ) .
 
-chase:backorder a :Chase; rdfs:comment "back, right-to-left"; 
-  :channels (
-ch:b36-C-b
-ch:b34-C-r
-ch:b31-L-r
-ch:b26-L-c
-ch:b25-R-w
-ch:b24-R-b
-ch:b23-L-b
-ch:b22-L-w
-ch:b21-R-c
-ch:b16-R-r
-ch:b13-C-r
-ch:b11-C-b
+chase:fronts a :Chase; :channels (
+ch:front3-l3
+ch:front5-l
+ch:front9-l
+ch:front6-pool
+ch:front11-c
+ch:front4-r
+ch:front8-r
+ch:front10-r3
 ) .
-
-
 
 chase:cycline a :Chase; :channels (ch:cyc-left ch:cyc-mid ch:cyc-right ) .
 chase:cycpong a :Chase; :channels (ch:cyc-left ch:cyc-mid ch:cyc-right ch:cyc-mid) .
-
-
-
 
 
 #ch:b26 :previewLayer [ :path "lightsim/skyline/front-left.png" ] .

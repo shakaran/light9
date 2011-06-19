@@ -83,7 +83,7 @@
          rdfs:label "b36-#-c" .
     
     ch:blacklight     a :Channel;
-         :output dmx:c15;
+         :output dmx:c14;
          rdfs:label "blacklight" .
     
     ch:blue1     a :Channel;
@@ -262,9 +262,13 @@
          :output dmx:c7;
          rdfs:label "sharlyn" .
     
-    ch:strobe     a :Channel;
-         :output dmx:c14;
-         rdfs:label "strobe" .
+    ch:strobebright     a :Channel;
+         :output dmx:c48;
+         rdfs:label "strobebright" .
+    
+    ch:strobespeed     a :Channel;
+         :output dmx:c47;
+         rdfs:label "strobespeed" .
     
     ch:upleft     a :Channel;
          :output dmx:c38;

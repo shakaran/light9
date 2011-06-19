@@ -1,0 +1,25 @@
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/blacklight> <http://www.w3.org/2000/01/rdf-schema#label> "blacklight".
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/blacklight> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/blacklight> <http://light9.bigasterisk.com/expression> "blacklight(t) > 0".
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/blacklight> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/blacklight>.
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/bow> <http://www.w3.org/2000/01/rdf-schema#label> "bow".
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/bow> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/bow> <http://light9.bigasterisk.com/expression> "bow(t)".
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/bow> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/bow>.
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/song08cobra> <http://www.w3.org/2000/01/rdf-schema#label> "song08cobra".
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/song08cobra> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/song08cobra> <http://light9.bigasterisk.com/expression> "song08cobra(t)".
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/song08cobra> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song08cobra>.
+<http://light9.bigasterisk.com/show/dance2011/song8> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2011/song8/subterm/blackextras>.
+<http://light9.bigasterisk.com/show/dance2011/song8> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2011/song8/subterm/blacklight>.
+<http://light9.bigasterisk.com/show/dance2011/song8> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2011/song8/subterm/bow>.
+<http://light9.bigasterisk.com/show/dance2011/song8> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2011/song8/subterm/song08cobra>.
+<http://light9.bigasterisk.com/show/dance2011/song8> <http://light9.bigasterisk.com/subterm> <http://light9.bigasterisk.com/show/dance2011/song8/subterm/song08>.
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/blackextras> <http://www.w3.org/2000/01/rdf-schema#label> "blackextras".
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/blackextras> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/blackextras> <http://light9.bigasterisk.com/expression> "blacklight(t)".
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/blackextras> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/blackextras>.
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/song08> <http://www.w3.org/2000/01/rdf-schema#label> "song08".
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/song08> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://light9.bigasterisk.com/Subterm>.
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/song08> <http://light9.bigasterisk.com/expression> "song08(t)".
+<http://light9.bigasterisk.com/show/dance2011/song8/subterm/song08> <http://light9.bigasterisk.com/sub> <http://light9.bigasterisk.com/sub/song08>.

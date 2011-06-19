@@ -1,0 +1,7 @@
+_:QeueNzkb108 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/front3-l3>.
+_:QeueNzkb108 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:QeueNzkb107 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/front10-r3>.
+_:QeueNzkb107 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+<http://light9.bigasterisk.com/sub/edge3> <http://www.w3.org/2000/01/rdf-schema#label> "edge3".
+<http://light9.bigasterisk.com/sub/edge3> <http://light9.bigasterisk.com/lightLevel> _:QeueNzkb108.
+<http://light9.bigasterisk.com/sub/edge3> <http://light9.bigasterisk.com/lightLevel> _:QeueNzkb107.

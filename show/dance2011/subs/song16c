@@ -1,0 +1,10 @@
+_:dVmHzGHS3137 <http://light9.bigasterisk.com/level> "0.73"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:dVmHzGHS3137 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/front6-pool>.
+_:dVmHzGHS3139 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:dVmHzGHS3139 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/down-c>.
+<http://light9.bigasterisk.com/sub/song16c> <http://light9.bigasterisk.com/lightLevel> _:dVmHzGHS3137.
+<http://light9.bigasterisk.com/sub/song16c> <http://light9.bigasterisk.com/lightLevel> _:dVmHzGHS3139.
+<http://light9.bigasterisk.com/sub/song16c> <http://light9.bigasterisk.com/lightLevel> _:dVmHzGHS3138.
+<http://light9.bigasterisk.com/sub/song16c> <http://www.w3.org/2000/01/rdf-schema#label> "song16c".
+_:dVmHzGHS3138 <http://light9.bigasterisk.com/level> "1.0"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:dVmHzGHS3138 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b14-b-c>.
