@@ -1,0 +1,13 @@
+_:lUJCypsL110 <http://light9.bigasterisk.com/level> "0.475"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:lUJCypsL110 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/post-r>.
+_:lUJCypsL109 <http://light9.bigasterisk.com/level> "0.45"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:lUJCypsL109 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/front10-r3>.
+_:lUJCypsL112 <http://light9.bigasterisk.com/level> "0.405"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:lUJCypsL112 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/front3-l3>.
+_:lUJCypsL111 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:lUJCypsL111 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/post-l>.
+<http://light9.bigasterisk.com/sub/patio> <http://www.w3.org/2000/01/rdf-schema#label> "patio".
+<http://light9.bigasterisk.com/sub/patio> <http://light9.bigasterisk.com/lightLevel> _:lUJCypsL110.
+<http://light9.bigasterisk.com/sub/patio> <http://light9.bigasterisk.com/lightLevel> _:lUJCypsL109.
+<http://light9.bigasterisk.com/sub/patio> <http://light9.bigasterisk.com/lightLevel> _:lUJCypsL112.
+<http://light9.bigasterisk.com/sub/patio> <http://light9.bigasterisk.com/lightLevel> _:lUJCypsL111.

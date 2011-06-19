@@ -35,6 +35,9 @@ vidref raise for musicScale race condition
 video follows *mouse* as you move around in CC (music cursor does not
 move unless you ask)
 
+ascoltami web ui should be able to set the pulseaudio routing of the
+music to internal laptop or external usb
+
 let us use chan name anywhere we can use sub name
 
 8 - mix to mono
@@ -44,4 +47,6 @@ CC don't let you make a curve name with non-python-identifier chars in it. flatt
 12 ending is super loud
 
 13 start with a chase?
+
+port vidref to store pics in mongodb gridfs
 

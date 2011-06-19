@@ -1,0 +1,13 @@
+<http://light9.bigasterisk.com/sub/pool3> <http://light9.bigasterisk.com/lightLevel> _:lUJCypsL106.
+<http://light9.bigasterisk.com/sub/pool3> <http://light9.bigasterisk.com/lightLevel> _:lUJCypsL104.
+<http://light9.bigasterisk.com/sub/pool3> <http://light9.bigasterisk.com/lightLevel> _:lUJCypsL105.
+<http://light9.bigasterisk.com/sub/pool3> <http://light9.bigasterisk.com/lightLevel> _:lUJCypsL103.
+<http://light9.bigasterisk.com/sub/pool3> <http://www.w3.org/2000/01/rdf-schema#label> "pool3".
+_:lUJCypsL106 <http://light9.bigasterisk.com/level> "1"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:lUJCypsL106 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/down-r>.
+_:lUJCypsL104 <http://light9.bigasterisk.com/level> "0.765"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:lUJCypsL104 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/b26-c-r>.
+_:lUJCypsL105 <http://light9.bigasterisk.com/level> "0.49"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:lUJCypsL105 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/front4-r>.
+_:lUJCypsL103 <http://light9.bigasterisk.com/level> "0.21"^^<http://www.w3.org/2001/XMLSchema#decimal>.
+_:lUJCypsL103 <http://light9.bigasterisk.com/channel> <http://light9.bigasterisk.com/theater/piedmont/channel/front8-r>.
