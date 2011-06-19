@@ -64,8 +64,11 @@ class ReplayViews(object):
             td = takeDir(songDir(song), take)
             r = Replay(td)
             if r.tooShort():
-                log.warn("cleaning up %s; too short" % r.takeDir)
-                r.deleteDir()
+                # this is happening even on full-song recordings, even
+                # after the Replay.__init__ attempt to catch it
+                log.warn("prob too short, but that's currently broken")
+                #log.warn("cleaning up %s; too short" % r.takeDir)
+                #r.deleteDir()
                 continue
             rv = ReplayView(self.parent, r)
             self.views.append(rv)
@@ -111,13 +114,14 @@ class ReplayView(object):
         if True:
             af = gtk.AspectFrame()
             af.set_visible(True)
-            af.set_size_request(320, 240-70-50)
+            w,h = (320), (240-70-50)
+            af.set_size_request(w, h)
             af.set_shadow_type(gtk.SHADOW_OUT)
             af.props.obey_child = True
 
             img = gtk.Image()
             img.set_visible(True)
-            img.set_size_request(320, 240-70-50)
+            img.set_size_request(w, h)
             self.picWidget = img
 
             af.add(img)
@@ -205,7 +209,12 @@ class Replay(object):
         return len(self.existingFrames) < (minSeconds * framerate)
 
     def deleteDir(self):
-        shutil.rmtree(self.takeDir)
+        try:
+            shutil.rmtree(self.takeDir)
+        except OSError:
+            # probably was writing frames into this dir at the same time!
+            log.warn("partial delete- frames were probably still writing "
+                     "into that dir")
 
     def getTitle(self):
         tm = time.localtime(int(os.path.basename(self.takeDir)))

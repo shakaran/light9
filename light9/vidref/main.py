@@ -150,7 +150,6 @@ gobject.type_register(VideoRecordSink)
 
 class Main(object):
     def __init__(self):
-        self.musicTime = MusicTime(onChange=self.onMusicTimeChange)
         wtree = gtk.Builder()
         wtree.add_from_file(sibpath(__file__, "vidref.glade"))
         mainwin = wtree.get_object("MainWindow")
@@ -160,8 +159,10 @@ class Main(object):
         self.recordingTo = wtree.get_object('recordingTo')
         self.musicScale = wtree.get_object("musicScale")
         self.musicScale.connect("value-changed", self.onMusicScaleValue)
+        # tiny race here if onMusicScaleValue tries to use musicTime right away
+        self.musicTime = MusicTime(onChange=self.onMusicTimeChange)
         self.ignoreScaleChanges = False
-        # self.attachLog(wtree.get_object("lastLog"))
+        # self.attachLog(wtree.get_object("lastLog")) # disabled due to crashing
 
         # wtree.get_object("replayPanel").show() # demo only
         rp = wtree.get_object("replayVbox")
