@@ -128,18 +128,14 @@ ch:front10-r3
 ) .
 
 chase:frontsrand a :Chase; :channels (
-ch:front3-l3
 ch:front9-l
 ch:front6-pool
 ch:front5-l
-ch:front10-r3
-ch:front3-l3
 ch:front4-r
 ch:front6-pool
 ch:front9-l
 ch:front8-r
 ch:front11-c
-ch:front10-r3
 ch:front11-c
 ch:front5-l
 ch:front8-r
