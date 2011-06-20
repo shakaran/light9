@@ -23,10 +23,10 @@
     </div>
 
     <div class="commands">
-      <button id="cmd-stop" class="playMode">Stop<div class="key">C-s</div></button>
-      <button id="cmd-play" class="playMode">Play <div class="key">C-p</div></button>
-      <button id="cmd-intro">Skip intro <div class="key">C-i</div></button>
-      <button id="cmd-post">Skip to Post <div class="key">C-t</div></button>
+      <button id="cmd-stop" class="playMode">Stop<div class="key">s</div></button>
+      <button id="cmd-play" class="playMode">Play <div class="key">p</div></button>
+      <button id="cmd-intro">Skip intro <div class="key">i</div></button>
+      <button id="cmd-post">Skip to Post <div class="key">t</div></button>
       <button id="cmd-go">Go  <div class="key">space</div></button>
     </div>
 
@@ -95,12 +95,12 @@ $(function () {
     var tojs = JSON.stringify;
 
     $(document).keypress(function (ev) {
-	if (1 || ev.ctrlKey) {
-	    if (ev.which == 115) { $("#cmd-stop").click(); return false; }
-	    if (ev.which == 112) { $("#cmd-play").click(); return false; }
-	    if (ev.which == 105) { $("#cmd-intro").click(); return false; }
-	    if (ev.which == 116) { $("#cmd-post").click(); return false; }
-	}
+
+	if (ev.which == 115) { $("#cmd-stop").click(); return false; }
+	if (ev.which == 112) { $("#cmd-play").click(); return false; }
+	if (ev.which == 105) { $("#cmd-intro").click(); return false; }
+	if (ev.which == 116) { $("#cmd-post").click(); return false; }
+
 	if (ev.which == 32) { $("#cmd-go").click(); return false; }
 	return true;
     });
