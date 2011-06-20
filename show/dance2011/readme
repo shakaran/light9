@@ -51,3 +51,15 @@ CC don't let you make a curve name with non-python-identifier chars in it. flatt
 
 port vidref to store pics in mongodb gridfs
 
+consider doing all the lighting from seats in the house, with wifi or
+ethernet or dmx+audio to the booth
+
+
+
+preshow:
+curtain warmer
+turn off lcd
+direct net
+
+
+
