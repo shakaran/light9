@@ -32,10 +32,14 @@ class Player(object):
         bus.add_signal_watch()
 
         def on_any(bus, msg):
-            print bus, msg
-        #bus.connect('message', on_any)
+            print bus, msg, msg.type
+            if msg.type == gst.MESSAGE_EOS:
+                if self.onEOS is not None:
+                    self.onEOS(self.getSong())
+        bus.connect('message', on_any)
 
         def onStreamStatus(bus, message):
+            print "streamstatus", bus, message
             (statusType, _elem) = message.parse_stream_status()
             if statusType == gst.STREAM_STATUS_TYPE_ENTER:
                 self.setupAutostop()
@@ -52,12 +56,14 @@ class Player(object):
             if self.lastWatchTime < self.autoStopTime < t:
                 log.info("autostop")
                 self.pause()
-            if not self.onEOS:
-                if self.isPlaying() and t >= self.duration() - .2:
-                    # i don't expect to hit dur exactly with this
-                    # polling. What would be better would be to watch for
-                    # the EOS signal and react to that
-                    self.onEOS(self.getSong())
+
+                # new EOS logic above should be better
+            ## if not self.onEOS:
+            ##     if self.isPlaying() and t >= self.duration() - .2:
+            ##         # i don't expect to hit dur exactly with this
+            ##         # polling. What would be better would be to watch for
+            ##         # the EOS signal and react to that
+            ##         self.onEOS(self.getSong())
 
             self.lastWatchTime = t
         except:

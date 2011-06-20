@@ -33,6 +33,8 @@ class App:
         self.player.pause()
         self.player.seek(0)
 
+        # stop here for now- no go-button behavior
+        return
         try:
             nextSong = self.playlist.nextSong(song)
         except NoSuchSong: # we're at the end of the playlist
