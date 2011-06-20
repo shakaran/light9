@@ -54,12 +54,40 @@ port vidref to store pics in mongodb gridfs
 consider doing all the lighting from seats in the house, with wifi or
 ethernet or dmx+audio to the booth
 
-
+pay attention to levels between songs in medlies, not just the
+per-dance normalization
 
 preshow:
-curtain warmer
-turn off lcd
+make curtain warmer
+turn off lcd to fix the audio buzz
 direct net
+kill unnecessary daemons
+
+show 2011:
+
+big trouble with music player stopping at the end time, instead of
+resetting to zero. then i ran the next curvecalc and it brought lights
+on between songs. we worked around it by playing the next song and
+then pausing it before it got to 4sec.
+
+looks like the magic .2 sec threshold in player.py might not be
+working. that should be a proper gstreamer event at the real end
+
+blacklight in 15 didn't seem to work
+
+got through 16 songs until the sliders disconnected from KC, leaving
+the solo special on until i could grab the mouse and take it
+out. worked around this by restarting a zeroed-out KC so it
+reconnected to sliders. i am still getting no error messages anywhere
+for this slider failure. maybe i can constantly ping the sliders
+somehow?
+
+16 goes briefly to black at 323!
+
+16 the color and back chases that last until 512, those are really
+extreme and long, when the theater is all dark. we should have been
+stricter about dark theater during the day
+
 
 
 
