@@ -406,7 +406,14 @@ class LevelServerHttp(resource.Resource):
 
 class Sliders(BCF2000):
     def __init__(self, kc):
-        BCF2000.__init__(self)
+        devices = ['/dev/snd/midiC1D0', '/dev/snd/midiC2D0']
+        for dev in devices:
+            try:
+                BCF2000.__init__(self, dev=dev)
+            except IOError, e:
+                if dev is devices[-1]:
+                    raise
+
         self.kc = kc
     def valueIn(self, name, value):
         kc = self.kc
