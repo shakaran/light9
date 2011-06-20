@@ -1,2 +1,6 @@
 #!/bin/zsh
+echo broken: use a plain shell loop
+exit 1
+
+
 for x (`ls $LIGHT9_SHOW/subterms`) { bin/curvecalc $x }
