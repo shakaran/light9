@@ -418,6 +418,7 @@ def add_subterms_for_song(graph, song, curveset, subterms, master):
 def graphPathForSubterms(song):
     return showconfig.subtermsForSong(showconfig.songFilenameFromURI(song)) + ".n3"
 
+@prof.logTime
 def read_all_subs(graph):
     """read all sub files into this graph so when add_one_subterm tries
     to add, the sub will be available"""
@@ -504,24 +505,28 @@ def currentlyPlayingSong():
     return URIRef(t['song'])
 
 def main():
+    startTime = time.time()
     parser = optparse.OptionParser()
     parser.set_usage("%prog [opts] [songURI]")
     parser.add_option("--sliders", action='store_true',
                       help='use hardware sliders')
     parser.add_option("--skip-music", action='store_true',
                       help="ignore music and smooth_music curve files")
+    parser.add_option("--debug", action="store_true",
+                      help="log at DEBUG")
+    parser.add_option("--startup-only", action='store_true',
+                      help="quit after loading everything (for timing tests)")
     opts, args = parser.parse_args()
 
     logging.basicConfig(format="%(asctime)s %(levelname)-5s %(name)s %(filename)s:%(lineno)d: %(message)s")
-    log.setLevel(logging.INFO)
+    log.setLevel(logging.DEBUG if opts.debug else logging.INFO)
 
-
+    log.debug("startup: music %s", time.time() - startTime)
     try:
         song = URIRef(args[0])
     except IndexError:
         song = currentlyPlayingSong()
 
-    log.debug("music")
     music=Music()
     graph = makeGraph()
     curveset = Curveset(sliders=opts.sliders)
@@ -535,7 +540,7 @@ def main():
             raise
         log.info("%s not found, starting with empty graph" % subtermPath)
     
-    log.debug("output")
+    log.debug("startup: output %s", time.time() - startTime)
     out = Output(subterms, music)
 
     musicfilename = showconfig.songOnDisk(song)
@@ -601,7 +606,10 @@ def main():
     reactor.callLater(.1, curvesetView.goLive)
 
     tksupport.install(root, ms=10)
-    log.debug("run")
+    log.debug("startup: run %s", time.time() - startTime)
+    if opts.startup_only:
+        log.debug("quitting now because of --startup-only")
+        return
     prof.run(reactor.run, profile=False)
 
 main()
