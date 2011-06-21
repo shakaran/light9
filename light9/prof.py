@@ -1,4 +1,5 @@
-import sys, traceback
+import sys, traceback, time, logging
+log = logging.getLogger()
 
 def run(main, profile=False):
     if not profile:
@@ -9,7 +10,7 @@ def run(main, profile=False):
     p = hotshot.Profile("/tmp/pro")
     p.runcall(main)
     p.close()
-    hotshot.stats.load("/tmp/pro").sort_stats('time').print_stats()
+    hotshot.stats.load("/tmp/pro").sort_stats('cumulative').print_stats()
     
 def watchPoint(filename, lineno, event="call"):
     """whenever we hit this line, print a stack trace. event='call'
@@ -34,3 +35,14 @@ def watchPoint(filename, lineno, event="call"):
     sys.settrace(trace)
 
     # atexit, print the frequencies?
+
+def logTime(func):
+    def inner(*args, **kw):
+        t1 = time.time()
+        try:
+            ret = func(*args, **kw)
+        finally:
+            log.info("Call to %s took %.1f ms" % (
+                func.__name__, 1000 * (time.time() - t1)))
+        return ret
+    return inner
