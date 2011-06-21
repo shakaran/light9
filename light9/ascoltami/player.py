@@ -118,6 +118,13 @@ class Player(object):
             return self.playbin.query_duration(gst.FORMAT_TIME)[0] / gst.SECOND
         except gst.QueryError:
             return 0
+
+    def states(self):
+        """json-friendly object describing the interesting states of
+        the player nodes"""
+        success, state, pending = self.playbin.get_state(timeout=0)
+        return {"current": {"name":state.value_nick},
+                "pending": {"name":state.value_nick}}
         
     def pause(self):
         self.pipeline.set_state(gst.STATE_PAUSED)

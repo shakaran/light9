@@ -18,6 +18,7 @@
     <div>Time: <span id="currentTime"/></div>
     <div>Left: <span id="leftTime"/></div>
     <div>Until autostop: <span id="leftAutoStopTime"/></div>
+    <div>States: <span id="states"/></div>
     <div class="timeRow">
       <div id="timeSlider"/>
     </div>
@@ -55,6 +56,7 @@ $(function () {
 	    $("#leftTime").text((data.duration - data.t).toFixed(1));
 	    $("#leftAutoStopTime").text(
 		Math.max(0, data.duration - times.post - data.t).toFixed(1));
+	    $("#states").text(JSON.stringify(data.state));
 	    currentDuration = data.duration;
 	    $("#timeSlider").slider({value: data.t,
 				     max: data.duration});

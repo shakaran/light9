@@ -40,7 +40,9 @@ class timeResource(object):
             "started" : player.playStartTime,
             "duration" : player.duration(),
             "playing" : player.isPlaying(),
-            "t" : player.currentTime()})
+            "t" : player.currentTime(),
+            "state" : player.states(),
+            })
 
     def POST(self):
         """
