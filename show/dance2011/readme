@@ -88,6 +88,6 @@ somehow?
 extreme and long, when the theater is all dark. we should have been
 stricter about dark theater during the day
 
+CC bug: new subterms don't make the subterm area scroll right.
 
-
-
+vidref segfaults sometimes for no reason, and usually at exit.
