@@ -91,3 +91,21 @@ stricter about dark theater during the day
 CC bug: new subterms don't make the subterm area scroll right.
 
 vidref segfaults sometimes for no reason, and usually at exit.
+
+
+---------------------------
+
+selectable:
+  curverow
+  points on any number of curves
+  
+
+menus:
+  create curve
+  create subtermx
+  
+  points:
+    scale selected pts
+    shift selected pts
+    adjust fade widths 
+    
