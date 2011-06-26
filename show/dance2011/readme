@@ -88,10 +88,48 @@ somehow?
 extreme and long, when the theater is all dark. we should have been
 stricter about dark theater during the day
 
-CC bug: new subterms don't make the subterm area scroll right.
+CC bug: new subterms don't make the subterm area scroll correctly.
 
 vidref segfaults sometimes for no reason, and usually at exit.
 
+we should have mixed all the audio to mono to avoid issues with the
+songs from the era when they panned certain instruments all the way to
+one side
+
+i should buy a little usb light we can point over the sound board,
+and maybe another for my laptop's nonilluminated keyboard
+
+second night, with ascoltami EOS fixes: everything was fine until the
+playthru of 16, which somehow went right into 17 and started fading
+lights in. We grabbed the audio level and wound ascoltami back to 0 to
+take the lights back out. Unclear why asco can sometimes play on to
+the next song, but i suspect all the async gst commands are not being
+handled right. i need a better state machine that really captures all
+the states that happen, and doesn't take it for granted that stuff
+like pause();seek(0) will happen as written
+
+
+
+---------------------------
+
+configuration:
+
+  plus laptop ran most things; a macbook running chrome had the
+  ascoltami gui. plus needed a usb hub for all its devices:
+    dmx
+    wireless mouse
+    sliders
+    phone charger
+    usb sound
+
+  plus had my garage LCD for 2 monitors, but we undid that for the
+  shows since plugging in the lcd added a lot of audio noise (even
+  with the usb sound card). Maybe my nicer lcd monitors don't cause
+  that problem
+
+  used one of my 3-pin/5-pin dmx convertors to connect the strobe
+  light. Used a plain 5-pin extension to connect the enttec dmx to the
+  theater- probably pointless
 
 ---------------------------
 
@@ -109,3 +147,7 @@ menus:
     shift selected pts
     adjust fade widths 
     
+
+multiple time grids overlaid on the scene: song breaks, sections
+within a song, beats. let them take optional labels
+
