@@ -2,9 +2,9 @@ from __future__ import division
 import math, time, logging
 import Tix as tk
 import louie as dispatcher
-from light9.zoomcontrol import RegionZoom
-from light9 import cursors
-from light9.curve import introPad, postPad
+from light9.curvecalc.zoomcontrol import RegionZoom
+from light9.curvecalc import cursors
+from light9.curvecalc.curve import introPad, postPad
 from light9.dmxchanedit import gradient
 
 log = logging.getLogger()
