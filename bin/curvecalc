@@ -17,7 +17,7 @@ try:
 except ImportError:
     import louie as dispatcher 
 from twisted.internet import reactor,tksupport
-import jsonlib, restkit
+import json, restkit
 import twisted
 from twisted.web.client import Agent
 from twisted.internet.protocol import Protocol
@@ -35,7 +35,8 @@ import run_local
 from light9 import Submaster, dmxclient, networking, showconfig, prof, Patch
 from light9.TLUtility import make_attributes_from_args
 from light9.zoomcontrol import Zoomcontrol
-from light9.curve import Curveset, Curvesetview
+from light9.curve import Curveset
+from light9.curveview import Curvesetview
 from light9.wavelength import wavelength
 from light9.uihelpers import toplevelat
 from light9.namespaces import L9
@@ -52,7 +53,7 @@ class GatherJson(Protocol):
         self.buf += bytes
 
     def connectionLost(self, reason):
-        self.finished.callback(jsonlib.read(self.buf, use_float=True))
+        self.finished.callback(json.loads(self.buf))
 
 class StringProducer(object):
     # http://twistedmatrix.com/documents/current/web/howto/client.html
@@ -99,7 +100,7 @@ class Music:
     def seekplay_or_pause(self,t):
         d = self.player.request("POST",
                                 networking.musicPlayer.path("seekPlayOrPause"),
-                                bodyProducer=StringProducer(jsonlib.write({"t" : t})))
+                                bodyProducer=StringProducer(json.dumps({"t" : t})))
 
 class Expr(object):
     """singleton, provides functions for use in subterm expressions,
@@ -500,7 +501,8 @@ def createHelpLines(root):
 
 def currentlyPlayingSong():
     """ask the music player what song it's on"""
-    t = jsonlib.read(restkit.Resource(networking.musicPlayer.url).get("time").body)
+    player = restkit.Resource(networking.musicPlayer.url)
+    t = json.loads(player.get("time").body_string())
     if t['song'] is None:
         raise ValueError("music player is not playing any song")
     return URIRef(t['song'])
