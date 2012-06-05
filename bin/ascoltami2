@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!bin/python
 import web, thread, gobject, sys, optparse, logging
 from rdflib import URIRef
 sys.path.append(".")

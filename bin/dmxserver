@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!bin/python
 """
 
 this is the only process to talk to the dmx hardware. other clients

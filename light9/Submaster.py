@@ -1,6 +1,6 @@
 from __future__ import division
 import os, logging
-from rdflib.Graph import Graph
+from rdflib import Graph
 from rdflib import RDFS, Literal, BNode
 from light9.namespaces import L9, XSD
 from light9.TLUtility import dict_scale, dict_max

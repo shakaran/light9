@@ -1,6 +1,6 @@
 import time, logging
 from os import path, getenv
-from rdflib.Graph import Graph
+from rdflib import Graph
 from rdflib import URIRef
 from namespaces import MUS, L9
 log = logging.getLogger('showconfig')
