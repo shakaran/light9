@@ -10,20 +10,19 @@ todo: curveview should preserve more objects, for speed maybe
 
 """
 from __future__ import division
-import time,textwrap,math,random,os,optparse, urllib2
+import time,textwrap,os,optparse, urllib2
 import Tix as tk
 import louie as dispatcher 
 from twisted.internet import reactor,tksupport
 
-from rdflib import Literal, URIRef, RDF, RDFS
+from rdflib import URIRef
 from rdflib import Graph
 import rdflib
 import logging
 log = logging.getLogger()
 
 import run_local
-from light9 import Submaster, dmxclient, showconfig, prof, Patch
-from light9.TLUtility import make_attributes_from_args
+from light9 import showconfig, prof
 from light9.curvecalc.zoomcontrol import Zoomcontrol
 from light9.curvecalc.curve import Curveset
 from light9.curvecalc.curveview import Curvesetview
@@ -31,214 +30,9 @@ from light9.curvecalc.musicaccess import Music, currentlyPlayingSong
 from light9.wavelength import wavelength
 from light9.uihelpers import toplevelat
 from light9.namespaces import L9
-import light9.Effects
-
-class Expr(object):
-    """singleton, provides functions for use in subterm expressions,
-    e.g. chases"""
-    def __init__(self):
-        self.effectGlobals = light9.Effects.configExprGlobals()
-    
-    def exprGlobals(self, startDict, t):
-        """globals dict for use by expressions"""
-
-        glo = startDict.copy()
-        
-        # add in functions from Effects
-        glo.update(self.effectGlobals)
-
-        glo['nsin'] = lambda x: (math.sin(x * (2 * math.pi)) + 1) / 2
-        glo['ncos'] = lambda x: (math.cos(x * (2 * math.pi)) + 1) / 2
-        glo['within'] = lambda a, b: a < t < b
-        glo['bef'] = lambda x: t < x
-
-
-        def smoove(x):
-            return -2 * (x ** 3) + 3 * (x ** 2)
-        glo['smoove'] = smoove
-
-        def aft(t, x, smooth=0):
-            left = x - smooth / 2
-            right = x + smooth / 2
-            if left < t < right:
-                return smoove((t - left) / (right - left))
-            return t > x
-        glo['aft'] = lambda x, smooth=0: aft(t, x, smooth)
-
-        def chan(name):
-            return Submaster.Submaster(
-                leveldict={Patch.get_dmx_channel(name) : 1.0},
-                temporary=True)
-        glo['chan'] = chan
-
-        def smooth_random(speed=1):
-            """1 = new stuff each second, <1 is slower, fade-ier"""
-            x = (t * speed) % len(self._smooth_random_items)
-            x1 = int(x)
-            x2 = (int(x) + 1) % len(self._smooth_random_items)
-            y1 = self._smooth_random_items[x1]
-            y2 = self._smooth_random_items[x2]
-            return y1 + (y2 - y1) * ((x - x1))
-
-        def notch_random(speed=1):
-            """1 = new stuff each second, <1 is slower, notch-ier"""
-            x = (t * speed) % len(self._smooth_random_items)
-            x1 = int(x)
-            y1 = self._smooth_random_items[x1]
-            return y1
-            
-        glo['noise'] = smooth_random
-        glo['notch'] = notch_random
-
-        
-
-        return glo
-
-exprglo = Expr()
-        
-class Subexpr:
-    curveset = None
-    def __init__(self,curveset,expr=""):
-        self.curveset = curveset
-        self.lasteval = None
-        self.expr=expr
-        self._smooth_random_items = [random.random() for x in range(100)]
-    def eval(self,t):
-        if self.expr=="":
-            dispatcher.send("expr_error",sender=self,exc="no expr, using 0")
-            return 0
-        glo = self.curveset.globalsdict()
-        glo['t'] = t
-
-        glo = exprglo.exprGlobals(glo, t)
-        
-        try:
-            self.lasteval = eval(self.expr,glo)
-        except Exception,e:
-            dispatcher.send("expr_error",sender=self,exc=e)
-        else:
-            dispatcher.send("expr_error",sender=self,exc="ok")
-        return self.lasteval
-
-    def expr():
-        doc = "python expression for level as a function of t, using curves"
-        def fget(self):
-            return self._expr
-        def fset(self, value):
-            self._expr = value
-            dispatcher("expr_changed",sender=self)
-        return locals()
-    expr = property(**expr())
-
-class Subexprview(tk.Frame):
-    def __init__(self,master,se,**kw):
-        self.subexpr=se
-        tk.Frame.__init__(self,master,**kw)
-        self.evar = tk.StringVar()
-        e = self.ent = tk.Entry(self,textvariable=self.evar)
-        e.pack(side='left',fill='x',exp=1)
-        self.expr_changed()
-        self.evar.trace_variable('w',self.evar_changed)
-        dispatcher.connect(self.expr_changed,"expr_changed",
-                           sender=self.subexpr)
-        self.error = tk.Label(self)
-        self.error.pack(side='left')
-        dispatcher.connect(lambda exc: self.error.config(text=str(exc)),
-                           "expr_error",sender=self.subexpr,weak=0)
-    def expr_changed(self):
-        if self.subexpr.expr!=self.evar.get():
-            self.evar.set(self.subexpr.expr)
-    def evar_changed(self,*args):
-        self.subexpr.expr = self.evar.get()
-
-class Subterm:
-    """one Submaster and its Subexpr"""
-    def __init__(self, submaster, subexpr):
-        make_attributes_from_args('submaster', 'subexpr')
-    def scaled(self, t):
-        subexpr_eval = self.subexpr.eval(t)
-        # we prevent any exceptions from escaping, since they cause us to
-        # stop sending levels
-        try:
-            if isinstance(subexpr_eval, Submaster.Submaster):
-                # if the expression returns a submaster, just return it
-                return subexpr_eval
-            else:
-                # otherwise, return our submaster multiplied by the value 
-                # returned
-                return self.submaster * subexpr_eval
-        except Exception, e:
-            dispatcher.send("expr_error", sender=self.subexpr, exc=str(e))
-            return Submaster.Submaster('Error: %s' % str(e), temporary=True)
-
-    def __repr__(self):
-        return "<Subterm %s %s>" % (self.submaster, self.subexpr)
-
-class Subtermview(tk.Frame):
-    def __init__(self, master, graph, st, **kw):
-        self.subterm = st
-        tk.Frame.__init__(self,master,bd=1,relief='raised',**kw)
-        l = tk.Label(self, text="sub %s" % self.subterm.submaster.name)
-        l.pack(side='left')
-        sev=Subexprview(self,self.subterm.subexpr)
-        sev.pack(side='left',fill='both',exp=1)
-
-class Output:
-    lastsendtime=0
-    lastsendlevs=None
-    def __init__(self, subterms, music):
-        make_attributes_from_args('subterms','music')
-
-        self.recent_t=[]
-        self.later = None
-
-        self.update()
-        
-    def update(self):
-        d = self.music.current_time()
-        d.addCallback(self.update2)
-        d.addErrback(self.updateerr)
-        
-    def updateerr(self,e):
-
-        print e.getTraceback()
-        dispatcher.send("update status",val=e.getErrorMessage())
-        if self.later and not self.later.cancelled and not self.later.called:
-            self.later.cancel()
-        self.later = reactor.callLater(1,self.update)
-        
-    def update2(self,t):
-        # spot alsa soundcard offset is always 0, we get times about a
-        # second ahead of what's really getting played
-        #t = t - .7
-        
-        dispatcher.send("update status",
-                        val="ok: receiving time from music player")
-        if self.later and not self.later.cancelled and not self.later.called:
-            self.later.cancel()
-
-        self.later = reactor.callLater(.02, self.update)
-
-        self.recent_t = self.recent_t[-50:]+[t]
-        period = (self.recent_t[-1] - self.recent_t[0]) / len(self.recent_t)
-        dispatcher.send("update period", val=period)
-        self.send_dmx(t)
-        
-    def send_dmx(self,t):
-        dispatcher.send("curves to sliders", t=t)
-        scaledsubs=[]
-        for st in self.subterms:
-            scl = st.scaled(t)
-            scaledsubs.append(scl)
-        out = Submaster.sub_maxes(*scaledsubs)
-        levs = out.get_levels()
-        now=time.time()
-        if now-self.lastsendtime>5 or levs!=self.lastsendlevs:
-            dispatcher.send("output levels",val=levs)
-            dmxclient.outputlevels(out.get_dmx_list(),
-                                   twisted=1,clientid='curvecalc')
-            self.lastsendtime = now
-            self.lastsendlevs = levs
+from light9.curvecalc.subterm import read_all_subs, savekey, graphPathForSubterms
+from light9.curvecalc.subtermview import makeSubtermCommandRow, add_one_subterm
+from light9.curvecalc.output import Output
 
 def makeStatusLines(master):
     """various labels that listen for dispatcher signals"""
@@ -258,81 +52,6 @@ def makeStatusLines(master):
                            l.config(text=sn+": "+tf(val)),
                            signame, weak=False)
 
-def add_one_subterm(graph, subUri, curveset, subterms, master, expr=None):
-    subname = graph.label(subUri)
-    print "%s's label is %s" % (subUri, subname)
-    if not subname: # fake sub, like for a chase
-        st = graph.subjects(L9['sub'], subUri).next()
-        subname = graph.label(st)
-        print "using parent subterm's name instead. parent %r, name %r" % (st, subname)
-    assert subname, "%s has no name" % subUri
-    if expr is None:
-        expr = '%s(t)' % subname
-
-    term = Subterm(Submaster.Submaster(graph=graph, name=subname, sub=subUri),
-                   Subexpr(curveset,expr))
-    subterms.append(term)
-
-    stv=Subtermview(master, graph, term)
-    stv.pack(side='top',fill='x')
-
-    return term
-
-def makeSubtermCommandRow(master, curveset, subterms, root, ssv, graph):
-    """
-    the row that starts with 'reload subs' button
-    """
-    f=tk.Frame(master,relief='raised',bd=1)
-    newname = tk.StringVar()
-
-    def add_cmd(evt):
-        uri = L9['sub/%s' % newname.get()]
-        graph.add((uri, RDF.type, L9.Subterm))
-        graph.add((uri, RDFS.label, Literal(newname.get())))
-        add_one_subterm(graph, uri,
-                        curveset, subterms, ssv, None)
-        if evt.state & 4: # control key modifier
-            curveset.new_curve(newname.get())
-        newname.set('')
-
-    def reload_subs():
-        dispatcher.send('reload all subs')
-
-    tk.Button(f, text="reload subs (C-r)", 
-        command=reload_subs).pack(side='left')
-    tk.Label(f, text="new subterm named (C-Enter for curve too, C-n for focus):").pack(side='left')
-    entry = tk.Entry(f, textvariable=newname)
-    entry.pack(side='left', fill='x', exp=1)
-    entry.bind("<Key-Return>", add_cmd)
-
-    def focus_entry():
-        entry.focus()
-        
-    dispatcher.connect(focus_entry, "focus new subterm", weak=False)
-
-    return f
-
-def savesubterms(filename,subterms):
-    raise NotImplementedError
-    s=""
-    for st in subterms:
-        s=s+"%s %s\n" % (st.submaster.name, st.subexpr.expr)
-    
-    file(filename,'w').write(s)
-
-def createSubtermGraph(song, subterms):
-    """rdf graph describing the subterms, readable by add_subterms_for_song"""
-    graph = Graph()
-    for subterm in subterms:
-        assert subterm.submaster.name, "submaster has no name"
-        uri = URIRef(song + "/subterm/" + subterm.submaster.name)
-        graph.add((song, L9['subterm'], uri))
-        graph.add((uri, RDF.type, L9['Subterm']))
-        graph.add((uri, RDFS.label, Literal(subterm.submaster.name)))
-        graph.add((uri, L9['sub'], L9['sub/%s' % subterm.submaster.name]))
-        graph.add((uri, L9['expression'], Literal(subterm.subexpr.expr)))
-    return graph
-
 def add_subterms_for_song(graph, song, curveset, subterms, master):
     for st in graph.objects(song, L9['subterm']):
         log.info("song %s has subterm %s", song, st)
@@ -347,18 +66,6 @@ def add_subterms_for_song(graph, song, curveset, subterms, master):
                                 curveset, subterms, master, expr)
                 
 
-def graphPathForSubterms(song):
-    return showconfig.subtermsForSong(showconfig.songFilenameFromURI(song)) + ".n3"
-
-@prof.logTime
-def read_all_subs(graph):
-    """read all sub files into this graph so when add_one_subterm tries
-    to add, the sub will be available"""
-    subsDir = showconfig.subsDir()
-    for filename in os.listdir(subsDir):
-        # parsing nt is faster, but it should try n3 format if the parsing fails
-        graph.parse(os.path.join(subsDir, filename), format="n3")
-
 def makeGraph():
     graphOrig = showconfig.getGraph()
     graph = Graph() # a copy, since we're going to add subs into it
@@ -366,15 +73,6 @@ def makeGraph():
         graph.add(s)
     read_all_subs(graph)
     return graph
-
-def savekey(song, subterms, curveset):
-    print "saving", song
-    g = createSubtermGraph(song, subterms)
-    g.serialize(graphPathForSubterms(song), format="nt")
-
-    curveset.save(basename=os.path.join(showconfig.curvesDir(),
-                                        showconfig.songFilenameFromURI(song)))
-    print "saved"
 
 def setupKeyBindings(root, song, subterms, curveset):
     root.bind("<Control-Key-s>",
