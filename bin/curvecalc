@@ -57,7 +57,6 @@ class Main(object):
 
         mainwin.connect("delete-event", lambda *args: reactor.crash())
         mainwin.set_title("curvecalc - %s" % graph.label(song))
-        mainwin.parse_geometry("1000x1000")
         
         self.add_subterms_for_song(song, curveset, subterms,
                                    wtree.get_object("subterms")
@@ -65,7 +64,8 @@ class Main(object):
 
 
         curvesetView = Curvesetview(wtree.get_object("curves"), curveset)
-
+        self.curvesetView = curvesetView # mem problem; don't let this get lost
+        
         # curvesetview must already exist, since this makes 'add_curve'
         # signals for all the initial curves
         curveset.load(basename=os.path.join(

@@ -75,6 +75,8 @@ class Curveview(object):
         """knobEnabled=True highlights the previous key and ties it to a
         hardware knob"""
         self.widget = goocanvas.Canvas()
+        self.widget.set_property("background-color", "black")
+        self.widget.set_size_request(-1, 130)
         self.root = self.widget.get_root_item()
 
         self.redrawsEnabled = False
@@ -95,7 +97,7 @@ class Curveview(object):
         if self.knobEnabled:
             dispatcher.connect(self.knob_in, "knob in")
             dispatcher.connect(self.slider_in, "set key")
-        print "setup alloc", self.__dict__
+
         self.widget.connect("size-allocate", self.update_curve)
         if 0:
 
@@ -283,8 +285,7 @@ class Curveview(object):
                 dispatcher.send("knob out", value=prevKey[1], curve=self.curve)
         
     def update_curve(self, _widget=None, _rect=None):
-        print "update curve on", self, id(self), self.__dict__
-        if not getattr(self, 'redrawsEnabled', False):
+        if not self.redrawsEnabled:
             return
         self.size = self.widget.get_allocation()
 
@@ -358,10 +359,9 @@ class Curveview(object):
                               fill=color, width=0, tags='curve')        
 
     def _draw_markers(self,visible_x):
-        return
         mark = self._draw_one_marker
 
-        mark(0,"0")
+        mark(0, "0")
         t1,t2=visible_x
         if t2-t1<30:
             for t in range(int(t1),int(t2)+1):
@@ -371,7 +371,7 @@ class Curveview(object):
         endtimes = dispatcher.send("get max time")
         if endtimes:
             endtime = endtimes[0][1]
-            mark(endtime,"end %.1f"%endtime)
+            mark(endtime, "end %.1f"%endtime)
             mark(endtime - postPad, "post %.1f" % (endtime - postPad))
         
     def _draw_one_marker(self,t,label):
@@ -380,12 +380,14 @@ class Curveview(object):
         if not 0 <= x < self.size.width:
             return
         x = max(5, x) # cheat left-edge stuff onscreen
-        self.create_line(x, ht,
-                         x, ht - 20,
-                         fill='white', tags=('curve',))
-        self.create_text(x, ht-20, text=label, anchor='s', fill='white',
-                         font="arial 7", tags=('curve',))
-
+        goocanvas.polyline_new_line(self.curveGroup,
+                                    x, ht,
+                                    x, ht - 20,
+                                    stroke_color='white')
+        goocanvas.Text(parent=self.curveGroup,
+                       fill_color="white",
+                       x=x, y=ht-20,
+                       text=label)
 
     def _draw_line(self,visible_points):
         linepts=[]
@@ -404,11 +406,11 @@ class Curveview(object):
         else:
             fill = 'white'
 
-        goocanvas.Polyline(parent=self.curveGroup,
-                           points=goocanvas.Points(linepts),
-                           width=linewidth,
-                           stroke_color=fill,
-                           )
+        self.pl = goocanvas.Polyline(parent=self.curveGroup,
+                                     points=goocanvas.Points(linepts),
+                                     width=linewidth,
+                                     stroke_color=fill,
+                                     )
             
         # canvas doesnt have keyboard focus, so i can't easily change the
         # cursor when ctrl is pressed
@@ -697,7 +699,7 @@ class Curvesetview(object):
         self.curvesVBox.pack_end(f.box)
         f.box.show_all()
         self.allCurveRows.add(f)
-        f.curveView.goLive()
+        #f.curveView.goLive()
 
 
     def goLive(self):
