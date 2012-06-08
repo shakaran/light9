@@ -68,43 +68,9 @@ def add_one_subterm(graph, subUri, curveset, subterms, master, expr=None):
     stv = Subtermview(graph, term)
     y = master.get_property('n-rows')
     master.resize(y + 1, columns=2)
-    master.attach(stv.label, 0, 1, y, y + 1, xoptions=0)
-    master.attach(stv.exprView, 1, 2, y, y + 1)
+    master.attach(stv.label, 0, 1, y, y + 1, xoptions=0, yoptions=0)
+    master.attach(stv.exprView, 1, 2, y, y + 1, yoptions=0)
 
     return term
 
 
-
-def makeSubtermCommandRow(master, curveset, subterms, root, ssv, graph):
-    """
-    the row that starts with 'reload subs' button
-    """
-    f=tk.Frame(master,relief='raised',bd=1)
-    newname = tk.StringVar()
-
-    def add_cmd(evt):
-        uri = L9['sub/%s' % newname.get()]
-        graph.add((uri, RDF.type, L9.Subterm))
-        graph.add((uri, RDFS.label, Literal(newname.get())))
-        add_one_subterm(graph, uri,
-                        curveset, subterms, ssv, None)
-        if evt.state & 4: # control key modifier
-            curveset.new_curve(newname.get())
-        newname.set('')
-
-    def reload_subs():
-        dispatcher.send('reload all subs')
-
-    tk.Button(f, text="reload subs (C-r)", 
-        command=reload_subs).pack(side='left')
-    tk.Label(f, text="new subterm named (C-Enter for curve too, C-n for focus):").pack(side='left')
-    entry = tk.Entry(f, textvariable=newname)
-    entry.pack(side='left', fill='x', exp=1)
-    entry.bind("<Key-Return>", add_cmd)
-
-    def focus_entry():
-        entry.focus()
-        
-    dispatcher.connect(focus_entry, "focus new subterm", weak=False)
-
-    return f

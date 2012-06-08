@@ -1,6 +1,6 @@
 from __future__ import division
 import math, time, logging
-import Tix as tk
+import gtk, goocanvas
 import louie as dispatcher
 from light9.curvecalc.zoomcontrol import RegionZoom
 from light9.curvecalc import cursors
@@ -67,19 +67,22 @@ class Sketch:
             
         self.curveview.update_curve()
 
-class Curveview(tk.Canvas):
-    def __init__(self, master, curve, knobEnabled=False, isMusic=False, **kw):
+class Curveview(object):
+    """
+    graphical curve widget only. Please pack .widget
+    """
+    def __init__(self, curve, knobEnabled=False, isMusic=False, **kw):
         """knobEnabled=True highlights the previous key and ties it to a
         hardware knob"""
+        self.widget = goocanvas.Canvas()
+        self.root = self.widget.get_root_item()
+
         self.redrawsEnabled = False
         self.curve = curve
         self.knobEnabled = knobEnabled
         self._isMusic = isMusic
         self._time = 0
         self.last_mouse_world = None
-        tk.Canvas.__init__(self,master,width=10,height=10,
-                           relief='sunken',bd=1,
-                           closeenough=5,takefocus=1, **kw)
         self.selected_points=[] # idx of points being dragged
         # self.bind("<Enter>",self.focus)
         dispatcher.connect(self.input_time, "input time")
@@ -92,64 +95,70 @@ class Curveview(tk.Canvas):
         if self.knobEnabled:
             dispatcher.connect(self.knob_in, "knob in")
             dispatcher.connect(self.slider_in, "set key")
-        self.bind("<Configure>",self.update_curve)
-        for x in range(1, 6):
-            def add_kb_marker_point(evt, x=x):
-                self.add_point((self.current_time(), (x - 1) / 4.0))
+        print "setup alloc", self.__dict__
+        self.widget.connect("size-allocate", self.update_curve)
+        if 0:
 
-            self.bind("<Key-%s>" % x, add_kb_marker_point)
+            for x in range(1, 6):
+                def add_kb_marker_point(evt, x=x):
+                    self.add_point((self.current_time(), (x - 1) / 4.0))
+
+                self.bind("<Key-%s>" % x, add_kb_marker_point)
 
 
-        for butnum,factor in (5, 1.5),(4, 1/1.5):
-            def onMouseWheel(ev,factor=factor):
-                dispatcher.send("zoom about mouse",
-                                t=self.world_from_screen(ev.x,0)[0],
-                                factor=factor)
-                # this is supposed to make the canvases redraw more
-                # visibly, so we don't waste line redraws that never
-                # get seen. I'm not sure if it works.
-                self.update()
-            self.bind("<ButtonPress-%s>" % butnum, onMouseWheel)
-        self.bind("<Key-Escape>", lambda ev:
-                  dispatcher.send("see time",
-                                  t=self.current_time()))
-        self.bind("<Shift-Escape>", lambda ev:
-                  dispatcher.send("see time until end",
-                                  t=self.current_time()))
-        self.bind("<Control-Escape>", lambda ev: dispatcher.send("show all"))
-        self.bind("<Control-p>", lambda ev:
-                  dispatcher.send("music seek",
-                                  t=self.world_from_screen(ev.x,0)[0]))
+            for butnum,factor in (5, 1.5),(4, 1/1.5):
+                def onMouseWheel(ev,factor=factor):
+                    dispatcher.send("zoom about mouse",
+                                    t=self.world_from_screen(ev.x,0)[0],
+                                    factor=factor)
+                    # this is supposed to make the canvases redraw more
+                    # visibly, so we don't waste line redraws that never
+                    # get seen. I'm not sure if it works.
+                    self.update()
+                self.bind("<ButtonPress-%s>" % butnum, onMouseWheel)
+            self.bind("<Key-Escape>", lambda ev:
+                      dispatcher.send("see time",
+                                      t=self.current_time()))
+            self.bind("<Shift-Escape>", lambda ev:
+                      dispatcher.send("see time until end",
+                                      t=self.current_time()))
+            self.bind("<Control-Escape>", lambda ev: dispatcher.send("show all"))
+            self.bind("<Control-p>", lambda ev:
+                      dispatcher.send("music seek",
+                                      t=self.world_from_screen(ev.x,0)[0]))
 
-        self.bind("<Motion>",
-                  self.dotmotion, add=True)
-        self.bind("<ButtonRelease-1>",
-                  self.dotrelease, add=True)
+            self.bind("<Motion>",
+                      self.dotmotion, add=True)
+            self.bind("<ButtonRelease-1>",
+                      self.dotrelease, add=True)
 
 
         # this binds on c-a-b1, etc
-        self.regionzoom = RegionZoom(self, self.world_from_screen,
-                                     self.screen_from_world)
+        if 0:
+            self.regionzoom = RegionZoom(self, self.world_from_screen,
+                                         self.screen_from_world)
 
         self.sketch = None # an in-progress sketch
-        self.bind("<Shift-ButtonPress-1>", self.sketch_press)
-        self.bind("<Shift-B1-Motion>", self.sketch_motion)
-        self.bind("<Shift-ButtonRelease-1>", self.sketch_release)
+        if 0:
+            self.bind("<Shift-ButtonPress-1>", self.sketch_press)
+            self.bind("<Shift-B1-Motion>", self.sketch_motion)
+            self.bind("<Shift-ButtonRelease-1>", self.sketch_release)
 
 
         self.dragging_dots = False
         self.selecting = False
-        self.bind("<ButtonPress-1>",#"<Alt-Key>",
-                  self.select_press, add=True)
-        self.bind("<Motion>", self.select_motion, add=True)
-        self.bind("<ButtonRelease-1>", #"<Alt-KeyRelease>",
-                  self.select_release, add=True)
+        if 0:
+            self.bind("<ButtonPress-1>",#"<Alt-Key>",
+                      self.select_press, add=True)
+            self.bind("<Motion>", self.select_motion, add=True)
+            self.bind("<ButtonRelease-1>", #"<Alt-KeyRelease>",
+                      self.select_release, add=True)
 
-        self.bind("<ButtonPress-1>", self.check_deselect, add=True)
+            self.bind("<ButtonPress-1>", self.check_deselect, add=True)
 
-        self.bind("<Key-m>", lambda *args: self.curve.toggleMute())
-        self.bind("<Key-c>", lambda *args: dispatcher.send('toggle collapse',
-                                                           sender=self.curve))
+            self.bind("<Key-m>", lambda *args: self.curve.toggleMute())
+            self.bind("<Key-c>", lambda *args: dispatcher.send('toggle collapse',
+                                                               sender=self.curve))
 
     def goLive(self):
         """this is for startup performance only, since the curves were
@@ -241,13 +250,13 @@ class Curveview(tk.Canvas):
 
     def screen_from_world(self,p):
         start,end = self.zoom
-        ht = self.height
-        return (p[0]-start)/(end-start)*self.width, (ht-5)-p[1]*(ht-10)
+        ht = self.size.height
+        return (p[0]-start)/(end-start)*self.size.width, (ht-5)-p[1]*(ht-10)
 
     def world_from_screen(self,x,y):
         start,end = self.zoom
-        ht = self.height
-        return x/self.width*(end-start)+start, ((ht-5)-y)/(ht-10)
+        ht = self.size.height
+        return x/self.size.width*(end-start)+start, ((ht-5)-y)/(ht-10)
     
     def input_time(self, val, forceUpdate=False):
         # i tried various things to make this not update like crazy,
@@ -255,7 +264,7 @@ class Curveview(tk.Canvas):
         # scared that things were getting built in a funny order.        
         #if self._time == val:
         #    return
-        
+        return
         t=val
         pts = self.screen_from_world((val,0))+self.screen_from_world((val,1))
         self.delete('timecursor')
@@ -273,29 +282,33 @@ class Curveview(tk.Canvas):
                                  tags=('knob',))
                 dispatcher.send("knob out", value=prevKey[1], curve=self.curve)
         
-    def update_curve(self,*args):
-        if not self.redrawsEnabled:
+    def update_curve(self, _widget=None, _rect=None):
+        print "update curve on", self, id(self), self.__dict__
+        if not getattr(self, 'redrawsEnabled', False):
             return
-        self.width, self.height = self.winfo_width(), self.winfo_height()
+        self.size = self.widget.get_allocation()
 
-        self.zoom = dispatcher.send("zoom area")[0][1]
+        self.zoom = 0, 3#dispatcher.send("zoom area")[0][1]
         cp = self.curve.points
 
         visible_x = (self.world_from_screen(0,0)[0],
-                     self.world_from_screen(self.width, 0)[0])
+                     self.world_from_screen(self.size.width, 0)[0])
 
         visible_idxs = self.curve.indices_between(visible_x[0], visible_x[1],
                                                   beyond=1)
         visible_points = [cp[i] for i in visible_idxs]
-        
-        self.delete('curve')
 
-        if self.curve.muted:
-            self['bg'] = 'grey20'
-        else:
-            self['bg'] = 'black'
+        if getattr(self, 'curveGroup', None):
+            self.curveGroup.remove()
+        self.curveGroup = goocanvas.Group(parent=self.root)
 
-        if self.height < 40:
+        if 0:
+            if self.curve.muted:
+                self['bg'] = 'grey20'
+            else:
+                self['bg'] = 'black'
+
+        if self.size.height < .40:
             self._draw_gradient()
         else:
             self._draw_markers(visible_x)
@@ -312,11 +325,13 @@ class Curveview(tk.Canvas):
         return self._isMusic
 
     def _draw_gradient(self):
+        print "no grad"
+        return
         t1 = time.time()
         gradient_res = 6 if self.is_music() else 3
         startX = startColor = None
         rects = 0
-        for x in range(0, self.width, gradient_res):
+        for x in range(0, self.size.width, gradient_res):
             wx = self.world_from_screen(x,0)[0]
             mag = self.curve.eval(wx, allow_muting=False)
             if self.curve.muted:
@@ -334,7 +349,7 @@ class Curveview(tk.Canvas):
                 startColor = color
 
         if startColor is not None:
-            self._draw_gradient_slice(startX, self.width, startColor)
+            self._draw_gradient_slice(startX, self.size.width, startColor)
             rects += 1
         log.debug("redraw %s rects in %.02f ms", rects, 1000 * (time.time()-t1))
 
@@ -343,6 +358,7 @@ class Curveview(tk.Canvas):
                               fill=color, width=0, tags='curve')        
 
     def _draw_markers(self,visible_x):
+        return
         mark = self._draw_one_marker
 
         mark(0,"0")
@@ -360,8 +376,8 @@ class Curveview(tk.Canvas):
         
     def _draw_one_marker(self,t,label):
         x = self.screen_from_world((t,0))[0]
-        ht = self.height
-        if not 0 <= x < self.winfo_width():
+        ht = self.size.height
+        if not 0 <= x < self.size.width:
             return
         x = max(5, x) # cheat left-edge stuff onscreen
         self.create_line(x, ht,
@@ -380,26 +396,32 @@ class Curveview(tk.Canvas):
             step = int(len(visible_points)/800)
             linewidth=1
         for p in visible_points[::step]:
-            linepts.extend(self.screen_from_world(p))
+            linepts.append(self.screen_from_world(p))
         if len(linepts)<4:
             return
         if self.curve.muted:
             fill = 'grey34'
         else:
             fill = 'white'
-        kwargs = dict(width=linewidth, tags='curve', fill=fill)
-        line = self.create_line(*linepts, **kwargs)
 
+        goocanvas.Polyline(parent=self.curveGroup,
+                           points=goocanvas.Points(linepts),
+                           width=linewidth,
+                           stroke_color=fill,
+                           )
+            
         # canvas doesnt have keyboard focus, so i can't easily change the
         # cursor when ctrl is pressed
         #        def curs(ev):
         #            print ev.state
         #        self.bind("<KeyPress>",curs)
         #        self.bind("<KeyRelease-Control_L>",lambda ev: curs(0))
-        self.tag_bind(line,"<Control-ButtonPress-1>",self.new_point_at_mouse)
+        if 0:
+            self.tag_bind(line,"<Control-ButtonPress-1>",self.new_point_at_mouse)
 
 
     def _draw_handle_points(self,visible_idxs,visible_points):
+        return
         for i,p in zip(visible_idxs,visible_points):
             rad=3
             worldp = p
@@ -539,61 +561,69 @@ class Curveview(tk.Canvas):
         self.last_mouse_world = None
         self.dragging_dots = False
 
-class CurveRow(tk.Frame):
+class CurveRow(object):
     """
     one of the repeating curve rows (including widgets on the left)
+
+    please pack self.box
     """
-    def __init__(self, master, name, curve, slider, knobEnabled):
-        tk.Frame.__init__(self, master, relief='raised', bd=1)
+    def __init__(self, name, curve, slider, knobEnabled):
 
-        self.collapsed = tk.IntVar()
-        self.muted = tk.IntVar()
+        self.box = gtk.HandleBox()
 
-        labelFont = "arial 8"
+        cols = gtk.HBox()
+        self.box.add(cols)
+        
+        controls = gtk.Frame()
+        controls.set_size_request(115, -1)
+        controls.set_shadow_type(gtk.SHADOW_OUT)
+        cols.pack_start(controls, expand=False)
+        self.setupControls(controls, name, curve, slider)
 
-        leftside = tk.Frame(self)
-        leftside.pack(side='left')
-
-        self.curveView = Curveview(self, curve, knobEnabled=knobEnabled,
+        self.curveView = Curveview(curve, knobEnabled=knobEnabled,
                                    isMusic=name in ['music', 'smooth_music'])
-        self.curveView.pack(side='left', fill='both', expand=True)
-        self.curveView.config(height=100)
-
+        cols.pack_start(self.curveView.widget, expand=True)
+        
+    def setupControls(self, controls, name, curve, slider):
+        box = gtk.VBox()
+        controls.add(box)
+        
         txt = "curve '%s'" % name
         if len(name) > 7:
             txt = name
-        curve_name_label = tk.Label(leftside, text=txt, font=labelFont,width=15)
-        curve_name_label.pack(side='top')
+        curve_name_label = gtk.Label(txt)
+        box.pack_start(curve_name_label)
 
-        bools = tk.Frame(leftside)
-        bools.pack(side='top')
-        collapsed_cb = tk.Checkbutton(bools, text="C",
-                                      font=labelFont, variable=self.collapsed)
-        collapsed_cb.pack(side='left')
-        self.collapsed.trace('w', self.update_ui_to_collapsed_state)
+
+#        self.collapsed = tk.IntVar()
+#        self.muted = tk.IntVar()
+
+        bools = gtk.HBox()
+        box.pack_start(bools)
+        collapsed_cb = gtk.CheckButton("C")
+        bools.pack_start(collapsed_cb)
+        #self.collapsed.trace('w', self.update_ui_to_collapsed_state)
         dispatcher.connect(self.toggleCollapsed, "toggle collapse",
                            sender=curve)
 
-        self.default_bg = leftside['bg']
-        muted_cb = tk.Checkbutton(bools, text="M", font=labelFont,
-                                  variable=self.muted)
-        muted_cb.pack(side='left')
-        self.muted.trace('w', self.sync_mute_to_curve)
+        muted_cb = gtk.CheckButton("M")
+        
+        bools.pack_start(muted_cb)
+        #self.muted.trace('w', self.sync_mute_to_curve)
         dispatcher.connect(self.mute_changed, 'mute changed', sender=curve)
 
         self.sliderLabel = None
         if slider is not None:
             # slider should have a checkbutton, defaults to off for
             # music tracks
-            self.sliderLabel = tk.Label(leftside, text="Slider %s" % slider,
-                                        fg='#800000', font=labelFont)
-            self.sliderLabel.pack(side='top')
+            self.sliderLabel = gtk.Label("Slider %s" % slider)
+            box.pack_start(self.sliderLabel)
 
         # widgets that need recoloring when we tint the row:
-        self.widgets = [leftside, collapsed_cb, muted_cb,
-                        curve_name_label, self]
-        if self.sliderLabel:
-            self.widgets.append(self.sliderLabel)
+        #self.widgets = [leftside, collapsed_cb, muted_cb,
+        #                curve_name_label, self]
+        #if self.sliderLabel:
+        #    self.widgets.append(self.sliderLabel)
 
     def toggleCollapsed(self):
         self.collapsed.set(not self.collapsed.get())
@@ -633,18 +663,20 @@ class CurveRow(tk.Frame):
         self.update_mute_look()
 
 
-class Curvesetview(tk.ScrolledWindow):
-    def __init__(self, master, curveset, **kw):
+class Curvesetview(object):
+    """
+    
+    """
+    def __init__(self, curvesVBox, curveset):
+        self.curvesVBox = curvesVBox
         self.curveset = curveset
         self.allCurveRows = set()
-        tk.ScrolledWindow.__init__(self,master,**kw)
+
+        dispatcher.connect(self.add_curve, "add_curve", sender=self.curveset)
         
-        f = tk.Frame(self.window,relief='raised',bd=1)
-        f.pack(side='top',fill='x')
-        tk.Label(f, text="new curve named: (C-N)").pack(side='left')
-        
-        self.newcurvename = tk.StringVar()
-        
+        self.newcurvename = gtk.EntryBuffer("", 0)
+        return
+
         entry = tk.Entry(f, textvariable=self.newcurvename)
         entry.pack(side='left', fill='x',exp=1)        
         entry.bind("<Key-Return>", self.new_curve)
@@ -652,7 +684,7 @@ class Curvesetview(tk.ScrolledWindow):
         def focus_entry():
             entry.focus()
         
-        dispatcher.connect(self.add_curve, "add_curve", sender=self.curveset)
+        
         dispatcher.connect(focus_entry, "focus new curve", weak=False)
 
     def new_curve(self, event):
@@ -661,10 +693,12 @@ class Curvesetview(tk.ScrolledWindow):
         
     def add_curve(self, name, slider=None, knobEnabled=False):
         curve = self.curveset.curves[name]
-        f = CurveRow(self.window, name, curve, slider, knobEnabled)
-        f.pack(side='top', fill='both')
+        f = CurveRow(name, curve, slider, knobEnabled)
+        self.curvesVBox.pack_end(f.box)
+        f.box.show_all()
         self.allCurveRows.add(f)
         f.curveView.goLive()
+
 
     def goLive(self):
         """for startup performance, none of the curves redraw

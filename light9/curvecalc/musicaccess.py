@@ -63,7 +63,7 @@ class Music:
         return done
 
     def _bodyReceived(self, data):
-        dispatcher.send("input time",val=data['t'])
+        dispatcher.send("input time", val=data['t'])
         return data['t'] # pass along to the real receiver
     
     def seekplay_or_pause(self,t):

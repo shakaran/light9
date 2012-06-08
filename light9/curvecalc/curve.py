@@ -114,7 +114,7 @@ class Sliders(BCF2000):
             self.knobButtonCallback(int(name[11:]))
 
         
-class Curveset:
+class Curveset(object):
     
     curves = None # curvename : curve
     def __init__(self, sliders=False):
@@ -172,7 +172,7 @@ class Curveset:
             num = None
             
         dispatcher.send("add_curve", slider=num, knobEnabled=num is not None,
-                        sender=self,name=name)
+                        sender=self, name=name)
 
     def globalsdict(self):
         return self.curves.copy()

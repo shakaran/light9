@@ -22,16 +22,15 @@ class Output:
     def updateerr(self,e):
 
         print e.getTraceback()
-        dispatcher.send("update status",val=e.getErrorMessage())
+        dispatcher.send("update status", val=e.getErrorMessage())
         if self.later and not self.later.cancelled and not self.later.called:
             self.later.cancel()
-        self.later = reactor.callLater(1,self.update)
+        self.later = reactor.callLater(1, self.update)
         
     def update2(self,t):
         # spot alsa soundcard offset is always 0, we get times about a
         # second ahead of what's really getting played
         #t = t - .7
-        
         dispatcher.send("update status",
                         val="ok: receiving time from music player")
         if self.later and not self.later.cancelled and not self.later.called:

@@ -10,12 +10,14 @@ todo: curveview should preserve more objects, for speed maybe
 
 """
 from __future__ import division
+
 from twisted.internet import gtk2reactor
-import time,textwrap,os,optparse, urllib2, gtk, gobject
+gtk2reactor.install()
+from twisted.internet import reactor
+
+import time, textwrap, os, optparse, urllib2, gtk, gobject
 import louie as dispatcher 
-
 from twisted.python.util import sibpath
-
 from rdflib import URIRef
 from rdflib import Graph
 import rdflib
@@ -32,27 +34,8 @@ from light9.wavelength import wavelength
 from light9.uihelpers import toplevelat
 from light9.namespaces import L9
 from light9.curvecalc.subterm import read_all_subs, savekey, graphPathForSubterms
-from light9.curvecalc.subtermview import makeSubtermCommandRow, add_one_subterm
+from light9.curvecalc.subtermview import add_one_subterm
 from light9.curvecalc.output import Output
-
-def makeStatusLines(master):
-    """various labels that listen for dispatcher signals"""
-    for signame,textfilter in [
-        ('input time',lambda t: "%.2fs"%t),
-        ('output levels',
-         lambda levels: textwrap.fill("; ".join(["%s:%.2f"%(n,v)
-                                                 for n,v in
-                                                 levels.items()[:5]
-                                                 if v>0]),70)),
-        ('update period',lambda t: "%.1fms"%(t*1000)),
-        ('update status',lambda t: str(t)),
-        ]:
-        l = tk.Label(master, anchor='w', justify='left', text='%s:' % signame)
-        l.pack(side='top',fill='x')
-        dispatcher.connect(lambda val,l=l,sn=signame,tf=textfilter:
-                           l.config(text=sn+": "+tf(val)),
-                           signame, weak=False)
-
 
 def makeGraph():
     graphOrig = showconfig.getGraph()
@@ -62,62 +45,8 @@ def makeGraph():
     read_all_subs(graph)
     return graph
 
-def setupKeyBindings(root, song, subterms, curveset):
-    root.bind("<Control-Key-s>",
-              lambda *args: savekey(song, subterms, curveset))
-    root.bind("<Control-Key-r>", lambda evt: dispatcher.send('reload all subs'))
-    root.bind("<Control-Key-n>",
-              lambda evt: dispatcher.send('focus new subterm'))
-    root.bind("<Control-Key-N>", lambda evt: dispatcher.send('focus new curve'))
-    root.bind("<Control-Key-q>",lambda ev: reactor.stop)
-    root.bind("<Destroy>",lambda ev: reactor.stop)
-    root.protocol('WM_DELETE_WINDOW', reactor.stop)
-
-def setupMenubar(barFrame, root, song, subterms, curveset):
-    class newMenu(object):
-        def __init__(self, name):
-            self.name = name
-        def __enter__(self):
-            m = tk.Menubutton(barFrame, text=self.name)
-            m.pack(side='left')
-            mm = tk.Menu(m)
-            m.config(menu=mm)
-            return mm
-        def __exit__(self, type, value, traceback):
-            return False
-        
-    def notImpl(*args):
-        print "sorry, menu command binding isn't done yet. Use the keyboard shortcut"
-        
-    with newMenu("Curvecalc") as m:
-        m.add_command(label='Save', underline=0, accelerator="Ctrl+s",
-                      command=lambda *args: savekey(song, subterms, curveset))
-        m.add_command(label='Quit', command=root.destroy)
-
-    with newMenu("View") as m:
-        m.add_command(label="See current time", accelerator="Esc", command=notImpl)
-        m.add_command(label="See from current time -> end", accelerator="Shift+Esc", command=notImpl)
-        m.add_command(label="Zoom all", accelerator="Ctrl+Esc", command=notImpl)
-        m.add_command(label="Zoom in", accelerator="Wheel up", command=notImpl)
-        m.add_command(label="Zoom out", accelerator="Wheel down", command=notImpl)
-
-    with newMenu("Playback") as m:
-        m.add_command(label="Play/pause at mouse", accelerator="Ctrl+P", command=notImpl)
-
-    with newMenu("Points") as m:
-        m.add_command(label="Delete", accelerator="Del", command=notImpl)
-
-
-def createHelpLines(root):
-    for helpline in ["Mousewheel zoom; C-p play/pause music at mouse",
-                     "Curve point bindings: B1 drag point; C-B1 curve add point; S-B1 sketch points; 1..5 add point at time; B1 drag select points",
-                     "Available in functions: nsin/ncos period=amp=1; within(a,b) bef(x) aft(x) compare to time; smoove(x) cubic smoothstep; chan(name); curvename(t) eval curve"]:
-        line = tk.Label(root, text=helpline, font="Helvetica -12 italic",
-                        anchor='w')
-        line.pack(side='top',fill='x')
-
 class Main(object):
-    def __init__(self, graph, song, curveset, subterms):
+    def __init__(self, graph, opts, song, curveset, subterms):
         self.graph = graph
         wtree = gtk.Builder()
         wtree.add_from_file(sibpath(__file__, "../light9/curvecalc/curvecalc.glade"))
@@ -125,13 +54,35 @@ class Main(object):
         mainwin.connect("destroy", gtk.main_quit)
         wtree.connect_signals(self)
         mainwin.show_all()
-        #gobject.timeout_add(1000 // framerate, self.updateLoop)
 
+        mainwin.connect("delete-event", lambda *args: reactor.crash())
         mainwin.set_title("curvecalc - %s" % graph.label(song))
-
+        mainwin.parse_geometry("1000x1000")
+        
         self.add_subterms_for_song(song, curveset, subterms,
                                    wtree.get_object("subterms")
                                    )
+
+
+        curvesetView = Curvesetview(wtree.get_object("curves"), curveset)
+
+        # curvesetview must already exist, since this makes 'add_curve'
+        # signals for all the initial curves
+        curveset.load(basename=os.path.join(
+            showconfig.curvesDir(),
+            showconfig.songFilenameFromURI(song)),
+                      skipMusic=opts.skip_music)
+        # this is scheduled after some tk shuffling, to try to minimize
+        # the number of times we redraw the curve at startup. If tk is
+        # very slow, it's ok. You'll just get some wasted redraws.
+        curvesetView.goLive()
+        
+        self.makeStatusLines(wtree.get_object("status"))
+
+        #zc = Zoomcontrol(root)
+
+    def onSave(self, *args):
+        savekey(song, subterms, curveset)
 
     def add_subterms_for_song(self, song, curveset, subterms, master):
         for st in self.graph.objects(song, L9['subterm']):
@@ -143,6 +94,46 @@ class Main(object):
                             master,
                             self.graph.value(st, L9['expression']))
         master.show_all()
+
+    def makeStatusLines(self, master):
+        """various labels that listen for dispatcher signals"""
+        for row, (signame, textfilter) in enumerate([
+            ('input time', lambda t: "%.2fs"%t),
+            ('output levels',
+             lambda levels: textwrap.fill("; ".join(["%s:%.2f"%(n,v)
+                                                     for n,v in
+                                                     levels.items()[:5]
+                                                     if v>0]),70)),
+            ('update period', lambda t: "%.1fms"%(t*1000)),
+            ('update status', lambda x: str(x)),
+            ]):
+            key = gtk.Label("%s:" % signame)
+            value = gtk.Label("")
+            master.resize(row + 1, 2)
+            master.attach(key, 0, 1, row, row + 1)
+            master.attach(value, 1, 2, row, row + 1)
+            key.set_alignment(1, 0)
+            value.set_alignment(0, 0)
+
+            dispatcher.connect(lambda val, value=value, tf=textfilter:
+                               value.set_text(tf(val)),
+                               signame, weak=False)
+        master.show_all()
+
+
+    def onReloadSubs(self): # wants to be ctrl-r  too
+        dispatcher.send('reload all subs')
+
+    def onAddSubterm(self):
+        uri = L9['sub/%s' % newname.get()]
+        graph.add((uri, RDF.type, L9.Subterm))
+        graph.add((uri, RDFS.label, Literal(newname.get())))
+        add_one_subterm(graph, uri,
+                        curveset, subterms, ssv, None)
+        if evt.state & 4: # control key modifier
+            curveset.new_curve(newname.get())
+        newname.set('')
+
 
 def main():
     startTime = time.time()
@@ -188,63 +179,15 @@ def main():
     maxtime = wavelength(musicfilename)
     dispatcher.connect(lambda: maxtime, "get max time", weak=False)
 
-    start = Main(graph, song, curveset, subterms)
-    #gtk2reactor.install()
+    start = Main(graph, opts, song, curveset, subterms)
 
+    dispatcher.send("max time", maxtime=maxtime)
+    dispatcher.send("show all")
+        
     if opts.startup_only:
         log.debug("quitting now because of --startup-only")
         return
 
-    gtk.main()
-    1/0
-    ###################
-
-
-    if 'fixed top rows':
-        zc = Zoomcontrol(root)
-        zc.pack(side='top', fill='x')
-
-    if 'panes':
-        panes = tk.PanedWindow(root, height=1)
-        panes.add('curvesetView')
-        panes.add('subterms')
-        panes.pack(side='top', fill='both', expand=True)
-
-        curvesetView = Curvesetview(panes.subwidget('curvesetView'), curveset,
-                                    height=600)
-        curvesetView.pack(fill='both', expand=True)
-
-        subtermArea = tk.Frame(panes.subwidget('subterms'), height=100)
-        subtermArea.pack(fill='both', expand=True)
-
-        subtermScroll = tk.ScrolledWindow(subtermArea)
-        subtermScroll.pack(fill='both')
-
-    if 'fixed bottom rows':
-        makeSubtermCommandRow(root, curveset, subterms, root, subtermArea,
-                              graph).pack(side='top', fill='x')
-        makeStatusLines(root)
-
-        helpBox = tk.Frame(root)
-        createHelpLines(helpBox)
-        helpBox.pack(side='top', fill='x')
-
-    setupKeyBindings(root, song, subterms, curveset)
-    setupMenubar(menubar, root, song, subterms, curveset)
-
-    # curvesetview must already exist, since this makes 'add_curve'
-    # signals for all the initial curves
-    curveset.load(basename=os.path.join(showconfig.curvesDir(),
-                                        showconfig.songFilenameFromURI(song)),
-                  skipMusic=opts.skip_music)
-    
-    dispatcher.send("max time",maxtime=maxtime)
-    dispatcher.send("show all")
-    
-    # this is scheduled after some tk shuffling, to try to minimize
-    # the number of times we redraw the curve at startup. If tk is
-    # very slow, it's ok. You'll just get some wasted redraws.
-    reactor.callLater(.1, curvesetView.goLive)
-
+    reactor.run()
 
 main()
