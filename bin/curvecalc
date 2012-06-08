@@ -53,19 +53,6 @@ def makeStatusLines(master):
                            l.config(text=sn+": "+tf(val)),
                            signame, weak=False)
 
-def add_subterms_for_song(graph, song, curveset, subterms, master):
-    for st in graph.objects(song, L9['subterm']):
-        log.info("song %s has subterm %s", song, st)
-        try:
-            add_one_subterm(graph, graph.value(st, L9['sub']), curveset,
-                            subterms, master, graph.value(st, L9['expression']))
-        except rdflib.exceptions.UniquenessError:
-            print "working around curvecalc save corruption"
-            # curvecalc put all the expressions on one subterm, which is wrong
-            for expr in graph.objects(st, L9['expression']):
-                add_one_subterm(graph, graph.value(st, L9['sub']),
-                                curveset, subterms, master, expr)
-                
 
 def makeGraph():
     graphOrig = showconfig.getGraph()
@@ -130,7 +117,8 @@ def createHelpLines(root):
         line.pack(side='top',fill='x')
 
 class Main(object):
-    def __init__(self):
+    def __init__(self, graph, song, curveset, subterms):
+        self.graph = graph
         wtree = gtk.Builder()
         wtree.add_from_file(sibpath(__file__, "../light9/curvecalc/curvecalc.glade"))
         mainwin = wtree.get_object("MainWindow")
@@ -138,6 +126,23 @@ class Main(object):
         wtree.connect_signals(self)
         mainwin.show_all()
         #gobject.timeout_add(1000 // framerate, self.updateLoop)
+
+        mainwin.set_title("curvecalc - %s" % graph.label(song))
+
+        self.add_subterms_for_song(song, curveset, subterms,
+                                   wtree.get_object("subterms")
+                                   )
+
+    def add_subterms_for_song(self, song, curveset, subterms, master):
+        for st in self.graph.objects(song, L9['subterm']):
+            log.info("song %s has subterm %s", song, st)
+            add_one_subterm(self.graph,
+                            self.graph.value(st, L9['sub']),
+                            curveset,
+                            subterms,
+                            master,
+                            self.graph.value(st, L9['expression']))
+        master.show_all()
 
 def main():
     startTime = time.time()
@@ -165,17 +170,6 @@ def main():
     music=Music()
     graph = makeGraph()
 
-    start=Main()
-    #gtk2reactor.install()
-
-    if opts.startup_only:
-        log.debug("quitting now because of --startup-only")
-        return
-
-    gtk.main()
-    1/0
-    ###################
-
     curveset = Curveset(sliders=opts.sliders)
     subterms = []
 
@@ -194,7 +188,17 @@ def main():
     maxtime = wavelength(musicfilename)
     dispatcher.connect(lambda: maxtime, "get max time", weak=False)
 
-    root.title("curvecalc - %s" % graph.label(song))
+    start = Main(graph, song, curveset, subterms)
+    #gtk2reactor.install()
+
+    if opts.startup_only:
+        log.debug("quitting now because of --startup-only")
+        return
+
+    gtk.main()
+    1/0
+    ###################
+
 
     if 'fixed top rows':
         zc = Zoomcontrol(root)
@@ -225,8 +229,6 @@ def main():
         createHelpLines(helpBox)
         helpBox.pack(side='top', fill='x')
 
-    add_subterms_for_song(graph, song, curveset, subterms,
-                          subtermScroll.subwidget('window'))
     setupKeyBindings(root, song, subterms, curveset)
     setupMenubar(menubar, root, song, subterms, curveset)
 
