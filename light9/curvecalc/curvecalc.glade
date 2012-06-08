@@ -1,42 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk+" version="2.16"/>
-  <!-- interface-naming-policy project-wide -->
-  <object class="GtkTextBuffer" id="textbuffer1">
-    <property name="text" translatable="yes">song01(t)</property>
-  </object>
-  <object class="GtkVBox" id="vbox2">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <child>
-      <object class="GtkImage" id="image1">
-        <property name="width_request">289</property>
-        <property name="height_request">120</property>
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="stock">gtk-missing-image</property>
-      </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="fill">False</property>
-        <property name="position">0</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkLabel" id="label18">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="yalign">0.4699999988079071</property>
-        <property name="label" translatable="yes">vidref from Sat 15:30</property>
-      </object>
-      <packing>
-        <property name="expand">True</property>
-        <property name="fill">True</property>
-        <property name="position">1</property>
-      </packing>
-    </child>
-  </object>
-  <object class="GtkWindow" id="window1">
+  <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkWindow" id="MainWindow">
     <property name="can_focus">False</property>
     <child>
       <object class="GtkVBox" id="vbox1">
@@ -46,24 +11,22 @@
           <object class="GtkMenuBar" id="menubar1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="ubuntu_local">True</property>
             <child>
               <object class="GtkMenuItem" id="menuitem1">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">_Curvecalc</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="ubuntu_local">True</property>
                     <child>
                       <object class="GtkImageMenuItem" id="imagemenuitem2">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -77,9 +40,9 @@
                     <child>
                       <object class="GtkImageMenuItem" id="imagemenuitem5">
                         <property name="label">gtk-quit</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -87,9 +50,9 @@
                     <child>
                       <object class="GtkImageMenuItem" id="imagemenuitem10">
                         <property name="label">gtk-about</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -100,9 +63,9 @@
             </child>
             <child>
               <object class="GtkMenuItem" id="menuitem7">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">_Edit</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
@@ -112,9 +75,9 @@
                     <child>
                       <object class="GtkImageMenuItem" id="imagemenuitem1">
                         <property name="label">gtk-cut</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -122,9 +85,9 @@
                     <child>
                       <object class="GtkImageMenuItem" id="imagemenuitem3">
                         <property name="label">gtk-copy</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -132,9 +95,9 @@
                     <child>
                       <object class="GtkImageMenuItem" id="imagemenuitem4">
                         <property name="label">gtk-paste</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -145,30 +108,29 @@
             </child>
             <child>
               <object class="GtkMenuItem" id="menuitem2">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">_View</property>
                 <property name="use_underline">True</property>
               </object>
             </child>
             <child>
               <object class="GtkMenuItem" id="menuitem3">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">_Playback</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu3">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="ubuntu_local">True</property>
                     <child>
                       <object class="GtkMenuItem" id="menuitem5">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">Play/pause</property>
                         <property name="use_underline">True</property>
                       </object>
@@ -179,9 +141,9 @@
             </child>
             <child>
               <object class="GtkMenuItem" id="menuitem4">
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Poin_ts</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
@@ -190,9 +152,9 @@
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkMenuItem" id="menuitem6">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">menuitem6</property>
                         <property name="use_underline">True</property>
                       </object>
@@ -235,8 +197,6 @@
                     <property name="invisible_char">●</property>
                     <property name="primary_icon_activatable">False</property>
                     <property name="secondary_icon_activatable">False</property>
-                    <property name="primary_icon_sensitive">True</property>
-                    <property name="secondary_icon_sensitive">True</property>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -299,6 +259,7 @@
                                         <child>
                                           <object class="GtkCheckButton" id="checkbutton3">
                                             <property name="label" translatable="yes">C</property>
+                                            <property name="use_action_appearance">False</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -314,6 +275,7 @@
                                         <child>
                                           <object class="GtkCheckButton" id="checkbutton4">
                                             <property name="label" translatable="yes">M</property>
+                                            <property name="use_action_appearance">False</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
@@ -424,8 +386,6 @@
                             <property name="invisible_char">●</property>
                             <property name="primary_icon_activatable">False</property>
                             <property name="secondary_icon_activatable">False</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
                           </object>
                           <packing>
                             <property name="expand">True</property>
@@ -486,8 +446,6 @@
                             <property name="invisible_char">●</property>
                             <property name="primary_icon_activatable">False</property>
                             <property name="secondary_icon_activatable">False</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
                           </object>
                           <packing>
                             <property name="expand">True</property>
@@ -548,8 +506,6 @@
                             <property name="invisible_char">●</property>
                             <property name="primary_icon_activatable">False</property>
                             <property name="secondary_icon_activatable">False</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
                           </object>
                           <packing>
                             <property name="expand">True</property>
@@ -803,6 +759,41 @@
           </packing>
         </child>
       </object>
+    </child>
+  </object>
+  <object class="GtkAccelGroup" id="accelgroup1"/>
+  <object class="GtkTextBuffer" id="textbuffer1">
+    <property name="text" translatable="yes">song01(t)</property>
+  </object>
+  <object class="GtkVBox" id="vbox2">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkImage" id="image1">
+        <property name="width_request">289</property>
+        <property name="height_request">120</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="stock">gtk-missing-image</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">False</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel" id="label18">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="yalign">0.4699999988079071</property>
+        <property name="label" translatable="yes">vidref from Sat 15:30</property>
+      </object>
+      <packing>
+        <property name="expand">True</property>
+        <property name="fill">True</property>
+        <property name="position">1</property>
+      </packing>
     </child>
   </object>
   <object class="GtkSizeGroup" id="sizegroup1"/>

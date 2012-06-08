@@ -10,10 +10,11 @@ todo: curveview should preserve more objects, for speed maybe
 
 """
 from __future__ import division
-import time,textwrap,os,optparse, urllib2
-import Tix as tk
+from twisted.internet import gtk2reactor
+import time,textwrap,os,optparse, urllib2, gtk, gobject
 import louie as dispatcher 
-from twisted.internet import reactor,tksupport
+
+from twisted.python.util import sibpath
 
 from rdflib import URIRef
 from rdflib import Graph
@@ -128,6 +129,16 @@ def createHelpLines(root):
                         anchor='w')
         line.pack(side='top',fill='x')
 
+class Main(object):
+    def __init__(self):
+        wtree = gtk.Builder()
+        wtree.add_from_file(sibpath(__file__, "../light9/curvecalc/curvecalc.glade"))
+        mainwin = wtree.get_object("MainWindow")
+        mainwin.connect("destroy", gtk.main_quit)
+        wtree.connect_signals(self)
+        mainwin.show_all()
+        #gobject.timeout_add(1000 // framerate, self.updateLoop)
+
 def main():
     startTime = time.time()
     parser = optparse.OptionParser()
@@ -153,6 +164,18 @@ def main():
 
     music=Music()
     graph = makeGraph()
+
+    start=Main()
+    #gtk2reactor.install()
+
+    if opts.startup_only:
+        log.debug("quitting now because of --startup-only")
+        return
+
+    gtk.main()
+    1/0
+    ###################
+
     curveset = Curveset(sliders=opts.sliders)
     subterms = []
 
@@ -171,15 +194,7 @@ def main():
     maxtime = wavelength(musicfilename)
     dispatcher.connect(lambda: maxtime, "get max time", weak=False)
 
-
-    root=tk.Tk()
-    root.tk_setPalette("gray50")
-    toplevelat("curvecalc",root)
-    root.tk_focusFollowsMouse()
     root.title("curvecalc - %s" % graph.label(song))
-
-    menubar = tk.Frame(root)
-    menubar.pack(side='top', fill='x')
 
     if 'fixed top rows':
         zc = Zoomcontrol(root)
@@ -229,11 +244,5 @@ def main():
     # very slow, it's ok. You'll just get some wasted redraws.
     reactor.callLater(.1, curvesetView.goLive)
 
-    tksupport.install(root, ms=10)
-    log.debug("startup: run %s", time.time() - startTime)
-    if opts.startup_only:
-        log.debug("quitting now because of --startup-only")
-        return
-    prof.run(reactor.run, profile=False)
 
 main()
