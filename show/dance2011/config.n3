@@ -28,7 +28,7 @@ sh:netHome
    sh:song11, sh:song12, sh:song13, sh:song14, sh:song15, sh:song16,
    sh:song17 .
 
-show:dance2011 :musicRoot "/home/drewp/projects/light9/show/dance2011/music/final/norm/pad" .
+show:dance2011 :musicRoot "/my/music/projects/sharlyn2011/final/norm/pad" .
 
 sh:song1 rdfs:label  "1 opening";           :songFilename "01-opening.wav" .
 sh:song2 rdfs:label  "2 specialty tap";     :songFilename "02-mix.wav" .
