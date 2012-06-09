@@ -75,7 +75,7 @@ class Curveview(object):
         """knobEnabled=True highlights the previous key and ties it to a
         hardware knob"""
         self.widget = goocanvas.Canvas()
-        self.widget.set_property("background-color", "black")
+        self.widget.set_property("background-color", "gray20")
         self.widget.set_size_request(-1, 130)
         self.root = self.widget.get_root_item()
 
@@ -423,22 +423,31 @@ class Curveview(object):
 
 
     def _draw_handle_points(self,visible_idxs,visible_points):
-        return
         for i,p in zip(visible_idxs,visible_points):
             rad=3
             worldp = p
             p = self.screen_from_world(p)
-            dot = self.create_rectangle(p[0]-rad,p[1]-rad,p[0]+rad,p[1]+rad,
-                                        outline='black',fill='blue',
-                                        tags=('curve','point', 'handle%d' % i))
+            dot = goocanvas.Rect(parent=self.curveGroup,
+                                 x=p[0] - rad, y=p[1] - rad,
+                                 width=rad * 2, height=rad * 2,
+                                 stroke_color='gray20',
+                                 fill_color='blue',
+                                 line_width=1,
+                                 #tags=('curve','point', 'handle%d' % i)
+                                 )
             if worldp[1] == 0:
                 rad += 3
-                dot2 = self.create_oval(p[0]-rad,p[1]-rad,
-                                             p[0]+rad,p[1]+rad,
-                                             outline='darkgreen',
-                                       tags=('curve','point', 'handle%d' % i))
-            self.tag_bind('handle%d' % i,"<ButtonPress-1>",
-                          lambda ev,i=i: self.dotpress(ev,i))
+                dot2 = goocanvas.Ellipse(parent=self.curveGroup,
+                                         center_x=p[0],
+                                         center_y=p[1],
+                                         radius_x=rad,
+                                         radius_y=rad,
+                                         line_width=.8,
+                                         stroke_color='darkgreen',
+                                         #tags=('curve','point', 'handle%d' % i)
+                                         )
+            #self.tag_bind('handle%d' % i,"<ButtonPress-1>",
+            #              lambda ev,i=i: self.dotpress(ev,i))
             #self.tag_bind('handle%d' % i, "<Key-d>",
             #              lambda ev, i=i: self.remove_point_idx(i))
                       
@@ -450,7 +459,7 @@ class Curveview(object):
             # are multiple pts selected)
             if self.selected_points:
                 self.remove_point_idx(*self.selected_points)
-        self.bind("<Key-Delete>", delpoint)
+        #self.bind("<Key-Delete>", delpoint)
 
         self.highlight_selected_dots()
 
@@ -501,6 +510,7 @@ class Curveview(object):
         self.update_curve()
 
     def highlight_selected_dots(self):
+        return
         for i,d in self.dots.items():
             if i in self.selected_points:
                 self.itemconfigure(d,fill='red')
@@ -572,6 +582,7 @@ class CurveRow(object):
     def __init__(self, name, curve, slider, knobEnabled):
 
         self.box = gtk.HandleBox()
+        self.box.set_border_width(1)
 
         cols = gtk.HBox()
         self.box.add(cols)

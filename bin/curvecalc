@@ -28,7 +28,7 @@ import run_local
 from light9 import showconfig, prof
 from light9.curvecalc.zoomcontrol import Zoomcontrol
 from light9.curvecalc.curve import Curveset
-from light9.curvecalc.curveview import Curvesetview
+from light9.curvecalc import curveview 
 from light9.curvecalc.musicaccess import Music, currentlyPlayingSong
 from light9.wavelength import wavelength
 from light9.uihelpers import toplevelat
@@ -62,20 +62,32 @@ class Main(object):
                                    wtree.get_object("subterms")
                                    )
 
+        def refreshCurveView():
+            m = os.path.getmtime(curveview.__file__.replace('.pyc', '.py'))
 
-        curvesetView = Curvesetview(wtree.get_object("curves"), curveset)
-        self.curvesetView = curvesetView # mem problem; don't let this get lost
-        
-        # curvesetview must already exist, since this makes 'add_curve'
-        # signals for all the initial curves
-        curveset.load(basename=os.path.join(
-            showconfig.curvesDir(),
-            showconfig.songFilenameFromURI(song)),
-                      skipMusic=opts.skip_music)
-        # this is scheduled after some tk shuffling, to try to minimize
-        # the number of times we redraw the curve at startup. If tk is
-        # very slow, it's ok. You'll just get some wasted redraws.
-        curvesetView.goLive()
+            if not hasattr(self, 'curvesetView') or self.curvesetView._mtime != m:
+                print "reload curveview.py"
+                curvesVBox = wtree.get_object("curves")
+                [curvesVBox.remove(c) for c in curvesVBox.get_children()]
+                reload(curveview)
+                # mem problem somewhere; need to hold a ref to this
+                self.curvesetView = curveview.Curvesetview(
+                    curvesVBox, curveset)
+                self.curvesetView._mtime = m
+
+                # curvesetview must already exist, since this makes 'add_curve'
+                # signals for all the initial curves
+                curveset.load(basename=os.path.join(
+                    showconfig.curvesDir(),
+                    showconfig.songFilenameFromURI(song)),
+                              skipMusic=opts.skip_music)
+                # this is scheduled after some tk shuffling, to try to minimize
+                # the number of times we redraw the curve at startup. If tk is
+                # very slow, it's ok. You'll just get some wasted redraws.
+                self.curvesetView.goLive()
+                
+            reactor.callLater(1, refreshCurveView)
+        refreshCurveView()       
         
         self.makeStatusLines(wtree.get_object("status"))
 
