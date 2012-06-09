@@ -76,7 +76,7 @@ class Curveview(object):
         hardware knob"""
         self.widget = goocanvas.Canvas()
         self.widget.set_property("background-color", "gray20")
-        self.widget.set_size_request(-1, 130)
+        self.widget.set_size_request(-1, 100)
         self.root = self.widget.get_root_item()
 
         self.redrawsEnabled = False
@@ -99,6 +99,10 @@ class Curveview(object):
             dispatcher.connect(self.slider_in, "set key")
 
         self.widget.connect("size-allocate", self.update_curve)
+
+        self.root.connect("motion-notify-event", self.dotmotion)
+        self.root.connect("button-release-event", self.dotrelease)
+        
         if 0:
 
             for x in range(1, 6):
@@ -192,7 +196,7 @@ class Curveview(object):
         self.update_curve()
 
     def print_state(self, msg=""):
-        if 0:
+        if 1:
             print "%s: dragging_dots=%s selecting=%s" % (
                 msg, self.dragging_dots, self.selecting)
 
@@ -289,7 +293,7 @@ class Curveview(object):
             return
         self.size = self.widget.get_allocation()
 
-        self.zoom = 0, 3#dispatcher.send("zoom area")[0][1]
+        self.zoom = 0, 228#dispatcher.send("zoom area")[0][1]
         cp = self.curve.points
 
         visible_x = (self.world_from_screen(0,0)[0],
@@ -383,24 +387,25 @@ class Curveview(object):
         goocanvas.polyline_new_line(self.curveGroup,
                                     x, ht,
                                     x, ht - 20,
-                                    stroke_color='white')
+                                    line_width=.5,
+                                    stroke_color='gray70')
         goocanvas.Text(parent=self.curveGroup,
                        fill_color="white",
-                       x=x, y=ht-20,
+                       font="ubuntu 9",
+                       x=x+3, y=ht-20,
                        text=label)
 
     def _draw_line(self,visible_points):
         linepts=[]
         step=1
-        linewidth=2
+        linewidth = 3
         # 800? maybe this should be related to self.width
-        if len(visible_points)>800:
-            step = int(len(visible_points)/800)
-            linewidth=1
+        if len(visible_points) > 800:
+            step = int(len(visible_points) / 800)
+            linewidth = .5
         for p in visible_points[::step]:
             linepts.append(self.screen_from_world(p))
-        if len(linepts)<4:
-            return
+
         if self.curve.muted:
             fill = 'grey34'
         else:
@@ -408,7 +413,7 @@ class Curveview(object):
 
         self.pl = goocanvas.Polyline(parent=self.curveGroup,
                                      points=goocanvas.Points(linepts),
-                                     width=linewidth,
+                                     line_width=linewidth,
                                      stroke_color=fill,
                                      )
             
@@ -430,7 +435,7 @@ class Curveview(object):
             dot = goocanvas.Rect(parent=self.curveGroup,
                                  x=p[0] - rad, y=p[1] - rad,
                                  width=rad * 2, height=rad * 2,
-                                 stroke_color='gray20',
+                                 stroke_color='gray90',
                                  fill_color='blue',
                                  line_width=1,
                                  #tags=('curve','point', 'handle%d' % i)
@@ -446,6 +451,7 @@ class Curveview(object):
                                          stroke_color='darkgreen',
                                          #tags=('curve','point', 'handle%d' % i)
                                          )
+            dot.connect("button-press-event", self.dotpress, i)
             #self.tag_bind('handle%d' % i,"<ButtonPress-1>",
             #              lambda ev,i=i: self.dotpress(ev,i))
             #self.tag_bind('handle%d' % i, "<Key-d>",
@@ -517,7 +523,7 @@ class Curveview(object):
             else:
                 self.itemconfigure(d,fill='blue')
         
-    def dotpress(self,ev,dotidx):
+    def dotpress(self, r1, r2, ev, dotidx):
         self.print_state("dotpress")
         if dotidx not in self.selected_points:
             self.selected_points=[dotidx]
@@ -531,7 +537,7 @@ class Curveview(object):
         self.selected_points = self.curve.indices_between(start,end)
         self.highlight_selected_dots()
 
-    def dotmotion(self,ev):
+    def dotmotion(self, group, hitObject, ev):
         if not self.dragging_dots:
             return
         if not ev.state & 256:
@@ -566,7 +572,7 @@ class Curveview(object):
         self.selected_points=[]
         self.highlight_selected_dots()
         
-    def dotrelease(self,ev):
+    def dotrelease(self, group, hitObject, ev):
         self.print_state("dotrelease")
         if not self.dragging_dots:
             return

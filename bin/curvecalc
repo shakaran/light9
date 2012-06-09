@@ -69,23 +69,25 @@ class Main(object):
                 print "reload curveview.py"
                 curvesVBox = wtree.get_object("curves")
                 [curvesVBox.remove(c) for c in curvesVBox.get_children()]
-                reload(curveview)
-                # mem problem somewhere; need to hold a ref to this
-                self.curvesetView = curveview.Curvesetview(
-                    curvesVBox, curveset)
-                self.curvesetView._mtime = m
+                try:
+                    reload(curveview)
+                    # mem problem somewhere; need to hold a ref to this
+                    self.curvesetView = curveview.Curvesetview(
+                        curvesVBox, curveset)
+                    self.curvesetView._mtime = m
 
-                # curvesetview must already exist, since this makes 'add_curve'
-                # signals for all the initial curves
-                curveset.load(basename=os.path.join(
-                    showconfig.curvesDir(),
-                    showconfig.songFilenameFromURI(song)),
-                              skipMusic=opts.skip_music)
-                # this is scheduled after some tk shuffling, to try to minimize
-                # the number of times we redraw the curve at startup. If tk is
-                # very slow, it's ok. You'll just get some wasted redraws.
-                self.curvesetView.goLive()
-                
+                    # curvesetview must already exist, since this makes 'add_curve'
+                    # signals for all the initial curves
+                    curveset.load(basename=os.path.join(
+                        showconfig.curvesDir(),
+                        showconfig.songFilenameFromURI(song)),
+                                  skipMusic=opts.skip_music)
+                    # this is scheduled after some tk shuffling, to try to minimize
+                    # the number of times we redraw the curve at startup. If tk is
+                    # very slow, it's ok. You'll just get some wasted redraws.
+                    self.curvesetView.goLive()
+                except Exception, e:
+                    print "reload failed:", e
             reactor.callLater(1, refreshCurveView)
         refreshCurveView()       
         
