@@ -601,6 +601,7 @@ class CurveRow(object):
     please pack self.box
     """
     def __init__(self, name, curve, slider, knobEnabled, zoomControl):
+        self.name = name
         self.box = gtk.HandleBox()
         self.box.set_border_width(1)
 
@@ -732,8 +733,10 @@ class Curvesetview(object):
         self.curvesVBox.pack_end(f.box)
         f.box.show_all()
         self.allCurveRows.add(f)
-        #f.curveView.goLive()
+        f.curveView.goLive()
 
+    def row(self, name):
+        return [r for r in self.allCurveRows if r.name == name][0]
 
     def goLive(self):
         """for startup performance, none of the curves redraw

@@ -32,6 +32,7 @@ from light9.namespaces import L9
 from light9.curvecalc.subterm import read_all_subs, savekey, graphPathForSubterms
 from light9.curvecalc.subtermview import add_one_subterm
 from light9.curvecalc.output import Output
+from light9.gtkpyconsole import togglePyConsole
 
 def makeGraph():
     graphOrig = showconfig.getGraph()
@@ -111,6 +112,9 @@ class Main(object):
         # threads. I don't know whose they are.
         os.kill(os.getpid(), signal.SIGKILL)
 
+    def onPythonConsole(self, item):
+        togglePyConsole(self, item, self.__dict__)
+        
     def onSeeCurrentTime(self, item):
         dispatcher.send("see time")
 
