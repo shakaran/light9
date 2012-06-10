@@ -74,10 +74,10 @@ class Curveview(object):
     def __init__(self, curve, knobEnabled=False, isMusic=False, zoomControl=None, **kw):
         """knobEnabled=True highlights the previous key and ties it to a
         hardware knob"""
-        print "new curveview"
         self.widget = goocanvas.Canvas()
         self.widget.set_property("background-color", "black")
         self.widget.set_size_request(-1, 100)
+        self.size = self.widget.get_allocation()
         self.root = self.widget.get_root_item()
 
         self.redrawsEnabled = False
