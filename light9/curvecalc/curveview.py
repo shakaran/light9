@@ -71,12 +71,12 @@ class Curveview(object):
     """
     graphical curve widget only. Please pack .widget
     """
-    def __init__(self, curve, knobEnabled=False, isMusic=False, **kw):
+    def __init__(self, curve, knobEnabled=False, isMusic=False, zoomControl=None, **kw):
         """knobEnabled=True highlights the previous key and ties it to a
         hardware knob"""
-        print "new curveview" 
+        print "new curveview"
         self.widget = goocanvas.Canvas()
-        self.widget.set_property("background-color", "gray20")
+        self.widget.set_property("background-color", "black")
         self.widget.set_size_request(-1, 100)
         self.root = self.widget.get_root_item()
 
@@ -84,6 +84,7 @@ class Curveview(object):
         self.curve = curve
         self.knobEnabled = knobEnabled
         self._isMusic = isMusic
+        self.zoomControl = zoomControl
         self._time = 0
         self.last_mouse_world = None
         self.entered = False # is the mouse currently over this widget
@@ -106,6 +107,7 @@ class Curveview(object):
         self.widget.connect("leave-notify-event", self.onLeave)
         self.widget.connect("enter-notify-event", self.onEnter)
         self.widget.connect("motion-notify-event", self.onMotion)
+        self.widget.connect("scroll-event", self.onScroll)
         self.widget.connect("button-release-event", self.onRelease)
         
         if 0:
@@ -115,25 +117,6 @@ class Curveview(object):
                     self.add_point((self.current_time(), (x - 1) / 4.0))
 
                 self.bind("<Key-%s>" % x, add_kb_marker_point)
-
-
-            for butnum,factor in (5, 1.5),(4, 1/1.5):
-                def onMouseWheel(ev,factor=factor):
-                    dispatcher.send("zoom about mouse",
-                                    t=self.world_from_screen(ev.x,0)[0],
-                                    factor=factor)
-                    # this is supposed to make the canvases redraw more
-                    # visibly, so we don't waste line redraws that never
-                    # get seen. I'm not sure if it works.
-                    self.update()
-                self.bind("<ButtonPress-%s>" % butnum, onMouseWheel)
-            self.bind("<Key-Escape>", lambda ev:
-                      dispatcher.send("see time",
-                                      t=self.current_time()))
-            self.bind("<Shift-Escape>", lambda ev:
-                      dispatcher.send("see time until end",
-                                      t=self.current_time()))
-            self.bind("<Control-Escape>", lambda ev: dispatcher.send("show all"))
 
         # this binds on c-a-b1, etc
         if 0:
@@ -167,14 +150,17 @@ class Curveview(object):
         user has pressed ctrl-p over a curve view, possibly this
         one. Returns the time under the mouse if we know it, or else
         None
+
+        todo: there should be a faint timecursor line under the mouse
+        so it's more obvious that we use that time for some
+        events. Rt-click should include Ctrl+P as 'play/pause from
+        here'
         """
-        print id(self), "checking", self.entered
+        # maybe self.widget.get_pointer would be ok for this? i didn't try it
         if self.entered:
             t = self.world_from_screen(self.lastMouseX, 0)[0]
-            print self.lastMouseX, t
             return t
         return None
-        #dispatcher.send("music seek", t=self.world_from_screen(ev.x,0)[0])
 
     def goLive(self):
         """this is for startup performance only, since the curves were
@@ -265,14 +251,14 @@ class Curveview(object):
         return self._time
 
     def screen_from_world(self,p):
-        start,end = self.zoom
+        z = self.zoomControl
         ht = self.size.height
-        return (p[0]-start)/(end-start)*self.size.width, (ht-5)-p[1]*(ht-10)
+        return (p[0]-z.start)/(z.end-z.start)*self.size.width, (ht-5)-p[1]*(ht-10)
 
     def world_from_screen(self,x,y):
-        start,end = self.zoom
+        z = self.zoomControl
         ht = self.size.height
-        return x/self.size.width*(end-start)+start, ((ht-5)-y)/(ht-10)
+        return x/self.size.width*(z.end-z.start)+z.start, ((ht-5)-y)/(ht-10)
 
     def input_time(self, val, forceUpdate=False):
         # i tried various things to make this not update like crazy,
@@ -310,9 +296,7 @@ class Curveview(object):
             return
         self.size = self.widget.get_allocation()
  
-        self.zoom = 0, 228#dispatcher.send("zoom area")[0][1]
         cp = self.curve.points
-
         visible_x = (self.world_from_screen(0,0)[0],
                      self.world_from_screen(self.size.width, 0)[0])
 
@@ -345,7 +329,7 @@ class Curveview(object):
         """are we one of the music curves (which might be drawn a bit
         differently)"""
         return self._isMusic
-
+ 
     def _draw_gradient(self):
         print "no grad"
         return
@@ -408,18 +392,19 @@ class Curveview(object):
                                     stroke_color='gray70')
         goocanvas.Text(parent=self.curveGroup,
                        fill_color="white",
-                       font="ubuntu 9",
+                       anchor=gtk.ANCHOR_SOUTH,
+                       font="ubuntu 7",
                        x=x+3, y=ht-20,
                        text=label)
 
     def _draw_line(self,visible_points):
         linepts=[]
         step=1
-        linewidth = 3
-        # 800? maybe this should be related to self.width
-        if len(visible_points) > 800:
-            step = int(len(visible_points) / 800)
-            linewidth = .5
+        linewidth = 1.5
+        maxPointsToDraw = self.size.width / 2
+        if len(visible_points) > maxPointsToDraw:
+            step = int(len(visible_points) / maxPointsToDraw)
+            linewidth = .8
         for p in visible_points[::step]:
             linepts.append(self.screen_from_world(p))
 
@@ -459,15 +444,15 @@ class Curveview(object):
                                  )
             if worldp[1] == 0:
                 rad += 3
-                dot2 = goocanvas.Ellipse(parent=self.curveGroup,
-                                         center_x=p[0],
-                                         center_y=p[1],
-                                         radius_x=rad,
-                                         radius_y=rad,
-                                         line_width=.8,
-                                         stroke_color='darkgreen',
-                                         #tags=('curve','point', 'handle%d' % i)
-                                         )
+                goocanvas.Ellipse(parent=self.curveGroup,
+                                  center_x=p[0],
+                                  center_y=p[1],
+                                  radius_x=rad,
+                                  radius_y=rad,
+                                  line_width=2,
+                                  stroke_color='#00a000',
+                                  #tags=('curve','point', 'handle%d' % i)
+                                  )
             dot.connect("button-press-event", self.dotpress, i)
             #self.tag_bind('handle%d' % i,"<ButtonPress-1>",
             #              lambda ev,i=i: self.dotpress(ev,i))
@@ -596,6 +581,11 @@ class Curveview(object):
     def unselect(self):
         self.selected_points=[]
         self.highlight_selected_dots()
+
+    def onScroll(self, widget, event):
+        t = self.world_from_screen(event.x, 0)[0]
+        self.zoomControl.zoom_about_mouse(
+            t, factor=1.5 if event.direction == gtk.gdk.SCROLL_DOWN else 1/1.5)
         
     def onRelease(self, widget, event):
         self.print_state("dotrelease")
@@ -610,8 +600,7 @@ class CurveRow(object):
 
     please pack self.box
     """
-    def __init__(self, name, curve, slider, knobEnabled):
-
+    def __init__(self, name, curve, slider, knobEnabled, zoomControl):
         self.box = gtk.HandleBox()
         self.box.set_border_width(1)
 
@@ -625,7 +614,8 @@ class CurveRow(object):
         self.setupControls(controls, name, curve, slider)
 
         self.curveView = Curveview(curve, knobEnabled=knobEnabled,
-                                   isMusic=name in ['music', 'smooth_music'])
+                                   isMusic=name in ['music', 'smooth_music'],
+                                   zoomControl=zoomControl)
         cols.pack_start(self.curveView.widget, expand=True)
         
     def setupControls(self, controls, name, curve, slider):
@@ -711,14 +701,21 @@ class Curvesetview(object):
     """
     
     """
-    def __init__(self, curvesVBox, curveset):
+    def __init__(self, curvesVBox, zoomControlBox, curveset):
         self.curvesVBox = curvesVBox
         self.curveset = curveset
         self.allCurveRows = set()
 
+        import light9.curvecalc.zoomcontrol
+        reload(light9.curvecalc.zoomcontrol)
+        self.zoomControl = light9.curvecalc.zoomcontrol.ZoomControl()
+        zoomControlBox.add(self.zoomControl.widget)
+        self.zoomControl.widget.show_all()
+
         dispatcher.connect(self.add_curve, "add_curve", sender=self.curveset)
         
         self.newcurvename = gtk.EntryBuffer("", 0)
+        
         return
 
         entry = tk.Entry(f, textvariable=self.newcurvename)
@@ -728,6 +725,7 @@ class Curvesetview(object):
         
         
         dispatcher.connect(self.focus_entry, "focus new curve")
+
     def focus_entry(self):
         self.entry.focus()
 
@@ -737,7 +735,7 @@ class Curvesetview(object):
         
     def add_curve(self, name, slider=None, knobEnabled=False):
         curve = self.curveset.curves[name]
-        f = CurveRow(name, curve, slider, knobEnabled)
+        f = CurveRow(name, curve, slider, knobEnabled, self.zoomControl)
         self.curvesVBox.pack_end(f.box)
         f.box.show_all()
         self.allCurveRows.add(f)

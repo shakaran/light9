@@ -26,7 +26,6 @@ log = logging.getLogger()
 
 import run_local
 from light9 import showconfig, prof
-from light9.curvecalc.zoomcontrol import Zoomcontrol
 from light9.curvecalc.curve import Curveset
 from light9.curvecalc import curveview 
 from light9.curvecalc.musicaccess import Music, currentlyPlayingSong
@@ -64,19 +63,26 @@ class Main(object):
                                    )
 
         def refreshCurveView():
-            m = os.path.getmtime(curveview.__file__.replace('.pyc', '.py'))
+            mtimes = [os.path.getmtime(f) for f in [
+                'light9/curvecalc/curveview.py',
+                'light9/curvecalc/zoomcontrol.py',
+                ]]
 
-            if not hasattr(self, 'curvesetView') or self.curvesetView._mtime != m:
+            if (not hasattr(self, 'curvesetView') or
+                self.curvesetView._mtimes != mtimes):
                 print "reload curveview.py"
                 curvesVBox = wtree.get_object("curves")
+                zoomControlBox = wtree.get_object("zoomControlBox")
                 [curvesVBox.remove(c) for c in curvesVBox.get_children()]
+                [zoomControlBox.remove(c) for c in
+                 zoomControlBox.get_children()]
                 try:
                     linecache.clearcache()
                     reload(curveview)
                     # mem problem somewhere; need to hold a ref to this
                     self.curvesetView = curveview.Curvesetview(
-                        curvesVBox, curveset)
-                    self.curvesetView._mtime = m
+                        curvesVBox, zoomControlBox, curveset)
+                    self.curvesetView._mtimes = mtimes
 
                     # curvesetview must already exist, since this
                     # makes 'add_curve' signals for all the initial
@@ -97,7 +103,14 @@ class Main(object):
         
         self.makeStatusLines(wtree.get_object("status"))
 
-        #zc = Zoomcontrol(root)
+    def onSeeCurrentTime(self, item):
+        dispatcher.send("see time")
+
+    def onSeeTimeUntilEnd(self, item):
+        dispatcher.send("see time until end")
+
+    def onZoomAll(self, item):
+        dispatcher.send("show all")
 
     def onPlayPause(self, item):
         # since the X coord in a curveview affects the handling, one

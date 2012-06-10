@@ -1,9 +1,12 @@
 from __future__ import division
-import Tkinter as tk
+import gtk, goocanvas
 import louie as dispatcher
 from light9.curvecalc import cursors 
 
-class Zoomcontrol(object,tk.Canvas):
+class ZoomControl(object):
+    """
+    please pack .widget
+    """
 
     mintime = 0
 
@@ -48,51 +51,57 @@ class Zoomcontrol(object,tk.Canvas):
         return locals()
     offset = property(**offset())
 
-    def __init__(self,master,**kw):
-        self.maxtime=370
+    def __init__(self, **kw):
+        self.widget = goocanvas.Canvas(bounds_padding=5)
+        self.widget.set_property("background-color", "gray60")
+        self.widget.set_size_request(-1, 30)
+
+        endtimes = dispatcher.send("get max time")
+        if endtimes:
+            self.maxtime = endtimes[0][1]
+        else:
+            self.maxtime = 0
+
         self.start=0
         self.end=20
-        tk.Canvas.__init__(self,master,width=250,height=30,
-                           relief='raised',bd=1,bg='gray60',**kw)
-        self.leftbrack = self.create_line(0,0,0,0,0,0,0,0,width=5)
-        self.rightbrack = self.create_line(0,0,0,0,0,0,0,0,width=5)
-        self.shade = self.create_rectangle(0,0,0,0,fill='gray70',outline=None)
-        self.time = self.create_line(0,0,0,0,fill='red',width=2)
-        self.redrawzoom()
-        self.bind("<Configure>",self.redrawzoom)
 
-        if 0:
-            # works, but you have to stay in the widget while you drag
-            self.bind("<ButtonPress-1>",self.press)
-            self.tag_bind(self.leftbrack,"<B1-Motion>",
-                          lambda ev: self.adjust(ev,'start'))
-            self.tag_bind(self.rightbrack,"<B1-Motion>",
-                          lambda ev: self.adjust(ev,'end'))
-            self.tag_bind(self.shade,"<B1-Motion>",
-                          lambda ev: self.adjust(ev,'offset'))
-        else:
-            # works better
-            # bind to buttonpress wasnt working, but Enter is good enough
-            self.tag_bind(self.leftbrack,"<Enter>",
-                          lambda ev: self.press(ev,'start'))
-            self.tag_bind(self.shade,"<Enter>",
-                          lambda ev: self.press(ev,'offset'))
-            self.tag_bind(self.rightbrack,"<Enter>",
-                          lambda ev: self.press(ev,'end'))
-            self.bind("<B1-Motion>",self.adjust)
-            self.bind("<ButtonRelease-1>",self.release)
+        self.root = self.widget.get_root_item()
+        self.leftbrack = goocanvas.Polyline(parent=self.root,
+                                            line_width=5, stroke_color='black')
+        self.rightbrack = goocanvas.Polyline(parent=self.root,
+                                             line_width=5, stroke_color='black')
+        self.shade = goocanvas.Rect(parent=self.root,
+                                    fill_color='gray70',
+                                    line_width=.5)
+        self.time = goocanvas.Polyline(parent=self.root,
+                                       line_width=2,
+                                       stroke_color='red')
+        self.redrawzoom()
+        self.widget.connect("size-allocate", self.redrawzoom)
+
+        self.widget.connect("motion-notify-event", self.adjust)
+        self.widget.connect("button-release-event", self.release)
+        self.leftbrack.connect("button-press-event",
+                               lambda i, t, ev: self.press(ev, 'start'))
+        self.rightbrack.connect("button-press-event",
+                                lambda i, t, ev: self.press(ev, 'end'))
+        self.shade.connect("button-press-event",
+                           lambda i, t, ev: self.press(ev, 'offset'))
         
-        dispatcher.connect(lambda: (self.start,self.end),"zoom area",weak=0)
         dispatcher.connect(self.input_time,"input time")
-        dispatcher.connect(lambda maxtime: (setattr(self,'maxtime',maxtime),
-                                            self.redrawzoom()),
-                           "max time",weak=0)
+        dispatcher.connect(self.max_time, "max time")
         dispatcher.connect(self.zoom_about_mouse, "zoom about mouse")
         dispatcher.connect(self.see_time, "see time")
         dispatcher.connect(self.see_time_until_end, "see time until end")
         dispatcher.connect(self.show_all, "show all")
         dispatcher.connect(self.zoom_to_range, "zoom to range")
         self.created=1
+        self.lastTime = 0
+
+    def max_time(self, maxtime):
+        self.maxtime = maxtime
+        self.redrawzoom()
+    
     def zoom_to_range(self,start,end):
         self.start = start
         self.end = end
@@ -108,7 +117,10 @@ class Zoomcontrol(object,tk.Canvas):
         self.end = t + factor*(self.end-t)
         self.redrawzoom()
 
-    def see_time(self, t):
+    def see_time(self, t=None):
+        """defaults to current time"""
+        if t is None:
+            t = self.lastTime
         vis_seconds = self.end - self.start
         margin = vis_seconds * .1
         if t < self.start or t > (self.end - vis_seconds * .3):
@@ -116,24 +128,32 @@ class Zoomcontrol(object,tk.Canvas):
 
         self.redrawzoom()
 
-    def see_time_until_end(self, t):
+    def see_time_until_end(self, t=None):
+        """defaults to current time"""
+        if t is None:
+            t = self.lastTime
         self.start = t - 2
         self.end = self.maxtime
 
         self.redrawzoom()
             
     def input_time(self,val):
-        t=val
-        x=self.can_for_t(t)
-        self.coords(self.time,x,0,x,self.winfo_height())
+        self.lastTime = val
+        x = self.can_for_t(self.lastTime)
+        self.time.set_property("points",
+                               goocanvas.Points([(x, 0),
+                                                 (x, self.size.height)]))
+        
     def press(self,ev,attr):
         self.adjustingattr = attr
         
-    def release(self,ev):
-        if hasattr(self,'adjustingattr'): del self.adjustingattr
-        if hasattr(self,'lastx'): del self.lastx
+    def release(self, widget, ev):
+        if hasattr(self,'adjustingattr'):
+            del self.adjustingattr
+        if hasattr(self,'lastx'):
+            del self.lastx
         
-    def adjust(self,ev,attr=None):
+    def adjust(self, widget, ev):
 
         if not hasattr(self,'adjustingattr'):
             return
@@ -147,36 +167,63 @@ class Zoomcontrol(object,tk.Canvas):
         self.redrawzoom()
 
     def can_for_t(self,t):
-        return (t-self.mintime)/(self.maxtime-self.mintime)*(self.winfo_width()-30)+20
+        a, b = self.mintime, self.maxtime
+        return (t - a) / (b - a) * (self.size.width - 30) + 20
     def t_for_can(self,x):
-        return (x-20)/(self.winfo_width()-30)*(self.maxtime-self.mintime)+self.mintime
+        a, b = self.mintime, self.maxtime
+        return (x - 20) / (self.size.width - 30) * (b - a) + a
 
     def redrawzoom(self,*args):
         """redraw pieces based on start/end"""
+        self.size = self.widget.get_allocation()
         dispatcher.send("zoom changed")
-        if not hasattr(self,'created'): return
-        y1,y2=3,self.winfo_height()-3
+        if not hasattr(self,'created'):
+            return
+        y1, y2 = 3, self.size.height - 3
         lip = 6
         scan = self.can_for_t(self.start)
         ecan = self.can_for_t(self.end)
-        self.coords(self.leftbrack,scan+lip,y1,scan,y1,scan,y2,scan+lip,y2)
-        self.coords(self.rightbrack,ecan-lip,y1,ecan,y1,ecan,y2,ecan-lip,y2)
-        self.coords(self.shade,scan+5,y1+lip,ecan-5,y2-lip)
+
+        self.leftbrack.set_property("points", goocanvas.Points([
+            (scan + lip, y1),
+            (scan, y1),
+            (scan, y2),
+            (scan + lip, y2)]))
+        self.rightbrack.set_property("points", goocanvas.Points([
+            (ecan - lip, y1),
+            (ecan, y1),
+            (ecan, y2),
+            (ecan - lip, y2)]))
+        self.shade.set_properties(
+            x=scan + 5,
+            y=y1 + lip,
+            width=max(0, ecan - 5 - (scan + 5)),
+            height=max(0, y2 - lip - (y1 + lip)))
+
         self.redrawTics()
         
     def redrawTics(self):
-        self.delete("tics")
-        lastx=-1000
+        if hasattr(self, 'ticsGroup'):
+            self.ticsGroup.remove()
+        self.ticsGroup = goocanvas.Group(parent=self.root)
+
+        lastx =- 1000
+
         for t in range(0,int(self.maxtime)):
             x = self.can_for_t(t)
-            if 0 < x < self.winfo_width() and x-lastx>30:
-                txt=str(t)
-                if lastx==-1000:
-                    txt=txt+"sec"
-                self.create_line(x,0,x,15,
-                                 tags=('tics',))
-                self.create_text(x, self.winfo_height()-1, anchor='s',
-                                 text=txt, tags=('tics',), font='arial 7')
+            if 0 < x < self.size.width and x - lastx > 30:
+                txt = str(t)
+                if lastx == -1000:
+                    txt = txt + "sec"
+                goocanvas.Polyline(parent=self.ticsGroup,
+                                   points=goocanvas.Points([(x, 0), (x, 15)]),
+                                   line_width=.8,
+                                   stroke_color='black')
+                goocanvas.Text(parent=self.ticsGroup,
+                               x=x, y=self.size.height-1,
+                               anchor=gtk.ANCHOR_SOUTH,
+                               text=txt,
+                               font='ubuntu 7')
                 lastx = x
 
 
