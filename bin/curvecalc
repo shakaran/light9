@@ -49,7 +49,7 @@ class Main(object):
         self.curveset, self.subterms, self.music = curveset, subterms, music
 
         wtree = self.wtree = gtk.Builder()
-        wtree.add_from_file(sibpath(__file__, "../light9/curvecalc/curvecalc.glade"))
+        wtree.add_from_file("light9/curvecalc/curvecalc.glade")
         mainwin = wtree.get_object("MainWindow")
         
         mainwin.connect("destroy", self.onQuit)
@@ -62,6 +62,11 @@ class Main(object):
 
         mainwin.connect("delete-event", lambda *args: reactor.crash())
         mainwin.set_title("curvecalc - %s" % graph.label(song))
+        mainwin.parse_geometry("715x930+1080+26")
+
+        # this is the only one i found that would set the size right,
+        # but it's a minimum size, which i don't really want
+        mainwin.set_size_request(1000, 1000)
         
         self.add_subterms_for_song(song, curveset, subterms,
                                    wtree.get_object("subterms")
