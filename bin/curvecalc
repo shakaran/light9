@@ -102,7 +102,7 @@ class Main(object):
         self.music.playOrPause(t=times[0] if times else None)
 
     def onSave(self, *args):
-        savekey(song, subterms, curveset)
+        savekey(self.song, self.subterms, self.curveset)
 
     def add_subterms_for_song(self, song, curveset, subterms, master):
         for st in self.graph.objects(song, L9['subterm']):
