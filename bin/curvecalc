@@ -15,7 +15,7 @@ from twisted.internet import gtk2reactor
 gtk2reactor.install()
 from twisted.internet import reactor
 
-import time, textwrap, os, optparse, urllib2, gtk, gobject, linecache
+import time, textwrap, os, optparse, urllib2, gtk, gobject, linecache, signal
 import louie as dispatcher 
 from twisted.python.util import sibpath
 from rdflib import URIRef
@@ -51,7 +51,8 @@ class Main(object):
         wtree = gtk.Builder()
         wtree.add_from_file(sibpath(__file__, "../light9/curvecalc/curvecalc.glade"))
         mainwin = wtree.get_object("MainWindow")
-        mainwin.connect("destroy", gtk.main_quit)
+        
+        mainwin.connect("destroy", self.onQuit)
         wtree.connect_signals(self)
         mainwin.show_all()
 
@@ -102,6 +103,12 @@ class Main(object):
         refreshCurveView()       
         
         self.makeStatusLines(wtree.get_object("status"))
+
+    def onQuit(self, *args):
+        reactor.crash()
+        # there's a hang after this, maybe in sem_wait in two
+        # threads. I don't know whose they are.
+        os.kill(os.getpid(), signal.SIGKILL)
 
     def onSeeCurrentTime(self, item):
         dispatcher.send("see time")
