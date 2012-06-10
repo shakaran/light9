@@ -1,4 +1,4 @@
-import web, jsonlib, socket
+import web, json, socket
 from twisted.python.util import sibpath
 from light9.namespaces import L9
 from light9.showconfig import getSongsFromShow, songOnDisk
@@ -35,7 +35,7 @@ class timeResource(object):
         else:
             song = None
         web.header("content-type", "application/json")
-        return jsonlib.write({
+        return json.dumps({
             "song" : song,
             "started" : player.playStartTime,
             "duration" : player.duration(),
@@ -50,7 +50,7 @@ class timeResource(object):
         want those actions. Use {t: <seconds>} to seek, optionally
         with a pause/resume command too.
         """
-        params = jsonlib.read(web.data(), use_float=True)
+        params = json.loads(web.data())
         player = app.player
         if params.get('pause', False):
             player.pause()
@@ -68,7 +68,7 @@ class songs(object):
         songs = getSongsFromShow(graph, app.show)
 
         web.header("Content-type", "application/json")
-        return jsonlib.write({"songs" : [
+        return json.dumps({"songs" : [
             {"uri" : s,
              "path" : graph.value(s, L9['showPath']),
              "label" : graph.label(s)} for s in songs]})
@@ -86,7 +86,7 @@ class seekPlayOrPause(object):
     def POST(self):
         player = app.player
 
-        data = jsonlib.read(web.data(), use_float=True)
+        data = json.loads(web.data())
         if player.isPlaying():
             player.pause()
         else:
