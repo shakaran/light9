@@ -133,16 +133,17 @@ class Curveset(object):
             self.sliderIgnoreInputUntil = {}
         else:
             self.sliders = None
-        
+
+    def sorter(self, name):
+        return not name.endswith('music'), name
+
     def load(self,basename, skipMusic=False):
         """find all files that look like basename-curvename and add
         curves with their contents
 
         This fires 'add_curve' dispatcher events to announce the new curves.
         """
-        def sorter(name):
-            return not name.endswith('music'), name
-        for filename in sorted(glob.glob("%s-*"%basename), key=sorter):
+        for filename in sorted(glob.glob("%s-*"%basename), key=self.sorter):
             curvename = filename[filename.rfind('-')+1:]
             if skipMusic and curvename in ['music', 'smooth_music']:
                 continue
@@ -156,6 +157,9 @@ class Curveset(object):
         like basename-curvename"""
         for name,cur in self.curves.items():
             cur.save("%s-%s" % (basename,name))
+
+    def curveNamesInOrder(self):
+        return sorted(self.curves.keys(), key=self.sorter)
             
     def add_curve(self,name,curve):
         self.curves[name] = curve

@@ -712,6 +712,9 @@ class Curvesetview(object):
         zoomControlBox.add(self.zoomControl.widget)
         self.zoomControl.widget.show_all()
 
+        for c in curveset.curveNamesInOrder():
+            self.add_curve(c) 
+
         dispatcher.connect(self.add_curve, "add_curve", sender=self.curveset)
         
         self.newcurvename = gtk.EntryBuffer("", 0)
@@ -722,7 +725,6 @@ class Curvesetview(object):
         entry.pack(side='left', fill='x',exp=1)        
         entry.bind("<Key-Return>", self.new_curve)
         self.entry = entry
-        
         
         dispatcher.connect(self.focus_entry, "focus new curve")
 

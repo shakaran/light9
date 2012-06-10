@@ -163,13 +163,6 @@ class Main(object):
                     curvesVBox, zoomControlBox, self.curveset)
                 self.curvesetView._mtimes = mtimes
 
-                # curvesetview must already exist, since this
-                # makes 'add_curve' signals for all the initial
-                # curves
-                self.curveset.load(basename=os.path.join(
-                    showconfig.curvesDir(),
-                    showconfig.songFilenameFromURI(self.song)),
-                              skipMusic=self.opts.skip_music)
                 # this is scheduled after some tk shuffling, to
                 # try to minimize the number of times we redraw
                 # the curve at startup. If tk is very slow, it's
@@ -224,6 +217,14 @@ def main():
 
     curveset = Curveset(sliders=opts.sliders)
     subterms = []
+
+    # curvesetview must already exist, since this
+    # makes 'add_curve' signals for all the initial
+    # curves.
+    curveset.load(basename=os.path.join(
+        showconfig.curvesDir(),
+        showconfig.songFilenameFromURI(song)),
+                  skipMusic=opts.skip_music)
 
     subtermPath = graphPathForSubterms(song)
     try:
