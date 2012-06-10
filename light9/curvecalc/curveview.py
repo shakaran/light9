@@ -109,9 +109,15 @@ class Curveview(object):
         self.widget.connect("motion-notify-event", self.onMotion)
         self.widget.connect("scroll-event", self.onScroll)
         self.widget.connect("button-release-event", self.onRelease)
+        self.root.connect("button-press-event", self.onCanvasPress)
+
+        # todo: hold control to get a [+] cursor
+        #        def curs(ev):
+        #            print ev.state
+        #        self.bind("<KeyPress>",curs)
+        #        self.bind("<KeyRelease-Control_L>",lambda ev: curs(0))
         
         if 0:
-
             for x in range(1, 6):
                 def add_kb_marker_point(evt, x=x):
                     self.add_point((self.current_time(), (x - 1) / 4.0))
@@ -124,11 +130,6 @@ class Curveview(object):
                                          self.screen_from_world)
 
         self.sketch = None # an in-progress sketch
-        if 0:
-            self.bind("<Shift-ButtonPress-1>", self.sketch_press)
-            self.bind("<Shift-B1-Motion>", self.sketch_motion)
-            self.bind("<Shift-ButtonRelease-1>", self.sketch_release)
-
 
         self.dragging_dots = False
         self.selecting = False
@@ -144,6 +145,26 @@ class Curveview(object):
             self.bind("<Key-m>", lambda *args: self.curve.toggleMute())
             self.bind("<Key-c>", lambda *args: dispatcher.send('toggle collapse',
                                                                sender=self.curve))
+
+    def onDelete(self):
+        if self.selected_points:
+            self.remove_point_idx(*self.selected_points)
+        
+
+    def onCanvasPress(self, item, target_item, event):
+        # when we support multiple curves per canvas, this should find
+        # the close one and add a point to that. Binding to the line
+        # itself is probably too hard to hit. Maybe a background-color
+        # really thick line would be a nice way to allow a sloppier
+        # click
+        if event.get_state() & gtk.gdk.CONTROL_MASK:
+            self.new_point_at_mouse(event)
+        elif event.get_state() & gtk.gdk.SHIFT_MASK:
+            self.sketch_press(event)
+        else:
+            self.select_press(event)
+
+            
 
     def playPause(self):
         """
@@ -213,7 +234,7 @@ class Curveview(object):
         if not self.selecting:
             self.selecting = True
             self.select_start = self.world_from_screen(ev.x,0)[0]
-            cursors.push(self,"gumby")
+            #cursors.push(self,"gumby")
         
     def select_motion(self,ev):
         if not self.selecting:
@@ -230,7 +251,7 @@ class Curveview(object):
         
         if not self.selecting:
             return
-        cursors.pop(self)
+        #cursors.pop(self)
         self.selecting = False
         self.select_between(self.select_start,
                             self.world_from_screen(ev.x,0)[0])
@@ -308,11 +329,9 @@ class Curveview(object):
             self.curveGroup.remove()
         self.curveGroup = goocanvas.Group(parent=self.root)
 
-        if 0:
-            if self.curve.muted:
-                self['bg'] = 'grey20'
-            else:
-                self['bg'] = 'black'
+        # this makes gtk quietly stop working. Getting called too early?
+        #self.widget.set_property("background-color",
+        #                         "gray20" if self.curve.muted else "black")
 
         if self.size.height < .40:
             self._draw_gradient()
@@ -406,7 +425,8 @@ class Curveview(object):
             step = int(len(visible_points) / maxPointsToDraw)
             linewidth = .8
         for p in visible_points[::step]:
-            linepts.append(self.screen_from_world(p))
+            x,y = self.screen_from_world(p)
+            linepts.append((int(x) + .5, y))
 
         if self.curve.muted:
             fill = 'grey34'
@@ -419,29 +439,21 @@ class Curveview(object):
                                      stroke_color=fill,
                                      )
             
-        # canvas doesnt have keyboard focus, so i can't easily change the
-        # cursor when ctrl is pressed
-        #        def curs(ev):
-        #            print ev.state
-        #        self.bind("<KeyPress>",curs)
-        #        self.bind("<KeyRelease-Control_L>",lambda ev: curs(0))
-        if 0:
-            self.tag_bind(line,"<Control-ButtonPress-1>",self.new_point_at_mouse)
-
-
     def _draw_handle_points(self,visible_idxs,visible_points):
         for i,p in zip(visible_idxs,visible_points):
             rad=3
             worldp = p
             p = self.screen_from_world(p)
             dot = goocanvas.Rect(parent=self.curveGroup,
-                                 x=p[0] - rad, y=p[1] - rad,
+                                 x=int(p[0] - rad) + .5,
+                                 y=int(p[1] - rad) + .5,
                                  width=rad * 2, height=rad * 2,
                                  stroke_color='gray90',
                                  fill_color='blue',
                                  line_width=1,
                                  #tags=('curve','point', 'handle%d' % i)
                                  )
+
             if worldp[1] == 0:
                 rad += 3
                 goocanvas.Ellipse(parent=self.curveGroup,
@@ -460,14 +472,6 @@ class Curveview(object):
             #              lambda ev, i=i: self.remove_point_idx(i))
                       
             self.dots[i]=dot
-
-        def delpoint(ev):
-            # had a hard time tag_binding to the points, so i trap at
-            # the widget level (which might be nice anyway when there
-            # are multiple pts selected)
-            if self.selected_points:
-                self.remove_point_idx(*self.selected_points)
-        #self.bind("<Key-Delete>", delpoint)
 
         self.highlight_selected_dots()
 
@@ -518,12 +522,11 @@ class Curveview(object):
         self.update_curve()
 
     def highlight_selected_dots(self):
-        return
         for i,d in self.dots.items():
             if i in self.selected_points:
-                self.itemconfigure(d,fill='red')
+                d.set_property('fill_color', 'red')
             else:
-                self.itemconfigure(d,fill='blue')
+                d.set_property('fill_color', 'blue')
         
     def dotpress(self, r1, r2, ev, dotidx):
         self.print_state("dotpress")
@@ -547,6 +550,12 @@ class Curveview(object):
 
     def onMotion(self, widget, event):
         self.lastMouseX = event.x
+
+        if event.state & gtk.gdk.SHIFT_MASK and 1: # and B1
+            self.sketch_motion(event)
+            return
+
+        self.select_motion(event)
         
         if not self.dragging_dots:
             return
@@ -589,6 +598,13 @@ class Curveview(object):
         
     def onRelease(self, widget, event):
         self.print_state("dotrelease")
+
+        if event.state & gtk.gdk.SHIFT_MASK: # relese-B1
+            self.sketch_release(event)
+            return
+
+        self.select_release(event)
+ 
         if not self.dragging_dots:
             return
         self.last_mouse_world = None
@@ -660,6 +676,9 @@ class CurveRow(object):
         #if self.sliderLabel:
         #    self.widgets.append(self.sliderLabel)
 
+    def onDelete(self):
+        self.curveView.onDelete()
+        
     def toggleCollapsed(self):
         self.collapsed.set(not self.collapsed.get())
 
@@ -745,3 +764,6 @@ class Curvesetview(object):
         for cr in self.allCurveRows:
             cr.curveView.goLive()
 
+    def onDelete(self):
+        for r in self.allCurveRows:
+            r.onDelete()

@@ -112,6 +112,9 @@ class Main(object):
         # threads. I don't know whose they are.
         os.kill(os.getpid(), signal.SIGKILL)
 
+    def onDelete(self, *args):
+        self.curvesetView.onDelete()
+
     def onPythonConsole(self, item):
         togglePyConsole(self, item, self.__dict__)
         
