@@ -15,7 +15,7 @@ from twisted.internet import gtk2reactor
 gtk2reactor.install()
 from twisted.internet import reactor
 
-import time, textwrap, os, optparse, urllib2, gtk, gobject
+import time, textwrap, os, optparse, urllib2, gtk, gobject, linecache
 import louie as dispatcher 
 from twisted.python.util import sibpath
 from rdflib import URIRef
@@ -46,8 +46,9 @@ def makeGraph():
     return graph
 
 class Main(object):
-    def __init__(self, graph, opts, song, curveset, subterms):
+    def __init__(self, graph, opts, song, curveset, subterms, music):
         self.graph = graph
+        self.music = music
         wtree = gtk.Builder()
         wtree.add_from_file(sibpath(__file__, "../light9/curvecalc/curvecalc.glade"))
         mainwin = wtree.get_object("MainWindow")
@@ -70,21 +71,24 @@ class Main(object):
                 curvesVBox = wtree.get_object("curves")
                 [curvesVBox.remove(c) for c in curvesVBox.get_children()]
                 try:
+                    linecache.clearcache()
                     reload(curveview)
                     # mem problem somewhere; need to hold a ref to this
                     self.curvesetView = curveview.Curvesetview(
                         curvesVBox, curveset)
                     self.curvesetView._mtime = m
 
-                    # curvesetview must already exist, since this makes 'add_curve'
-                    # signals for all the initial curves
+                    # curvesetview must already exist, since this
+                    # makes 'add_curve' signals for all the initial
+                    # curves
                     curveset.load(basename=os.path.join(
                         showconfig.curvesDir(),
                         showconfig.songFilenameFromURI(song)),
                                   skipMusic=opts.skip_music)
-                    # this is scheduled after some tk shuffling, to try to minimize
-                    # the number of times we redraw the curve at startup. If tk is
-                    # very slow, it's ok. You'll just get some wasted redraws.
+                    # this is scheduled after some tk shuffling, to
+                    # try to minimize the number of times we redraw
+                    # the curve at startup. If tk is very slow, it's
+                    # ok. You'll just get some wasted redraws.
                     self.curvesetView.goLive()
                 except Exception, e:
                     print "reload failed:", e
@@ -94,6 +98,13 @@ class Main(object):
         self.makeStatusLines(wtree.get_object("status"))
 
         #zc = Zoomcontrol(root)
+
+    def onPlayPause(self, item):
+        # since the X coord in a curveview affects the handling, one
+        # of them may be able to pick this up
+        results = dispatcher.send("onPlayPause")
+        times = [t for listener, t in results if t is not None]
+        self.music.playOrPause(t=times[0] if times else None)
 
     def onSave(self, *args):
         savekey(song, subterms, curveset)
@@ -193,7 +204,7 @@ def main():
     maxtime = wavelength(musicfilename)
     dispatcher.connect(lambda: maxtime, "get max time", weak=False)
 
-    start = Main(graph, opts, song, curveset, subterms)
+    start = Main(graph, opts, song, curveset, subterms, music)
 
     dispatcher.send("max time", maxtime=maxtime)
     dispatcher.send("show all")

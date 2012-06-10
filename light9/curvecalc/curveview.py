@@ -8,7 +8,7 @@ from light9.curvecalc.curve import introPad, postPad
 from light9.dmxchanedit import gradient
 
 log = logging.getLogger()
-
+print "curveview.py toplevel"
 def vlen(v):
     return math.sqrt(v[0]*v[0] + v[1]*v[1])
 
@@ -74,6 +74,7 @@ class Curveview(object):
     def __init__(self, curve, knobEnabled=False, isMusic=False, **kw):
         """knobEnabled=True highlights the previous key and ties it to a
         hardware knob"""
+        print "new curveview" 
         self.widget = goocanvas.Canvas()
         self.widget.set_property("background-color", "gray20")
         self.widget.set_size_request(-1, 100)
@@ -85,8 +86,10 @@ class Curveview(object):
         self._isMusic = isMusic
         self._time = 0
         self.last_mouse_world = None
+        self.entered = False # is the mouse currently over this widget
         self.selected_points=[] # idx of points being dragged
         # self.bind("<Enter>",self.focus)
+        dispatcher.connect(self.playPause, "onPlayPause")
         dispatcher.connect(self.input_time, "input time")
         dispatcher.connect(self.update_curve, "zoom changed")
         dispatcher.connect(self.update_curve, "points changed",
@@ -100,8 +103,10 @@ class Curveview(object):
 
         self.widget.connect("size-allocate", self.update_curve)
 
-        self.root.connect("motion-notify-event", self.dotmotion)
-        self.root.connect("button-release-event", self.dotrelease)
+        self.widget.connect("leave-notify-event", self.onLeave)
+        self.widget.connect("enter-notify-event", self.onEnter)
+        self.widget.connect("motion-notify-event", self.onMotion)
+        self.widget.connect("button-release-event", self.onRelease)
         
         if 0:
 
@@ -129,15 +134,6 @@ class Curveview(object):
                       dispatcher.send("see time until end",
                                       t=self.current_time()))
             self.bind("<Control-Escape>", lambda ev: dispatcher.send("show all"))
-            self.bind("<Control-p>", lambda ev:
-                      dispatcher.send("music seek",
-                                      t=self.world_from_screen(ev.x,0)[0]))
-
-            self.bind("<Motion>",
-                      self.dotmotion, add=True)
-            self.bind("<ButtonRelease-1>",
-                      self.dotrelease, add=True)
-
 
         # this binds on c-a-b1, etc
         if 0:
@@ -165,6 +161,20 @@ class Curveview(object):
             self.bind("<Key-m>", lambda *args: self.curve.toggleMute())
             self.bind("<Key-c>", lambda *args: dispatcher.send('toggle collapse',
                                                                sender=self.curve))
+
+    def playPause(self):
+        """
+        user has pressed ctrl-p over a curve view, possibly this
+        one. Returns the time under the mouse if we know it, or else
+        None
+        """
+        print id(self), "checking", self.entered
+        if self.entered:
+            t = self.world_from_screen(self.lastMouseX, 0)[0]
+            print self.lastMouseX, t
+            return t
+        return None
+        #dispatcher.send("music seek", t=self.world_from_screen(ev.x,0)[0])
 
     def goLive(self):
         """this is for startup performance only, since the curves were
@@ -263,19 +273,26 @@ class Curveview(object):
         start,end = self.zoom
         ht = self.size.height
         return x/self.size.width*(end-start)+start, ((ht-5)-y)/(ht-10)
-    
+
     def input_time(self, val, forceUpdate=False):
         # i tried various things to make this not update like crazy,
         # but the timeline was always missing at startup, so i got
         # scared that things were getting built in a funny order.        
         #if self._time == val:
         #    return
-        return
         t=val
-        pts = self.screen_from_world((val,0))+self.screen_from_world((val,1))
-        self.delete('timecursor')
-        self.create_line(*pts,**dict(width=2,fill='red',tags=('timecursor',)))
-        self.have_time_line = True
+
+        if not getattr(self, 'timelineLine', None):
+            self.timelineGroup = goocanvas.Group(parent=self.root)
+            self.timelineLine = goocanvas.Polyline(
+                parent=self.timelineGroup,
+                points=goocanvas.Points([(0,0), (0,0)]),
+                line_width=2, stroke_color='red')
+
+        self.timelineLine.set_property('points', goocanvas.Points([
+            self.screen_from_world((val,0)),
+            self.screen_from_world((val,1))]))
+        
         self._time = t
         if self.knobEnabled:
             self.delete('knob')
@@ -292,7 +309,7 @@ class Curveview(object):
         if not self.redrawsEnabled:
             return
         self.size = self.widget.get_allocation()
-
+ 
         self.zoom = 0, 228#dispatcher.send("zoom area")[0][1]
         cp = self.curve.points
 
@@ -537,15 +554,23 @@ class Curveview(object):
         self.selected_points = self.curve.indices_between(start,end)
         self.highlight_selected_dots()
 
-    def dotmotion(self, group, hitObject, ev):
+    def onEnter(self, widget, event):
+        self.entered = True
+
+    def onLeave(self, widget, event):
+        self.entered = False
+
+    def onMotion(self, widget, event):
+        self.lastMouseX = event.x
+        
         if not self.dragging_dots:
             return
-        if not ev.state & 256:
+        if not event.state & 256:
             return # not lmb-down
         cp = self.curve.points
         moved=0
 
-        cur = self.world_from_screen(ev.x, ev.y)
+        cur = self.world_from_screen(event.x, event.y)
         if self.last_mouse_world:
             delta = (cur[0] - self.last_mouse_world[0],
                      cur[1] - self.last_mouse_world[1])
@@ -572,7 +597,7 @@ class Curveview(object):
         self.selected_points=[]
         self.highlight_selected_dots()
         
-    def dotrelease(self, group, hitObject, ev):
+    def onRelease(self, widget, event):
         self.print_state("dotrelease")
         if not self.dragging_dots:
             return
@@ -699,12 +724,12 @@ class Curvesetview(object):
         entry = tk.Entry(f, textvariable=self.newcurvename)
         entry.pack(side='left', fill='x',exp=1)        
         entry.bind("<Key-Return>", self.new_curve)
-
-        def focus_entry():
-            entry.focus()
+        self.entry = entry
         
         
-        dispatcher.connect(focus_entry, "focus new curve", weak=False)
+        dispatcher.connect(self.focus_entry, "focus new curve")
+    def focus_entry(self):
+        self.entry.focus()
 
     def new_curve(self, event):
         self.curveset.new_curve(self.newcurvename.get())

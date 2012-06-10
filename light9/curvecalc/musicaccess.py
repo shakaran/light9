@@ -46,7 +46,6 @@ class Music:
     def __init__(self):
         self.recenttime=0
         self.player = Agent(reactor)
-        dispatcher.connect(self.seekplay_or_pause,"music seek")
         self.timePath = networking.musicPlayer.path("time")
         
     def current_time(self):
@@ -66,12 +65,14 @@ class Music:
         dispatcher.send("input time", val=data['t'])
         return data['t'] # pass along to the real receiver
     
-    def seekplay_or_pause(self,t):
-        d = self.player.request("POST",
+    def playOrPause(self, t=None):
+        if t is None:
+            # could be better
+            self.current_time().addCallback(lambda t: self.playOrPause(t))
+        else:
+            self.player.request("POST",
                                 networking.musicPlayer.path("seekPlayOrPause"),
                                 bodyProducer=StringProducer(json.dumps({"t" : t})))
-
-
 
 def currentlyPlayingSong():
     """ask the music player what song it's on"""
