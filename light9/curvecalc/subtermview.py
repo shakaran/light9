@@ -50,7 +50,7 @@ class Subtermview(object):
         self.exprView = sev.box
 
 
-def add_one_subterm(graph, subUri, curveset, subterms, master, expr=None):
+def add_one_subterm(graph, subUri, curveset, subterms, master, expr=None, show=False):
     subname = graph.label(subUri)
     print "%s's label is %s" % (subUri, subname)
     if not subname: # fake sub, like for a chase
@@ -70,7 +70,8 @@ def add_one_subterm(graph, subUri, curveset, subterms, master, expr=None):
     master.resize(y + 1, columns=2)
     master.attach(stv.label, 0, 1, y, y + 1, xoptions=0, yoptions=0)
     master.attach(stv.exprView, 1, 2, y, y + 1, yoptions=0)
-
+    if show:
+        master.show_all()
     return term
 
 

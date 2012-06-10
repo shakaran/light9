@@ -430,33 +430,23 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label2">
+                          <object class="GtkButton" id="button2">
+                            <property name="label">gtk-add</property>
                             <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">new subterm named (C-Enter for curve too, C-n for focus):</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="use_action_appearance">False</property>
+                            <property name="use_stock">True</property>
+                            <signal name="clicked" handler="onNewSubterm" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">True</property>
+                            <property name="fill">False</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry" id="entry1">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="invisible_char">●</property>
-                            <property name="invisible_char_set">True</property>
-                            <property name="primary_icon_activatable">False</property>
-                            <property name="secondary_icon_activatable">False</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">2</property>
-                          </packing>
+                          <placeholder/>
                         </child>
                       </object>
                       <packing>
@@ -612,6 +602,7 @@ Available in functions: nsin/ncos period=amp=1; within(a,b) bef(x) aft(x) compar
     <property name="can_focus">False</property>
     <property name="stock">gtk-refresh</property>
   </object>
+  <object class="GtkListStore" id="liststore1"/>
   <object class="GtkDialog" id="newCurve">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -631,7 +622,7 @@ Available in functions: nsin/ncos period=amp=1; within(a,b) bef(x) aft(x) compar
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="button12">
+              <object class="GtkButton" id="button5">
                 <property name="label">gtk-cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -646,7 +637,7 @@ Available in functions: nsin/ncos period=amp=1; within(a,b) bef(x) aft(x) compar
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button2">
+              <object class="GtkButton" id="button4">
                 <property name="label">gtk-add</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -671,7 +662,7 @@ Available in functions: nsin/ncos period=amp=1; within(a,b) bef(x) aft(x) compar
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="label11">
+          <object class="GtkLabel" id="label12">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label" translatable="yes">Name for new curve</property>
@@ -703,12 +694,130 @@ Available in functions: nsin/ncos period=amp=1; within(a,b) bef(x) aft(x) compar
       </object>
     </child>
     <action-widgets>
-      <action-widget response="2">button12</action-widget>
-      <action-widget response="1">button2</action-widget>
+      <action-widget response="2">button5</action-widget>
+      <action-widget response="1">button4</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkTextBuffer" id="textbuffer1">
-    <property name="text" translatable="yes">song01(t)</property>
+  <object class="GtkDialog" id="newSubterm">
+    <property name="can_focus">False</property>
+    <property name="border_width">5</property>
+    <property name="type">popup</property>
+    <property name="title" translatable="yes">New curve</property>
+    <property name="modal">True</property>
+    <property name="window_position">mouse</property>
+    <property name="type_hint">normal</property>
+    <child internal-child="vbox">
+      <object class="GtkVBox" id="dialog-vbox3">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area3">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="button12">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button3">
+                <property name="label">gtk-add</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="has_default">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label11">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Name for new subterm</property>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkVBox" id="vbox11">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkComboBox" id="newSubtermName">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="has_focus">True</property>
+                <property name="is_focus">True</property>
+                <property name="model">liststore1</property>
+                <property name="has_entry">True</property>
+                <property name="entry_text_column">0</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="newSubtermMakeCurve">
+                <property name="label" translatable="yes">_Make new curve with the same name</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="use_underline">True</property>
+                <property name="active">True</property>
+                <property name="draw_indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="2">button12</action-widget>
+      <action-widget response="1">button3</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkVBox" id="vbox2">
     <property name="visible">True</property>
@@ -742,4 +851,8 @@ Available in functions: nsin/ncos period=amp=1; within(a,b) bef(x) aft(x) compar
     </child>
   </object>
   <object class="GtkSizeGroup" id="sizegroup1"/>
+  <object class="GtkSizeGroup" id="sizegroup2"/>
+  <object class="GtkTextBuffer" id="textbuffer1">
+    <property name="text" translatable="yes">song01(t)</property>
+  </object>
 </interface>
