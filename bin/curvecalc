@@ -72,25 +72,23 @@ class Main(object):
         self.makeStatusLines(wtree.get_object("status"))
 
     def onNewCurve(self, *args):
-        nc = self.wtree.get_object("newCurve")
+        dialog = self.wtree.get_object("newCurve")
         entry = self.wtree.get_object("newCurveName")
         # if you don't have songx, that should be the suggested name
         entry.set_text("")
-        response = nc.run()
-        if response == 1:
+        if dialog.run() == 1:
             self.curveset.new_curve(entry.get_text())
-        nc.hide()
+        dialog.hide()
 
     def onNewSubterm(self, *args):
-        ns = self.wtree.get_object("newSubterm")
+        dialog = self.wtree.get_object("newSubterm")
         # the plan is to autocomplete this on existing subterm names
         # (but let you make one up, too)
         entry = self.wtree.get_object("newSubtermName").get_children()[0]
         entry.set_text("")
-        if ns.run() == 1:
+        entry.grab_focus()
+        if dialog.run() == 1:
             newname = entry.get_text()
-            makeCurve = self.wtree.get_object("newSubtermMakeCurve").get_active()
-
             uri = L9['sub/%s' % newname]
             self.graph.add((uri, RDF.type, L9.Subterm))
             self.graph.add((uri, RDFS.label, Literal(newname)))
@@ -98,10 +96,10 @@ class Main(object):
                             self.curveset, self.subterms,
                             self.wtree.get_object("subterms"),
                             None, show=True)
-            if makeCurve:
+            if self.wtree.get_object("newSubtermMakeCurve").get_active():
                 self.curveset.new_curve(newname)
             
-        ns.hide()
+        dialog.hide()
 
     def refreshTheme(self):
         gtk.rc_reparse_all()

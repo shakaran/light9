@@ -101,7 +101,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="use_action_appearance">False</property>
-                <property name="label" translatable="yes">_Curves</property>
+                <property name="label" translatable="yes">_Create</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu6">
@@ -113,10 +113,20 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
-                        <property name="label" translatable="yes">Add...</property>
+                        <property name="label" translatable="yes">Curve...</property>
                         <property name="use_underline">True</property>
                         <accelerator key="n" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                         <signal name="activate" handler="onNewCurve" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="menuitem15">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="label" translatable="yes">Subterm...</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="onNewSubterm" swapped="no"/>
                       </object>
                     </child>
                   </object>

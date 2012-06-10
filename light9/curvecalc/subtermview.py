@@ -20,8 +20,8 @@ class Subexprview(object):
 
         self.entry.set_buffer(self.entryBuffer)
         self.expr_changed()
-        self.entryBuffer.connect("deleted-text", self.evar_changed)
-        self.entryBuffer.connect("inserted-text", self.evar_changed)
+        self.entryBuffer.connect("deleted-text", self.entry_changed)
+        self.entryBuffer.connect("inserted-text", self.entry_changed)
         dispatcher.connect(self.expr_changed,"expr_changed",
                            sender=self.subexpr)
 
@@ -33,8 +33,7 @@ class Subexprview(object):
         if e != self.entryBuffer.get_text():
             self.entryBuffer.set_text(e, len(e))
             
-    def evar_changed(self,*args):
-        print "hi change"
+    def entry_changed(self, *args):
         self.subexpr.expr = self.entryBuffer.get_text()
 
 class Subtermview(object):

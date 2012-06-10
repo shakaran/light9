@@ -719,15 +719,6 @@ class Curvesetview(object):
         
         self.newcurvename = gtk.EntryBuffer("", 0)
         
-        return
-
-        entry = tk.Entry(f, textvariable=self.newcurvename)
-        entry.pack(side='left', fill='x',exp=1)        
-        entry.bind("<Key-Return>", self.new_curve)
-        self.entry = entry
-        
-        dispatcher.connect(self.focus_entry, "focus new curve")
-
     def focus_entry(self):
         self.entry.focus()
 
