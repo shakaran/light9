@@ -193,7 +193,6 @@
                 <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">Poin_ts</property>
                 <property name="use_underline">True</property>
-                <signal name="activate" handler="onPlayPause" swapped="no"/>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu4">
                     <property name="visible">True</property>
@@ -399,6 +398,7 @@
                             <property name="receives_default">True</property>
                             <property name="use_action_appearance">False</property>
                             <property name="image">image2</property>
+                            <accelerator key="r" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                             <signal name="clicked" handler="onReloadSubs" swapped="no"/>
                           </object>
                           <packing>

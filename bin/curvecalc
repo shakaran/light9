@@ -30,7 +30,6 @@ from light9.curvecalc.curve import Curveset
 from light9.curvecalc import curveview 
 from light9.curvecalc.musicaccess import Music, currentlyPlayingSong
 from light9.wavelength import wavelength
-from light9.uihelpers import toplevelat
 from light9.namespaces import L9
 from light9.curvecalc.subterm import read_all_subs, savekey, graphPathForSubterms
 from light9.curvecalc.subtermview import add_one_subterm
@@ -46,14 +45,19 @@ def makeGraph():
 
 class Main(object):
     def __init__(self, graph, opts, song, curveset, subterms, music):
-        self.graph = graph
-        self.music = music
-        wtree = gtk.Builder()
+        self.graph, self.opts, self.song = graph, opts, song
+        self.curveset, self.subterms, self.music = curveset, subterms, music
+
+        wtree = self.wtree = gtk.Builder()
         wtree.add_from_file(sibpath(__file__, "../light9/curvecalc/curvecalc.glade"))
         mainwin = wtree.get_object("MainWindow")
         
         mainwin.connect("destroy", self.onQuit)
         wtree.connect_signals(self)
+        gtk.rc_parse("theme/marble-ice/gtk-2.0/gtkrc")
+        gtk.rc_parse_string("""style "default" {font_name = "sans 7"}""")
+        if self.opts.reload:
+            self.refreshTheme()
         mainwin.show_all()
 
         mainwin.connect("delete-event", lambda *args: reactor.crash())
@@ -62,47 +66,13 @@ class Main(object):
         self.add_subterms_for_song(song, curveset, subterms,
                                    wtree.get_object("subterms")
                                    )
-
-        def refreshCurveView():
-            mtimes = [os.path.getmtime(f) for f in [
-                'light9/curvecalc/curveview.py',
-                'light9/curvecalc/zoomcontrol.py',
-                ]]
-
-            if (not hasattr(self, 'curvesetView') or
-                self.curvesetView._mtimes != mtimes):
-                print "reload curveview.py"
-                curvesVBox = wtree.get_object("curves")
-                zoomControlBox = wtree.get_object("zoomControlBox")
-                [curvesVBox.remove(c) for c in curvesVBox.get_children()]
-                [zoomControlBox.remove(c) for c in
-                 zoomControlBox.get_children()]
-                try:
-                    linecache.clearcache()
-                    reload(curveview)
-                    # mem problem somewhere; need to hold a ref to this
-                    self.curvesetView = curveview.Curvesetview(
-                        curvesVBox, zoomControlBox, curveset)
-                    self.curvesetView._mtimes = mtimes
-
-                    # curvesetview must already exist, since this
-                    # makes 'add_curve' signals for all the initial
-                    # curves
-                    curveset.load(basename=os.path.join(
-                        showconfig.curvesDir(),
-                        showconfig.songFilenameFromURI(song)),
-                                  skipMusic=opts.skip_music)
-                    # this is scheduled after some tk shuffling, to
-                    # try to minimize the number of times we redraw
-                    # the curve at startup. If tk is very slow, it's
-                    # ok. You'll just get some wasted redraws.
-                    self.curvesetView.goLive()
-                except Exception, e:
-                    print "reload failed:", e
-            reactor.callLater(1, refreshCurveView)
-        refreshCurveView()       
+        self.refreshCurveView()       
         
         self.makeStatusLines(wtree.get_object("status"))
+
+    def refreshTheme(self):
+        gtk.rc_reparse_all()
+        reactor.callLater(1, self.refreshTheme)
 
     def onQuit(self, *args):
         reactor.crash()
@@ -165,8 +135,47 @@ class Main(object):
                                signame, weak=False)
         master.show_all()
 
+    def refreshCurveView(self):
+        wtree = self.wtree
+        mtimes = [os.path.getmtime(f) for f in [
+            'light9/curvecalc/curveview.py',
+            'light9/curvecalc/zoomcontrol.py',
+            ]]
 
-    def onReloadSubs(self): # wants to be ctrl-r  too
+        if (not hasattr(self, 'curvesetView') or
+            self.curvesetView._mtimes != mtimes):
+            print "reload curveview.py"
+            curvesVBox = wtree.get_object("curves")
+            zoomControlBox = wtree.get_object("zoomControlBox")
+            [curvesVBox.remove(c) for c in curvesVBox.get_children()]
+            [zoomControlBox.remove(c) for c in
+             zoomControlBox.get_children()]
+            try:
+                linecache.clearcache()
+                reload(curveview)
+                # mem problem somewhere; need to hold a ref to this
+                self.curvesetView = curveview.Curvesetview(
+                    curvesVBox, zoomControlBox, self.curveset)
+                self.curvesetView._mtimes = mtimes
+
+                # curvesetview must already exist, since this
+                # makes 'add_curve' signals for all the initial
+                # curves
+                self.curveset.load(basename=os.path.join(
+                    showconfig.curvesDir(),
+                    showconfig.songFilenameFromURI(self.song)),
+                              skipMusic=self.opts.skip_music)
+                # this is scheduled after some tk shuffling, to
+                # try to minimize the number of times we redraw
+                # the curve at startup. If tk is very slow, it's
+                # ok. You'll just get some wasted redraws.
+                self.curvesetView.goLive()
+            except Exception, e:
+                print "reload failed:", e
+        if self.opts.reload:
+            reactor.callLater(1, self.refreshCurveView)
+
+    def onReloadSubs(self, *args): # wants to be ctrl-r  too
         dispatcher.send('reload all subs')
 
     def onAddSubterm(self):
@@ -190,6 +199,8 @@ def main():
                       help="ignore music and smooth_music curve files")
     parser.add_option("--debug", action="store_true",
                       help="log at DEBUG")
+    parser.add_option("--reload", action="store_true",
+                      help="live reload of themes and code")
     parser.add_option("--startup-only", action='store_true',
                       help="quit after loading everything (for timing tests)")
     opts, args = parser.parse_args()
@@ -203,7 +214,7 @@ def main():
     except IndexError:
         song = currentlyPlayingSong()
 
-    music=Music()
+    music = Music()
     graph = makeGraph()
 
     curveset = Curveset(sliders=opts.sliders)
@@ -233,6 +244,6 @@ def main():
         log.debug("quitting now because of --startup-only")
         return
 
-    reactor.run()
+    prof.run(reactor.run, profile=False)
 
 main()
