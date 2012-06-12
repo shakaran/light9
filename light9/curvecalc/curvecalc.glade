@@ -690,6 +690,7 @@
   </object>
   <object class="GtkTextBuffer" id="help">
     <property name="text">Mousewheel zoom; C-p play/pause music at mouse
+Over a curve: C to collapse; R to rebuild canvas widget
 Curve point bindings: B1 drag point; C-B1 curve add point; S-B1 sketch points; 1..5 add point at time; B1 drag select points
 Available in functions: nsin/ncos period=amp=1; within(a,b) bef(x) aft(x) compare to time; smoove(x) cubic smoothstep; chan(name); curvename(t) eval curve</property>
   </object>
