@@ -749,7 +749,7 @@ class Curvesetview(object):
     def add_curve(self, name, slider=None, knobEnabled=False):
         curve = self.curveset.curves[name]
         f = CurveRow(name, curve, slider, knobEnabled, self.zoomControl)
-        self.curvesVBox.pack_end(f.box)
+        self.curvesVBox.pack_start(f.box)
         f.box.show_all()
         self.allCurveRows.add(f)
         f.curveView.goLive()

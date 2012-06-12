@@ -135,7 +135,7 @@ class Curveset(object):
             self.sliders = None
 
     def sorter(self, name):
-        return not name.endswith('music'), name
+        return (not name in ['music', 'smooth_music'], name)
 
     def load(self,basename, skipMusic=False):
         """find all files that look like basename-curvename and add
