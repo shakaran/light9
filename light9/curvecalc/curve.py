@@ -67,8 +67,10 @@ class Curve(object):
     __call__=eval
 
     def insert_pt(self,new_pt):
+        """returns index of new point"""
         i = bisect(self.points,(new_pt[0],None))
         self.points.insert(i,new_pt)
+        return i
 
     def indices_between(self, x1, x2, beyond=0):
         leftidx = max(0, bisect(self.points, (x1,None)) - beyond)

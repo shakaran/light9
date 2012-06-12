@@ -42,6 +42,7 @@ class Sketch:
     def release(self,ev):
         pts = self.pts
         pts.sort()
+        finalPoints = pts[:]
 
         dx = .01
         to_remove = []
@@ -56,6 +57,7 @@ class Sketch:
 
         for i in to_remove:
             self.curveview.curve.points.remove(pts[i])
+            finalPoints.remove(pts[i])
 
         # the simplified curve may now be too far away from some of
         # the points, so we'll put them back. this has an unfortunate
@@ -64,8 +66,10 @@ class Sketch:
             p = pts[i]
             if abs(self.curveview.curve(p[0]) - p[1]) > .1:
                 self.curveview.add_point(p)
+                finalPoints.append(p)
             
         self.curveview.update_curve()
+        self.curveview.select_points(finalPoints)
 
 class Curveview(object):
     """
@@ -164,8 +168,6 @@ class Curveview(object):
         else:
             self.select_press(event)
 
-            
-
     def playPause(self):
         """
         user has pressed ctrl-p over a curve view, possibly this
@@ -223,6 +225,18 @@ class Curveview(object):
         except ValueError:
             self.selected_points[:] = []
             self.highlight_selected_dots()
+
+    def select_points(self, pts):
+        """set selection to the given point values (tuples, not indices)"""
+        idxs = []
+        for p in pts:
+            idxs.append(self.curve.points.index(p))
+        self.select_indices(idxs)
+
+    def select_indices(self, idxs):
+        """set selection to these point indices"""
+        self.selected_points = idxs
+        self.highlight_selected_dots()
 
     def select_press(self,ev):
         # todo: these select_ handlers are getting called on c-a-drag
@@ -485,16 +499,14 @@ class Curveview(object):
         
     def new_point_at_mouse(self, ev):
         p = self.world_from_screen(ev.x,ev.y)
-        x, y = p
-        y = max(0, y)
-        y = min(1, y)
-        p = x, y
-        self.add_point(p)
+        x = p[0]
+        y = self.curve.eval(x)
+        self.add_point((x, y))
 
     def add_point(self, p):
-        self.unselect()
-        self.curve.insert_pt(p)
+        i = self.curve.insert_pt(p)
         self.update_curve()
+        self.select_indices([i])
         
     def remove_point_idx(self, *idxs):
         idxs = list(idxs)
@@ -539,8 +551,7 @@ class Curveview(object):
     def select_between(self,start,end):
         if start > end:
             start, end = end, start
-        self.selected_points = self.curve.indices_between(start,end)
-        self.highlight_selected_dots()
+        self.select_indices(self.curve.indices_between(start,end))
 
     def onEnter(self, widget, event):
         self.entered = True
