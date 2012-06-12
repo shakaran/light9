@@ -75,12 +75,12 @@ class Curveview(object):
     """
     graphical curve widget only. Please pack .widget
     """
-    def __init__(self, curve, knobEnabled=False, isMusic=False, zoomControl=None, **kw):
+    def __init__(self, curve, knobEnabled=False, isMusic=False,
+                 zoomControl=None):
         """knobEnabled=True highlights the previous key and ties it to a
         hardware knob"""
         self.widget = goocanvas.Canvas()
         self.widget.set_property("background-color", "black")
-        self.widget.set_size_request(-1, 100)
         self.size = self.widget.get_allocation()
         self.root = self.widget.get_root_item()
 
@@ -137,6 +137,7 @@ class Curveview(object):
 
         self.dragging_dots = False
         self.selecting = False
+        
         if 0:
             self.bind("<ButtonPress-1>",#"<Alt-Key>",
                       self.select_press, add=True)
@@ -147,14 +148,12 @@ class Curveview(object):
             self.bind("<ButtonPress-1>", self.check_deselect, add=True)
 
             self.bind("<Key-m>", lambda *args: self.curve.toggleMute())
-            self.bind("<Key-c>", lambda *args: dispatcher.send('toggle collapse',
-                                                               sender=self.curve))
 
     def onDelete(self):
         if self.selected_points:
             self.remove_point_idx(*self.selected_points)
         
-
+            
     def onCanvasPress(self, item, target_item, event):
         # when we support multiple curves per canvas, this should find
         # the close one and add a point to that. Binding to the line
@@ -355,7 +354,7 @@ class Curveview(object):
 
             self.dots = {} # idx : canvas rectangle
 
-            if len(visible_points)<50:
+            if len(visible_points) < 50 and not self.curve.muted:
                 self._draw_handle_points(visible_idxs,visible_points)
 
     def is_music(self):
@@ -625,11 +624,13 @@ class CurveRow(object):
     """
     one of the repeating curve rows (including widgets on the left)
 
+    i wish these were in a list-style TreeView so i could set_reorderable on it
+
     please pack self.box
     """
     def __init__(self, name, curve, slider, knobEnabled, zoomControl):
         self.name = name
-        self.box = gtk.HandleBox()
+        self.box = gtk.VBox()
         self.box.set_border_width(1)
 
         cols = gtk.HBox()
@@ -644,7 +645,8 @@ class CurveRow(object):
         self.curveView = Curveview(curve, knobEnabled=knobEnabled,
                                    isMusic=name in ['music', 'smooth_music'],
                                    zoomControl=zoomControl)
-        cols.pack_start(self.curveView.widget, expand=True)
+        self.curveView.widget.set_size_request(-1, 100)
+        cols.pack_start(self.curveView.widget, expand=True)       
         
     def setupControls(self, controls, name, curve, slider):
         box = gtk.VBox()
@@ -656,22 +658,16 @@ class CurveRow(object):
         curve_name_label = gtk.Label(txt)
         box.pack_start(curve_name_label)
 
-
-#        self.collapsed = tk.IntVar()
-#        self.muted = tk.IntVar()
-
         bools = gtk.HBox()
         box.pack_start(bools)
-        collapsed_cb = gtk.CheckButton("C")
-        bools.pack_start(collapsed_cb)
-        #self.collapsed.trace('w', self.update_ui_to_collapsed_state)
-        dispatcher.connect(self.toggleCollapsed, "toggle collapse",
-                           sender=curve)
-
-        muted_cb = gtk.CheckButton("M")
+        self.collapsed = gtk.CheckButton("C")
+        bools.pack_start(self.collapsed)
+        self.collapsed.connect("toggled", self.update_ui_to_collapsed_state)
+        self.hideWhenCollapsed = [bools]
+        self.muted = gtk.CheckButton("M")
         
-        bools.pack_start(muted_cb)
-        #self.muted.trace('w', self.sync_mute_to_curve)
+        bools.pack_start(self.muted)
+        self.muted.connect("toggled", self.sync_mute_to_curve)
         dispatcher.connect(self.mute_changed, 'mute changed', sender=curve)
 
         self.sliderLabel = None
@@ -682,7 +678,7 @@ class CurveRow(object):
             box.pack_start(self.sliderLabel)
 
         # widgets that need recoloring when we tint the row:
-        #self.widgets = [leftside, collapsed_cb, muted_cb,
+        #self.widgets = [leftside, self.collapsed, self.muted,
         #                curve_name_label, self]
         #if self.sliderLabel:
         #    self.widgets.append(self.sliderLabel)
@@ -690,42 +686,35 @@ class CurveRow(object):
     def onDelete(self):
         self.curveView.onDelete()
         
-    def toggleCollapsed(self):
-        self.collapsed.set(not self.collapsed.get())
-
     def update_ui_to_collapsed_state(self, *args):
-        if self.collapsed.get():
-            if self.sliderLabel:
-                self.sliderLabel.pack_forget()
-            self.curveView.config(height=25)
+        if self.collapsed.get_active():
+            self.curveView.widget.set_size_request(-1, 25)
+            [w.hide() for w in self.hideWhenCollapsed]
         else:
-            if self.sliderLabel:
-                self.sliderLabel.pack(side='left')
-            self.curveView.config(height=100)
+            self.curveView.widget.set_size_request(-1, 100)
+            [w.show() for w in self.hideWhenCollapsed]
 
     def sync_mute_to_curve(self, *args):
-        """send value from Tk var to the master attribute inside Curve"""
-        new_mute = self.muted.get()
-        old_mute = self.curveView.curve.muted
-        if new_mute == old_mute:
-            return
-
+        """send value from CheckButton to the master attribute inside Curve"""
+        new_mute = self.muted.get_active()
         self.curveView.curve.muted = new_mute
 
     def update_mute_look(self):
         """set colors on the widgets in the row according to self.muted.get()"""
-        if self.muted.get():
+        # not yet ported for gtk
+        return
+        if self.curveView.curve.muted:
             new_bg = 'grey20'
         else:
-            new_bg = self.default_bg
+            new_bg = 'normal'
 
         for widget in self.widgets:
             widget['bg'] = new_bg
 
     def mute_changed(self):
         """call this if curve.muted changed"""
-        self.muted.set(self.curveView.curve.muted)
-        self.update_mute_look()
+        self.muted.set_active(self.curveView.curve.muted)
+        #self.update_mute_look()
 
 
 class Curvesetview(object):
@@ -749,7 +738,31 @@ class Curvesetview(object):
         dispatcher.connect(self.add_curve, "add_curve", sender=self.curveset)
         
         self.newcurvename = gtk.EntryBuffer("", 0)
-        
+
+        eventBox = self.curvesVBox.get_parent()
+        eventBox.connect("key-press-event", self.onKeyPress)
+        eventBox.connect("button-press-event", self.takeFocus)
+
+    def takeFocus(self, *args):
+        """the whole curveset's eventbox is what gets the focus, currently, so
+        keys like 'c' can work in it"""
+        self.curvesVBox.get_parent().grab_focus()
+
+    def onKeyPress(self, widget, event):
+        r = self.row_under_mouse()
+        if event.string == 'c':
+            # calling toggled() had no effect; don't know why
+            r.collapsed.set_active(not r.collapsed.get_active())
+
+    def row_under_mouse(self):
+        x, y = self.curvesVBox.get_pointer()
+        for r in self.allCurveRows:
+            inRowX, inRowY = self.curvesVBox.translate_coordinates(r.box, x, y)
+            _, _, w, h = r.box.get_allocation()
+            if 0 <= inRowX < w and 0 <= inRowY < h:
+                return r
+        raise ValueError("no curveRow is under the mouse")
+
     def focus_entry(self):
         self.entry.focus()
 
@@ -778,3 +791,13 @@ class Curvesetview(object):
     def onDelete(self):
         for r in self.allCurveRows:
             r.onDelete()
+
+    def collapseAll(self):
+        for r in self.allCurveRows:
+            r.collapsed.set_active(True)
+
+    def collapseNone(self):
+        for r in self.allCurveRows:
+            r.collapsed.set_active(False)
+
+        
