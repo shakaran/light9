@@ -429,14 +429,16 @@
                       <object class="GtkScrolledWindow" id="scrolledwindow2">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="vadjustment">adjustment1</property>
+                        <property name="hscrollbar_policy">never</property>
                         <child>
                           <object class="GtkViewport" id="viewport1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="vadjustment">adjustment1</property>
                             <property name="shadow_type">none</property>
                             <child>
                               <object class="GtkTable" id="subterms">
-                                <property name="height_request">90</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="n_columns">2</property>
@@ -641,6 +643,11 @@
     </child>
   </object>
   <object class="GtkAccelGroup" id="accelgroup1"/>
+  <object class="GtkAdjustment" id="adjustment1">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkTextBuffer" id="help">
     <property name="text">Mousewheel zoom; C-p play/pause music at mouse
 Curve point bindings: B1 drag point; C-B1 curve add point; S-B1 sketch points; 1..5 add point at time; B1 drag select points
