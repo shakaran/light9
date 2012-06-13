@@ -151,20 +151,55 @@ class Curveview(object):
             print "rebuilding canvas"
 
         self.timelineLine = self.curveGroup = None
-        self.widget = goocanvas.Canvas()
-        self.widget.set_property("background-color", "black")
-        self.size = self.widget.get_allocation()
-        self.root = self.widget.get_root_item()
+        self.widget = gtk.EventBox()
+        self.widget.set_can_focus(True)
+        self.widget.add_events(gtk.gdk.KEY_PRESS_MASK |
+                               gtk.gdk.FOCUS_CHANGE_MASK)
+        self.onFocusOut()
 
-        self.widget.connect("size-allocate", self.update_curve)
-        self.widget.connect("expose-event", self.onExpose)
+        box = gtk.VBox()
+        box.set_border_width(1)
+        self.widget.add(box)
+        box.show()
+        
+        self.canvas = goocanvas.Canvas()
+        box.pack_start(self.canvas)
+        self.canvas.show()
+        
+        self.canvas.set_property("background-color", "black")
+        self.size = self.canvas.get_allocation()
+        self.root = self.canvas.get_root_item()
 
-        self.widget.connect("leave-notify-event", self.onLeave)
-        self.widget.connect("enter-notify-event", self.onEnter)
-        self.widget.connect("motion-notify-event", self.onMotion)
-        self.widget.connect("scroll-event", self.onScroll)
-        self.widget.connect("button-release-event", self.onRelease)
+        self.canvas.connect("size-allocate", self.update_curve)
+        self.canvas.connect("expose-event", self.onExpose)
+
+        self.canvas.connect("leave-notify-event", self.onLeave)
+        self.canvas.connect("enter-notify-event", self.onEnter)
+        self.canvas.connect("motion-notify-event", self.onMotion)
+        self.canvas.connect("scroll-event", self.onScroll)
+        self.canvas.connect("button-release-event", self.onRelease)
         self.root.connect("button-press-event", self.onCanvasPress)
+
+        self.widget.connect("key-press-event", self.onKeyPress)
+
+        self.widget.connect("focus-in-event", self.onFocusIn)
+        self.widget.connect("focus-out-event", self.onFocusOut)
+        self.widget.connect("event", self.onAny)
+
+    def onAny(self, w, event):
+        print "   %s on %s" % (event, w)
+        
+    def onFocusIn(self, *args):
+        print "focusin", args
+        self.widget.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("red"))
+
+    def onFocusOut(self, widget=None, event=None):
+        #if event:
+        #    import pdb;pdb.set_trace()
+        print "focusout now", event.get_state() if event else 0
+
+    def onKeyPress(self, *args):
+        print "canvas key", args
 
     def onExpose(self, *args):
         if self.culled:
@@ -181,6 +216,11 @@ class Curveview(object):
         # itself is probably too hard to hit. Maybe a background-color
         # really thick line would be a nice way to allow a sloppier
         # click
+
+        print "focus on", self.widget
+        self.widget.grab_focus()
+        print "done grab"
+        
         if event.get_state() & gtk.gdk.CONTROL_MASK:
             self.new_point_at_mouse(event)
         elif event.get_state() & gtk.gdk.SHIFT_MASK:
@@ -199,7 +239,7 @@ class Curveview(object):
         events. Rt-click should include Ctrl+P as 'play/pause from
         here'
         """
-        # maybe self.widget.get_pointer would be ok for this? i didn't try it
+        # maybe self.canvas.get_pointer would be ok for this? i didn't try it
         if self.entered:
             t = self.world_from_screen(self.lastMouseX, 0)[0]
             return t
@@ -352,7 +392,7 @@ class Curveview(object):
 
     def canvasIsVisible(self):
         if not hasattr(self, "scrollWin"):
-            self.scrollWin = self.widget
+            self.scrollWin = self.canvas
             while not isinstance(self.scrollWin, gtk.ScrolledWindow):
                 self.scrollWin = self.scrollWin.get_parent()
 
@@ -361,11 +401,11 @@ class Curveview(object):
         visy1 = sw.translate_coordinates(top, 0, 0)[1]
         visy2 = visy1 + sw.get_allocation().height
 
-        coords = self.widget.translate_coordinates(top, 0, 0)
+        coords = self.canvas.translate_coordinates(top, 0, 0)
         if not coords: # probably broken after a reload()
             return False
         cany1 = coords[1]
-        cany2 = cany1 + self.widget.get_allocation().height
+        cany2 = cany1 + self.canvas.get_allocation().height
         return not (cany2 < visy1 or cany1 > visy2)
         
     def update_curve(self, *args):
@@ -377,7 +417,7 @@ class Curveview(object):
             return
         self.culled = False
         
-        self.size = self.widget.get_allocation()
+        self.size = self.canvas.get_allocation()
  
         cp = self.curve.points
         visible_x = (self.world_from_screen(0,0)[0],
@@ -392,7 +432,7 @@ class Curveview(object):
         self.curveGroup = goocanvas.Group(parent=self.root)
 
         # this makes gtk quietly stop working. Getting called too early?
-        #self.widget.set_property("background-color",
+        #self.canvas.set_property("background-color",
         #                         "gray20" if self.curve.muted else "black")
 
         if self.size.height < 40:
@@ -482,7 +522,7 @@ class Curveview(object):
         linepts=[]
         step=1
         linewidth = 1.5
-        maxPointsToDraw = self.size.width / 3
+        maxPointsToDraw = self.size.width / 2
         if len(visible_points) > maxPointsToDraw:
             step = int(len(visible_points) / maxPointsToDraw)
             linewidth = .8
