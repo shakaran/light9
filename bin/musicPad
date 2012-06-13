@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!bin/python
 """
 rewrite all the songs with silence at the start and end
 """
@@ -14,9 +14,6 @@ introPad = 4
 postPad = 9 # 5 + autostop + 4
 
 playlist = Playlist.fromShow(showconfig.getGraph(), showconfig.showUri())
-# instead of taking a show uri like it should, i just convert every
-# path i find in the graph (hoping that you only loaded statements for
-# the current show)
 for p in playlist.allSongPaths():
     log.info("read %s", p)
     inputWave = wave.open(p, 'r')

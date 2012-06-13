@@ -74,7 +74,7 @@ def songOnDisk(song):
     if not name:
         raise ValueError("Song %r has no :songFilename" % song)
 
-    return path.join(root, name)
+    return path.abspath(path.join(root, name))
 
 def songFilenameFromURI(uri):
     """

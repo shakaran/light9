@@ -1,4 +1,4 @@
-from light9.showconfig import getSongsFromShow
+from light9.showconfig import getSongsFromShow, songOnDisk
 from light9.namespaces import L9
 
 class NoSuchSong(ValueError):
@@ -25,21 +25,22 @@ class Playlist(object):
                              currentSong)
 
         return nextSong
+
     def allSongs(self):
         """Returns a list of all song URIs in order."""
         return self.songs
+    
     def allSongPaths(self):
         """Returns a list of the filesystem paths to all songs in order."""
         paths = []
         for song in self.songs:
-            paths.append(self.songPath(song))
+            paths.append(songOnDisk(song))
         return paths
     
     def songPath(self, uri):
         """filesystem path to a song"""
-        p = self.graph.value(uri, L9['showPath'])
-        assert p.startswith("file://"), p
-        return p[len("file://"):]
+        raise NotImplementedError("see showconfig.songOnDisk")
+        # maybe that function should be moved to this method
 
     @classmethod
     def fromShow(playlistClass, graph, show):

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!bin/python
 
 """for completion, print the available song uris on stdout
 

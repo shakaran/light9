@@ -262,8 +262,8 @@ def main():
     subtermPath = graphPathForSubterms(song)
     try:
         graph.parse(subtermPath, format='n3')
-    except urllib2.URLError, e:
-        if e.reason.errno != 2:
+    except IOError, e:
+        if e.errno != 2:
             raise
         log.info("%s not found, starting with empty graph" % subtermPath)
     

@@ -32,7 +32,7 @@ class Player(object):
         bus.add_signal_watch()
 
         def on_any(bus, msg):
-            print bus, msg, msg.type
+            #print bus, msg, msg.type
             if msg.type == gst.MESSAGE_EOS:
                 if self.onEOS is not None:
                     self.onEOS(self.getSong())
