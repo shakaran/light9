@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 from louie import dispatcher
 from rdflib import RDF, RDFS, Literal
 from light9 import Submaster
@@ -9,14 +9,14 @@ class Subexprview(object):
     def __init__(self, se):
         self.subexpr = se
 
-        self.box = gtk.HBox()
+        self.box = Gtk.HBox()
 
-        self.entryBuffer = gtk.EntryBuffer("", -1)
-        self.entry = gtk.Entry()
-        self.error = gtk.Label("")
+        self.entryBuffer = Gtk.EntryBuffer()
+        self.entry = Gtk.Entry()
+        self.error = Gtk.Label("")
 
-        self.box.pack_start(self.entry, expand=True)
-        self.box.pack_start(self.error, expand=False)
+        self.box.pack_start(self.entry, True, True, True)
+        self.box.pack_start(self.error, False, False, False)
 
         self.entry.set_buffer(self.entryBuffer)
         self.expr_changed()
@@ -43,7 +43,7 @@ class Subtermview(object):
     def __init__(self, graph, st):
         self.subterm = st
 
-        self.label = gtk.Label("sub %s" % self.subterm.submaster.name)
+        self.label = Gtk.Label("sub %s" % self.subterm.submaster.name)
 
         sev = Subexprview(self.subterm.subexpr)
         self.exprView = sev.box

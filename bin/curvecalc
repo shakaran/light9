@@ -1,4 +1,7 @@
-#!bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8; tab-width: 4; mode: python -*-
+# emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: t -*-
+# vi: set ft=python sts=4 ts=4 sw=4 noet 
 
 """
 now launches like this:
@@ -11,12 +14,25 @@ todo: curveview should preserve more objects, for speed maybe
 """
 from __future__ import division
 
-from twisted.internet import gtk2reactor
-gtk2reactor.install()
+from twisted.internet import gtk3reactor
+gtk3reactor.install()
 from twisted.internet import reactor
 
-import time, textwrap, os, optparse, urllib2, gtk, gobject, linecache, signal, traceback
-import louie as dispatcher 
+import time
+import textwrap
+import os
+import optparse
+import urllib2
+import gi
+
+from gi.repository import Gtk
+from gi.repository import GObject
+
+import linecache
+import signal
+import traceback
+import louie as dispatcher
+
 from twisted.python.util import sibpath
 from rdflib import URIRef, Graph, Literal, RDF, RDFS
 import logging
@@ -47,14 +63,14 @@ class Main(object):
         self.graph, self.opts, self.song = graph, opts, song
         self.curveset, self.subterms, self.music = curveset, subterms, music
 
-        wtree = self.wtree = gtk.Builder()
+        wtree = self.wtree = Gtk.Builder()
         wtree.add_from_file("light9/curvecalc/curvecalc.glade")
         mainwin = wtree.get_object("MainWindow")
         
         mainwin.connect("destroy", self.onQuit)
         wtree.connect_signals(self)
-        gtk.rc_parse("theme/marble-ice/gtk-2.0/gtkrc")
-        gtk.rc_parse_string("""style "default" {font_name = "sans 7"}""")
+        Gtk.rc_parse("theme/marble-ice/gtk-2.0/gtkrc")
+        Gtk.rc_parse_string("""style "default" {font_name = "sans 7"}""")
         if self.opts.reload:
             self.refreshTheme()
         mainwin.show_all()
@@ -103,7 +119,7 @@ class Main(object):
         dialog.hide()
 
     def refreshTheme(self):
-        gtk.rc_reparse_all()
+        Gtk.rc_reparse_all()
         reactor.callLater(1, self.refreshTheme)
 
     def onQuit(self, *args):
@@ -167,8 +183,8 @@ class Main(object):
             ('update period', lambda t: "%.1fms"%(t*1000)),
             ('update status', lambda x: str(x)),
             ]):
-            key = gtk.Label("%s:" % signame)
-            value = gtk.Label("")
+            key = Gtk.Label("%s:" % signame)
+            value = Gtk.Label("")
             master.resize(row + 1, 2)
             master.attach(key, 0, 1, row, row + 1)
             master.attach(value, 1, 2, row, row + 1)
@@ -276,7 +292,7 @@ def main():
 
     start = Main(graph, opts, song, curveset, subterms, music)
 
-    dispatcher.send("max time", maxtime=maxtime)
+    dispatcher.send("max time", maxtime=master)
     dispatcher.send("show all")
         
     if opts.startup_only:

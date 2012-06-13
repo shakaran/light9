@@ -1,5 +1,9 @@
 from __future__ import division
-import gtk, goocanvas
+
+from gi.repository import Gtk
+from gi.repository import GObject
+from gi.repository import GooCanvas
+
 import louie as dispatcher
 from light9.curvecalc import cursors 
 
@@ -52,7 +56,7 @@ class ZoomControl(object):
     offset = property(**offset())
 
     def __init__(self, **kw):
-        self.widget = goocanvas.Canvas(bounds_padding=5)
+        self.widget = GooCanvas.Canvas(bounds_padding=5)
         self.widget.set_property("background-color", "gray60")
         self.widget.set_size_request(-1, 30)
 
@@ -66,14 +70,14 @@ class ZoomControl(object):
         self.end=20
 
         self.root = self.widget.get_root_item()
-        self.leftbrack = goocanvas.Polyline(parent=self.root,
+        self.leftbrack = GooCanvas.Polyline(parent=self.root,
                                             line_width=5, stroke_color='black')
-        self.rightbrack = goocanvas.Polyline(parent=self.root,
+        self.rightbrack = GooCanvas.Polyline(parent=self.root,
                                              line_width=5, stroke_color='black')
-        self.shade = goocanvas.Rect(parent=self.root,
+        self.shade = GooCanvas.Rect(parent=self.root,
                                     fill_color='gray70',
                                     line_width=.5)
-        self.time = goocanvas.Polyline(parent=self.root,
+        self.time = GooCanvas.Polyline(parent=self.root,
                                        line_width=2,
                                        stroke_color='red')
         self.redrawzoom()
@@ -141,7 +145,7 @@ class ZoomControl(object):
         self.lastTime = val
         x = self.can_for_t(self.lastTime)
         self.time.set_property("points",
-                               goocanvas.Points([(x, 0),
+                               GooCanvas.Points([(x, 0),
                                                  (x, self.size.height)]))
         
     def press(self,ev,attr):
@@ -184,12 +188,12 @@ class ZoomControl(object):
         scan = self.can_for_t(self.start)
         ecan = self.can_for_t(self.end)
 
-        self.leftbrack.set_property("points", goocanvas.Points([
+        self.leftbrack.set_property("points", GooCanvas.Points([
             (scan + lip, y1),
             (scan, y1),
             (scan, y2),
             (scan + lip, y2)]))
-        self.rightbrack.set_property("points", goocanvas.Points([
+        self.rightbrack.set_property("points", GooCanvas.Points([
             (ecan - lip, y1),
             (ecan, y1),
             (ecan, y2),
@@ -205,7 +209,7 @@ class ZoomControl(object):
     def redrawTics(self):
         if hasattr(self, 'ticsGroup'):
             self.ticsGroup.remove()
-        self.ticsGroup = goocanvas.Group(parent=self.root)
+        self.ticsGroup = GooCanvas.Group(parent=self.root)
 
         lastx =- 1000
 
@@ -215,13 +219,13 @@ class ZoomControl(object):
                 txt = str(t)
                 if lastx == -1000:
                     txt = txt + "sec"
-                goocanvas.Polyline(parent=self.ticsGroup,
-                                   points=goocanvas.Points([(x, 0), (x, 15)]),
+                GooCanvas.Polyline(parent=self.ticsGroup,
+                                   points=GooCanvas.Points([(x, 0), (x, 15)]),
                                    line_width=.8,
                                    stroke_color='black')
-                goocanvas.Text(parent=self.ticsGroup,
+                GooCanvas.Text(parent=self.ticsGroup,
                                x=x, y=self.size.height-1,
-                               anchor=gtk.ANCHOR_SOUTH,
+                               anchor=Gtk.ANCHOR_SOUTH,
                                text=txt,
                                font='ubuntu 7')
                 lastx = x

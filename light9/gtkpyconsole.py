@@ -1,5 +1,10 @@
+#!/usr/bin/env python
+
 from lib.ipython_view import IPythonView
-import pango, gtk
+
+import gi
+from gi.repository import Gtk
+from gi.repository import Pango
 
 def togglePyConsole(self, item, user_ns):
     """
@@ -12,23 +17,25 @@ def togglePyConsole(self, item, user_ns):
     user_ns is a dict you want to appear as locals in the console
     """
     if item.get_active():
-        if not hasattr(self, 'pythonWindow'):
-            self.pythonWindow = gtk.Window()
-            S = gtk.ScrolledWindow()
-            S.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        if not hasattr(self, 'python_window'):
+            self.python_window = Gtk.Window()
+            S = Gtk.ScrolledWindow()
+            S.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_AUTOMATIC)
             V = IPythonView(user_ns=user_ns)
-            V.modify_font(pango.FontDescription("luxi mono 8"))
-            V.set_wrap_mode(gtk.WRAP_CHAR)
+            V.modify_font(pango.FontDescription('luxi mono 8'))
+            V.set_wrap_mode(Gtk.WRAP_CHAR)
             S.add(V)
-            self.pythonWindow.add(S)
-            self.pythonWindow.show_all()
-            self.pythonWindow.set_size_request(750, 550)
-            self.pythonWindow.set_resizable(True)
+            self.python_window.add(S)
+            self.python_window.show_all()
+            self.python_window.set_size_request(750, 550)
+            self.python_window.set_resizable(True)
+            
             def onDestroy(*args):
                 item.set_active(False)
-                del self.pythonWindow
-            self.pythonWindow.connect("destroy", onDestroy)
+                del self.python_window
+                
+            self.python_window.connect('destroy', onDestroy)
     else:
-        if hasattr(self, 'pythonWindow'):
-            self.pythonWindow.destroy()
+        if hasattr(self, 'python_window'):
+            self.python_window.destroy()
 

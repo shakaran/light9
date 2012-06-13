@@ -15,11 +15,12 @@ is available at U{http://www.opensource.org/licenses/bsd-license.php}
 # this file is a modified version of source code from the Accerciser project
 # http://live.gnome.org/accerciser
  
-import gtk
+from gi.repository import Gtk
+from gi.repository import Gdk
 import re
 import sys
 import os
-import pango
+from gi.repository import Pango
 from StringIO import StringIO
  
 try:
@@ -155,10 +156,10 @@ class IterableIPShell:
       output.close()
       input.close()
  
-class ConsoleView(gtk.TextView):
+class ConsoleView(Gtk.TextView):
   def __init__(self):
-    gtk.TextView.__init__(self)
-    self.modify_font(pango.FontDescription('Mono'))
+    Gtk.TextView.__init__(self)
+    self.modify_font(Pango.FontDescription('Mono'))
     self.set_cursor_visible(True)
     self.text_buffer = self.get_buffer()
     self.mark = self.text_buffer.create_mark('scroll_mark', 
@@ -267,7 +268,7 @@ class IPythonView(ConsoleView, IterableIPShell):
     return self.getCurrentLine()
  
   def keyPress(self, widget, event):
-    if event.state & gtk.gdk.CONTROL_MASK and event.keyval == 99:
+    if event.state & Gdk.ModifierType.CONTROL_MASK and event.keyval == 99:
       self.interrupt = True
       self._processLine()
       return True

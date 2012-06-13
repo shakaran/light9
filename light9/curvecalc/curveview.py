@@ -1,6 +1,10 @@
 from __future__ import division
 import math, time, logging
-import gtk, goocanvas
+
+from gi.repository import Gtk
+from gi.repository import GObject
+
+from gi.repository import GooCanvas
 import louie as dispatcher
 from light9.curvecalc.zoomcontrol import RegionZoom
 from light9.curvecalc import cursors
