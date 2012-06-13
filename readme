@@ -3,3 +3,27 @@ on dash:
 dash(pts/35):/my/dl/modified/mpd% src/mpd --no-daemon --verbose
 
 
+--------------------------------
+
+curvecalc upgrades:
+
+1..5 keys
+
+fix fader UIs
+
+draw handles for moving and resizing a fade with various anchor points
+
+add vidref on mousemove. separate process? yes
+
+sub autocomplete
+
+drop grids with keystrokes. grid all the beats that way? different
+keys make different grid colors. do the beats from various songs with
+different colors.
+
+be able to select grid lines to delete them. maybe grid is on a
+special curve row
+
+hotter reloading of subs and values. from KC, drag a new sub into CC
+
+drag looks into CC
